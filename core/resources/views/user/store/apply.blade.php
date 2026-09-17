@@ -100,6 +100,30 @@
             box-shadow: 0 4px 14px rgba(40, 167, 69, 0.35) !important;
         }
     }
+
+    /* Document & Camera Upload Action Buttons */
+    .doc-btn-group {
+        display: flex !important;
+        gap: 8px !important;
+        align-items: center !important;
+        width: 100% !important;
+    }
+    .doc-btn-group .btn-upload-file {
+        flex: 1 1 0 !important;
+        min-width: 0 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        padding-left: 6px !important;
+        padding-right: 6px !important;
+        text-align: center !important;
+    }
+    .doc-btn-group .btn-cam-snap {
+        flex: 0 0 auto !important;
+        white-space: nowrap !important;
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
 </style>
 @endsection
 
@@ -297,14 +321,14 @@
                                             @endif
                                         </div>
 
-                                        <div class="d-flex gap-2" style="gap: 8px;">
-                                            <label class="btn btn-outline-primary btn-sm flex-fill mb-0 cursor-pointer" for="id_card_front">
-                                                <i class="icon-upload"></i> {{ __('Upload File') }}
+                                        <div class="doc-btn-group">
+                                            <label class="btn btn-outline-primary btn-sm btn-upload-file mb-0 cursor-pointer" for="id_card_front">
+                                                <i class="icon-upload mr-1"></i> {{ __('Upload File') }}
                                             </label>
                                             <input type="file" name="id_card_front" id="id_card_front" class="d-none" accept="image/*" onchange="handleFileSelected(this, 'id_card_front')">
                                             
-                                            <button type="button" class="btn btn-primary btn-sm" onclick="openCamModal('id_card_front')">
-                                                <i class="icon-camera"></i> {{ __('Camera') }}
+                                            <button type="button" class="btn btn-primary btn-sm btn-cam-snap" onclick="openCamModal('id_card_front')">
+                                                <i class="icon-camera mr-1"></i> {{ __('Camera') }}
                                             </button>
                                         </div>
                                         <input type="hidden" name="id_card_front_cam" id="id_card_front_cam">
@@ -334,14 +358,14 @@
                                             @endif
                                         </div>
 
-                                        <div class="d-flex gap-2" style="gap: 8px;">
-                                            <label class="btn btn-outline-primary btn-sm flex-fill mb-0 cursor-pointer" for="selfie_with_id">
-                                                <i class="icon-upload"></i> {{ __('Upload File') }}
+                                        <div class="doc-btn-group">
+                                            <label class="btn btn-outline-primary btn-sm btn-upload-file mb-0 cursor-pointer" for="selfie_with_id">
+                                                <i class="icon-upload mr-1"></i> {{ __('Upload File') }}
                                             </label>
                                             <input type="file" name="selfie_with_id" id="selfie_with_id" class="d-none" accept="image/*" onchange="handleFileSelected(this, 'selfie_with_id')">
                                             
-                                            <button type="button" class="btn btn-primary btn-sm" onclick="openCamModal('selfie_with_id')">
-                                                <i class="icon-camera"></i> {{ __('Camera') }}
+                                            <button type="button" class="btn btn-primary btn-sm btn-cam-snap" onclick="openCamModal('selfie_with_id')">
+                                                <i class="icon-camera mr-1"></i> {{ __('Camera') }}
                                             </button>
                                         </div>
                                         <input type="hidden" name="selfie_with_id_cam" id="selfie_with_id_cam">
@@ -353,7 +377,7 @@
                                 </div>
 
                                 <!-- Store Documents (Image / PDF) -->
-                                <div class="col-md-12 mb-3">
+                                <div class="col-md-12 mb-4">
                                     <div class="p-3 doc-upload-card" id="card_store_documents">
                                         <div class="d-flex justify-content-between align-items-start mb-1">
                                             <label class="font-weight-bold mb-0 text-dark">{{ __('Store Documents (Image or PDF)') }} <span class="text-danger">*</span></label>
@@ -373,20 +397,162 @@
                                             @endif
                                         </div>
 
-                                        <div class="d-flex gap-2" style="gap: 8px;">
-                                            <label class="btn btn-outline-primary btn-sm flex-fill mb-0 cursor-pointer" for="store_documents">
-                                                <i class="icon-upload"></i> {{ __('Upload Document / Image / PDF') }}
+                                        <div class="doc-btn-group">
+                                            <label class="btn btn-outline-primary btn-sm btn-upload-file mb-0 cursor-pointer" for="store_documents">
+                                                <i class="icon-upload mr-1"></i> {{ __('Upload File / PDF') }}
                                             </label>
                                             <input type="file" name="store_documents" id="store_documents" class="d-none" accept="image/*,application/pdf" onchange="handleFileSelected(this, 'store_documents')">
                                             
-                                            <button type="button" class="btn btn-primary btn-sm" onclick="openCamModal('store_documents')">
-                                                <i class="icon-camera"></i> {{ __('Camera') }}
+                                            <button type="button" class="btn btn-primary btn-sm btn-cam-snap" onclick="openCamModal('store_documents')">
+                                                <i class="icon-camera mr-1"></i> {{ __('Camera') }}
                                             </button>
                                         </div>
                                         <input type="hidden" name="store_documents_cam" id="store_documents_cam">
                                         <input type="hidden" id="has_existing_store_documents" value="{{ !empty($latestRequest->store_documents) ? '1' : '0' }}">
                                         <div class="text-danger font-size-sm mt-2 d-none" id="error_store_documents">
                                             <i class="icon-alert-circle mr-1"></i> {{ __('Please provide a store document (upload file or capture photo).') }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SAMPLE PRODUCTS VERIFICATION (AT LEAST 3 PRODUCTS) -->
+                                <div class="col-md-12 mt-2 mb-2">
+                                    <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-3">
+                                        <h6 class="text-primary font-weight-bold mb-0">
+                                            <i class="icon-box mr-1"></i> {{ __('Sample Products Verification (At least 3 Products)') }}
+                                        </h6>
+                                        <span class="badge badge-warning text-dark font-weight-bold">{{ __('3 Items Required') }}</span>
+                                    </div>
+                                    <p class="text-muted font-size-sm mb-3">
+                                        {{ __('Please provide details and clear photos of at least 3 products you will sell. Enter product name and upload photo or snap with camera.') }}
+                                    </p>
+                                </div>
+
+                                <!-- Product 1 -->
+                                <div class="col-md-4 mb-4">
+                                    <div class="p-3 doc-upload-card h-100" id="card_sample_product_1">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <label class="font-weight-bold mb-0 text-dark">
+                                                <i class="icon-package text-primary mr-1"></i> {{ __('Product 1') }} <span class="text-danger">*</span>
+                                            </label>
+                                            <span class="badge badge-secondary doc-status-badge" id="badge_sample_product_1">{{ __('Required') }}</span>
+                                        </div>
+                                        <div class="form-group mb-2">
+                                            <label for="sample_product_1_name" class="font-size-xs text-muted mb-1">{{ __('Product 1 Name') }} <span class="text-danger">*</span></label>
+                                            <input type="text" name="sample_product_1_name" id="sample_product_1_name" class="form-control form-control-sm" placeholder="{{ __('e.g. Wireless Earbuds') }}" value="{{ old('sample_product_1_name', $latestRequest->sample_product_1_name ?? '') }}" required>
+                                            <div class="invalid-feedback font-size-xs">{{ __('Please enter Product 1 Name.') }}</div>
+                                        </div>
+                                        
+                                        <div class="preview-box mb-2 text-center p-2 bg-white rounded border" style="min-height: 100px; display: flex; align-items: center; justify-content: center;">
+                                            @if(!empty($latestRequest->sample_product_1_image))
+                                                <img src="{{ asset('core/public/storage/images/stores/' . $latestRequest->sample_product_1_image) }}" class="img-fluid rounded" style="max-height: 95px;" id="preview_sample_product_1">
+                                                <span class="text-muted font-italic d-none" id="no_img_sample_product_1">{{ __('No photo selected') }}</span>
+                                            @else
+                                                <span class="text-muted font-italic font-size-xs" id="no_img_sample_product_1">{{ __('No photo selected') }}</span>
+                                                <img src="" class="img-fluid rounded d-none" style="max-height: 95px;" id="preview_sample_product_1">
+                                            @endif
+                                        </div>
+
+                                        <div class="doc-btn-group">
+                                            <label class="btn btn-outline-primary btn-sm btn-upload-file mb-0 cursor-pointer" for="sample_product_1">
+                                                <i class="icon-upload mr-1"></i> {{ __('Upload') }}
+                                            </label>
+                                            <input type="file" name="sample_product_1" id="sample_product_1" class="d-none" accept="image/*" onchange="handleFileSelected(this, 'sample_product_1')">
+                                            
+                                            <button type="button" class="btn btn-primary btn-sm btn-cam-snap" onclick="openCamModal('sample_product_1')">
+                                                <i class="icon-camera mr-1"></i> {{ __('Camera') }}
+                                            </button>
+                                        </div>
+                                        <input type="hidden" name="sample_product_1_cam" id="sample_product_1_cam">
+                                        <input type="hidden" id="has_existing_sample_product_1" value="{{ !empty($latestRequest->sample_product_1_image) ? '1' : '0' }}">
+                                        <div class="text-danger font-size-xs mt-1 d-none" id="error_sample_product_1">
+                                            <i class="icon-alert-circle mr-1"></i> {{ __('Please upload or snap a photo of Product 1.') }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Product 2 -->
+                                <div class="col-md-4 mb-4">
+                                    <div class="p-3 doc-upload-card h-100" id="card_sample_product_2">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <label class="font-weight-bold mb-0 text-dark">
+                                                <i class="icon-package text-primary mr-1"></i> {{ __('Product 2') }} <span class="text-danger">*</span>
+                                            </label>
+                                            <span class="badge badge-secondary doc-status-badge" id="badge_sample_product_2">{{ __('Required') }}</span>
+                                        </div>
+                                        <div class="form-group mb-2">
+                                            <label for="sample_product_2_name" class="font-size-xs text-muted mb-1">{{ __('Product 2 Name') }} <span class="text-danger">*</span></label>
+                                            <input type="text" name="sample_product_2_name" id="sample_product_2_name" class="form-control form-control-sm" placeholder="{{ __('e.g. Cotton Polo Shirt') }}" value="{{ old('sample_product_2_name', $latestRequest->sample_product_2_name ?? '') }}" required>
+                                            <div class="invalid-feedback font-size-xs">{{ __('Please enter Product 2 Name.') }}</div>
+                                        </div>
+                                        
+                                        <div class="preview-box mb-2 text-center p-2 bg-white rounded border" style="min-height: 100px; display: flex; align-items: center; justify-content: center;">
+                                            @if(!empty($latestRequest->sample_product_2_image))
+                                                <img src="{{ asset('core/public/storage/images/stores/' . $latestRequest->sample_product_2_image) }}" class="img-fluid rounded" style="max-height: 95px;" id="preview_sample_product_2">
+                                                <span class="text-muted font-italic d-none" id="no_img_sample_product_2">{{ __('No photo selected') }}</span>
+                                            @else
+                                                <span class="text-muted font-italic font-size-xs" id="no_img_sample_product_2">{{ __('No photo selected') }}</span>
+                                                <img src="" class="img-fluid rounded d-none" style="max-height: 95px;" id="preview_sample_product_2">
+                                            @endif
+                                        </div>
+
+                                        <div class="doc-btn-group">
+                                            <label class="btn btn-outline-primary btn-sm btn-upload-file mb-0 cursor-pointer" for="sample_product_2">
+                                                <i class="icon-upload mr-1"></i> {{ __('Upload') }}
+                                            </label>
+                                            <input type="file" name="sample_product_2" id="sample_product_2" class="d-none" accept="image/*" onchange="handleFileSelected(this, 'sample_product_2')">
+                                            
+                                            <button type="button" class="btn btn-primary btn-sm btn-cam-snap" onclick="openCamModal('sample_product_2')">
+                                                <i class="icon-camera mr-1"></i> {{ __('Camera') }}
+                                            </button>
+                                        </div>
+                                        <input type="hidden" name="sample_product_2_cam" id="sample_product_2_cam">
+                                        <input type="hidden" id="has_existing_sample_product_2" value="{{ !empty($latestRequest->sample_product_2_image) ? '1' : '0' }}">
+                                        <div class="text-danger font-size-xs mt-1 d-none" id="error_sample_product_2">
+                                            <i class="icon-alert-circle mr-1"></i> {{ __('Please upload or snap a photo of Product 2.') }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Product 3 -->
+                                <div class="col-md-4 mb-4">
+                                    <div class="p-3 doc-upload-card h-100" id="card_sample_product_3">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <label class="font-weight-bold mb-0 text-dark">
+                                                <i class="icon-package text-primary mr-1"></i> {{ __('Product 3') }} <span class="text-danger">*</span>
+                                            </label>
+                                            <span class="badge badge-secondary doc-status-badge" id="badge_sample_product_3">{{ __('Required') }}</span>
+                                        </div>
+                                        <div class="form-group mb-2">
+                                            <label for="sample_product_3_name" class="font-size-xs text-muted mb-1">{{ __('Product 3 Name') }} <span class="text-danger">*</span></label>
+                                            <input type="text" name="sample_product_3_name" id="sample_product_3_name" class="form-control form-control-sm" placeholder="{{ __('e.g. Leather Wallet') }}" value="{{ old('sample_product_3_name', $latestRequest->sample_product_3_name ?? '') }}" required>
+                                            <div class="invalid-feedback font-size-xs">{{ __('Please enter Product 3 Name.') }}</div>
+                                        </div>
+                                        
+                                        <div class="preview-box mb-2 text-center p-2 bg-white rounded border" style="min-height: 100px; display: flex; align-items: center; justify-content: center;">
+                                            @if(!empty($latestRequest->sample_product_3_image))
+                                                <img src="{{ asset('core/public/storage/images/stores/' . $latestRequest->sample_product_3_image) }}" class="img-fluid rounded" style="max-height: 95px;" id="preview_sample_product_3">
+                                                <span class="text-muted font-italic d-none" id="no_img_sample_product_3">{{ __('No photo selected') }}</span>
+                                            @else
+                                                <span class="text-muted font-italic font-size-xs" id="no_img_sample_product_3">{{ __('No photo selected') }}</span>
+                                                <img src="" class="img-fluid rounded d-none" style="max-height: 95px;" id="preview_sample_product_3">
+                                            @endif
+                                        </div>
+
+                                        <div class="doc-btn-group">
+                                            <label class="btn btn-outline-primary btn-sm btn-upload-file mb-0 cursor-pointer" for="sample_product_3">
+                                                <i class="icon-upload mr-1"></i> {{ __('Upload') }}
+                                            </label>
+                                            <input type="file" name="sample_product_3" id="sample_product_3" class="d-none" accept="image/*" onchange="handleFileSelected(this, 'sample_product_3')">
+                                            
+                                            <button type="button" class="btn btn-primary btn-sm btn-cam-snap" onclick="openCamModal('sample_product_3')">
+                                                <i class="icon-camera mr-1"></i> {{ __('Camera') }}
+                                            </button>
+                                        </div>
+                                        <input type="hidden" name="sample_product_3_cam" id="sample_product_3_cam">
+                                        <input type="hidden" id="has_existing_sample_product_3" value="{{ !empty($latestRequest->sample_product_3_image) ? '1' : '0' }}">
+                                        <div class="text-danger font-size-xs mt-1 d-none" id="error_sample_product_3">
+                                            <i class="icon-alert-circle mr-1"></i> {{ __('Please upload or snap a photo of Product 3.') }}
                                         </div>
                                     </div>
                                 </div>
@@ -723,6 +889,7 @@
 
     function validateStep3() {
         let isValid = true;
+        let firstInvalid = null;
         const docs = ['id_card_front', 'selfie_with_id', 'store_documents'];
 
         docs.forEach(docId => {
@@ -737,6 +904,34 @@
                 if (err) err.classList.add('d-none');
             }
         });
+
+        // 3 Sample Products Validation
+        for (let p = 1; p <= 3; p++) {
+            const nameInput = document.getElementById('sample_product_' + p + '_name');
+            const card = document.getElementById('card_sample_product_' + p);
+            const err = document.getElementById('error_sample_product_' + p);
+
+            if (!nameInput || !nameInput.value.trim()) {
+                if (nameInput) nameInput.classList.add('is-invalid');
+                isValid = false;
+                if (!firstInvalid && nameInput) firstInvalid = nameInput;
+            } else {
+                if (nameInput) nameInput.classList.remove('is-invalid');
+            }
+
+            if (!hasDoc('sample_product_' + p)) {
+                isValid = false;
+                if (card) card.classList.add('border-danger');
+                if (err) err.classList.remove('d-none');
+            } else {
+                if (card) card.classList.remove('border-danger');
+                if (err) err.classList.add('d-none');
+            }
+        }
+
+        if (!isValid && firstInvalid) {
+            firstInvalid.focus();
+        }
 
         return isValid;
     }
@@ -856,7 +1051,7 @@
     }
 
     // Realtime clear invalid state on typing
-    ['first_name', 'last_name', 'phone', 'email', 'cnic', 'shop_name', 'product_types', 'shop_address', 'account_type', 'account_name', 'account_number', 'transaction_id'].forEach(id => {
+    ['first_name', 'last_name', 'phone', 'email', 'cnic', 'shop_name', 'product_types', 'shop_address', 'account_type', 'account_name', 'account_number', 'transaction_id', 'sample_product_1_name', 'sample_product_2_name', 'sample_product_3_name'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
             el.addEventListener('input', function() {

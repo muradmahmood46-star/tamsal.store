@@ -63,6 +63,7 @@ class StoreApplyController extends Controller
 
         $latestRequest = StoreRequest::where('user_id', $user->id)->latest()->first();
         $hasExistingDocs = $latestRequest && $latestRequest->id_card_front;
+        $hasExistingSamples = $latestRequest && $latestRequest->sample_product_1_image && $latestRequest->sample_product_2_image && $latestRequest->sample_product_3_image;
 
         $rules = [
             'first_name' => 'required|string|max:255',
@@ -73,6 +74,9 @@ class StoreApplyController extends Controller
             'shop_name' => 'required|string|max:255',
             'product_types' => 'required|string|max:500',
             'shop_address' => 'required|string|max:1000',
+            'sample_product_1_name' => 'required|string|max:255',
+            'sample_product_2_name' => 'required|string|max:255',
+            'sample_product_3_name' => 'required|string|max:255',
         ];
 
         // Step 3 Document validation
@@ -88,6 +92,19 @@ class StoreApplyController extends Controller
             }
         }
 
+        // Step 3 Sample products image validation
+        if (!$hasExistingSamples) {
+            if (!$request->hasFile('sample_product_1') && !$request->filled('sample_product_1_cam')) {
+                return redirect()->back()->withInput()->withErrors(['sample_product_1' => __('Please upload or take a photo of Sample Product 1.')]);
+            }
+            if (!$request->hasFile('sample_product_2') && !$request->filled('sample_product_2_cam')) {
+                return redirect()->back()->withInput()->withErrors(['sample_product_2' => __('Please upload or take a photo of Sample Product 2.')]);
+            }
+            if (!$request->hasFile('sample_product_3') && !$request->filled('sample_product_3_cam')) {
+                return redirect()->back()->withInput()->withErrors(['sample_product_3' => __('Please upload or take a photo of Sample Product 3.')]);
+            }
+        }
+
         if ($request->hasFile('id_card_front')) {
             $rules['id_card_front'] = 'file|mimes:jpeg,jpg,png,webp,svg,gif,bmp,tiff,tif,avif,ico,jfif,heic,heif|max:10240';
         }
@@ -96,6 +113,15 @@ class StoreApplyController extends Controller
         }
         if ($request->hasFile('store_documents')) {
             $rules['store_documents'] = 'file|mimes:jpeg,jpg,png,webp,svg,gif,bmp,tiff,tif,avif,ico,jfif,heic,heif,pdf|max:20480';
+        }
+        if ($request->hasFile('sample_product_1')) {
+            $rules['sample_product_1'] = 'file|mimes:jpeg,jpg,png,webp,svg,gif,bmp,tiff,tif,avif,ico,jfif,heic,heif|max:10240';
+        }
+        if ($request->hasFile('sample_product_2')) {
+            $rules['sample_product_2'] = 'file|mimes:jpeg,jpg,png,webp,svg,gif,bmp,tiff,tif,avif,ico,jfif,heic,heif|max:10240';
+        }
+        if ($request->hasFile('sample_product_3')) {
+            $rules['sample_product_3'] = 'file|mimes:jpeg,jpg,png,webp,svg,gif,bmp,tiff,tif,avif,ico,jfif,heic,heif|max:10240';
         }
 
         // Step 4 Payment validation if fee is enabled
@@ -147,6 +173,11 @@ class StoreApplyController extends Controller
         $idCardFront = $processFileOrBase64('id_card_front', 'id_card_front_cam', $latestRequest ? $latestRequest->id_card_front : null);
         $selfieWithId = $processFileOrBase64('selfie_with_id', 'selfie_with_id_cam', $latestRequest ? $latestRequest->selfie_with_id : null);
         $storeDocuments = $processFileOrBase64('store_documents', 'store_documents_cam', $latestRequest ? $latestRequest->store_documents : null);
+        
+        $sampleProduct1Image = $processFileOrBase64('sample_product_1', 'sample_product_1_cam', $latestRequest ? $latestRequest->sample_product_1_image : null);
+        $sampleProduct2Image = $processFileOrBase64('sample_product_2', 'sample_product_2_cam', $latestRequest ? $latestRequest->sample_product_2_image : null);
+        $sampleProduct3Image = $processFileOrBase64('sample_product_3', 'sample_product_3_cam', $latestRequest ? $latestRequest->sample_product_3_image : null);
+
         $paymentScreenshot = null;
 
         if ($isFree == 0) {
@@ -167,6 +198,12 @@ class StoreApplyController extends Controller
             'id_card_front' => $idCardFront,
             'selfie_with_id' => $selfieWithId,
             'store_documents' => $storeDocuments,
+            'sample_product_1_name' => $request->sample_product_1_name,
+            'sample_product_1_image' => $sampleProduct1Image,
+            'sample_product_2_name' => $request->sample_product_2_name,
+            'sample_product_2_image' => $sampleProduct2Image,
+            'sample_product_3_name' => $request->sample_product_3_name,
+            'sample_product_3_image' => $sampleProduct3Image,
             'is_free' => $isFree,
             'store_fee' => $isFree ? 0 : $storeFee,
             'account_type' => $isFree ? null : $request->account_type,

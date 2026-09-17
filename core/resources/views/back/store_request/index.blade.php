@@ -294,6 +294,40 @@
                     </div>
                 </div>
 
+                <!-- Sample Products Verification Preview -->
+                <h6 class="font-weight-bold text-dark border-bottom pb-2 mb-3 mt-3"><i class="fas fa-boxes mr-1 text-primary"></i> {{ __('Sample Products Verification (3 Required Products)') }}</h6>
+                <div class="row mb-4">
+                    <!-- Product 1 -->
+                    <div class="col-md-4 text-center mb-3">
+                        <div class="card p-2 border bg-light h-100 shadow-sm">
+                            <span class="badge badge-primary mb-1 small">{{ __('Product 1') }}</span>
+                            <div class="font-weight-bold small mb-2 text-truncate" id="modalSampleProd1Name" title="">-</div>
+                            <div id="modalSampleProd1Wrap" class="mb-2" style="height: 140px; display:flex; align-items:center; justify-content:center; background:#fff; border-radius:4px; overflow:hidden; border:1px solid #eee;"></div>
+                            <div id="modalSampleProd1Link"></div>
+                        </div>
+                    </div>
+
+                    <!-- Product 2 -->
+                    <div class="col-md-4 text-center mb-3">
+                        <div class="card p-2 border bg-light h-100 shadow-sm">
+                            <span class="badge badge-primary mb-1 small">{{ __('Product 2') }}</span>
+                            <div class="font-weight-bold small mb-2 text-truncate" id="modalSampleProd2Name" title="">-</div>
+                            <div id="modalSampleProd2Wrap" class="mb-2" style="height: 140px; display:flex; align-items:center; justify-content:center; background:#fff; border-radius:4px; overflow:hidden; border:1px solid #eee;"></div>
+                            <div id="modalSampleProd2Link"></div>
+                        </div>
+                    </div>
+
+                    <!-- Product 3 -->
+                    <div class="col-md-4 text-center mb-3">
+                        <div class="card p-2 border bg-light h-100 shadow-sm">
+                            <span class="badge badge-primary mb-1 small">{{ __('Product 3') }}</span>
+                            <div class="font-weight-bold small mb-2 text-truncate" id="modalSampleProd3Name" title="">-</div>
+                            <div id="modalSampleProd3Wrap" class="mb-2" style="height: 140px; display:flex; align-items:center; justify-content:center; background:#fff; border-radius:4px; overflow:hidden; border:1px solid #eee;"></div>
+                            <div id="modalSampleProd3Link"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Payment Step Details -->
                 <div id="modalPaymentSection" class="p-3 bg-light rounded border">
                     <h6 class="font-weight-bold text-primary border-bottom pb-2 mb-2"><i class="fas fa-money-bill-wave mr-1"></i> {{ __('Payment Proof & Transaction Details') }}</h6>
@@ -571,6 +605,36 @@
         } else {
             $('#modalStoreDocsWrap').html('<span class="text-muted font-italic">No documents</span>');
             $('#modalStoreDocsLink').html('');
+        }
+
+        // Sample Product 1 Preview
+        $('#modalSampleProd1Name').text(data.sample_product_1_name || 'Product 1').attr('title', data.sample_product_1_name || '');
+        if (data.sample_product_1_image) {
+            $('#modalSampleProd1Wrap').html('<a href="' + imageBaseUrl + data.sample_product_1_image + '" target="_blank"><img src="' + imageBaseUrl + data.sample_product_1_image + '" style="max-height:130px; max-width:100%; object-fit:contain;"></a>');
+            $('#modalSampleProd1Link').html('<a href="' + imageBaseUrl + data.sample_product_1_image + '" target="_blank" class="btn btn-outline-primary btn-xs mt-1"><i class="fas fa-external-link-alt"></i> Full View</a>');
+        } else {
+            $('#modalSampleProd1Wrap').html('<span class="text-muted font-italic">No photo uploaded</span>');
+            $('#modalSampleProd1Link').html('');
+        }
+
+        // Sample Product 2 Preview
+        $('#modalSampleProd2Name').text(data.sample_product_2_name || 'Product 2').attr('title', data.sample_product_2_name || '');
+        if (data.sample_product_2_image) {
+            $('#modalSampleProd2Wrap').html('<a href="' + imageBaseUrl + data.sample_product_2_image + '" target="_blank"><img src="' + imageBaseUrl + data.sample_product_2_image + '" style="max-height:130px; max-width:100%; object-fit:contain;"></a>');
+            $('#modalSampleProd2Link').html('<a href="' + imageBaseUrl + data.sample_product_2_image + '" target="_blank" class="btn btn-outline-primary btn-xs mt-1"><i class="fas fa-external-link-alt"></i> Full View</a>');
+        } else {
+            $('#modalSampleProd2Wrap').html('<span class="text-muted font-italic">No photo uploaded</span>');
+            $('#modalSampleProd2Link').html('');
+        }
+
+        // Sample Product 3 Preview
+        $('#modalSampleProd3Name').text(data.sample_product_3_name || 'Product 3').attr('title', data.sample_product_3_name || '');
+        if (data.sample_product_3_image) {
+            $('#modalSampleProd3Wrap').html('<a href="' + imageBaseUrl + data.sample_product_3_image + '" target="_blank"><img src="' + imageBaseUrl + data.sample_product_3_image + '" style="max-height:130px; max-width:100%; object-fit:contain;"></a>');
+            $('#modalSampleProd3Link').html('<a href="' + imageBaseUrl + data.sample_product_3_image + '" target="_blank" class="btn btn-outline-primary btn-xs mt-1"><i class="fas fa-external-link-alt"></i> Full View</a>');
+        } else {
+            $('#modalSampleProd3Wrap').html('<span class="text-muted font-italic">No photo uploaded</span>');
+            $('#modalSampleProd3Link').html('');
         }
 
         // Payment Info

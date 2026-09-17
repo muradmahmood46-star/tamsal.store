@@ -131,9 +131,22 @@
                             <div class="col-md-6 mb-2">
                                 <span class="text-muted">{{ __('Application Date:') }}</span> <strong>{{ $latestRequest->created_at ? $latestRequest->created_at->format('M d, Y h:i A') : __('Just now') }}</strong>
                             </div>
+                            @if($latestRequest->product_types)
+                                <div class="col-md-12 mb-2">
+                                    <span class="text-muted">{{ __('Product Types:') }}</span> <span class="badge badge-primary">{{ $latestRequest->product_types }}</span>
+                                </div>
+                            @endif
                             <div class="col-md-12 mb-2">
                                 <span class="text-muted">{{ __('Store Location:') }}</span> <strong>{{ $latestRequest->shop_address }}</strong>
                             </div>
+                            @if($latestRequest->sample_product_1_name || $latestRequest->sample_product_2_name || $latestRequest->sample_product_3_name)
+                                <div class="col-md-12 mb-2">
+                                    <span class="text-muted">{{ __('Sample Products:') }}</span>
+                                    <span class="badge badge-secondary mr-1">{{ $latestRequest->sample_product_1_name }}</span>
+                                    <span class="badge badge-secondary mr-1">{{ $latestRequest->sample_product_2_name }}</span>
+                                    <span class="badge badge-secondary">{{ $latestRequest->sample_product_3_name }}</span>
+                                </div>
+                            @endif
 
                             @if($latestRequest->is_free == 0)
                                 <div class="col-md-12 mt-2 pt-2 border-top">
