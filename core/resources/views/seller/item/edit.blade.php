@@ -418,18 +418,6 @@
 
             <!-- Right Sidebar Column -->
             <div class="col-lg-4">
-                <!-- Action Buttons -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-body">
-                        <button type="submit" class="btn btn-primary btn-block py-2 font-weight-bold mb-2" onclick="$('#is_button').val(0)">
-                            <i class="fas fa-save mr-1"></i> {{ __('Update & View All Products') }}
-                        </button>
-                        <button type="submit" class="btn btn-outline-primary btn-block py-2 font-weight-bold" onclick="$('#is_button').val(1)">
-                            <i class="fas fa-edit mr-1"></i> {{ __('Update & Continue Editing') }}
-                        </button>
-                    </div>
-                </div>
-
                 <!-- Pricing, Advance Payment & Delivery Fees -->
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-primary text-white py-2">
@@ -578,6 +566,18 @@
                                 <i class="fas fa-shield-alt text-primary mr-1"></i> {{ __('Only for internal admin/vendor calculations (never shown to buyers/users on product page). When an order with this product is accepted, this profit is added to your store total earnings.') }}
                             </small>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons (Positioned at the very end of form) -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <button type="submit" class="btn btn-primary btn-block py-2 font-weight-bold mb-2" onclick="$('#is_button').val(0)">
+                            <i class="fas fa-save mr-1"></i> {{ __('Update & View All Products') }}
+                        </button>
+                        <button type="submit" class="btn btn-outline-primary btn-block py-2 font-weight-bold" onclick="$('#is_button').val(1)">
+                            <i class="fas fa-edit mr-1"></i> {{ __('Update & Continue Editing') }}
+                        </button>
                     </div>
                 </div>
 
