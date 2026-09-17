@@ -415,59 +415,218 @@
                 font-size: 11px !important;
             }
 
+        /* =========================================================
+           VENDOR DASHBOARD STAT CARDS — ZERO OVERLAP & BULLETPROOF FLEX
+           ========================================================= */
+        .card-stats {
+            position: relative !important;
+            overflow: hidden !important;
+            border-radius: 10px !important;
+        }
+
+        .card-stats .card-body {
+            padding: 12px 14px !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        .card-stats .card-body > .row,
+        .card-stats .row {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            width: 100% !important;
+            margin: 0 !important;
+        }
+
+        .card-stats .col-icon,
+        .card-stats .col-auto.col-icon {
+            flex: 0 0 46px !important;
+            width: 46px !important;
+            height: 46px !important;
+            min-width: 46px !important;
+            max-width: 46px !important;
+            min-height: 46px !important;
+            max-height: 46px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .card-stats .icon-big {
+            width: 46px !important;
+            height: 46px !important;
+            min-width: 46px !important;
+            max-width: 46px !important;
+            min-height: 46px !important;
+            max-height: 46px !important;
+            border-radius: 10px !important;
+            font-size: 20px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            margin: 0 !important;
+            flex-shrink: 0 !important;
+            line-height: 1 !important;
+        }
+
+        .card-stats .icon-big i {
+            font-size: 20px !important;
+            line-height: 1 !important;
+            margin: 0 !important;
+        }
+
+        .card-stats .col-stats,
+        .card-stats .col.col-stats {
+            flex: 1 1 0% !important;
+            min-width: 0 !important;
+            padding-left: 12px !important;
+            padding-right: 0 !important;
+            margin: 0 !important;
+            overflow: hidden !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        .card-stats .numbers {
+            width: 100% !important;
+            min-width: 0 !important;
+            overflow: hidden !important;
+            text-align: left !important;
+        }
+
+        .card-stats .numbers .card-category,
+        .card-stats .numbers p {
+            font-size: 12px !important;
+            font-weight: 600 !important;
+            line-height: 1.25 !important;
+            margin: 0 0 3px 0 !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+        }
+
+        .card-stats .numbers .card-title,
+        .card-stats .numbers h4 {
+            font-size: 16px !important;
+            font-weight: 700 !important;
+            line-height: 1.25 !important;
+            margin: 0 !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+        }
+
+        @media (max-width: 767.98px) {
             .card-stats .card-body {
-                padding: 8px 6px !important;
+                padding: 10px 8px !important;
             }
 
-            .card-stats .col-icon {
-                width: 38px !important;
-                height: 38px !important;
-                min-width: 38px !important;
-                margin-left: 0 !important;
+            .card-stats .col-icon,
+            .card-stats .col-auto.col-icon {
+                flex: 0 0 36px !important;
+                width: 36px !important;
+                height: 36px !important;
+                min-width: 36px !important;
+                max-width: 36px !important;
+                min-height: 36px !important;
+                max-height: 36px !important;
+                margin: 0 !important;
                 padding: 0 !important;
             }
 
             .card-stats .icon-big {
-                font-size: 1.1em !important;
-                min-height: 38px !important;
-                width: 38px !important;
-                height: 38px !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
+                width: 36px !important;
+                height: 36px !important;
+                min-width: 36px !important;
+                max-width: 36px !important;
+                min-height: 36px !important;
+                max-height: 36px !important;
+                border-radius: 8px !important;
+                font-size: 16px !important;
+                margin: 0 !important;
             }
 
-            .card-stats .col-stats {
-                padding-left: 6px !important;
+            .card-stats .icon-big i {
+                font-size: 16px !important;
+                line-height: 1 !important;
+            }
+
+            .card-stats .col-stats,
+            .card-stats .col.col-stats {
+                padding-left: 8px !important;
                 padding-right: 0 !important;
                 min-width: 0 !important;
-                flex: 1 1 auto !important;
+                flex: 1 1 0% !important;
             }
 
-            .card-stats .numbers {
-                width: 100% !important;
+            .card-stats .numbers .card-category,
+            .card-stats .numbers p {
+                font-size: 11px !important;
+                line-height: 1.2 !important;
+                margin-bottom: 2px !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
             }
 
-            .card-stats .numbers .card-title {
+            .card-stats .numbers .card-title,
+            .card-stats .numbers h4 {
                 font-size: 13.5px !important;
                 line-height: 1.2 !important;
-                word-break: break-word !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .card-stats .card-body {
+                padding: 8px 6px !important;
             }
 
-            .card-stats .card-category {
-                font-size: 10.5px !important;
-                line-height: 1.2 !important;
-                margin-bottom: 2px !important;
-                white-space: normal !important;
-                word-break: break-word !important;
+            .card-stats .col-icon,
+            .card-stats .col-auto.col-icon {
+                flex: 0 0 30px !important;
+                width: 30px !important;
+                height: 30px !important;
+                min-width: 30px !important;
+                max-width: 30px !important;
+                min-height: 30px !important;
+                max-height: 30px !important;
             }
 
+            .card-stats .icon-big {
+                width: 30px !important;
+                height: 30px !important;
+                min-width: 30px !important;
+                max-width: 30px !important;
+                min-height: 30px !important;
+                max-height: 30px !important;
+                border-radius: 6px !important;
+                font-size: 13px !important;
+            }
+
+            .card-stats .icon-big i {
+                font-size: 13px !important;
+            }
+
+            .card-stats .col-stats,
+            .card-stats .col.col-stats {
+                padding-left: 6px !important;
+            }
+
+            .card-stats .numbers .card-category,
             .card-stats .numbers p {
-                font-size: 10.5px !important;
-                line-height: 1.2 !important;
-                margin-bottom: 2px !important;
-                white-space: normal !important;
-                word-break: break-word !important;
+                font-size: 9.5px !important;
+            }
+
+            .card-stats .numbers .card-title,
+            .card-stats .numbers h4 {
+                font-size: 12px !important;
             }
         }
     </style>
