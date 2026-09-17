@@ -21,9 +21,14 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
+            sudo git config --global --add safe.directory /var/www/html/tamsal.store
+            git config --global --add safe.directory /var/www/html/tamsal.store
             cd /var/www/html/tamsal.store
             sudo git reset --hard HEAD
             sudo git pull origin main
+            sudo mkdir -p /var/www/html/tamsal.store/core/public
+            sudo rm -rf /var/www/html/tamsal.store/core/public/storage
+            sudo cp -r /var/www/html/tamsal.store/storage /var/www/html/tamsal.store/core/public/storage
             cd /var/www/html/tamsal.store/core
             sudo php artisan config:clear
             sudo php artisan cache:clear
