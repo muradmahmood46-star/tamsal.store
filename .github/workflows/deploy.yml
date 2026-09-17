@@ -27,8 +27,9 @@ jobs:
             sudo git reset --hard HEAD
             sudo git pull origin main
             sudo mkdir -p /var/www/html/tamsal.store/core/public
-            sudo rm -rf /var/www/html/tamsal.store/core/public/storage
-            sudo cp -r /var/www/html/tamsal.store/storage /var/www/html/tamsal.store/core/public/storage
+            sudo rm -rf /var/www/html/tamsal.store/core/public/storage /var/www/html/tamsal.store/storage
+            sudo ln -sf /var/www/html/tamsal.store/core/storage/app/public /var/www/html/tamsal.store/core/public/storage
+            sudo ln -sf /var/www/html/tamsal.store/core/storage/app/public /var/www/html/tamsal.store/storage
             cd /var/www/html/tamsal.store/core
             sudo php artisan config:clear
             sudo php artisan cache:clear
