@@ -28,6 +28,353 @@
         <link rel="stylesheet" href="{{ asset('assets/back/css/rtl.css') }}">
     @endif
 
+    <style>
+        /* Mobile Width & Viewport Optimization for Vendor Panel */
+        html, body {
+            overflow-x: hidden !important;
+            max-width: 100vw !important;
+        }
+
+        @media (max-width: 991.98px) {
+            .wrapper {
+                overflow-x: hidden !important;
+                width: 100% !important;
+                max-width: 100vw !important;
+                min-height: 100vh !important;
+            }
+
+            .main-panel {
+                width: 100% !important;
+                max-width: 100% !important;
+                float: none !important;
+                margin-left: 0 !important;
+                padding: 0 !important;
+                overflow-x: hidden !important;
+            }
+
+            .main-panel > .content,
+            .main-panel > .content-full {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin-top: 57px !important;
+                padding: 0 !important;
+                overflow-x: hidden !important;
+            }
+
+            .page-inner {
+                padding: 10px 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+
+            .container-fluid {
+                padding-left: 10px !important;
+                padding-right: 10px !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+
+            .row {
+                margin-left: -5px !important;
+                margin-right: -5px !important;
+            }
+
+            .row > [class*="col-"] {
+                padding-left: 5px !important;
+                padding-right: 5px !important;
+            }
+
+            .card {
+                margin-bottom: 14px !important;
+                border-radius: 8px !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05) !important;
+            }
+
+            .card .card-body {
+                padding: 12px 10px !important;
+            }
+
+            .card .card-header {
+                padding: 10px 12px !important;
+            }
+
+            .main-header .logo-header {
+                width: 100% !important;
+                padding: 0 10px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+            }
+
+            .main-header .logo-header .navbar-toggler {
+                display: block !important;
+                opacity: 1 !important;
+                color: #ffffff !important;
+                padding: 6px 8px !important;
+            }
+
+            .main-header .logo-header .more {
+                display: block !important;
+                opacity: 1 !important;
+                width: auto !important;
+                color: #ffffff !important;
+                margin-left: 8px !important;
+            }
+
+            .main-header .navbar-header .navbar-nav {
+                flex-direction: row !important;
+                flex-wrap: wrap !important;
+                padding: 8px 10px !important;
+                gap: 6px !important;
+            }
+
+            .main-header .navbar-header .navbar-nav .nav-item {
+                margin-right: 0 !important;
+                margin-bottom: 4px !important;
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            .page-title, h3, .h3 {
+                font-size: 16px !important;
+                line-height: 1.35 !important;
+            }
+
+            .card-title, h4, .h4 {
+                font-size: 15px !important;
+            }
+
+            h6, .h6 {
+                font-size: 13.5px !important;
+            }
+
+            .d-sm-flex.justify-content-between,
+            .d-flex.justify-content-between:not(.custom-control):not(.form-check):not(.nav) {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 8px !important;
+            }
+
+            .d-sm-flex.justify-content-between > div,
+            .d-flex.justify-content-between > div {
+                width: 100% !important;
+            }
+
+            .d-sm-flex.justify-content-between .btn,
+            .d-sm-flex.justify-content-between .btn-group,
+            .d-sm-flex.justify-content-between > a.btn {
+                width: 100% !important;
+                margin-top: 4px !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                text-align: center !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+
+            .btn-group,
+            .btn-group-sm {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                width: 100% !important;
+                gap: 4px !important;
+            }
+
+            .btn-group > .btn,
+            .btn-group-sm > .btn,
+            .btn-group > a,
+            .btn-group-sm > a {
+                flex: 1 1 calc(50% - 4px) !important;
+                min-width: 110px !important;
+                border-radius: 4px !important;
+                margin: 0 !important;
+                padding: 7px 6px !important;
+                font-size: 11.5px !important;
+                white-space: normal !important;
+                line-height: 1.25 !important;
+                text-align: center !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+
+            .gd-responsive-table,
+            .table-responsive,
+            .dataTables_wrapper {
+                width: 100% !important;
+                max-width: 100% !important;
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                display: block !important;
+                border: 1px solid #e2e8f0 !important;
+                border-radius: 6px !important;
+                margin-bottom: 12px !important;
+                background: #ffffff !important;
+            }
+
+            .gd-responsive-table table,
+            .table-responsive table,
+            .dataTables_wrapper table {
+                width: 100% !important;
+                min-width: 580px !important;
+                max-width: none !important;
+                margin-bottom: 0 !important;
+            }
+
+            .table th,
+            .table td {
+                padding: 8px 8px !important;
+                font-size: 12px !important;
+                white-space: normal !important;
+                word-break: break-word !important;
+                vertical-align: middle !important;
+            }
+
+            .form-group {
+                margin-bottom: 12px !important;
+                padding: 0 !important;
+                width: 100% !important;
+            }
+
+            .form-control,
+            .custom-select {
+                font-size: 13px !important;
+                height: auto !important;
+                padding: 8px 10px !important;
+                max-width: 100% !important;
+            }
+
+            .input-group {
+                flex-wrap: nowrap !important;
+                width: 100% !important;
+            }
+
+            .input-group .form-control {
+                min-width: 0 !important;
+                width: 100% !important;
+                font-size: 13px !important;
+            }
+
+            .input-group-prepend .input-group-text,
+            .input-group-append .input-group-text {
+                font-size: 11.5px !important;
+                padding: 6px 8px !important;
+                white-space: nowrap !important;
+            }
+
+            .custom-file,
+            .custom-file-input,
+            .custom-file-label {
+                width: 100% !important;
+                max-width: 100% !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                white-space: nowrap !important;
+                font-size: 12px !important;
+            }
+
+            .tags,
+            .tagify,
+            tagify {
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+
+            #specifications-section .d-flex,
+            .special-box .d-flex {
+                flex-direction: column !important;
+                gap: 6px !important;
+                margin-bottom: 12px !important;
+                padding: 10px !important;
+                background: #f8fafc !important;
+                border: 1px solid #e2e8f0 !important;
+                border-radius: 6px !important;
+            }
+
+            #specifications-section .d-flex > div,
+            .special-box .d-flex > div {
+                width: 100% !important;
+                margin-right: 0 !important;
+            }
+
+            #specifications-section .d-flex .flex-btn button,
+            .special-box .d-flex .flex-btn button {
+                width: 100% !important;
+                padding: 7px !important;
+                font-size: 13px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+
+            .btn-xs {
+                font-size: 10.5px !important;
+                padding: 3px 6px !important;
+                margin-bottom: 4px !important;
+            }
+
+            .switch-primary,
+            .switch-body {
+                display: inline-flex !important;
+                align-items: center !important;
+                max-width: 100% !important;
+            }
+
+            .switch-text {
+                font-size: 13px !important;
+                word-break: break-word !important;
+                max-width: calc(100% - 60px) !important;
+                line-height: 1.3 !important;
+            }
+
+            .note-editor.note-frame {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+
+            .note-toolbar {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                padding: 4px !important;
+                gap: 2px !important;
+            }
+
+            .note-toolbar .note-btn-group {
+                margin-right: 2px !important;
+                margin-bottom: 2px !important;
+            }
+
+            .note-toolbar .note-btn {
+                padding: 4px 6px !important;
+                font-size: 11px !important;
+            }
+
+            .card-stats .col-icon {
+                width: 48px !important;
+                height: 48px !important;
+                min-width: 48px !important;
+                margin-left: 6px !important;
+            }
+
+            .card-stats .icon-big {
+                font-size: 1.4em !important;
+                min-height: 48px !important;
+            }
+
+            .card-stats .col-stats {
+                padding-left: 10px !important;
+            }
+
+            .card-stats .numbers .card-title {
+                font-size: 15px !important;
+            }
+        }
+    </style>
+
     @yield('styles')
 </head>
 

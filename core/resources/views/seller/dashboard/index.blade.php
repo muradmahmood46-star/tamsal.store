@@ -26,15 +26,15 @@
 
     @if(isset($rejectedProductsCount) && $rejectedProductsCount > 0)
         <div class="alert alert-danger shadow-sm mb-4 border-left border-danger" style="border-left-width: 5px !important;">
-            <div class="d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center">
+            <div class="d-flex flex-wrap align-items-center justify-content-between">
+                <div class="d-flex align-items-center mb-2 mb-md-0">
                     <i class="fas fa-exclamation-circle fa-2x mr-3 text-danger"></i>
                     <div>
                         <h6 class="mb-1 font-weight-bold text-danger">{{ __('Action Required: :count product(s) rejected by admin', ['count' => $rejectedProductsCount]) }}</h6>
                         <p class="mb-0 text-dark small">{{ __('Admin has reviewed your submissions and requested modifications on some of your products. Please review the feedback and update your listings.') }}</p>
                     </div>
                 </div>
-                <a href="{{ route('seller.item.index') }}" class="btn btn-danger btn-sm font-weight-bold text-nowrap ml-3">
+                <a href="{{ route('seller.item.index') }}" class="btn btn-danger btn-sm font-weight-bold mt-2 mt-md-0">
                     <i class="fas fa-eye mr-1"></i> {{ __('View Rejected Products') }}
                 </a>
             </div>
