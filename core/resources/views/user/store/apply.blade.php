@@ -152,15 +152,8 @@
 
         <div class="col-lg-8">
             <div class="card shadow-sm border-0">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-3">
+                <div class="card-header bg-primary text-white py-3">
                     <h5 class="mb-0 text-white"><i class="icon-shopping-bag mr-2"></i> {{ __('Open Shop / Seller Application') }}</h5>
-                    @if(isset($setting) && $setting->is_store_opening_free == 1)
-                        <span class="badge badge-success px-3 py-2"><i class="icon-check-circle"></i> {{ __('FREE STORE OPENING') }}</span>
-                    @else
-                        <span class="badge badge-warning text-dark px-3 py-2 font-weight-bold">
-                            {{ __('Fee:') }} {{ PriceHelper::storeOpeningFee($setting->store_opening_fee ?? 0) }}
-                        </span>
-                    @endif
                 </div>
 
                 <div class="card-body p-4">
@@ -725,6 +718,12 @@
                 <!-- Video Stream View -->
                 <div id="cameraLiveWrap" class="position-relative bg-black rounded overflow-hidden shadow-inner" style="height: 320px;">
                     <video id="cameraVideo" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+                    
+                    <!-- Quick Floating Flip Camera Button on Video Overlay -->
+                    <button type="button" class="btn btn-dark btn-sm rounded-circle position-absolute" style="top: 12px; right: 12px; z-index: 10; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.65); border: 1px solid rgba(255,255,255,0.4);" onclick="toggleCameraFacing()" title="{{ __('Flip / Switch Camera') }}">
+                        <i class="fas fa-sync-alt text-white" style="font-size: 16px;"></i>
+                    </button>
+                    
                     <canvas id="cameraCanvas" class="d-none"></canvas>
                 </div>
 
@@ -738,7 +737,10 @@
             <div class="modal-footer justify-content-between py-2">
                 <button type="button" class="btn btn-secondary btn-sm" onclick="closeCameraModal()">{{ __('Cancel') }}</button>
                 
-                <div id="cameraLiveControls">
+                <div id="cameraLiveControls" class="d-flex align-items-center" style="gap: 8px;">
+                    <button type="button" class="btn btn-outline-info btn-sm font-weight-bold" id="switchCamBtn" onclick="toggleCameraFacing()" title="{{ __('Flip / Switch Front and Back Camera') }}">
+                        <i class="fas fa-sync-alt mr-1"></i> <span id="switchCamText">{{ __('Flip Camera') }}</span>
+                    </button>
                     <button type="button" class="btn btn-success font-weight-bold px-4" id="captureBtn" onclick="takeSnapshot()">
                         <i class="icon-camera mr-1"></i> {{ __('Snap Photo') }}
                     </button>
@@ -767,6 +769,7 @@
     let capturedTempDataUrl = null;
     let activeCameraTarget = null;
     let cameraStream = null;
+    let currentFacingMode = 'environment';
 
     // -------------------------------------------------------------
     // Validation Helpers
@@ -1143,14 +1146,89 @@
     };
 
     // -------------------------------------------------------------
-    // WebRTC Camera Capture Integration
+    // WebRTC Camera Capture & Front/Back Swap Integration
     // -------------------------------------------------------------
+    function startCameraStream(facing) {
+        if (cameraStream) {
+            cameraStream.getTracks().forEach(track => track.stop());
+            cameraStream = null;
+        }
+        currentFacingMode = facing;
+        const video = document.getElementById('cameraVideo');
+        const errDiv = document.getElementById('cameraError');
+        const switchText = document.getElementById('switchCamText');
+        if (errDiv) errDiv.classList.add('d-none');
+        if (switchText) {
+            switchText.innerText = (facing === 'user') ? '{{ __("Switch to Back") }}' : '{{ __("Switch to Front") }}';
+        }
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            if (errDiv) {
+                errDiv.innerText = "{{ __('Camera API is not supported on this browser. Please choose a file.') }}";
+                errDiv.classList.remove('d-none');
+            }
+            return;
+        }
+
+        // Try with ideal facing constraint first
+        navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: { ideal: facing },
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
+            },
+            audio: false
+        })
+        .then(function(stream) {
+            cameraStream = stream;
+            if (video) {
+                video.srcObject = stream;
+                video.play();
+            }
+        })
+        .catch(function(err) {
+            // Fallback: simple string facingMode
+            navigator.mediaDevices.getUserMedia({
+                video: { facingMode: facing },
+                audio: false
+            })
+            .then(function(stream) {
+                cameraStream = stream;
+                if (video) {
+                    video.srcObject = stream;
+                    video.play();
+                }
+            })
+            .catch(function(err2) {
+                // Final fallback: any video device
+                navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+                .then(function(stream) {
+                    cameraStream = stream;
+                    if (video) {
+                        video.srcObject = stream;
+                        video.play();
+                    }
+                })
+                .catch(function(e) {
+                    if (errDiv) {
+                        errDiv.innerText = "{{ __('Unable to access camera. Please allow camera permissions or upload file directly from your device.') }}";
+                        errDiv.classList.remove('d-none');
+                    }
+                });
+            });
+        });
+    }
+
+    window.toggleCameraFacing = function() {
+        const nextFacing = (currentFacingMode === 'user') ? 'environment' : 'user';
+        startCameraStream(nextFacing);
+    };
+
     window.openCamModal = function(targetInputName) {
         activeCameraTarget = targetInputName;
         capturedTempDataUrl = null;
 
         const modal = $('#cameraModal');
-        const video = document.getElementById('cameraVideo');
         const errDiv = document.getElementById('cameraError');
         const liveWrap = document.getElementById('cameraLiveWrap');
         const snapWrap = document.getElementById('cameraSnapWrap');
@@ -1169,6 +1247,9 @@
             'id_card_front': '{{ __("Capture ID Card Picture") }}',
             'selfie_with_id': '{{ __("Capture Selfie with ID Card") }}',
             'store_documents': '{{ __("Capture Store Document / Photo") }}',
+            'sample_product_1': '{{ __("Capture Sample Product 1 Photo") }}',
+            'sample_product_2': '{{ __("Capture Sample Product 2 Photo") }}',
+            'sample_product_3': '{{ __("Capture Sample Product 3 Photo") }}',
             'payment_screenshot': '{{ __("Capture Payment Receipt") }}'
         };
         const modalTitle = document.getElementById('cameraModalTitle');
@@ -1176,36 +1257,9 @@
 
         modal.modal('show');
 
-        // Camera facing: 'user' for selfie, 'environment' for documents
-        const facing = (targetInputName === 'selfie_with_id') ? 'user' : 'environment';
-
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia({
-                video: { facingMode: facing, width: { ideal: 1280 }, height: { ideal: 720 } },
-                audio: false
-            })
-            .then(function(stream) {
-                cameraStream = stream;
-                video.srcObject = stream;
-                video.play();
-            })
-            .catch(function(err) {
-                // Fallback without facingMode constraint
-                navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-                .then(function(stream) {
-                    cameraStream = stream;
-                    video.srcObject = stream;
-                    video.play();
-                })
-                .catch(function(e) {
-                    errDiv.innerText = "{{ __('Unable to access camera. Please allow camera permissions or upload file directly from your device.') }}";
-                    errDiv.classList.remove('d-none');
-                });
-            });
-        } else {
-            errDiv.innerText = "{{ __('Camera API is not supported on this browser. Please choose a file.') }}";
-            errDiv.classList.remove('d-none');
-        }
+        // Camera facing: 'user' for selfie, 'environment' for documents and products
+        const initialFacing = (targetInputName === 'selfie_with_id') ? 'user' : 'environment';
+        startCameraStream(initialFacing);
     };
 
     window.takeSnapshot = function() {
