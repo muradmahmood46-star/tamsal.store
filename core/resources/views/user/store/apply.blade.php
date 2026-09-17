@@ -124,6 +124,137 @@
         padding-left: 10px !important;
         padding-right: 10px !important;
     }
+
+    /* Enhanced Animated Hero Banner */
+    .store-hero-banner {
+        display: flex !important;
+        align-items: center !important;
+        padding: 16px 20px !important;
+        border-radius: 12px !important;
+        margin-bottom: 1.5rem !important;
+        background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%) !important;
+        border: 1px solid #bfdbfe !important;
+        border-left: 5px solid #0d6efd !important;
+        box-shadow: 0 4px 18px rgba(13, 110, 253, 0.07) !important;
+        position: relative !important;
+        overflow: hidden !important;
+        transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+    }
+    .store-hero-banner:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 22px rgba(13, 110, 253, 0.12) !important;
+    }
+    .store-hero-banner.is-free-banner {
+        background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%) !important;
+        border-color: #bbf7d0 !important;
+        border-left-color: #16a34a !important;
+        box-shadow: 0 4px 18px rgba(22, 163, 74, 0.07) !important;
+    }
+    .store-hero-icon-wrap {
+        width: 52px !important;
+        height: 52px !important;
+        min-width: 52px !important;
+        max-width: 52px !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex-shrink: 0 !important;
+        margin-right: 18px !important;
+        background: linear-gradient(135deg, #0d6efd 0%, #2563eb 100%) !important;
+        box-shadow: 0 4px 14px rgba(13, 110, 253, 0.35) !important;
+        animation: pulseIconGlow 2.5s infinite ease-in-out !important;
+    }
+    .is-free-banner .store-hero-icon-wrap {
+        background: linear-gradient(135deg, #16a34a 0%, #15803d 100%) !important;
+        box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35) !important;
+        animation: pulseFreeIconGlow 2.5s infinite ease-in-out !important;
+    }
+    .store-hero-icon-wrap i {
+        color: #ffffff !important;
+        font-size: 22px !important;
+        line-height: 1 !important;
+    }
+    .store-hero-content {
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+    }
+    .store-hero-title {
+        font-size: 16px !important;
+        font-weight: 700 !important;
+        color: #1e293b !important;
+        margin-bottom: 4px !important;
+        letter-spacing: -0.2px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        flex-wrap: wrap !important;
+    }
+    .store-hero-subtitle {
+        font-size: 13.5px !important;
+        color: #475569 !important;
+        line-height: 1.45 !important;
+        margin-bottom: 0 !important;
+    }
+    .store-hero-badge {
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        padding: 3px 8px !important;
+        border-radius: 20px !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.4px !important;
+        background: rgba(13, 110, 253, 0.12) !important;
+        color: #0d6efd !important;
+    }
+    .is-free-banner .store-hero-badge {
+        background: rgba(22, 163, 74, 0.12) !important;
+        color: #16a34a !important;
+    }
+
+    @keyframes pulseIconGlow {
+        0%, 100% {
+            transform: scale(1);
+            box-shadow: 0 4px 14px rgba(13, 110, 253, 0.35);
+        }
+        50% {
+            transform: scale(1.06);
+            box-shadow: 0 6px 20px rgba(13, 110, 253, 0.55);
+        }
+    }
+    @keyframes pulseFreeIconGlow {
+        0%, 100% {
+            transform: scale(1);
+            box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);
+        }
+        50% {
+            transform: scale(1.06);
+            box-shadow: 0 6px 20px rgba(22, 163, 74, 0.55);
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .store-hero-banner {
+            padding: 14px 14px !important;
+            align-items: flex-start !important;
+        }
+        .store-hero-icon-wrap {
+            width: 44px !important;
+            height: 44px !important;
+            min-width: 44px !important;
+            max-width: 44px !important;
+            margin-right: 12px !important;
+            margin-top: 2px !important;
+        }
+        .store-hero-icon-wrap i {
+            font-size: 18px !important;
+        }
+        .store-hero-title {
+            font-size: 15px !important;
+        }
+        .store-hero-subtitle {
+            font-size: 12.5px !important;
+        }
+    }
 </style>
 @endsection
 
@@ -165,19 +296,31 @@
                     @endphp
 
                     @if($isFree)
-                        <div class="alert alert-success d-flex align-items-center mb-4">
-                            <i class="icon-gift fa-2x mr-3 text-success"></i>
-                            <div>
-                                <h6 class="mb-1 font-weight-bold text-success">{{ __('Free Store Opening Offer is Active!') }}</h6>
-                                <p class="mb-0 font-size-sm">{{ __('Open your store without any fees. Complete the 3-step application below to get your shop approved.') }}</p>
+                        <div class="store-hero-banner is-free-banner">
+                            <div class="store-hero-icon-wrap">
+                                <i class="fas fa-gift"></i>
+                            </div>
+                            <div class="store-hero-content">
+                                <div class="store-hero-title">
+                                    {{ __('Free Store Opening Offer is Active!') }}
+                                    <span class="store-hero-badge">{{ __('Free') }}</span>
+                                </div>
+                                <p class="store-hero-subtitle">
+                                    {{ __('Open your store without any fees. Complete the 3-step application below to get your shop approved.') }}
+                                </p>
                             </div>
                         </div>
                     @else
-                        <div class="alert alert-info d-flex align-items-center mb-4">
-                            <i class="icon-info fa-2x mr-3 text-primary"></i>
-                            <div>
-                                <h6 class="mb-1 font-weight-bold text-primary">{{ __('Open Shop / Seller Application') }}</h6>
-                                <p class="mb-0 font-size-sm">
+                        <div class="store-hero-banner">
+                            <div class="store-hero-icon-wrap">
+                                <i class="fas fa-store"></i>
+                            </div>
+                            <div class="store-hero-content">
+                                <div class="store-hero-title">
+                                    {{ __('Open Shop / Seller Application') }}
+                                    <span class="store-hero-badge">{{ __('Easy Steps') }}</span>
+                                </div>
+                                <p class="store-hero-subtitle">
                                     {{ __('Complete steps 1-4 and submit your application to open your store and list your products.') }}
                                 </p>
                             </div>
