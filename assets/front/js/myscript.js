@@ -5,8 +5,8 @@ $(function ($) {
         $(".lazy").Lazy({
             scrollDirection: 'vertical',
             effect: "fadeIn",
-            effectTime: 1000,
-            threshold: 0,
+            effectTime: 250,
+            threshold: 300,
             visibleOnly: false,
             onError: function (element) {
                 console.log('error loading ' + element.data('src'));
@@ -1192,9 +1192,22 @@ $(document).on('click', '#trams__condition', function () {
 
 
 
+function dismissPreloader() {
+    var $p = $('#preloader');
+    if ($p.length) {
+        $p.stop(true, true).fadeOut(200, function() {
+            $(this).remove();
+        });
+    }
+}
+
+$(document).ready(function() {
+    setTimeout(dismissPreloader, 150);
+});
+
 $(window).on('load', function (event) {
     // Preloader
-    $('#preloader').fadeOut(500);
+    dismissPreloader();
     // announcement
     if (mainbs.is_announcement == 1) {
         // trigger announcement banner base on sessionStorage
@@ -1205,7 +1218,8 @@ $(window).on('load', function (event) {
             }, mainbs.announcement_delay * 1000);
         }
     }
-
 });
+
+setTimeout(dismissPreloader, 700);
 
 

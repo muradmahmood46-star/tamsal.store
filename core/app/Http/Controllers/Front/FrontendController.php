@@ -169,7 +169,7 @@ class FrontendController extends Controller
                     ->when($childcategory, function ($query, $childcategory) {
                         return $query->where('childcategory_id', $childcategory);
                     })
-                    ->whereStatus(1)->get();
+                    ->whereStatus(1)->orderby('id', 'desc')->take(10)->get();
             }
         }
 

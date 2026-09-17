@@ -1,5 +1,7 @@
 <?php
-    header("Content-type: text/css; charset: UTF-8");
+    header("Content-type: text/css; charset=UTF-8");
+    header("Cache-Control: public, max-age=604800, stale-while-revalidate=86400");
+    header("Pragma: cache");
     if(isset($_GET['primary_color']))
     {
     $color = '#'.$_GET['primary_color'];

@@ -153,13 +153,36 @@ body_theme4 @endif
 ">
     @if ($setting->is_loader == 1)
         <!-- Preloader Start -->
-        @if ($setting->is_loader == 1)
-            <div id="preloader">
-                <img src="{{ url('/core/public/storage/images/' . $setting->loader) }}" alt="{{ __('Loading...') }}">
-            </div>
-        @endif
-
-        <!-- Preloader endif -->
+        <div id="preloader">
+            <img src="{{ url('/core/public/storage/images/' . $setting->loader) }}" alt="{{ __('Loading...') }}">
+        </div>
+        <script>
+            (function() {
+                function dismissLoader() {
+                    var loader = document.getElementById('preloader');
+                    if (loader && loader.style.display !== 'none') {
+                        loader.style.transition = 'opacity 0.25s ease, visibility 0.25s ease';
+                        loader.style.opacity = '0';
+                        loader.style.visibility = 'hidden';
+                        setTimeout(function() {
+                            if (loader && loader.parentNode) {
+                                loader.parentNode.removeChild(loader);
+                            }
+                        }, 260);
+                    }
+                }
+                if (document.readyState === 'interactive' || document.readyState === 'complete') {
+                    setTimeout(dismissLoader, 80);
+                } else {
+                    document.addEventListener('DOMContentLoaded', function() {
+                        setTimeout(dismissLoader, 120);
+                    });
+                    window.addEventListener('load', dismissLoader);
+                    setTimeout(dismissLoader, 900); // Strict safety fallback: never block mobile screen
+                }
+            })();
+        </script>
+        <!-- Preloader End -->
     @endif
 
     <!-- Header-->
