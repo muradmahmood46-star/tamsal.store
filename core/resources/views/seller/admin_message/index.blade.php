@@ -3,7 +3,7 @@
 @section('content')
 <div class="container-fluid">
     <!-- Page Heading -->
-    <div class="card mb-3 shadow-sm border-0" style="border-radius: 10px;">
+    <div class="card mb-3 shadow-sm border-0 d-none d-md-block" style="border-radius: 10px;">
         <div class="card-body py-3">
             <div class="d-sm-flex align-items-center justify-content-between">
                 <div>
@@ -43,6 +43,7 @@
             align-items: center;
             justify-content: space-between;
             z-index: 2;
+            flex-shrink: 0;
         }
         .admin-msg-avatar {
             width: 44px;
@@ -56,6 +57,7 @@
             font-size: 19px;
             margin-right: 14px;
             box-shadow: 0 2px 6px rgba(30, 27, 75, 0.35);
+            flex-shrink: 0;
         }
         .admin-msg-stream {
             flex-grow: 1;
@@ -107,6 +109,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            flex-shrink: 0;
         }
         .admin-msg-input {
             flex-grow: 1;
@@ -142,12 +145,18 @@
             transform: scale(1.04);
         }
 
-        @media (max-width: 767.98px) {
+        @media (max-width: 991.98px) {
             .admin-msg-container {
-                height: calc(100vh - 130px) !important;
-                min-height: 480px !important;
-                border-radius: 8px !important;
-                width: 100% !important;
+                height: calc(100vh - 75px) !important;
+                min-height: calc(100vh - 75px) !important;
+                max-height: calc(100vh - 75px) !important;
+                border-radius: 0 !important;
+                border: none !important;
+                margin: -10px -10px -10px -10px !important;
+                width: calc(100% + 20px) !important;
+                max-width: calc(100% + 20px) !important;
+                box-shadow: none !important;
+                position: relative !important;
             }
 
             .admin-msg-header {
@@ -166,23 +175,28 @@
             }
 
             .msg-bubble {
-                max-width: 85% !important;
+                max-width: 88% !important;
                 font-size: 13.5px !important;
+                padding: 8px 12px 6px 12px !important;
             }
 
             .admin-msg-footer {
                 padding: 8px 10px !important;
+                position: sticky !important;
+                bottom: 0 !important;
+                z-index: 10 !important;
             }
 
             .admin-msg-input {
-                font-size: 13px !important;
+                font-size: 13.5px !important;
                 padding: 8px 14px !important;
+                height: 40px !important;
             }
 
             .admin-msg-send-btn {
-                width: 38px !important;
-                height: 38px !important;
-                font-size: 14px !important;
+                width: 40px !important;
+                height: 40px !important;
+                font-size: 15px !important;
             }
         }
     </style>

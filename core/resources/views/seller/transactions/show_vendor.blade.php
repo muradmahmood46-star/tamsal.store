@@ -18,7 +18,7 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-8">
+        <div class="{{ $vTxn->depositRequest ? 'col-lg-7' : 'col-12' }}">
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-white py-3">
                     <h6 class="m-0 font-weight-bold text-dark"><i class="fas fa-info-circle mr-1"></i> {{ __('Transaction Information') }}</h6>

@@ -209,7 +209,7 @@
                     <div class="form-group">
                         <label for="details">{{ __('Description') }} *</label>
                         <textarea name="details" id="details"
-                            class="form-control text-editor"
+                            class="form-control"
                             rows="6"
                             placeholder="{{ __('Enter Description') }}"
                             >{{$item->details}}</textarea>

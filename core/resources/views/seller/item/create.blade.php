@@ -133,9 +133,9 @@
                             <label class="switch-primary">
                                 <input type="checkbox" class="switch switch-bootstrap status radio-check" id="is_variant_toggle" name="is_variant" value="1" onchange="toggleVariantSection(this)">
                                 <span class="switch-body"></span>
-                                <span class="switch-text font-weight-bold text-dark" style="font-size: 14.5px;">{{ __('Enable Size & Color Variants for this product') }}</span>
+                                <span class="switch-text font-weight-bold text-dark">{{ __('Enable Size & Color Variants for this product') }}</span>
                             </label>
-                            <p class="text-muted mb-0" style="font-size: 13px;">{{ __('Enable this if this product has multiple colors or sizes with individual stock quantities (e.g. Black - M - 5 pcs, Black - L - 3 pcs).') }}</p>
+                            <p class="text-muted mb-0 small">{{ __('Enable this if this product has multiple colors or sizes with individual stock quantities (e.g. Black - M - 5 pcs, Black - L - 3 pcs).') }}</p>
                         </div>
 
                         <div id="variants_section_wrapper" style="display: none;">

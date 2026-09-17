@@ -281,18 +281,20 @@
             .table-responsive table,
             .dataTables_wrapper table {
                 width: 100% !important;
-                min-width: 580px !important;
+                min-width: 620px !important;
                 max-width: none !important;
                 margin-bottom: 0 !important;
             }
 
             .table th,
             .table td {
-                padding: 8px 8px !important;
-                font-size: 12px !important;
-                white-space: normal !important;
-                word-break: break-word !important;
+                padding: 9px 10px !important;
+                font-size: 12.5px !important;
                 vertical-align: middle !important;
+            }
+
+            .table th {
+                white-space: nowrap !important;
             }
 
             .form-group {
@@ -379,18 +381,34 @@
                 margin-bottom: 4px !important;
             }
 
-            .switch-primary,
-            .switch-body {
-                display: inline-flex !important;
-                align-items: center !important;
+            .switch-primary {
+                display: flex !important;
+                align-items: flex-start !important;
+                width: 100% !important;
                 max-width: 100% !important;
+                cursor: pointer;
+                margin-bottom: 0 !important;
             }
 
+            .switch-primary .switch-body,
+            .switch-body {
+                display: inline-block !important;
+                flex-shrink: 0 !important;
+                float: none !important;
+                margin-right: 10px !important;
+                margin-top: 2px !important;
+            }
+
+            .switch-primary .switch-text,
             .switch-text {
-                font-size: 13px !important;
+                flex: 1 1 auto !important;
+                min-width: 0 !important;
+                font-size: 13.5px !important;
                 word-break: break-word !important;
-                max-width: calc(100% - 60px) !important;
-                line-height: 1.3 !important;
+                overflow-wrap: break-word !important;
+                white-space: normal !important;
+                line-height: 1.35 !important;
+                max-width: 100% !important;
             }
 
             .note-editor.note-frame {

@@ -256,6 +256,35 @@ img.admin-setting-img {
   background-color: #f0ad4e;
 }
 
+.switch-primary {
+  display: flex !important;
+  align-items: flex-start !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  cursor: pointer;
+  margin-bottom: 0 !important;
+}
+
+.switch-primary .switch-body,
+.switch-body {
+  display: inline-block !important;
+  flex-shrink: 0 !important;
+  float: none !important;
+  margin-right: 10px !important;
+  margin-top: 2px !important;
+}
+
+.switch-primary .switch-text,
+.switch-text {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  font-size: 13.5px !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+  line-height: 1.35 !important;
+  max-width: 100% !important;
+}
 
 /* Switch Slider Ends */
 
