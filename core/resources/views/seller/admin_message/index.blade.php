@@ -141,6 +141,50 @@
             background: #006b57;
             transform: scale(1.04);
         }
+
+        @media (max-width: 767.98px) {
+            .admin-msg-container {
+                height: calc(100vh - 130px) !important;
+                min-height: 480px !important;
+                border-radius: 8px !important;
+                width: 100% !important;
+            }
+
+            .admin-msg-header {
+                padding: 10px 12px !important;
+            }
+
+            .admin-msg-avatar {
+                width: 36px !important;
+                height: 36px !important;
+                font-size: 15px !important;
+                margin-right: 8px !important;
+            }
+
+            .admin-msg-stream {
+                padding: 12px 10px !important;
+            }
+
+            .msg-bubble {
+                max-width: 85% !important;
+                font-size: 13.5px !important;
+            }
+
+            .admin-msg-footer {
+                padding: 8px 10px !important;
+            }
+
+            .admin-msg-input {
+                font-size: 13px !important;
+                padding: 8px 14px !important;
+            }
+
+            .admin-msg-send-btn {
+                width: 38px !important;
+                height: 38px !important;
+                font-size: 14px !important;
+            }
+        }
     </style>
 
     <div class="admin-msg-container">

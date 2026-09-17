@@ -100,7 +100,7 @@
 
                         <div class="form-group mb-0">
                             <label for="details" class="font-weight-bold">{{ __('Full Description') }} <span class="text-danger">*</span></label>
-                            <textarea name="details" id="details" rows="8" class="form-control text-editor">{{ old('details', $item->details) }}</textarea>
+                            <textarea name="details" id="details" rows="6" class="form-control" placeholder="{{ __('Full detailed description of product features, material, specs, etc.') }}">{{ old('details', $item->details) }}</textarea>
                         </div>
                     </div>
                 </div>

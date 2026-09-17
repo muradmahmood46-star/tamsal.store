@@ -239,6 +239,42 @@
                 border-radius: 6px !important;
                 margin-bottom: 12px !important;
                 background: #ffffff !important;
+                padding: 6px !important;
+            }
+
+            .dataTables_wrapper .dataTables_length,
+            .dataTables_wrapper .dataTables_filter {
+                width: 100% !important;
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                margin-bottom: 8px !important;
+                float: none !important;
+                text-align: left !important;
+                font-size: 12px !important;
+            }
+
+            .dataTables_wrapper .dataTables_filter input {
+                width: 100% !important;
+                max-width: 160px !important;
+                margin-left: 6px !important;
+                height: 32px !important;
+                font-size: 12px !important;
+            }
+
+            .dataTables_wrapper .dataTables_info,
+            .dataTables_wrapper .dataTables_paginate {
+                width: 100% !important;
+                text-align: center !important;
+                margin-top: 8px !important;
+                float: none !important;
+                font-size: 12px !important;
+            }
+
+            .dataTables_wrapper .dataTables_paginate ul.pagination {
+                justify-content: center !important;
+                flex-wrap: wrap !important;
+                margin-top: 4px !important;
             }
 
             .gd-responsive-table table,

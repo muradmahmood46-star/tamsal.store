@@ -219,6 +219,77 @@
             background: #006b57;
             transform: scale(1.04);
         }
+
+        @media (max-width: 767.98px) {
+            .chat-app-container {
+                height: calc(100vh - 130px) !important;
+                min-height: 480px !important;
+                border-radius: 8px !important;
+                flex-direction: column !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+
+            @if($activeChat)
+                .chat-sidebar {
+                    display: none !important;
+                }
+                .chat-main {
+                    display: flex !important;
+                    width: 100% !important;
+                    height: 100% !important;
+                }
+            @else
+                .chat-sidebar {
+                    display: flex !important;
+                    width: 100% !important;
+                    height: 100% !important;
+                    min-width: 0 !important;
+                    border-right: none !important;
+                }
+                .chat-main {
+                    display: none !important;
+                }
+            @endif
+
+            .chat-header {
+                padding: 10px 12px !important;
+            }
+
+            .chat-product-banner {
+                padding: 8px 12px !important;
+                flex-wrap: wrap !important;
+                gap: 6px !important;
+            }
+
+            .chat-product-banner > div {
+                max-width: calc(100% - 95px) !important;
+            }
+
+            .chat-messages-area {
+                padding: 12px 10px !important;
+            }
+
+            .chat-bubble {
+                max-width: 85% !important;
+                font-size: 13.5px !important;
+            }
+
+            .chat-footer {
+                padding: 8px 10px !important;
+            }
+
+            .chat-input {
+                font-size: 13px !important;
+                padding: 8px 14px !important;
+            }
+
+            .chat-send-btn {
+                width: 38px !important;
+                height: 38px !important;
+                font-size: 14px !important;
+            }
+        }
     </style>
 
     <div class="chat-app-container">
@@ -274,6 +345,9 @@
                 <!-- Chat Header -->
                 <div class="chat-header">
                     <div class="d-flex align-items-center">
+                        <a href="{{ route('seller.message.index') }}" class="btn btn-outline-primary btn-sm d-md-none mr-2 px-2 py-1" title="{{ __('Back to Chats') }}">
+                            <i class="fas fa-arrow-left mr-1"></i> {{ __('Chats') }}
+                        </a>
                         <div class="chat-avatar" style="background: #008069; color: #fff;">
                             {{ strtoupper(substr($activeChat->buyer_name, 0, 1)) ?: 'C' }}
                         </div>
@@ -281,7 +355,7 @@
                             <h6 class="mb-0 font-weight-bold text-dark">{{ $activeChat->buyer_name }}</h6>
                             <small class="text-muted">
                                 <i class="fas fa-envelope mr-1"></i> {{ $activeChat->user->email ?? 'N/A' }} 
-                                @if($activeChat->user->phone)
+                                @if($activeChat->user && $activeChat->user->phone)
                                     <span class="mx-1">•</span> <i class="fas fa-phone mr-1"></i> {{ $activeChat->user->phone }}
                                 @endif
                             </small>
@@ -289,7 +363,7 @@
                     </div>
                     <div>
                         <a href="{{ route('seller.message.delete', $activeChat->id) }}" class="btn btn-outline-danger btn-sm" onclick="return confirm('{{ __('Are you sure you want to delete this chat conversation?') }}')">
-                            <i class="fas fa-trash-alt mr-1"></i> {{ __('Delete Chat') }}
+                            <i class="fas fa-trash-alt mr-1"></i> {{ __('Delete') }}
                         </a>
                     </div>
                 </div>
