@@ -1,0 +1,269 @@
+<?php
+// Standalone View & Server Cache Cleaner for Namartzone
+if (function_exists('opcache_reset')) {
+    @opcache_reset();
+}
+
+$viewPath = __DIR__ . '/core/storage/framework/views';
+$deleted = 0;
+if (file_exists($viewPath)) {
+    foreach (glob($viewPath . '/*.php') as $file) {
+        @unlink($file);
+        $deleted++;
+    }
+}
+
+$cachePath = __DIR__ . '/core/storage/framework/cache/data';
+if (file_exists($cachePath)) {
+    $files = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($cachePath, RecursiveDirectoryIterator::SKIP_DOTS),
+        RecursiveIteratorIterator::CHILD_FIRST
+    );
+    foreach ($files as $fileinfo) {
+        if ($fileinfo->isFile()) {
+            @unlink($fileinfo->getRealPath());
+        }
+    }
+}
+
+// Clear Bootstrap Cache
+$bootstrapCache = __DIR__ . '/core/bootstrap/cache';
+if (file_exists($bootstrapCache)) {
+    foreach (['config.php', 'routes.php', 'packages.php', 'services.php'] as $bFile) {
+        if (file_exists($bootstrapCache . '/' . $bFile)) {
+            @unlink($bootstrapCache . '/' . $bFile);
+        }
+    }
+}
+
+// Auto-sync database columns safely if .env exists
+$envFile = __DIR__ . '/core/.env';
+if (!file_exists($envFile)) {
+    $envFile = __DIR__ . '/.env';
+}
+if (file_exists($envFile)) {
+    $envContent = file_get_contents($envFile);
+    preg_match('/DB_HOST=(.*)/', $envContent, $dbHost);
+    preg_match('/DB_DATABASE=(.*)/', $envContent, $dbName);
+    preg_match('/DB_USERNAME=(.*)/', $envContent, $dbUser);
+    preg_match('/DB_PASSWORD=(.*)/', $envContent, $dbPass);
+    preg_match('/DB_PORT=(.*)/', $envContent, $dbPort);
+    
+    $host = isset($dbHost[1]) ? trim($dbHost[1], " \t\n\r\0\x0B\"'") : 'localhost';
+    $dbname = isset($dbName[1]) ? trim($dbName[1], " \t\n\r\0\x0B\"'") : '';
+    $user = isset($dbUser[1]) ? trim($dbUser[1], " \t\n\r\0\x0B\"'") : '';
+    $pass = isset($dbPass[1]) ? trim($dbPass[1], " \t\n\r\0\x0B\"'") : '';
+    $port = isset($dbPort[1]) ? trim($dbPort[1], " \t\n\r\0\x0B\"'") : '3306';
+}
+
+$dbStatus = [];
+if (!empty($dbname)) {
+    try {
+        $pdo = new PDO("mysql:host={$host};port={$port};dbname={$dbname};charset=utf8", $user, $pass);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        
+        // items.item_variants
+        $stmt = $pdo->query("SHOW COLUMNS FROM `items` LIKE 'item_variants'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("ALTER TABLE `items` ADD COLUMN `item_variants` LONGTEXT NULL AFTER `stock`");
+            $dbStatus[] = "✔ Database column `items.item_variants` created successfully!";
+        }
+
+        // items.is_custom_rating
+        $stmt = $pdo->query("SHOW COLUMNS FROM `items` LIKE 'is_custom_rating'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("ALTER TABLE `items` ADD COLUMN `is_custom_rating` TINYINT DEFAULT 0 AFTER `stock`");
+            $dbStatus[] = "✔ Database column `items.is_custom_rating` created successfully!";
+        }
+
+        // items.custom_rating
+        $stmt = $pdo->query("SHOW COLUMNS FROM `items` LIKE 'custom_rating'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("ALTER TABLE `items` ADD COLUMN `custom_rating` DECIMAL(3,2) NULL DEFAULT 5.00 AFTER `is_custom_rating`");
+            $dbStatus[] = "✔ Database column `items.custom_rating` created successfully!";
+        }
+
+        // items.custom_rating_count
+        $stmt = $pdo->query("SHOW COLUMNS FROM `items` LIKE 'custom_rating_count'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("ALTER TABLE `items` ADD COLUMN `custom_rating_count` INT NULL DEFAULT 0 AFTER `custom_rating`");
+            $dbStatus[] = "✔ Database column `items.custom_rating_count` created successfully!";
+        }
+
+        // reviews.customer_name
+        $stmt = $pdo->query("SHOW COLUMNS FROM `reviews` LIKE 'customer_name'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("ALTER TABLE `reviews` ADD COLUMN `customer_name` VARCHAR(255) NULL AFTER `user_id`");
+            $dbStatus[] = "✔ Database column `reviews.customer_name` created successfully!";
+        }
+
+        // reviews.is_admin_added
+        $stmt = $pdo->query("SHOW COLUMNS FROM `reviews` LIKE 'is_admin_added'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("ALTER TABLE `reviews` ADD COLUMN `is_admin_added` TINYINT DEFAULT 0 AFTER `customer_name`");
+            $dbStatus[] = "✔ Database column `reviews.is_admin_added` created successfully!";
+        }
+
+        // settings.whatsapp_enabled
+        $stmt = $pdo->query("SHOW COLUMNS FROM `settings` LIKE 'whatsapp_enabled'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("ALTER TABLE `settings` ADD COLUMN `whatsapp_enabled` TINYINT DEFAULT 0");
+            $dbStatus[] = "✔ Database column `settings.whatsapp_enabled` created successfully!";
+        }
+
+        // settings.whatsapp_phone_number_id
+        $stmt = $pdo->query("SHOW COLUMNS FROM `settings` LIKE 'whatsapp_phone_number_id'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("ALTER TABLE `settings` ADD COLUMN `whatsapp_phone_number_id` VARCHAR(100) NULL");
+            $dbStatus[] = "✔ Database column `settings.whatsapp_phone_number_id` created successfully!";
+        }
+
+        // settings.whatsapp_access_token
+        $stmt = $pdo->query("SHOW COLUMNS FROM `settings` LIKE 'whatsapp_access_token'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("ALTER TABLE `settings` ADD COLUMN `whatsapp_access_token` TEXT NULL");
+            $dbStatus[] = "✔ Database column `settings.whatsapp_access_token` created successfully!";
+        }
+
+        // settings.whatsapp_from_number
+        $stmt = $pdo->query("SHOW COLUMNS FROM `settings` LIKE 'whatsapp_from_number'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("ALTER TABLE `settings` ADD COLUMN `whatsapp_from_number` VARCHAR(30) NULL");
+            $dbStatus[] = "✔ Database column `settings.whatsapp_from_number` created successfully!";
+        }
+
+        // settings.whatsapp_template_order_confirmed
+        $stmt = $pdo->query("SHOW COLUMNS FROM `settings` LIKE 'whatsapp_template_order_confirmed'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("ALTER TABLE `settings` ADD COLUMN `whatsapp_template_order_confirmed` VARCHAR(100) DEFAULT 'order_confirmed'");
+            $dbStatus[] = "✔ Database column `settings.whatsapp_template_order_confirmed` created successfully!";
+        }
+
+        // settings.whatsapp_template_in_progress
+        $stmt = $pdo->query("SHOW COLUMNS FROM `settings` LIKE 'whatsapp_template_in_progress'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("ALTER TABLE `settings` ADD COLUMN `whatsapp_template_in_progress` VARCHAR(100) DEFAULT 'order_in_progress'");
+            $dbStatus[] = "✔ Database column `settings.whatsapp_template_in_progress` created successfully!";
+        }
+
+        // settings.whatsapp_template_delivered
+        $stmt = $pdo->query("SHOW COLUMNS FROM `settings` LIKE 'whatsapp_template_delivered'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("ALTER TABLE `settings` ADD COLUMN `whatsapp_template_delivered` VARCHAR(100) DEFAULT 'order_delivered'");
+            $dbStatus[] = "✔ Database column `settings.whatsapp_template_delivered` created successfully!";
+        }
+
+        // settings.whatsapp_template_canceled
+        $stmt = $pdo->query("SHOW COLUMNS FROM `settings` LIKE 'whatsapp_template_canceled'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("ALTER TABLE `settings` ADD COLUMN `whatsapp_template_canceled` VARCHAR(100) DEFAULT 'order_canceled'");
+            $dbStatus[] = "✔ Database column `settings.whatsapp_template_canceled` created successfully!";
+        }
+
+        if (empty($dbStatus)) {
+            $dbStatus[] = "✔ All database columns (variants, rating management & WhatsApp) are up to date.";
+        }
+    } catch (\Exception $e) {
+        $dbStatus[] = "DB Status Note: " . htmlspecialchars($e->getMessage());
+    }
+}
+
+echo '<div style="font-family: Arial, sans-serif; text-align: center; padding: 50px; max-width: 600px; margin: 0 auto;">';
+echo '<h2 style="color: #16a34a;">All Server & View Caches Cleared Successfully!</h2>';
+echo '<p style="font-size: 16px; color: #555;">Cleared ' . $deleted . ' cached Blade templates and system cache files.</p>';
+foreach ($dbStatus as $statusLine) {
+    echo '<p style="font-size: 14.5px; color: #15803d; margin: 5px 0;">' . $statusLine . '</p>';
+}
+echo '<a href="/" style="display: inline-block; margin-top: 15px; padding: 10px 20px; background: #2563eb; color: #fff; text-decoration: none; border-radius: 6px; font-weight: bold;">Go to Website</a>';
+echo '</div>';
+
+// === DEBUG INFO FOR 404 ISSUE ===
+echo '<div style="font-family: monospace; text-align: left; padding: 20px; max-width: 800px; margin: 30px auto; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px;">';
+echo '<h3 style="color: #1e40af;">Debug Info (Home 404 Issue)</h3>';
+echo '<pre style="white-space: pre-wrap; word-break: break-all;">';
+
+echo "Script location: " . __FILE__ . "\n";
+echo "Document root: " . $_SERVER['DOCUMENT_ROOT'] . "\n";
+echo "Server name: " . $_SERVER['SERVER_NAME'] . "\n";
+echo "PHP version: " . phpversion() . "\n";
+echo "Server software: " . ($_SERVER['SERVER_SOFTWARE'] ?? 'N/A') . "\n\n";
+
+// Check .env APP_URL
+echo "=== .ENV CHECK ===\n";
+if (file_exists($envFile)) {
+    $lines2 = file($envFile);
+    foreach ($lines2 as $line2) {
+        $line2 = trim($line2);
+        if (strpos($line2, 'APP_URL') !== false || strpos($line2, 'APP_ENV') !== false || strpos($line2, 'APP_DEBUG') !== false) {
+            echo $line2 . "\n";
+        }
+    }
+}
+
+// Check homepage categories  
+echo "\n=== HOMEPAGE CATEGORIES CHECK ===\n";
+if (!empty($dbname)) {
+    try {
+        $stmt = $pdo->query("SELECT feature_category, popular_category, home_4_popular_category FROM home_cutomizes LIMIT 1");
+        $hc = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($hc) {
+            $fc = json_decode($hc['feature_category'], true);
+            if ($fc) {
+                for ($i = 1; $i <= 4; $i++) {
+                    $catId = $fc['category_id' . $i] ?? null;
+                    if ($catId) {
+                        $cs = $pdo->query("SELECT id, name FROM categories WHERE id = " . intval($catId));
+                        $cat = $cs->fetch(PDO::FETCH_ASSOC);
+                        echo "Feature Cat $i (ID:$catId): " . ($cat ? $cat['name'] : "*** MISSING ***") . "\n";
+                    }
+                }
+            }
+            
+            $pc = json_decode($hc['popular_category'], true);
+            if ($pc) {
+                for ($i = 1; $i <= 4; $i++) {
+                    $catId = $pc['category_id' . $i] ?? null;
+                    if ($catId) {
+                        $cs = $pdo->query("SELECT id, name FROM categories WHERE id = " . intval($catId));
+                        $cat = $cs->fetch(PDO::FETCH_ASSOC);
+                        echo "Popular Cat $i (ID:$catId): " . ($cat ? $cat['name'] : "*** MISSING ***") . "\n";
+                    }
+                }
+            }
+
+            $ts = $pdo->query("SELECT theme FROM settings LIMIT 1");
+            $theme = $ts->fetch(PDO::FETCH_ASSOC);
+            echo "Theme: " . ($theme['theme'] ?? 'unknown') . "\n";
+        }
+        
+        echo "\n=== MENU DATA ===\n";
+        $ms = $pdo->query("SELECT menus FROM menus WHERE id = 1");
+        $menu = $ms->fetch(PDO::FETCH_ASSOC);
+        if ($menu) {
+            $links = json_decode($menu['menus'], true);
+            if ($links) {
+                foreach ($links as $lnk) {
+                    if (!isset($lnk['children'])) {
+                        echo "Menu: " . $lnk['text'] . " | type: " . $lnk['type'] . " | href: '" . $lnk['href'] . "'\n";
+                    } else {
+                        echo "Menu: " . $lnk['text'] . " (has children) | type: " . $lnk['type'] . "\n";
+                    }
+                }
+            }
+        }
+
+        echo "\n=== .HTACCESS ===\n";
+        $htFile = __DIR__ . '/.htaccess';
+        if (file_exists($htFile)) {
+            echo file_get_contents($htFile);
+        } else {
+            echo "*** .htaccess NOT FOUND ***\n";
+        }
+
+    } catch (Exception $e) {
+        echo "Debug DB Error: " . $e->getMessage() . "\n";
+    }
+}
+
+echo '</pre></div>';
+
