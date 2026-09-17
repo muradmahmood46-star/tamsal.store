@@ -255,6 +255,178 @@
             font-size: 12.5px !important;
         }
     }
+
+    /* Camera Modal Responsive Styles */
+    .cam-modal-footer {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 12px 16px !important;
+        background: #f8fafc !important;
+        border-top: 1px solid #e2e8f0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    .cam-live-controls, .cam-snap-controls {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+    .cam-live-controls.d-none, .cam-snap-controls.d-none {
+        display: none !important;
+    }
+
+    @media (max-width: 575.98px) {
+        #cameraModal .modal-dialog {
+            margin: 8px !important;
+            max-width: calc(100% - 16px) !important;
+        }
+        #cameraModal .modal-body {
+            padding: 10px !important;
+        }
+        #cameraLiveWrap, #cameraSnapWrap {
+            height: 260px !important;
+        }
+        .cam-modal-footer {
+            flex-direction: column-reverse !important;
+            gap: 10px !important;
+            padding: 12px 14px !important;
+        }
+        .cam-modal-footer .btn-cam-cancel {
+            width: 100% !important;
+            order: 3 !important;
+            margin: 0 !important;
+            padding: 10px !important;
+            font-size: 14px !important;
+        }
+        .cam-live-controls, .cam-snap-controls {
+            width: 100% !important;
+            flex-direction: column !important;
+            gap: 8px !important;
+        }
+        .cam-live-controls .btn,
+        .cam-snap-controls .btn {
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 12px 14px !important;
+            font-size: 15px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            box-sizing: border-box !important;
+        }
+        .cam-live-controls .btn-snap-photo {
+            order: 1 !important;
+            padding: 13px !important;
+            font-size: 16px !important;
+            font-weight: 700 !important;
+            box-shadow: 0 4px 14px rgba(40, 167, 69, 0.4) !important;
+        }
+        .cam-live-controls .btn-switch-cam {
+            order: 2 !important;
+            background: #ffffff !important;
+        }
+        .cam-snap-controls .btn-confirm-photo {
+            order: 1 !important;
+            padding: 13px !important;
+            font-size: 16px !important;
+            font-weight: 700 !important;
+            box-shadow: 0 4px 14px rgba(13, 110, 253, 0.4) !important;
+        }
+        .cam-snap-controls .btn-retake-photo {
+            order: 2 !important;
+        }
+    }
+
+    /* Payment Method Selector Grid & Dynamic Cards */
+    .payment-methods-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+    .payment-method-card {
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 12px 8px;
+        text-align: center;
+        background: #ffffff;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        position: relative;
+        user-select: none;
+    }
+    .payment-method-card:hover {
+        border-color: #0d6efd;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.12);
+    }
+    .payment-method-card.selected {
+        border-color: #0d6efd !important;
+        background: #f0f7ff !important;
+        box-shadow: 0 4px 14px rgba(13, 110, 253, 0.22) !important;
+    }
+    .payment-method-card .method-icon-wrap {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: #eef2f6;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 6px;
+        color: #0d6efd;
+        font-size: 16px;
+        transition: all 0.2s ease;
+    }
+    .payment-method-card.selected .method-icon-wrap {
+        background: #0d6efd;
+        color: #ffffff;
+    }
+    .payment-method-card .method-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: #1e293b;
+        display: block;
+        line-height: 1.2;
+        margin-bottom: 2px;
+    }
+    .payment-method-card .method-tag {
+        font-size: 10.5px;
+        color: #64748b;
+        display: block;
+    }
+    .payment-method-card .method-check {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #0d6efd;
+        color: #ffffff;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        box-shadow: 0 2px 6px rgba(13, 110, 253, 0.4);
+    }
+    .payment-method-card.selected .method-check {
+        display: flex !important;
+    }
+
+    .selected-admin-account-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border: 2px solid #0d6efd;
+        border-radius: 12px;
+        padding: 16px 18px;
+        box-shadow: 0 4px 16px rgba(13, 110, 253, 0.1);
+        animation: fadeInCard 0.25s ease-in-out;
+    }
+    @keyframes fadeInCard {
+        from { opacity: 0; transform: translateY(-6px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 </style>
 @endsection
 
@@ -722,60 +894,115 @@
                                     <span class="badge badge-light border text-muted">{{ __('4 of 4') }}</span>
                                 </div>
 
-                                <!-- Receiving Accounts Callout -->
+                                <!-- Receiving Accounts Section -->
                                 <div class="bg-light p-3 rounded border mb-4">
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <h6 class="font-weight-bold text-dark mb-0">
-                                            <i class="icon-info text-primary mr-1"></i> {{ __('Store Opening Fee:') }} 
+                                            <i class="icon-credit-card text-primary mr-1"></i> {{ __('Store Opening Fee:') }} 
                                             <span class="text-primary font-weight-bold">{{ PriceHelper::storeOpeningFee($setting->store_opening_fee ?? 0) }}</span>
                                         </h6>
                                     </div>
-                                    <p class="text-muted font-size-sm mb-3">{{ __('Please transfer the fee to one of our official accounts below, then provide your transaction details and receipt.') }}</p>
-                                    
-                                    <div class="row">
+                                    <p class="text-muted font-size-sm mb-3">{{ __('Select your payment method below to view our official account details:') }}</p>
+
+                                    <!-- Step 4.1: Interactive Payment Method Selection Grid -->
+                                    <label class="font-weight-bold text-dark mb-2 d-block">
+                                        <i class="icon-layers text-primary mr-1"></i> {{ __('1. Choose Payment Method:') }} <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="payment-methods-grid" id="paymentMethodsGrid">
                                         @forelse($receivingAccounts as $acc)
-                                            <div class="col-md-6 mb-3">
-                                                <div class="p-3 bg-white border rounded shadow-sm account-card">
-                                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                                        <span class="badge badge-primary font-weight-bold px-2 py-1">{{ $acc->payment_method }}</span>
-                                                        <small class="text-muted"><i class="icon-check-circle text-success"></i> {{ __('Verified Account') }}</small>
-                                                    </div>
-                                                    <div class="mb-1 font-size-sm"><span class="text-muted">{{ __('Account Name:') }}</span> <strong>{{ $acc->account_name }}</strong></div>
-                                                    <div class="d-flex justify-content-between align-items-center font-size-sm">
-                                                        <div><span class="text-muted">{{ __('Account No:') }}</span> <strong class="text-primary">{{ $acc->account_number }}</strong></div>
-                                                        <button type="button" class="btn btn-outline-secondary btn-xs py-0 px-2" onclick="navigator.clipboard.writeText('{{ $acc->account_number }}'); alert('Account number copied to clipboard!');">{{ __('Copy') }}</button>
-                                                    </div>
-                                                    @if($acc->note)
-                                                        <small class="text-muted d-block mt-2 border-top pt-1"><i class="icon-info"></i> {{ $acc->note }}</small>
-                                                    @endif
+                                            @php
+                                                $methodLower = strtolower($acc->payment_method);
+                                                $iconClass = 'icon-credit-card';
+                                                if (str_contains($methodLower, 'jazz') || str_contains($methodLower, 'easy') || str_contains($methodLower, 'sada') || str_contains($methodLower, 'naya') || str_contains($methodLower, 'wallet') || str_contains($methodLower, 'mobile')) {
+                                                    $iconClass = 'icon-smartphone';
+                                                } elseif (str_contains($methodLower, 'bank') || str_contains($methodLower, 'hbl') || str_contains($methodLower, 'meezan') || str_contains($methodLower, 'alflah') || str_contains($methodLower, 'mcb') || str_contains($methodLower, 'ubl') || str_contains($methodLower, 'allied')) {
+                                                    $iconClass = 'icon-briefcase';
+                                                }
+                                            @endphp
+                                            <div class="payment-method-card" id="method_card_{{ $acc->id }}" onclick="selectPaymentMethod('{{ $acc->id }}', '{{ addslashes($acc->payment_method) }}')">
+                                                <div class="method-check"><i class="icon-check"></i></div>
+                                                <div class="method-icon-wrap">
+                                                    <i class="{{ $iconClass }}"></i>
                                                 </div>
+                                                <span class="method-name">{{ $acc->payment_method }}</span>
+                                                <span class="method-tag">{{ __('Tap to select') }}</span>
                                             </div>
                                         @empty
-                                            <div class="col-12">
-                                                <p class="text-muted mb-0 font-italic font-size-sm">{{ __('Transfer methods: Easypaisa / JazzCash / Bank Transfer.') }}</p>
+                                            <div class="payment-method-card" id="method_card_easypaisa" onclick="selectPaymentMethod('easypaisa', 'Easypaisa')">
+                                                <div class="method-check"><i class="icon-check"></i></div>
+                                                <div class="method-icon-wrap"><i class="icon-smartphone"></i></div>
+                                                <span class="method-name">Easypaisa</span>
+                                                <span class="method-tag">{{ __('Tap to select') }}</span>
+                                            </div>
+                                            <div class="payment-method-card" id="method_card_jazzcash" onclick="selectPaymentMethod('jazzcash', 'JazzCash')">
+                                                <div class="method-check"><i class="icon-check"></i></div>
+                                                <div class="method-icon-wrap"><i class="icon-smartphone"></i></div>
+                                                <span class="method-name">JazzCash</span>
+                                                <span class="method-tag">{{ __('Tap to select') }}</span>
+                                            </div>
+                                            <div class="payment-method-card" id="method_card_bank" onclick="selectPaymentMethod('bank', 'Bank Transfer')">
+                                                <div class="method-check"><i class="icon-check"></i></div>
+                                                <div class="method-icon-wrap"><i class="icon-briefcase"></i></div>
+                                                <span class="method-name">Bank Transfer</span>
+                                                <span class="method-tag">{{ __('Tap to select') }}</span>
                                             </div>
                                         @endforelse
+                                    </div>
+                                    <div class="text-danger font-size-xs d-none mb-3" id="error_payment_method_select">
+                                        <i class="icon-alert-circle mr-1"></i> {{ __('Please choose a payment method from above.') }}
+                                    </div>
+
+                                    <!-- Step 4.2: Selected Admin Receiving Account Details Box (Shown ONLY when selected) -->
+                                    <div class="mt-2" id="adminAccountDisplaySection">
+                                        <!-- Placeholder when none selected -->
+                                        <div class="p-4 text-center bg-white rounded border text-muted" id="noAccountSelectedPrompt" style="border-style: dashed !important; border-width: 2px !important;">
+                                            <i class="icon-credit-card text-primary mb-2" style="font-size: 32px; display: inline-block;"></i>
+                                            <h6 class="font-weight-bold text-dark mb-1">{{ __('Please select a payment method above') }}</h6>
+                                            <p class="font-size-xs text-muted mb-0">{{ __('Official receiving account details and payment instructions will appear here.') }}</p>
+                                        </div>
+
+                                        <!-- Dedicated Details Card for each account -->
+                                        @foreach($receivingAccounts as $acc)
+                                            <div class="selected-admin-account-card d-none" id="admin_acc_box_{{ $acc->id }}">
+                                                <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                                                    <div class="d-flex align-items-center flex-wrap" style="gap: 6px;">
+                                                        <span class="badge badge-primary font-weight-bold px-3 py-1 font-size-sm">{{ $acc->payment_method }}</span>
+                                                        <span class="badge badge-success text-white font-size-xs"><i class="icon-check-circle mr-1"></i>{{ __('Verified Account') }}</span>
+                                                    </div>
+                                                    <small class="text-muted"><i class="icon-shield text-primary mr-1"></i>{{ __('Official Account') }}</small>
+                                                </div>
+                                                
+                                                <div class="row align-items-center mb-2">
+                                                    <div class="col-sm-5 mb-2 mb-sm-0">
+                                                        <span class="text-muted font-size-xs d-block">{{ __('Account Title / Name:') }}</span>
+                                                        <strong class="text-dark font-size-md">{{ $acc->account_name }}</strong>
+                                                    </div>
+                                                    <div class="col-sm-7">
+                                                        <span class="text-muted font-size-xs d-block">{{ __('Account / Mobile / IBAN Number:') }}</span>
+                                                        <div class="d-flex align-items-center justify-content-between bg-white p-2 rounded border mt-1">
+                                                            <strong class="text-primary font-size-md font-weight-bold tracking-wide" id="acc_num_text_{{ $acc->id }}">{{ $acc->account_number }}</strong>
+                                                            <button type="button" class="btn btn-outline-primary btn-xs py-1 px-2 copy-btn" onclick="copyAccountNumber('{{ $acc->account_number }}', this)">
+                                                                <i class="icon-copy mr-1"></i> <span class="copy-text">{{ __('Copy') }}</span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                @if($acc->note)
+                                                    <div class="bg-white p-2 rounded border mt-3 font-size-xs text-secondary d-flex align-items-start">
+                                                        <i class="icon-info text-info mr-2 mt-1" style="font-size: 14px;"></i>
+                                                        <div><strong>{{ __('Instructions:') }}</strong> {{ $acc->note }}</div>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @endforeach
                                     </div>
                                 </div>
 
                                 <!-- Sender Details Form -->
-                                <h6 class="font-weight-bold mb-3 text-dark"><i class="icon-edit mr-1"></i> {{ __('Enter Your Payment Details:') }}</h6>
+                                <h6 class="font-weight-bold mb-3 text-dark"><i class="icon-edit mr-1"></i> {{ __('2. Enter Your Payment Transfer Details:') }}</h6>
+                                <input type="hidden" name="account_type" id="account_type" value="{{ old('account_type') }}">
                                 <div class="row">
-                                    <div class="col-md-6 form-group">
-                                        <label for="account_type">{{ __('Sent Via (Payment Method)') }} <span class="text-danger">*</span></label>
-                                        <select name="account_type" id="account_type" class="form-control" required>
-                                            <option value="">{{ __('-- Select Payment Method --') }}</option>
-                                            @foreach($receivingAccounts as $acc)
-                                                <option value="{{ $acc->payment_method }}" {{ old('account_type') == $acc->payment_method ? 'selected' : '' }}>{{ $acc->payment_method }}</option>
-                                            @endforeach
-                                            <option value="Easypaisa" {{ old('account_type') == 'Easypaisa' ? 'selected' : '' }}>Easypaisa</option>
-                                            <option value="JazzCash" {{ old('account_type') == 'JazzCash' ? 'selected' : '' }}>JazzCash</option>
-                                            <option value="HBL / Bank" {{ old('account_type') == 'HBL / Bank' ? 'selected' : '' }}>HBL / Bank Transfer</option>
-                                            <option value="Other" {{ old('account_type') == 'Other' ? 'selected' : '' }}>Other</option>
-                                        </select>
-                                        <div class="invalid-feedback">{{ __('Please select a payment method.') }}</div>
-                                    </div>
-
                                     <div class="col-md-6 form-group">
                                         <label for="account_name">{{ __('Sender Account Holder Name') }} <span class="text-danger">*</span></label>
                                         <input type="text" name="account_name" id="account_name" class="form-control" value="{{ old('account_name') }}" placeholder="{{ __('Name on your sending account') }}" required>
@@ -788,9 +1015,9 @@
                                         <div class="invalid-feedback">{{ __('Please enter sender account number.') }}</div>
                                     </div>
 
-                                    <div class="col-md-6 form-group">
+                                    <div class="col-md-12 form-group">
                                         <label for="transaction_id">{{ __('Transaction ID (TRX ID)') }} <span class="text-danger">*</span></label>
-                                        <input type="text" name="transaction_id" id="transaction_id" class="form-control" value="{{ old('transaction_id') }}" placeholder="{{ __('e.g. 19283746501') }}" required>
+                                        <input type="text" name="transaction_id" id="transaction_id" class="form-control" value="{{ old('transaction_id') }}" placeholder="{{ __('e.g. 19283746501 or TID') }}" required>
                                         <div class="invalid-feedback">{{ __('Please enter the transaction ID.') }}</div>
                                     </div>
 
@@ -808,14 +1035,14 @@
                                                 <img src="" class="img-fluid rounded d-none" style="max-height: 120px;" id="preview_payment_screenshot">
                                             </div>
 
-                                            <div class="d-flex gap-2" style="gap: 8px;">
-                                                <label class="btn btn-outline-primary btn-sm flex-fill mb-0 cursor-pointer" for="payment_screenshot">
-                                                    <i class="icon-upload"></i> {{ __('Upload Screenshot') }}
+                                            <div class="doc-btn-group">
+                                                <label class="btn btn-outline-primary btn-sm btn-upload-file mb-0 cursor-pointer" for="payment_screenshot">
+                                                    <i class="icon-upload mr-1"></i> {{ __('Upload Screenshot') }}
                                                 </label>
                                                 <input type="file" name="payment_screenshot" id="payment_screenshot" class="d-none" accept="image/*" onchange="handleFileSelected(this, 'payment_screenshot')">
                                                 
-                                                <button type="button" class="btn btn-primary btn-sm" onclick="openCamModal('payment_screenshot')">
-                                                    <i class="icon-camera"></i> {{ __('Camera') }}
+                                                <button type="button" class="btn btn-primary btn-sm btn-cam-snap" onclick="openCamModal('payment_screenshot')">
+                                                    <i class="icon-camera mr-1"></i> {{ __('Camera') }}
                                                 </button>
                                             </div>
                                             <input type="hidden" name="payment_screenshot_cam" id="payment_screenshot_cam">
@@ -859,7 +1086,7 @@
             </div>
             <div class="modal-body text-center p-3 bg-light">
                 <!-- Video Stream View -->
-                <div id="cameraLiveWrap" class="position-relative bg-black rounded overflow-hidden shadow-inner" style="height: 320px;">
+                <div id="cameraLiveWrap" class="position-relative bg-black rounded overflow-hidden shadow-inner" style="height: 320px; width: 100%;">
                     <video id="cameraVideo" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
                     
                     <!-- Quick Floating Flip Camera Button on Video Overlay -->
@@ -871,29 +1098,29 @@
                 </div>
 
                 <!-- Snapshot Preview View (Shown after capture) -->
-                <div id="cameraSnapWrap" class="d-none position-relative bg-white rounded p-2 border" style="height: 320px; display: flex; align-items: center; justify-content: center;">
-                    <img id="cameraSnapImg" src="" class="img-fluid rounded" style="max-height: 300px; object-fit: contain;">
+                <div id="cameraSnapWrap" class="d-none position-relative bg-white rounded p-2 border" style="height: 320px; width: 100%; display: flex; align-items: center; justify-content: center;">
+                    <img id="cameraSnapImg" src="" class="img-fluid rounded" style="max-height: 300px; max-width: 100%; object-fit: contain;">
                 </div>
 
                 <div id="cameraError" class="alert alert-danger mt-3 mb-0 d-none text-left font-size-sm"></div>
             </div>
-            <div class="modal-footer justify-content-between py-2">
-                <button type="button" class="btn btn-secondary btn-sm" onclick="closeCameraModal()">{{ __('Cancel') }}</button>
+            <div class="modal-footer cam-modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm btn-cam-cancel" onclick="closeCameraModal()">{{ __('Cancel') }}</button>
                 
-                <div id="cameraLiveControls" class="d-flex align-items-center" style="gap: 8px;">
-                    <button type="button" class="btn btn-outline-info btn-sm font-weight-bold" id="switchCamBtn" onclick="toggleCameraFacing()" title="{{ __('Flip / Switch Front and Back Camera') }}">
+                <div id="cameraLiveControls" class="cam-live-controls">
+                    <button type="button" class="btn btn-outline-info btn-sm font-weight-bold btn-switch-cam" id="switchCamBtn" onclick="toggleCameraFacing()" title="{{ __('Flip / Switch Front and Back Camera') }}">
                         <i class="fas fa-sync-alt mr-1"></i> <span id="switchCamText">{{ __('Flip Camera') }}</span>
                     </button>
-                    <button type="button" class="btn btn-success font-weight-bold px-4" id="captureBtn" onclick="takeSnapshot()">
+                    <button type="button" class="btn btn-success font-weight-bold px-4 btn-snap-photo" id="captureBtn" onclick="takeSnapshot()">
                         <i class="icon-camera mr-1"></i> {{ __('Snap Photo') }}
                     </button>
                 </div>
 
-                <div id="cameraSnapControls" class="d-none" style="gap: 8px;">
-                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="retakePhoto()">
+                <div id="cameraSnapControls" class="d-none cam-snap-controls">
+                    <button type="button" class="btn btn-outline-secondary btn-sm btn-retake-photo" onclick="retakePhoto()">
                         <i class="icon-refresh-cw mr-1"></i> {{ __('Retake') }}
                     </button>
-                    <button type="button" class="btn btn-primary btn-sm font-weight-bold px-3" onclick="confirmCapturedPhoto()">
+                    <button type="button" class="btn btn-primary btn-sm font-weight-bold px-3 btn-confirm-photo" onclick="confirmCapturedPhoto()">
                         <i class="icon-check mr-1"></i> {{ __('Use Photo') }}
                     </button>
                 </div>
@@ -1093,13 +1320,16 @@
         const trxId = document.getElementById('transaction_id');
         const card = document.getElementById('card_payment_screenshot');
         const err = document.getElementById('error_payment_screenshot');
+        const errMethod = document.getElementById('error_payment_method_select');
 
-        if (!accType || !accType.value) {
-            if (accType) accType.classList.add('is-invalid');
+        if (!accType || !accType.value || !accType.value.trim()) {
+            if (errMethod) errMethod.classList.remove('d-none');
+            const grid = document.getElementById('paymentMethodsGrid');
+            if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'center' });
             isValid = false;
             if (!firstInvalid && accType) firstInvalid = accType;
         } else {
-            accType.classList.remove('is-invalid');
+            if (errMethod) errMethod.classList.add('d-none');
         }
 
         if (!accName || !accName.value.trim()) {
@@ -1136,10 +1366,84 @@
         }
 
         if (!isValid && firstInvalid) {
-            firstInvalid.focus();
+            if (typeof firstInvalid.focus === 'function') firstInvalid.focus();
         }
 
         return isValid;
+    }
+
+    // -------------------------------------------------------------
+    // Dynamic Payment Method Selection & Copy Helpers
+    // -------------------------------------------------------------
+    window.selectPaymentMethod = function(accId, methodName) {
+        // Update hidden input
+        const accTypeInput = document.getElementById('account_type');
+        if (accTypeInput) {
+            accTypeInput.value = methodName;
+            accTypeInput.classList.remove('is-invalid');
+        }
+
+        const errMethod = document.getElementById('error_payment_method_select');
+        if (errMethod) errMethod.classList.add('d-none');
+
+        // Toggle active card
+        document.querySelectorAll('.payment-method-card').forEach(card => {
+            card.classList.remove('selected');
+        });
+        const activeCard = document.getElementById('method_card_' + accId);
+        if (activeCard) {
+            activeCard.classList.add('selected');
+        }
+
+        // Hide prompt placeholder
+        const prompt = document.getElementById('noAccountSelectedPrompt');
+        if (prompt) prompt.classList.add('d-none');
+
+        // Hide all admin account boxes
+        document.querySelectorAll('.selected-admin-account-card').forEach(box => {
+            box.classList.add('d-none');
+        });
+
+        // Show selected account box
+        const targetBox = document.getElementById('admin_acc_box_' + accId);
+        if (targetBox) {
+            targetBox.classList.remove('d-none');
+        }
+    };
+
+    window.copyAccountNumber = function(accNumber, btn) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(accNumber).then(function() {
+                showCopiedFeedback(btn);
+            }).catch(function() {
+                fallbackCopy(accNumber, btn);
+            });
+        } else {
+            fallbackCopy(accNumber, btn);
+        }
+    };
+
+    function showCopiedFeedback(btn) {
+        if (!btn) return;
+        const origHtml = btn.innerHTML;
+        btn.classList.remove('btn-outline-primary');
+        btn.classList.add('btn-success');
+        btn.innerHTML = '<i class="icon-check mr-1"></i> {{ __("Copied!") }}';
+        setTimeout(function() {
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-outline-primary');
+            btn.innerHTML = origHtml;
+        }, 2000);
+    }
+
+    function fallbackCopy(text, btn) {
+        const dummy = document.createElement("textarea");
+        document.body.appendChild(dummy);
+        dummy.value = text;
+        dummy.select();
+        document.execCommand("copy");
+        document.body.removeChild(dummy);
+        showCopiedFeedback(btn);
     }
 
     // -------------------------------------------------------------
@@ -1504,6 +1808,23 @@
                 }
             }
         });
+
+        // Initialize payment method selection if prefilled
+        const accTypeInput = document.getElementById('account_type');
+        if (accTypeInput && accTypeInput.value) {
+            let matched = false;
+            document.querySelectorAll('.payment-method-card').forEach(card => {
+                const nameEl = card.querySelector('.method-name');
+                if (nameEl && nameEl.innerText.trim().toLowerCase() === accTypeInput.value.trim().toLowerCase()) {
+                    card.click();
+                    matched = true;
+                }
+            });
+            if (!matched) {
+                const firstCard = document.querySelector('.payment-method-card');
+                if (firstCard) firstCard.click();
+            }
+        }
     });
 })();
 </script>
