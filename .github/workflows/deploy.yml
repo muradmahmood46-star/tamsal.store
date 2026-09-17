@@ -30,6 +30,7 @@ jobs:
             sudo rm -rf /var/www/html/tamsal.store/core/public/storage /var/www/html/tamsal.store/storage
             sudo ln -sf /var/www/html/tamsal.store/core/storage/app/public /var/www/html/tamsal.store/core/public/storage
             sudo ln -sf /var/www/html/tamsal.store/core/storage/app/public /var/www/html/tamsal.store/storage
+            sudo mkdir -p /var/www/html/tamsal.store/core/storage/framework/sessions /var/www/html/tamsal.store/core/storage/framework/views /var/www/html/tamsal.store/core/storage/framework/cache
             cd /var/www/html/tamsal.store/core
             sudo php artisan config:clear
             sudo php artisan cache:clear

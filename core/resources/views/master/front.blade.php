@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     @if (url()->current() == route('front.index'))
         <title>{{ $setting->title }}{{ !empty($setting->home_page_title) ? ' - ' . $setting->home_page_title : '' }}</title>
     @else

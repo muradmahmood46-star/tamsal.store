@@ -55,6 +55,12 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
+        if ($exception instanceof \Illuminate\Session\TokenMismatchException) {
+            return redirect()->back()
+                ->withInput($request->except('password', 'password_confirmation', '_token'))
+                ->with('error', __('Your session expired or page was open too long. Please submit again.'));
+        }
+
         return parent::render($request, $exception);
     }
 
