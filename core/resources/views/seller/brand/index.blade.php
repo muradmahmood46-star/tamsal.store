@@ -21,7 +21,7 @@
 		<div class="card-body">
 			@include('alerts.alerts')
 			<div class="gd-responsive-table">
-				<table class="table table-bordered table-striped" id="admin-table" style="min-width: 650px;" width="100%" cellspacing="0">
+				<table class="table table-bordered table-striped" id="admin-table" style="min-width: 750px;" width="100%" cellspacing="0">
 					<thead>
 						<tr>
                             <th>{{ __('Name') }}</th>

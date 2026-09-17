@@ -894,6 +894,23 @@
                 font-size: 12px !important;
             }
         }
+
+        /* Full width file inputs & category / brand form boxes */
+        .file,
+        .file-custom,
+        .custom-file,
+        .custom-file-input,
+        .custom-file-label {
+            width: 100% !important;
+            max-width: 100% !important;
+            display: block !important;
+            box-sizing: border-box !important;
+        }
+        .file input {
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 0 !important;
+        }
     </style>
 
     @yield('styles')

@@ -117,7 +117,7 @@
         </div>
         <div class="card-body">
             <div class="gd-responsive-table">
-                <table class="table table-bordered table-hover align-middle" width="100%" cellspacing="0">
+                <table class="table table-bordered table-hover align-middle" style="min-width: 950px;" width="100%" cellspacing="0">
                     <thead class="thead-light">
                         <tr>
                             <th style="width: 50px;">#</th>

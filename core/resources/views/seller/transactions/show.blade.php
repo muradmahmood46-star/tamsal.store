@@ -34,7 +34,7 @@
 
                     <h6 class="font-weight-bold text-dark border-bottom pb-2 mb-3">{{ __('Your Store Items in this Transaction:') }}</h6>
                     <div class="table-responsive">
-                        <table class="table table-bordered">
+                        <table class="table table-bordered mb-0" style="min-width: 650px;">
                             <thead class="thead-light">
                                 <tr>
                                     <th>{{ __('Product') }}</th>
