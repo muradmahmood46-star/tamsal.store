@@ -338,17 +338,17 @@
         }
     }
 
-    /* Payment Method Selector Grid & Dynamic Cards */
+    /* Payment Method Selector Grid & Compact Sleek Cards */
     .payment-methods-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-        gap: 10px;
-        margin-bottom: 14px;
+        grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+        gap: 8px;
+        margin-bottom: 12px;
     }
     .payment-method-card {
-        border: 2px solid #e2e8f0;
-        border-radius: 10px;
-        padding: 12px 8px;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 7px 4px;
         text-align: center;
         background: #ffffff;
         cursor: pointer;
@@ -359,24 +359,24 @@
     .payment-method-card:hover {
         border-color: #0d6efd;
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.12);
+        box-shadow: 0 3px 10px rgba(13, 110, 253, 0.12);
     }
     .payment-method-card.selected {
         border-color: #0d6efd !important;
         background: #f0f7ff !important;
-        box-shadow: 0 4px 14px rgba(13, 110, 253, 0.22) !important;
+        box-shadow: 0 3px 12px rgba(13, 110, 253, 0.22) !important;
     }
     .payment-method-card .method-icon-wrap {
-        width: 38px;
-        height: 38px;
+        width: 28px;
+        height: 28px;
         border-radius: 50%;
         background: #eef2f6;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 6px;
+        margin-bottom: 3px;
         color: #0d6efd;
-        font-size: 16px;
+        font-size: 13px;
         transition: all 0.2s ease;
     }
     .payment-method-card.selected .method-icon-wrap {
@@ -384,32 +384,33 @@
         color: #ffffff;
     }
     .payment-method-card .method-name {
-        font-size: 13px;
+        font-size: 11.5px;
         font-weight: 700;
         color: #1e293b;
         display: block;
-        line-height: 1.2;
-        margin-bottom: 2px;
+        line-height: 1.15;
+        margin-bottom: 1px;
     }
     .payment-method-card .method-tag {
-        font-size: 10.5px;
+        font-size: 9px;
         color: #64748b;
         display: block;
+        line-height: 1.1;
     }
     .payment-method-card .method-check {
         position: absolute;
-        top: -6px;
-        right: -6px;
-        width: 20px;
-        height: 20px;
+        top: -4px;
+        right: -4px;
+        width: 16px;
+        height: 16px;
         border-radius: 50%;
         background: #0d6efd;
         color: #ffffff;
         display: none;
         align-items: center;
         justify-content: center;
-        font-size: 10px;
-        box-shadow: 0 2px 6px rgba(13, 110, 253, 0.4);
+        font-size: 8px;
+        box-shadow: 0 2px 5px rgba(13, 110, 253, 0.4);
     }
     .payment-method-card.selected .method-check {
         display: flex !important;
@@ -419,13 +420,87 @@
         background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
         border: 2px solid #0d6efd;
         border-radius: 12px;
-        padding: 16px 18px;
+        padding: 14px 16px;
         box-shadow: 0 4px 16px rgba(13, 110, 253, 0.1);
         animation: fadeInCard 0.25s ease-in-out;
     }
     @keyframes fadeInCard {
         from { opacity: 0; transform: translateY(-6px); }
         to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Enhanced Account Title Badge with Vibrant Colors */
+    .account-title-badge {
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        border: 1.5px solid #93c5fd;
+        border-radius: 8px;
+        padding: 6px 12px;
+        display: inline-flex;
+        align-items: center;
+        box-shadow: 0 2px 6px rgba(37, 99, 235, 0.1);
+        max-width: 100%;
+    }
+    .account-title-text {
+        color: #1e40af !important;
+        font-size: 14.5px !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.2px;
+        word-break: break-word;
+    }
+
+    /* Single Line Label on Mobile Viewport */
+    .acc-single-line-heading {
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        font-size: 11.5px !important;
+        letter-spacing: -0.1px !important;
+    }
+
+    /* Refined Instruction Note Card & Circular Icon */
+    .admin-instruction-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-left: 4px solid #0d6efd;
+        border-radius: 8px;
+        padding: 10px 12px;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+    }
+    .instruction-icon-circle {
+        width: 26px;
+        height: 26px;
+        min-width: 26px;
+        max-width: 26px;
+        border-radius: 50%;
+        background: rgba(13, 110, 253, 0.12);
+        border: 1px solid rgba(13, 110, 253, 0.25);
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        flex-shrink: 0;
+        margin-top: 1px;
+    }
+    .instruction-content {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+    .instruction-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: #1e293b;
+        display: block;
+        margin-bottom: 2px;
+    }
+    .instruction-text {
+        font-size: 12px;
+        color: #475569;
+        line-height: 1.45;
+        margin-bottom: 0;
     }
 </style>
 @endsection
@@ -972,14 +1047,16 @@
                                                     <small class="text-muted"><i class="icon-shield text-primary mr-1"></i>{{ __('Official Account') }}</small>
                                                 </div>
                                                 
-                                                <div class="row align-items-center mb-2">
+                                                <div class="row align-items-center mb-1">
                                                     <div class="col-sm-5 mb-2 mb-sm-0">
-                                                        <span class="text-muted font-size-xs d-block">{{ __('Account Title / Name:') }}</span>
-                                                        <strong class="text-dark font-size-md">{{ $acc->account_name }}</strong>
+                                                        <span class="text-muted font-size-xs d-block mb-1 font-weight-semibold text-uppercase" style="letter-spacing: 0.3px;"><i class="icon-user text-primary mr-1"></i>{{ __('Account Title / Name:') }}</span>
+                                                        <div class="account-title-badge">
+                                                            <strong class="account-title-text">{{ $acc->account_name }}</strong>
+                                                        </div>
                                                     </div>
                                                     <div class="col-sm-7">
-                                                        <span class="text-muted font-size-xs d-block">{{ __('Account / Mobile / IBAN Number:') }}</span>
-                                                        <div class="d-flex align-items-center justify-content-between bg-white p-2 rounded border mt-1">
+                                                        <span class="text-muted font-size-xs d-block mb-1 font-weight-semibold acc-single-line-heading"><i class="icon-credit-card text-primary mr-1"></i>{{ __('Account / Mobile / IBAN:') }}</span>
+                                                        <div class="d-flex align-items-center justify-content-between bg-white p-2 rounded border" style="box-shadow: 0 1px 4px rgba(0,0,0,0.04);">
                                                             <strong class="text-primary font-size-md font-weight-bold tracking-wide" id="acc_num_text_{{ $acc->id }}">{{ $acc->account_number }}</strong>
                                                             <button type="button" class="btn btn-outline-primary btn-xs py-1 px-2 copy-btn" onclick="copyAccountNumber('{{ $acc->account_number }}', this)">
                                                                 <i class="icon-copy mr-1"></i> <span class="copy-text">{{ __('Copy') }}</span>
@@ -989,9 +1066,14 @@
                                                 </div>
 
                                                 @if($acc->note)
-                                                    <div class="bg-white p-2 rounded border mt-3 font-size-xs text-secondary d-flex align-items-start">
-                                                        <i class="icon-info text-info mr-2 mt-1" style="font-size: 14px;"></i>
-                                                        <div><strong>{{ __('Instructions:') }}</strong> {{ $acc->note }}</div>
+                                                    <div class="admin-instruction-card mt-3">
+                                                        <div class="instruction-icon-circle">
+                                                            <i class="fas fa-info text-primary"></i>
+                                                        </div>
+                                                        <div class="instruction-content">
+                                                            <strong class="instruction-title"><i class="icon-help-circle mr-1 text-primary"></i>{{ __('Instructions / Note:') }}</strong>
+                                                            <div class="instruction-text">{{ $acc->note }}</div>
+                                                        </div>
                                                     </div>
                                                 @endif
                                             </div>
