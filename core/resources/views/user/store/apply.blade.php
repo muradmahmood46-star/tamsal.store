@@ -161,7 +161,7 @@
                             <div>
                                 <h6 class="mb-1 font-weight-bold text-primary">{{ __('Open Shop / Seller Application') }}</h6>
                                 <p class="mb-0 font-size-sm">
-                                    {{ __('Complete steps 1-4 or apni application bhejein apna store open krny k liye or products list krny k liye.') }}
+                                    {{ __('Complete steps 1-4 and submit your application to open your store and list your products.') }}
                                 </p>
                             </div>
                         </div>
