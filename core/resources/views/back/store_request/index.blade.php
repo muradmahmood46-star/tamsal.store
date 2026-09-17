@@ -139,6 +139,9 @@
                                 <td class="col-id text-center font-weight-bold">{{ $loop->iteration }}</td>
                                 <td class="col-store">
                                     <strong class="d-block text-dark">{{ $data->shop_name }}</strong>
+                                    @if($data->product_types)
+                                        <small class="text-primary d-block font-weight-bold" title="{{ $data->product_types }}"><i class="fas fa-tags mr-1"></i>{{ Str::limit($data->product_types, 28) }}</small>
+                                    @endif
                                     <small class="text-muted d-block text-truncate" style="max-width: 170px;" title="{{ $data->shop_address }}"><i class="fas fa-map-marker-alt text-danger mr-1"></i>{{ Str::limit($data->shop_address, 35) }}</small>
                                 </td>
                                 <td class="col-applicant">
@@ -251,6 +254,7 @@
                         <div class="p-3 bg-light rounded border h-100">
                             <h6 class="font-weight-bold text-primary border-bottom pb-2 mb-2"><i class="fas fa-store mr-1"></i> {{ __('Store Details') }}</h6>
                             <p class="mb-1"><strong>{{ __('Store Name:') }}</strong> <span id="modalStoreNameText"></span></p>
+                            <p class="mb-1"><strong>{{ __('Product Types:') }}</strong> <span id="modalProductTypes" class="badge badge-primary px-2 py-1" style="font-size: 12px; white-space: normal;"></span></p>
                             <p class="mb-1"><strong>{{ __('Store Address:') }}</strong> <span id="modalStoreAddress"></span></p>
                             <p class="mb-1"><strong>{{ __('Application Date:') }}</strong> <span id="modalDate"></span></p>
                             <p class="mb-1"><strong>{{ __('Request Status:') }}</strong> <span id="modalStatusBadge"></span></p>
@@ -508,6 +512,7 @@
         $('#modalApplicantEmail').text(data.email || 'N/A');
         $('#modalApplicantCnic').text(data.cnic || 'N/A');
         $('#modalStoreNameText').text(data.shop_name);
+        $('#modalProductTypes').text(data.product_types || 'Not Specified');
         $('#modalStoreAddress').text(data.shop_address || 'N/A');
         $('#modalDate').text(data.created_at ? new Date(data.created_at).toLocaleDateString() : 'N/A');
 

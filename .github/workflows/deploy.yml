@@ -36,6 +36,7 @@ jobs:
             sudo php artisan cache:clear
             sudo php artisan view:clear
             sudo php artisan route:clear
+            sudo php artisan migrate --force
             sudo chmod -R 777 /var/www/html/tamsal.store/storage /var/www/html/tamsal.store/core/storage /var/www/html/tamsal.store/core/public /var/www/html/tamsal.store/assets
             sudo chown -R www-data:www-data /var/www/html/tamsal.store
             sudo systemctl restart apache2

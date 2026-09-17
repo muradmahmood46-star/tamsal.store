@@ -243,6 +243,12 @@
                                     <small class="text-muted">{{ __('This name will be displayed publicly on your store profile and products.') }}</small>
                                 </div>
                                 <div class="col-md-12 form-group">
+                                    <label for="product_types">{{ __('Product Types / Categories') }} <span class="text-danger">*</span></label>
+                                    <input type="text" name="product_types" id="product_types" class="form-control" value="{{ old('product_types', $latestRequest->product_types ?? '') }}" placeholder="{{ __('e.g. Electronics, Men\'s Clothing, Fashion, Groceries') }}" required>
+                                    <div class="invalid-feedback">{{ __('Please specify your product types (e.g. Electronics, Men\'s Clothing).') }}</div>
+                                    <small class="text-muted">{{ __('Suggested: Electronics, Men\'s Clothing, Shoes, Accessories, etc.') }}</small>
+                                </div>
+                                <div class="col-md-12 form-group">
                                     <label for="shop_address">{{ __('Store Location / Complete Address') }} <span class="text-danger">*</span></label>
                                     <textarea name="shop_address" id="shop_address" rows="3" class="form-control" placeholder="{{ __('Shop #, Street, Plaza/Market, City, Province') }}" required>{{ old('shop_address', $latestRequest->shop_address ?? '') }}</textarea>
                                     <div class="invalid-feedback">{{ __('Please enter your complete shop / store address.') }}</div>
@@ -681,6 +687,7 @@
         let firstInvalid = null;
 
         const shopName = document.getElementById('shop_name');
+        const productTypes = document.getElementById('product_types');
         const shopAddress = document.getElementById('shop_address');
 
         if (!shopName || !shopName.value.trim()) {
@@ -689,6 +696,14 @@
             if (!firstInvalid && shopName) firstInvalid = shopName;
         } else {
             shopName.classList.remove('is-invalid');
+        }
+
+        if (!productTypes || !productTypes.value.trim()) {
+            if (productTypes) productTypes.classList.add('is-invalid');
+            isValid = false;
+            if (!firstInvalid && productTypes) firstInvalid = productTypes;
+        } else {
+            productTypes.classList.remove('is-invalid');
         }
 
         if (!shopAddress || !shopAddress.value.trim()) {
@@ -841,7 +856,7 @@
     }
 
     // Realtime clear invalid state on typing
-    ['first_name', 'last_name', 'phone', 'email', 'cnic', 'shop_name', 'shop_address', 'account_type', 'account_name', 'account_number', 'transaction_id'].forEach(id => {
+    ['first_name', 'last_name', 'phone', 'email', 'cnic', 'shop_name', 'product_types', 'shop_address', 'account_type', 'account_name', 'account_number', 'transaction_id'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
             el.addEventListener('input', function() {

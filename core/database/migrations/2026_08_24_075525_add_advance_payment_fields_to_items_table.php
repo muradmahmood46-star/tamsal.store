@@ -14,8 +14,12 @@ class AddAdvancePaymentFieldsToItemsTable extends Migration
     public function up()
     {
         Schema::table('items', function (Blueprint $table) {
-            $table->string('advance_payment_type')->nullable()->default('percentage');
-            $table->decimal('advance_payment_amount', 11, 2)->nullable()->default(0);
+            if (!Schema::hasColumn('items', 'advance_payment_type')) {
+                $table->string('advance_payment_type')->nullable()->default('percentage');
+            }
+            if (!Schema::hasColumn('items', 'advance_payment_amount')) {
+                $table->decimal('advance_payment_amount', 11, 2)->nullable()->default(0);
+            }
         });
     }
 

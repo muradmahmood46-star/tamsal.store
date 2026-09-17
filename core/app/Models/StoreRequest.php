@@ -15,6 +15,7 @@ class StoreRequest extends Model
         'cnic',
         'shop_name',
         'shop_address',
+        'product_types',
         'id_card_front',
         'selfie_with_id',
         'store_documents',

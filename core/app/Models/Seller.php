@@ -10,6 +10,7 @@ class Seller extends Model
         'user_id',
         'shop_name',
         'shop_address',
+        'product_types',
         'shop_phone',
         'shop_email',
         'shop_logo',

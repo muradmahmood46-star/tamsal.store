@@ -71,6 +71,7 @@ class StoreApplyController extends Controller
             'email' => 'required|email|max:255',
             'cnic' => 'required|string|max:50',
             'shop_name' => 'required|string|max:255',
+            'product_types' => 'required|string|max:500',
             'shop_address' => 'required|string|max:1000',
         ];
 
@@ -161,6 +162,7 @@ class StoreApplyController extends Controller
             'email' => $request->email,
             'cnic' => $request->cnic,
             'shop_name' => $request->shop_name,
+            'product_types' => $request->product_types,
             'shop_address' => $request->shop_address,
             'id_card_front' => $idCardFront,
             'selfie_with_id' => $selfieWithId,
