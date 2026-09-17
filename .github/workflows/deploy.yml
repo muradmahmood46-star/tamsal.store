@@ -1,0 +1,34 @@
+name: Auto Deploy to Lightsail
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Server via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            cd /var/www/html/tamsal.store
+            sudo git reset --hard HEAD
+            sudo git pull origin main
+            cd /var/www/html/tamsal.store/core
+            sudo php artisan config:clear
+            sudo php artisan cache:clear
+            sudo php artisan view:clear
+            sudo php artisan route:clear
+            sudo chmod -R 777 /var/www/html/tamsal.store/storage /var/www/html/tamsal.store/core/storage /var/www/html/tamsal.store/core/public /var/www/html/tamsal.store/assets
+            sudo chown -R www-data:www-data /var/www/html/tamsal.store
+            sudo systemctl restart apache2
