@@ -1087,7 +1087,7 @@
                                 <div class="row">
                                     <div class="col-md-6 form-group">
                                         <label for="account_name">{{ __('Sender Account Holder Name') }} <span class="text-danger">*</span></label>
-                                        <input type="text" name="account_name" id="account_name" class="form-control" value="{{ old('account_name') }}" placeholder="{{ __('Name on your sending account') }}" required>
+                                        <input type="text" name="account_name" id="account_name" class="form-control" value="{{ old('account_name') }}" placeholder="{{ __('e.g. Ahmad Khan') }}" required>
                                         <div class="invalid-feedback">{{ __('Please enter sender account name.') }}</div>
                                     </div>
 
