@@ -82,19 +82,19 @@
     <!-- Sales Row -->
     <div class="row">
         <!-- Total Sales -->
-        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 mb-3">
+        <div class="col-6 col-md-6 col-xl-3 mb-3">
             <div class="card card-stats card-round h-100" style="border-left: 4px solid #1572e8;">
-                <div class="card-body py-3">
-                    <div class="row align-items-center">
-                        <div class="col-icon">
+                <div class="card-body py-2 py-md-3 px-2 px-md-3">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col-auto col-icon">
                             <div class="icon-big text-center icon-primary bubble-shadow-small">
-                                <i class="fas fa-chart-line" style="font-size: 22px;"></i>
+                                <i class="fas fa-chart-line"></i>
                             </div>
                         </div>
-                        <div class="col col-stats ml-3 ml-sm-0">
+                        <div class="col col-stats pl-2 pl-md-3">
                             <div class="numbers">
-                                <p class="mb-0 text-muted" style="font-size: 13px; font-weight: 600;"><b>{{ __('Total Sales') }}</b></p>
-                                <h4 class="card-title text-primary font-weight-bold" style="font-size: 18px; margin-top: 2px; margin-bottom: 0;">{{ PriceHelper::setCurrencyPrice($totalSales) }}</h4>
+                                <p class="mb-0 text-muted" style="font-size: 11.5px; font-weight: 600;"><b>{{ __('Total Sales') }}</b></p>
+                                <h4 class="card-title text-primary font-weight-bold mb-0" style="font-size: 15px;">{{ PriceHelper::setCurrencyPrice($totalSales) }}</h4>
                             </div>
                         </div>
                     </div>
@@ -103,19 +103,19 @@
         </div>
 
         <!-- Today Sales -->
-        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 mb-3">
+        <div class="col-6 col-md-6 col-xl-3 mb-3">
             <div class="card card-stats card-round h-100" style="border-left: 4px solid #1572e8;">
-                <div class="card-body py-3">
-                    <div class="row align-items-center">
-                        <div class="col-icon">
+                <div class="card-body py-2 py-md-3 px-2 px-md-3">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col-auto col-icon">
                             <div class="icon-big text-center icon-primary bubble-shadow-small">
-                                <i class="fas fa-chart-line" style="font-size: 22px;"></i>
+                                <i class="fas fa-chart-line"></i>
                             </div>
                         </div>
-                        <div class="col col-stats ml-3 ml-sm-0">
+                        <div class="col col-stats pl-2 pl-md-3">
                             <div class="numbers">
-                                <p class="mb-0 text-muted" style="font-size: 13px; font-weight: 600;"><b>{{ __('Today Sales') }}</b></p>
-                                <h4 class="card-title text-primary font-weight-bold" style="font-size: 18px; margin-top: 2px; margin-bottom: 0;">{{ PriceHelper::setCurrencyPrice($todaySales) }}</h4>
+                                <p class="mb-0 text-muted" style="font-size: 11.5px; font-weight: 600;"><b>{{ __('Today Sales') }}</b></p>
+                                <h4 class="card-title text-primary font-weight-bold mb-0" style="font-size: 15px;">{{ PriceHelper::setCurrencyPrice($todaySales) }}</h4>
                             </div>
                         </div>
                     </div>
@@ -124,19 +124,19 @@
         </div>
 
         <!-- This Month Sales -->
-        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 mb-3">
+        <div class="col-6 col-md-6 col-xl-3 mb-3">
             <div class="card card-stats card-round h-100" style="border-left: 4px solid #1572e8;">
-                <div class="card-body py-3">
-                    <div class="row align-items-center">
-                        <div class="col-icon">
+                <div class="card-body py-2 py-md-3 px-2 px-md-3">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col-auto col-icon">
                             <div class="icon-big text-center icon-primary bubble-shadow-small">
-                                <i class="fas fa-chart-line" style="font-size: 22px;"></i>
+                                <i class="fas fa-chart-line"></i>
                             </div>
                         </div>
-                        <div class="col col-stats ml-3 ml-sm-0">
+                        <div class="col col-stats pl-2 pl-md-3">
                             <div class="numbers">
-                                <p class="mb-0 text-muted" style="font-size: 13px; font-weight: 600;"><b>{{ __('This Month Sales') }}</b></p>
-                                <h4 class="card-title text-primary font-weight-bold" style="font-size: 18px; margin-top: 2px; margin-bottom: 0;">{{ PriceHelper::setCurrencyPrice($thisMonthSales) }}</h4>
+                                <p class="mb-0 text-muted" style="font-size: 11.5px; font-weight: 600;"><b>{{ __('This Month Sales') }}</b></p>
+                                <h4 class="card-title text-primary font-weight-bold mb-0" style="font-size: 15px;">{{ PriceHelper::setCurrencyPrice($thisMonthSales) }}</h4>
                             </div>
                         </div>
                     </div>
@@ -145,19 +145,19 @@
         </div>
 
         <!-- This Year Sales -->
-        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 mb-3">
+        <div class="col-6 col-md-6 col-xl-3 mb-3">
             <div class="card card-stats card-round h-100" style="border-left: 4px solid #1572e8;">
-                <div class="card-body py-3">
-                    <div class="row align-items-center">
-                        <div class="col-icon">
+                <div class="card-body py-2 py-md-3 px-2 px-md-3">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col-auto col-icon">
                             <div class="icon-big text-center icon-primary bubble-shadow-small">
-                                <i class="fas fa-chart-line" style="font-size: 22px;"></i>
+                                <i class="fas fa-chart-line"></i>
                             </div>
                         </div>
-                        <div class="col col-stats ml-3 ml-sm-0">
+                        <div class="col col-stats pl-2 pl-md-3">
                             <div class="numbers">
-                                <p class="mb-0 text-muted" style="font-size: 13px; font-weight: 600;"><b>{{ __('This Year Sales') }}</b></p>
-                                <h4 class="card-title text-primary font-weight-bold" style="font-size: 18px; margin-top: 2px; margin-bottom: 0;">{{ PriceHelper::setCurrencyPrice($thisYearSales) }}</h4>
+                                <p class="mb-0 text-muted" style="font-size: 11.5px; font-weight: 600;"><b>{{ __('This Year Sales') }}</b></p>
+                                <h4 class="card-title text-primary font-weight-bold mb-0" style="font-size: 15px;">{{ PriceHelper::setCurrencyPrice($thisYearSales) }}</h4>
                             </div>
                         </div>
                     </div>
@@ -169,19 +169,19 @@
     <!-- Earnings Row -->
     <div class="row">
         <!-- Total Earnings -->
-        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 mb-3">
+        <div class="col-6 col-md-6 col-xl-3 mb-3">
             <div class="card card-stats card-round h-100" style="border-left: 4px solid #f3545d;">
-                <div class="card-body py-3">
-                    <div class="row align-items-center">
-                        <div class="col-icon">
+                <div class="card-body py-2 py-md-3 px-2 px-md-3">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col-auto col-icon">
                             <div class="icon-big text-center icon-danger bubble-shadow-small">
-                                <i class="fas fa-money-bill-wave" style="font-size: 22px;"></i>
+                                <i class="fas fa-money-bill-wave"></i>
                             </div>
                         </div>
-                        <div class="col col-stats ml-3 ml-sm-0">
+                        <div class="col col-stats pl-2 pl-md-3">
                             <div class="numbers">
-                                <p class="mb-0 text-muted" style="font-size: 13px; font-weight: 600;"><b>{{ __('Total Earnings') }}</b></p>
-                                <h4 class="card-title text-danger font-weight-bold" style="font-size: 18px; margin-top: 2px; margin-bottom: 0;">{{ PriceHelper::setCurrencyPrice($totalEarnings) }}</h4>
+                                <p class="mb-0 text-muted" style="font-size: 11.5px; font-weight: 600;"><b>{{ __('Total Earnings') }}</b></p>
+                                <h4 class="card-title text-danger font-weight-bold mb-0" style="font-size: 15px;">{{ PriceHelper::setCurrencyPrice($totalEarnings) }}</h4>
                             </div>
                         </div>
                     </div>
@@ -190,19 +190,19 @@
         </div>
 
         <!-- Today Earnings -->
-        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 mb-3">
+        <div class="col-6 col-md-6 col-xl-3 mb-3">
             <div class="card card-stats card-round h-100" style="border-left: 4px solid #f3545d;">
-                <div class="card-body py-3">
-                    <div class="row align-items-center">
-                        <div class="col-icon">
+                <div class="card-body py-2 py-md-3 px-2 px-md-3">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col-auto col-icon">
                             <div class="icon-big text-center icon-danger bubble-shadow-small">
-                                <i class="fas fa-money-bill-wave" style="font-size: 22px;"></i>
+                                <i class="fas fa-money-bill-wave"></i>
                             </div>
                         </div>
-                        <div class="col col-stats ml-3 ml-sm-0">
+                        <div class="col col-stats pl-2 pl-md-3">
                             <div class="numbers">
-                                <p class="mb-0 text-muted" style="font-size: 13px; font-weight: 600;"><b>{{ __('Today Earnings') }}</b></p>
-                                <h4 class="card-title text-danger font-weight-bold" style="font-size: 18px; margin-top: 2px; margin-bottom: 0;">{{ PriceHelper::setCurrencyPrice($todayEarnings) }}</h4>
+                                <p class="mb-0 text-muted" style="font-size: 11.5px; font-weight: 600;"><b>{{ __('Today Earnings') }}</b></p>
+                                <h4 class="card-title text-danger font-weight-bold mb-0" style="font-size: 15px;">{{ PriceHelper::setCurrencyPrice($todayEarnings) }}</h4>
                             </div>
                         </div>
                     </div>
@@ -211,19 +211,19 @@
         </div>
 
         <!-- This Month Earnings -->
-        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 mb-3">
+        <div class="col-6 col-md-6 col-xl-3 mb-3">
             <div class="card card-stats card-round h-100" style="border-left: 4px solid #f3545d;">
-                <div class="card-body py-3">
-                    <div class="row align-items-center">
-                        <div class="col-icon">
+                <div class="card-body py-2 py-md-3 px-2 px-md-3">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col-auto col-icon">
                             <div class="icon-big text-center icon-danger bubble-shadow-small">
-                                <i class="fas fa-money-bill-wave" style="font-size: 22px;"></i>
+                                <i class="fas fa-money-bill-wave"></i>
                             </div>
                         </div>
-                        <div class="col col-stats ml-3 ml-sm-0">
+                        <div class="col col-stats pl-2 pl-md-3">
                             <div class="numbers">
-                                <p class="mb-0 text-muted" style="font-size: 13px; font-weight: 600;"><b>{{ __('This Month Earnings') }}</b></p>
-                                <h4 class="card-title text-danger font-weight-bold" style="font-size: 18px; margin-top: 2px; margin-bottom: 0;">{{ PriceHelper::setCurrencyPrice($thisMonthEarnings) }}</h4>
+                                <p class="mb-0 text-muted" style="font-size: 11.5px; font-weight: 600;"><b>{{ __('This Month Earnings') }}</b></p>
+                                <h4 class="card-title text-danger font-weight-bold mb-0" style="font-size: 15px;">{{ PriceHelper::setCurrencyPrice($thisMonthEarnings) }}</h4>
                             </div>
                         </div>
                     </div>
@@ -232,19 +232,19 @@
         </div>
 
         <!-- This Year Earnings -->
-        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 mb-3">
+        <div class="col-6 col-md-6 col-xl-3 mb-3">
             <div class="card card-stats card-round h-100" style="border-left: 4px solid #f3545d;">
-                <div class="card-body py-3">
-                    <div class="row align-items-center">
-                        <div class="col-icon">
+                <div class="card-body py-2 py-md-3 px-2 px-md-3">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col-auto col-icon">
                             <div class="icon-big text-center icon-danger bubble-shadow-small">
-                                <i class="fas fa-money-bill-wave" style="font-size: 22px;"></i>
+                                <i class="fas fa-money-bill-wave"></i>
                             </div>
                         </div>
-                        <div class="col col-stats ml-3 ml-sm-0">
+                        <div class="col col-stats pl-2 pl-md-3">
                             <div class="numbers">
-                                <p class="mb-0 text-muted" style="font-size: 13px; font-weight: 600;"><b>{{ __('This Year Earnings') }}</b></p>
-                                <h4 class="card-title text-danger font-weight-bold" style="font-size: 18px; margin-top: 2px; margin-bottom: 0;">{{ PriceHelper::setCurrencyPrice($thisYearEarnings) }}</h4>
+                                <p class="mb-0 text-muted" style="font-size: 11.5px; font-weight: 600;"><b>{{ __('This Year Earnings') }}</b></p>
+                                <h4 class="card-title text-danger font-weight-bold mb-0" style="font-size: 15px;">{{ PriceHelper::setCurrencyPrice($thisYearEarnings) }}</h4>
                             </div>
                         </div>
                     </div>
@@ -256,19 +256,19 @@
     <!-- Catalog & Orders Overview -->
     <div class="row">
         <!-- Total Products -->
-        <div class="col-sm-6 col-md-3">
-            <div class="card card-stats card-round">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-icon">
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card card-stats card-round h-100">
+                <div class="card-body py-2 py-md-3 px-2 px-md-3">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col-auto col-icon">
                             <div class="icon-big text-center icon-info bubble-shadow-small">
                                 <i class="fab fa-product-hunt"></i>
                             </div>
                         </div>
-                        <div class="col col-stats ml-3 ml-sm-0">
+                        <div class="col col-stats pl-2 pl-md-3">
                             <div class="numbers">
-                                <p class="card-category">{{ __('Total Products') }}</p>
-                                <h4 class="card-title">{{ $totalProducts }}</h4>
+                                <p class="card-category font-weight-bold text-muted">{{ __('Total Products') }}</p>
+                                <h4 class="card-title font-weight-bold mb-0">{{ $totalProducts }}</h4>
                             </div>
                         </div>
                     </div>
@@ -277,19 +277,19 @@
         </div>
 
         <!-- Total Categories -->
-        <div class="col-sm-6 col-md-3">
-            <div class="card card-stats card-round">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-icon">
-                            <div class="icon-big text-center bubble-shadow-small" style="background-color: #17a2b8; color: #fff; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card card-stats card-round h-100">
+                <div class="card-body py-2 py-md-3 px-2 px-md-3">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col-auto col-icon">
+                            <div class="icon-big text-center bubble-shadow-small" style="background-color: #17a2b8; color: #fff; border-radius: 50%; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;">
                                 <i class="fas fa-list-alt"></i>
                             </div>
                         </div>
-                        <div class="col col-stats ml-3 ml-sm-0">
+                        <div class="col col-stats pl-2 pl-md-3">
                             <div class="numbers">
-                                <p class="card-category">{{ __('Total Categories') }}</p>
-                                <h4 class="card-title">{{ $totalCategories }}</h4>
+                                <p class="card-category font-weight-bold text-muted">{{ __('Total Categories') }}</p>
+                                <h4 class="card-title font-weight-bold mb-0">{{ $totalCategories }}</h4>
                             </div>
                         </div>
                     </div>
@@ -298,19 +298,19 @@
         </div>
 
         <!-- Total Brands -->
-        <div class="col-sm-6 col-md-3">
-            <div class="card card-stats card-round">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-icon">
-                            <div class="icon-big text-center bubble-shadow-small" style="background-color: #20c997; color: #fff; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card card-stats card-round h-100">
+                <div class="card-body py-2 py-md-3 px-2 px-md-3">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col-auto col-icon">
+                            <div class="icon-big text-center bubble-shadow-small" style="background-color: #20c997; color: #fff; border-radius: 50%; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;">
                                 <i class="fas fa-tags"></i>
                             </div>
                         </div>
-                        <div class="col col-stats ml-3 ml-sm-0">
+                        <div class="col col-stats pl-2 pl-md-3">
                             <div class="numbers">
-                                <p class="card-category">{{ __('Total Brands') }}</p>
-                                <h4 class="card-title">{{ $totalBrands }}</h4>
+                                <p class="card-category font-weight-bold text-muted">{{ __('Total Brands') }}</p>
+                                <h4 class="card-title font-weight-bold mb-0">{{ $totalBrands }}</h4>
                             </div>
                         </div>
                     </div>
@@ -319,19 +319,19 @@
         </div>
 
         <!-- Total Orders -->
-        <div class="col-sm-6 col-md-3">
-            <div class="card card-stats card-round">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-icon">
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card card-stats card-round h-100">
+                <div class="card-body py-2 py-md-3 px-2 px-md-3">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col-auto col-icon">
                             <div class="icon-big text-center icon-info bubble-shadow-small">
                                 <i class="fas fa-shopping-cart"></i>
                             </div>
                         </div>
-                        <div class="col col-stats ml-3 ml-sm-0">
+                        <div class="col col-stats pl-2 pl-md-3">
                             <div class="numbers">
-                                <p class="card-category">{{ __('Total Orders') }}</p>
-                                <h4 class="card-title">{{ $totalOrders }}</h4>
+                                <p class="card-category font-weight-bold text-muted">{{ __('Total Orders') }}</p>
+                                <h4 class="card-title font-weight-bold mb-0">{{ $totalOrders }}</h4>
                             </div>
                         </div>
                     </div>
@@ -343,19 +343,19 @@
     <!-- Orders Workflow Overview -->
     <div class="row">
         <!-- Pending Orders -->
-        <div class="col-sm-6 col-md-3">
-            <div class="card card-stats card-round">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-icon">
-                            <div class="icon-big text-center bubble-shadow-small" style="background-color: #ff9800; color: #fff; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card card-stats card-round h-100">
+                <div class="card-body py-2 py-md-3 px-2 px-md-3">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col-auto col-icon">
+                            <div class="icon-big text-center bubble-shadow-small" style="background-color: #ff9800; color: #fff; border-radius: 50%; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;">
                                 <i class="fas fa-clock"></i>
                             </div>
                         </div>
-                        <div class="col col-stats ml-3 ml-sm-0">
+                        <div class="col col-stats pl-2 pl-md-3">
                             <div class="numbers">
                                 <p class="card-category font-weight-bold text-warning">{{ __('Pending Orders') }}</p>
-                                <h4 class="card-title text-warning font-weight-bold">{{ $totalPendingOrders }}</h4>
+                                <h4 class="card-title text-warning font-weight-bold mb-0">{{ $totalPendingOrders }}</h4>
                             </div>
                         </div>
                     </div>
@@ -364,19 +364,19 @@
         </div>
 
         <!-- Accepted Orders -->
-        <div class="col-sm-6 col-md-3">
-            <div class="card card-stats card-round">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-icon">
-                            <div class="icon-big text-center bubble-shadow-small" style="background-color: #007bff; color: #fff; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card card-stats card-round h-100">
+                <div class="card-body py-2 py-md-3 px-2 px-md-3">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col-auto col-icon">
+                            <div class="icon-big text-center bubble-shadow-small" style="background-color: #007bff; color: #fff; border-radius: 50%; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;">
                                 <i class="fas fa-check"></i>
                             </div>
                         </div>
-                        <div class="col col-stats ml-3 ml-sm-0">
+                        <div class="col col-stats pl-2 pl-md-3">
                             <div class="numbers">
-                                <p class="card-category">{{ __('Accepted Orders') }}</p>
-                                <h4 class="card-title">{{ $totalAcceptedOrders }}</h4>
+                                <p class="card-category font-weight-bold text-primary">{{ __('Accepted Orders') }}</p>
+                                <h4 class="card-title font-weight-bold text-primary mb-0">{{ $totalAcceptedOrders }}</h4>
                             </div>
                         </div>
                     </div>
@@ -385,19 +385,19 @@
         </div>
 
         <!-- Order in Delivery House -->
-        <div class="col-sm-6 col-md-3">
-            <div class="card card-stats card-round">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-icon">
-                            <div class="icon-big text-center bubble-shadow-small" style="background-color: #6f42c1; color: #fff; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card card-stats card-round h-100">
+                <div class="card-body py-2 py-md-3 px-2 px-md-3">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col-auto col-icon">
+                            <div class="icon-big text-center bubble-shadow-small" style="background-color: #6f42c1; color: #fff; border-radius: 50%; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;">
                                 <i class="fas fa-warehouse"></i>
                             </div>
                         </div>
-                        <div class="col col-stats ml-3 ml-sm-0">
+                        <div class="col col-stats pl-2 pl-md-3">
                             <div class="numbers">
-                                <p class="card-category">{{ __('Order in Delivery House') }}</p>
-                                <h4 class="card-title">{{ $totalSendToDeliveryOrders }}</h4>
+                                <p class="card-category font-weight-bold text-muted">{{ __('In Delivery House') }}</p>
+                                <h4 class="card-title font-weight-bold mb-0">{{ $totalSendToDeliveryOrders }}</h4>
                             </div>
                         </div>
                     </div>
@@ -406,19 +406,19 @@
         </div>
 
         <!-- Delivered Orders -->
-        <div class="col-sm-6 col-md-3">
-            <div class="card card-stats card-round">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-icon">
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card card-stats card-round h-100">
+                <div class="card-body py-2 py-md-3 px-2 px-md-3">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col-auto col-icon">
                             <div class="icon-big text-center icon-success bubble-shadow-small">
                                 <i class="fas fa-check-circle"></i>
                             </div>
                         </div>
-                        <div class="col col-stats ml-3 ml-sm-0">
+                        <div class="col col-stats pl-2 pl-md-3">
                             <div class="numbers">
-                                <p class="card-category">{{ __('Delivered Orders') }}</p>
-                                <h4 class="card-title">{{ $totalDeliveredOrders }}</h4>
+                                <p class="card-category font-weight-bold text-success">{{ __('Delivered Orders') }}</p>
+                                <h4 class="card-title font-weight-bold text-success mb-0">{{ $totalDeliveredOrders }}</h4>
                             </div>
                         </div>
                     </div>
@@ -430,19 +430,19 @@
     <!-- Additional Status Overview -->
     <div class="row">
         <!-- Delivery in Progress -->
-        <div class="col-sm-6 col-md-3">
-            <div class="card card-stats card-round">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-icon">
-                            <div class="icon-big text-center bubble-shadow-small" style="background-color: #17a2b8; color: #fff; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card card-stats card-round h-100">
+                <div class="card-body py-2 py-md-3 px-2 px-md-3">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col-auto col-icon">
+                            <div class="icon-big text-center bubble-shadow-small" style="background-color: #17a2b8; color: #fff; border-radius: 50%; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;">
                                 <i class="fas fa-truck"></i>
                             </div>
                         </div>
-                        <div class="col col-stats ml-3 ml-sm-0">
+                        <div class="col col-stats pl-2 pl-md-3">
                             <div class="numbers">
-                                <p class="card-category">{{ __('Delivery in Progress') }}</p>
-                                <h4 class="card-title">{{ $totalInProgressOrders }}</h4>
+                                <p class="card-category font-weight-bold text-info">{{ __('In Progress') }}</p>
+                                <h4 class="card-title font-weight-bold text-info mb-0">{{ $totalInProgressOrders }}</h4>
                             </div>
                         </div>
                     </div>
@@ -451,19 +451,19 @@
         </div>
 
         <!-- Canceled Orders -->
-        <div class="col-sm-6 col-md-3">
-            <div class="card card-stats card-round">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-icon">
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card card-stats card-round h-100">
+                <div class="card-body py-2 py-md-3 px-2 px-md-3">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col-auto col-icon">
                             <div class="icon-big text-center icon-danger bubble-shadow-small">
                                 <i class="fas fa-ban"></i>
                             </div>
                         </div>
-                        <div class="col col-stats ml-3 ml-sm-0">
+                        <div class="col col-stats pl-2 pl-md-3">
                             <div class="numbers">
-                                <p class="card-category">{{ __('Canceled Orders') }}</p>
-                                <h4 class="card-title">{{ $totalCanceledOrders }}</h4>
+                                <p class="card-category font-weight-bold text-danger">{{ __('Canceled Orders') }}</p>
+                                <h4 class="card-title font-weight-bold text-danger mb-0">{{ $totalCanceledOrders }}</h4>
                             </div>
                         </div>
                     </div>
@@ -472,19 +472,19 @@
         </div>
 
         <!-- Pending Products -->
-        <div class="col-sm-6 col-md-3">
-            <div class="card card-stats card-round">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-icon">
-                            <div class="icon-big text-center bubble-shadow-small" style="background-color: #ffc107; color: #212529; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card card-stats card-round h-100">
+                <div class="card-body py-2 py-md-3 px-2 px-md-3">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col-auto col-icon">
+                            <div class="icon-big text-center bubble-shadow-small" style="background-color: #ffc107; color: #212529; border-radius: 50%; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;">
                                 <i class="fas fa-hourglass-half"></i>
                             </div>
                         </div>
-                        <div class="col col-stats ml-3 ml-sm-0">
+                        <div class="col col-stats pl-2 pl-md-3">
                             <div class="numbers">
-                                <p class="card-category">{{ __('Pending Products') }}</p>
-                                <h4 class="card-title">{{ $pendingProductsCount }}</h4>
+                                <p class="card-category font-weight-bold text-warning">{{ __('Pending Products') }}</p>
+                                <h4 class="card-title font-weight-bold text-warning mb-0">{{ $pendingProductsCount }}</h4>
                             </div>
                         </div>
                     </div>
@@ -493,19 +493,19 @@
         </div>
 
         <!-- Out of Stock -->
-        <div class="col-sm-6 col-md-3">
-            <div class="card card-stats card-round">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-icon">
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card card-stats card-round h-100">
+                <div class="card-body py-2 py-md-3 px-2 px-md-3">
+                    <div class="row align-items-center no-gutters">
+                        <div class="col-auto col-icon">
                             <div class="icon-big text-center icon-secondary bubble-shadow-small">
                                 <i class="fas fa-exclamation-triangle"></i>
                             </div>
                         </div>
-                        <div class="col col-stats ml-3 ml-sm-0">
+                        <div class="col col-stats pl-2 pl-md-3">
                             <div class="numbers">
-                                <p class="card-category">{{ __('Out of Stock') }}</p>
-                                <h4 class="card-title">{{ $stockOutProducts }}</h4>
+                                <p class="card-category font-weight-bold text-muted">{{ __('Out of Stock') }}</p>
+                                <h4 class="card-title font-weight-bold mb-0">{{ $stockOutProducts }}</h4>
                             </div>
                         </div>
                     </div>

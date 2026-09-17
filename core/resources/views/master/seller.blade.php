@@ -35,6 +35,32 @@
             max-width: 100vw !important;
         }
 
+        /* Topbar Header Icons (Hamburger 3 lines, Minimize, 3 Dots) always White */
+        .main-header .logo-header .navbar-toggler,
+        .main-header .logo-header .sidenav-toggler,
+        .main-header .logo-header .navbar-toggler-icon,
+        .main-header .logo-header .navbar-toggler-icon i,
+        .main-header .logo-header .topbar-toggler,
+        .main-header .logo-header .topbar-toggler i,
+        .main-header .logo-header .btn-minimize,
+        .main-header .logo-header .btn-minimize i,
+        .main-header .logo-header .more,
+        .main-header .logo-header .more i,
+        .main-header .logo-header i.fa-bars,
+        .main-header .logo-header i.fa-ellipsis-v,
+        .main-header .navbar-toggler i,
+        .main-header .sidenav-toggler i {
+            color: #ffffff !important;
+            fill: #ffffff !important;
+        }
+
+        .main-header .logo-header .btn-minimize:hover i,
+        .main-header .logo-header .navbar-toggler:hover i,
+        .main-header .logo-header .topbar-toggler:hover i {
+            color: #ffffff !important;
+            opacity: 0.9;
+        }
+
         @media (max-width: 991.98px) {
             .wrapper {
                 overflow-x: hidden !important;
@@ -353,24 +379,59 @@
                 font-size: 11px !important;
             }
 
+            .card-stats .card-body {
+                padding: 8px 6px !important;
+            }
+
             .card-stats .col-icon {
-                width: 48px !important;
-                height: 48px !important;
-                min-width: 48px !important;
-                margin-left: 6px !important;
+                width: 38px !important;
+                height: 38px !important;
+                min-width: 38px !important;
+                margin-left: 0 !important;
+                padding: 0 !important;
             }
 
             .card-stats .icon-big {
-                font-size: 1.4em !important;
-                min-height: 48px !important;
+                font-size: 1.1em !important;
+                min-height: 38px !important;
+                width: 38px !important;
+                height: 38px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
             }
 
             .card-stats .col-stats {
-                padding-left: 10px !important;
+                padding-left: 6px !important;
+                padding-right: 0 !important;
+                min-width: 0 !important;
+                flex: 1 1 auto !important;
+            }
+
+            .card-stats .numbers {
+                width: 100% !important;
             }
 
             .card-stats .numbers .card-title {
-                font-size: 15px !important;
+                font-size: 13.5px !important;
+                line-height: 1.2 !important;
+                word-break: break-word !important;
+            }
+
+            .card-stats .card-category {
+                font-size: 10.5px !important;
+                line-height: 1.2 !important;
+                margin-bottom: 2px !important;
+                white-space: normal !important;
+                word-break: break-word !important;
+            }
+
+            .card-stats .numbers p {
+                font-size: 10.5px !important;
+                line-height: 1.2 !important;
+                margin-bottom: 2px !important;
+                white-space: normal !important;
+                word-break: break-word !important;
             }
         }
     </style>
@@ -400,13 +461,13 @@
                 <button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse"
                     data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon">
-                        <i class="fa fa-bars"></i>
+                        <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 20px;"></i>
                     </span>
                 </button>
-                <button class="topbar-toggler more"><i class="fa fa-ellipsis-v"></i></button>
+                <button class="topbar-toggler more"><i class="fa fa-ellipsis-v text-white" style="color: #ffffff !important; font-size: 20px;"></i></button>
                 <div class="navbar-minimize">
                     <button class="btn btn-minimize">
-                        <i class="fa fa-bars"></i>
+                        <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 18px;"></i>
                     </button>
                 </div>
             </div>
