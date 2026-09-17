@@ -46,7 +46,7 @@
     <div class="card shadow mb-4">
         <div class="card-body">
             <div class="gd-responsive-table">
-                <table class="table table-bordered table-striped table-hover" width="100%" cellspacing="0">
+                <table class="table table-bordered table-striped table-hover" style="min-width: 820px;" width="100%" cellspacing="0">
                     <thead class="thead-light">
                         <tr>
                             <th>{{ __('Order ID') }}</th>
@@ -166,7 +166,7 @@
                 </table>
             </div>
 
-            <div class="d-flex justify-content-end mt-3">
+            <div class="d-flex justify-content-center justify-content-md-end mt-3 flex-wrap">
                 {{ $datas->links() }}
             </div>
         </div>

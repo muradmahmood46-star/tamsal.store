@@ -168,7 +168,7 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="gd-responsive-table">
-                        <table class="table table-bordered table-hover mb-0">
+                        <table class="table table-bordered table-hover mb-0" style="min-width: 680px;">
                             <thead class="thead-light">
                                 <tr>
                                     <th>{{ __('Product') }}</th>
