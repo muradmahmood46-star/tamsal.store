@@ -48,6 +48,58 @@
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
+
+    /* Wizard Navigation Buttons - Mobile Responsive */
+    .wizard-nav-btns {
+        margin-top: 1.75rem !important;
+        padding-top: 1.25rem !important;
+        border-top: 1px solid #e9ecef;
+        position: relative;
+        z-index: 5;
+    }
+
+    @media (max-width: 767.98px) {
+        .wizard-nav-btns {
+            display: flex !important;
+            flex-direction: column-reverse !important;
+            gap: 12px !important;
+            width: 100% !important;
+        }
+
+        .wizard-nav-btns .btn,
+        .wizard-nav-btns a.btn {
+            width: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 13px 20px !important;
+            font-size: 15px !important;
+            font-weight: 600 !important;
+            border-radius: 8px !important;
+            margin: 0 !important;
+            text-align: center !important;
+            box-sizing: border-box !important;
+            min-height: 48px !important;
+        }
+
+        .wizard-nav-btns .wizard-btn-next {
+            order: 1 !important;
+            font-weight: 700 !important;
+            font-size: 16px !important;
+            box-shadow: 0 4px 14px rgba(13, 110, 253, 0.3) !important;
+        }
+
+        .wizard-nav-btns .wizard-btn-prev {
+            order: 2 !important;
+            background-color: #f8f9fa !important;
+            color: #495057 !important;
+            border: 1px solid #ced4da !important;
+        }
+
+        .wizard-nav-btns .btn-success.wizard-btn-next {
+            box-shadow: 0 4px 14px rgba(40, 167, 69, 0.35) !important;
+        }
+    }
 </style>
 @endsection
 
@@ -161,11 +213,11 @@
                                 </div>
                             </div>
 
-                            <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-4">
-                                <a href="{{ route('user.dashboard') }}" class="btn btn-outline-secondary">
+                            <div class="wizard-nav-btns d-flex justify-content-between align-items-center pt-3 border-top mt-4">
+                                <a href="{{ route('user.dashboard') }}" class="btn btn-outline-secondary wizard-btn-prev">
                                     <i class="icon-x mr-1"></i> {{ __('Cancel') }}
                                 </a>
-                                <button type="button" class="btn btn-primary px-4 font-weight-bold" id="step1NextBtn" onclick="nextStep(1)">
+                                <button type="button" class="btn btn-primary px-4 font-weight-bold wizard-btn-next" id="step1NextBtn" onclick="nextStep(1)">
                                     {{ __('Next: Store Info') }} <i class="icon-arrow-right ml-1"></i>
                                 </button>
                             </div>
@@ -197,11 +249,11 @@
                                 </div>
                             </div>
 
-                            <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-4">
-                                <button type="button" class="btn btn-outline-secondary" onclick="prevStep(2)">
+                            <div class="wizard-nav-btns d-flex justify-content-between align-items-center pt-3 border-top mt-4">
+                                <button type="button" class="btn btn-outline-secondary wizard-btn-prev" onclick="prevStep(2)">
                                     <i class="icon-arrow-left mr-1"></i> {{ __('Previous: Personal Info') }}
                                 </button>
-                                <button type="button" class="btn btn-primary px-4 font-weight-bold" id="step2NextBtn" onclick="nextStep(2)">
+                                <button type="button" class="btn btn-primary px-4 font-weight-bold wizard-btn-next" id="step2NextBtn" onclick="nextStep(2)">
                                     {{ __('Next: Documents') }} <i class="icon-arrow-right ml-1"></i>
                                 </button>
                             </div>
@@ -334,16 +386,16 @@
                                 </div>
                             </div>
 
-                            <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-4">
-                                <button type="button" class="btn btn-outline-secondary" onclick="prevStep(3)">
+                            <div class="wizard-nav-btns d-flex justify-content-between align-items-center pt-3 border-top mt-4">
+                                <button type="button" class="btn btn-outline-secondary wizard-btn-prev" onclick="prevStep(3)">
                                     <i class="icon-arrow-left mr-1"></i> {{ __('Previous: Store Info') }}
                                 </button>
                                 @if($isFree)
-                                    <button type="submit" class="btn btn-success px-4 font-weight-bold" id="step3SubmitBtn">
+                                    <button type="submit" class="btn btn-success px-4 font-weight-bold wizard-btn-next" id="step3SubmitBtn">
                                         <i class="icon-check mr-1"></i> {{ __('Submit Store Application') }}
                                     </button>
                                 @else
-                                    <button type="button" class="btn btn-primary px-4 font-weight-bold" id="step3NextBtn" onclick="nextStep(3)">
+                                    <button type="button" class="btn btn-primary px-4 font-weight-bold wizard-btn-next" id="step3NextBtn" onclick="nextStep(3)">
                                         {{ __('Next: Payment Proof') }} <i class="icon-arrow-right ml-1"></i>
                                     </button>
                                 @endif
@@ -466,11 +518,11 @@
                                     </div>
                                 </div>
 
-                                <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-4">
-                                    <button type="button" class="btn btn-outline-secondary" onclick="prevStep(4)">
+                                <div class="wizard-nav-btns d-flex justify-content-between align-items-center pt-3 border-top mt-4">
+                                    <button type="button" class="btn btn-outline-secondary wizard-btn-prev" onclick="prevStep(4)">
                                         <i class="icon-arrow-left mr-1"></i> {{ __('Previous: Documents') }}
                                     </button>
-                                    <button type="submit" class="btn btn-success px-4 font-weight-bold" id="step4SubmitBtn">
+                                    <button type="submit" class="btn btn-success px-4 font-weight-bold wizard-btn-next" id="step4SubmitBtn">
                                         <i class="icon-check mr-1"></i> {{ __('Submit Store Application') }}
                                     </button>
                                 </div>
