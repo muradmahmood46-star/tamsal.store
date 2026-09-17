@@ -107,9 +107,9 @@
                         <div class="alert alert-info d-flex align-items-center mb-4">
                             <i class="icon-info fa-2x mr-3 text-primary"></i>
                             <div>
-                                <h6 class="mb-1 font-weight-bold text-primary">{{ __('Store Opening Fee Required') }}</h6>
+                                <h6 class="mb-1 font-weight-bold text-primary">{{ __('Open Shop / Seller Application') }}</h6>
                                 <p class="mb-0 font-size-sm">
-                                    {{ __('A one-time store opening fee of') }} <strong>{{ PriceHelper::storeOpeningFee($setting->store_opening_fee ?? 0) }}</strong> {{ __('applies. Complete steps 1-3 followed by payment proof in Step 4.') }}
+                                    {{ __('Complete steps 1-4 or apni application bhejein apna store open krny k liye or products list krny k liye.') }}
                                 </p>
                             </div>
                         </div>
