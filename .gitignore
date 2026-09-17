@@ -11,9 +11,11 @@
 .env
 core/.env
 *.sql
+!core/database/seed_database.sql
 scratch/
 *.zip
 *.log
 error_log
 .DS_Store
 Thumbs.db
+tamsal_store_live.*
