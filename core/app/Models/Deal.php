@@ -11,6 +11,7 @@ class Deal extends Model
         'vendor_id',
         'name',
         'slug',
+        'photo',
         'description',
         'discount_type',
         'discount_value',

@@ -66,7 +66,7 @@
 		<div class="card-body">
             @include('alerts.alerts')
 
-            <form action="{{ route('back.deal.update', $deal->id) }}" method="POST" id="deal-form">
+            <form action="{{ route('back.deal.update', $deal->id) }}" method="POST" id="deal-form" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -81,6 +81,17 @@
                         <div class="form-group">
                             <label for="description">{{ __('Deal Description') }}</label>
                             <textarea class="form-control" name="description" id="description" rows="3" placeholder="{{ __('Describe what makes this deal special...') }}">{{ old('description', $deal->description) }}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="photo">{{ __('Bundle Image') }}</label>
+                            @if($deal->photo)
+                                <div class="mb-2">
+                                    <img src="{{ url('/core/public/storage/images/' . $deal->photo) }}" style="height:80px;object-fit:cover;border-radius:4px;" alt="bundle">
+                                    <small class="d-block text-muted mt-1">{{ __('Current image. Upload new to replace.') }}</small>
+                                </div>
+                            @endif
+                            <input type="file" class="form-control-file" name="photo" id="photo" accept="image/*">
                         </div>
 
                         <div class="form-group">

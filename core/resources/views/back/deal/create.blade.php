@@ -67,7 +67,7 @@
 		<div class="card-body">
             @include('alerts.alerts')
 
-            <form action="{{ route('back.deal.store') }}" method="POST" id="deal-form">
+            <form action="{{ route('back.deal.store') }}" method="POST" id="deal-form" enctype="multipart/form-data">
                 @csrf
 
                 <div class="row">
@@ -81,6 +81,12 @@
                         <div class="form-group">
                             <label for="description">{{ __('Deal Description') }}</label>
                             <textarea class="form-control" name="description" id="description" rows="3" placeholder="{{ __('Describe what makes this deal special...') }}">{{ old('description') }}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="photo">{{ __('Bundle Image') }}</label>
+                            <input type="file" class="form-control-file" name="photo" id="photo" accept="image/*">
+                            <small class="text-muted">{{ __('Optional. This image will appear on the bundle card.') }}</small>
                         </div>
 
                         <div class="form-group">

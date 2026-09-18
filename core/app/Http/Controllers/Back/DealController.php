@@ -123,6 +123,7 @@ class DealController extends Controller
             'vendor_id' => 0,
             'name' => $request->name,
             'slug' => $slug,
+            'photo' => $request->hasFile('photo') ? $request->file('photo')->store('images', 'public') : null,
             'description' => $request->description,
             'discount_type' => $discountType,
             'discount_value' => $discountValue,
@@ -237,6 +238,7 @@ class DealController extends Controller
 
         $deal->update([
             'name' => $request->name,
+            'photo' => $request->hasFile('photo') ? $request->file('photo')->store('images', 'public') : $deal->photo,
             'description' => $request->description,
             'discount_type' => $discountType,
             'discount_value' => $discountValue,
