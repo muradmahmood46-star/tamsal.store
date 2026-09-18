@@ -90,11 +90,18 @@
             }
             .sright-image .inner-content {
                 position: absolute;
-                top: 34%;
+                top: 50%;
                 transform: translateY(-50%);
                 left: 24px;
                 right: 20px;
                 z-index: 2;
+                padding: 10px 14px;
+                background: rgba(255, 255, 255, 0.78);
+                border: 1px solid rgba(255, 255, 255, 0.55);
+                border-radius: 10px;
+                box-shadow: 0 4px 14px rgba(15, 23, 42, 0.16);
+                backdrop-filter: blur(6px);
+                -webkit-backdrop-filter: blur(6px);
             }
             .sright-image .inner-content p {
                 display: inline-block;

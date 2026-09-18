@@ -89,16 +89,12 @@ $(function ($) {
             }
         }
 
-        $hero_slider_main.on('initialized.owl.carousel changed.owl.carousel', function (event) {
-            if (!event.relatedTarget) {
-                return;
-            }
-
-            var carousel = event.relatedTarget;
-            var current = carousel.current();
-
-            loadHeroSliderBackground($(carousel.$stage.children().eq(current)));
-            loadHeroSliderBackground($(carousel.$stage.children().eq(carousel.normalize(current + 1))));
+        $hero_slider_main.on('initialized.owl.carousel', function () {
+            setTimeout(function () {
+                $hero_slider_main.find('[data-slider-background]').each(function () {
+                    loadHeroSliderBackground($(this));
+                });
+            }, 500);
         });
 
         $hero_slider_main.owlCarousel({
