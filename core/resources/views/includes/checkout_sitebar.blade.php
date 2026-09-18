@@ -54,11 +54,28 @@
                     $delivery_fee_details = [];
                     if (!empty($curr_cart) && is_array($curr_cart)) {
                         $curr_val = PriceHelper::setCurrencyValue();
+                        $processedDealIds = [];
                         foreach ($curr_cart as $key => $cItem) {
                             $itemId = explode('-', $key)[0];
                             $product = \App\Models\Item::find($itemId);
                             $itemFee = 0;
                             $isFree = false;
+
+                            // Deal item - use bundle's own delivery setting
+                            if (!empty($cItem['deal_id'])) {
+                                $dealId = (int)$cItem['deal_id'];
+                                if (in_array($dealId, $processedDealIds)) continue;
+                                $processedDealIds[] = $dealId;
+                                $isFree = !empty($cItem['deal_free_delivery']);
+                                $itemFee = $isFree ? 0 : (float)($cItem['deal_delivery_charge'] ?? 0);
+                                $delivery_fee_details[] = [
+                                    'name' => __('Bundle') . ': ' . ($cItem['name'] ?? 'Bundle'),
+                                    'fee'  => $itemFee,
+                                    'is_free' => $isFree,
+                                ];
+                                continue;
+                            }
+
                             if ($product) {
                                 if ($product->is_free_delivery == 1) {
                                     $isFree = true;

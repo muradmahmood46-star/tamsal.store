@@ -53,8 +53,8 @@ class DealController extends Controller
                 'item_l_n'            => null,
                 'item_l_k'            => null,
                 'deal_id'             => $deal->id,
-                'deal_delivery_charge'=> $deal->is_free_delivery ? 0 : $deal->delivery_charge,
-                'deal_free_delivery'  => $deal->is_free_delivery,
+                'deal_delivery_charge'=> $deal->is_free_delivery ? 0 : (float)$deal->delivery_charge,
+                'deal_free_delivery'  => (bool)$deal->is_free_delivery,
             ];
         }
 
