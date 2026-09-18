@@ -367,16 +367,25 @@ if (!empty($dbname)) {
     }
 }
 
-echo "\n=== LATEST LARAVEL LOG (LAST 40 LINES) ===\n";
+echo "</pre></div>";
+
+echo '<div style="font-family: monospace; text-align: left; padding: 20px; max-width: 900px; margin: 30px auto; background: #1e1e1e; color: #d4d4d4; border-radius: 8px;">';
+echo '<h3 style="color: #60a5fa; margin-top:0;">LATEST LARAVEL LOG</h3>';
 $logFile = __DIR__ . '/core/storage/logs/laravel.log';
 if (file_exists($logFile)) {
     $lines = file($logFile);
-    $lastLines = array_slice($lines, -40);
-    echo htmlspecialchars(implode('', $lastLines));
+    $lastLines = array_slice($lines, -30);
+    foreach ($lastLines as $l) {
+        $color = '#d4d4d4';
+        if (strpos($l, '.ERROR') !== false) {
+            $color = '#f87171; font-weight:bold;';
+        } elseif (strpos($l, '#') === 0) {
+            $color = '#9ca3af; font-size:12px;';
+        }
+        echo '<div style="color:' . $color . '; margin-bottom: 2px; word-break: break-all;">' . htmlspecialchars($l, ENT_QUOTES, 'UTF-8') . '</div>';
+    }
 } else {
-    echo "laravel.log not found";
+    echo "<div>laravel.log not found</div>";
 }
-
-echo "\n=== END LOG ===\n";
-echo '</pre></div>';
+echo '</div>';
 
