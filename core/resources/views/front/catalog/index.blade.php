@@ -24,6 +24,10 @@
                     <li><a href="{{route('front.catalog')}}">{{__('Stores')}}</a></li>
                     <li class="separator"></li>
                     <li>{{ $vendorStore->name }}</li>
+                @elseif(request()->filled('tag'))
+                    <li><a href="{{route('front.catalog')}}">{{__('Shop')}}</a></li>
+                    <li class="separator"></li>
+                    <li>#{{ request('tag') }}</li>
                 @else
                     <li>{{__('Shop')}}</li>
                 @endif
@@ -127,6 +131,17 @@
         <div class="row g-3">
 
           <div class="col-lg-9 order-lg-2" id="list_view_ajax">
+            @if(request()->filled('tag'))
+                <div class="alert alert-info d-flex align-items-center justify-content-between p-2 px-3 mb-3 shadow-sm" style="border-radius: 8px; background: #f0f9ff; border: 1px solid #bae6fd; color: #0369a1;">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-tags mr-2" style="font-size: 16px;"></i>
+                        <span>{{ __('Showing products for Tag') }}: <strong class="text-primary font-weight-bold ml-1">#{{ request('tag') }}</strong></span>
+                    </div>
+                    <a href="{{ route('front.catalog') }}" class="btn btn-sm btn-outline-danger py-1 px-2" style="font-size: 12px; border-radius: 6px; text-decoration: none;">
+                        <i class="fas fa-times mr-1"></i> {{ __('Clear Tag') }}
+                    </a>
+                </div>
+            @endif
             @include('front.catalog.catalog')
           </div>
 
@@ -211,6 +226,7 @@
         <input type="text" name="subcategory" id="subcategory" value="{{isset($subcategory) ? $subcategory->slug : ''}}">
         <input type="text" name="sorting" id="sorting" value="{{isset($sorting) ? $sorting : ''}}">
         <input type="text" name="view_check" id="view_check" value="{{isset($view_check) ? $view_check : ''}}">
+        <input type="text" name="tag" id="tag" value="{{request()->input('tag') ? request()->input('tag') : ''}}">
 
 
         <button type="submit" id="search_button" class="d-none"></button>

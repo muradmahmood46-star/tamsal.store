@@ -70,7 +70,7 @@ class CatalogController extends Controller
         $childcategory = $request->has('childcategory') ? ( !empty($request->childcategory) ? ChieldCategory::where('slug',$request->childcategory)->first() : null ) : null;
         $minPrice = $request->has('minPrice') ?  ( !empty($request->minPrice) ? PriceHelper::convertPrice($request->minPrice) : null ) : null;
         $maxPrice = $request->has('maxPrice') ?  ( !empty($request->maxPrice) ? PriceHelper::convertPrice($request->maxPrice) : null ) : null;
-        $tag = $request->has('tag') ?  ( !empty($request->tag) ? $request->tag : null ) : null;
+        $tag = $request->has('tag') ?  ( !empty($request->tag) ? trim($request->tag) : null ) : null;
         $items = Item::with('category')
         ->when($category, function ($query, $category) {
             return $query->where('category_id', $category->id);
@@ -244,6 +244,7 @@ class CatalogController extends Controller
             'checkType'  => $checkType,
             'vendorStore' => $vendorStore,
             'vendor' => $vendor,
+            'tag' => $tag,
             'brands' => Brand::withCount('items')->whereStatus(1)->get(),
             'categories' => Category::whereStatus(1)->orderby('serial','asc')->withCount(['items' => function($query) {
                 $query->where('status',1);

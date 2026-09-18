@@ -427,6 +427,24 @@
                                             </span>
                                         </div>
                                     @endif
+                                    @if (!empty($item->tags))
+                                        <div class="col-12 mt-2 pt-2 border-top">
+                                            <div class="d-flex align-items-center flex-wrap" style="gap: 6px;">
+                                                <span class="text-muted font-weight-500 mr-1" style="font-size: 13px;">
+                                                    <i class="fas fa-tags text-primary mr-1"></i> {{ __('Tags') }}:
+                                                </span>
+                                                @foreach (array_filter(array_map('trim', explode(',', $item->tags))) as $tag)
+                                                    <a href="{{ route('front.catalog') . '?tag=' . urlencode($tag) }}" 
+                                                       class="badge border text-dark py-1 px-2 text-decoration-none shadow-sm" 
+                                                       style="font-size: 12px; font-weight: 500; border-radius: 6px; background: #ffffff; border-color: #cbd5e1 !important; transition: all 0.2s;"
+                                                       onmouseover="this.style.background='#0d6efd'; this.style.color='#fff'; this.style.borderColor='#0d6efd';"
+                                                       onmouseout="this.style.background='#ffffff'; this.style.color='#1e293b'; this.style.borderColor='#cbd5e1';">
+                                                        #{{ $tag }}
+                                                    </a>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
 
@@ -584,10 +602,28 @@
                                                     <td>{{ $sdetail }}</td>
                                                 </tr>
                                             @endforeach
-                                        @else
+                                        @elseif(empty($item->tags))
                                             <tr class="text-center">
                                                 <td colspan="2" style="text-align:center; color:#94a3b8; padding:24px;">
                                                     <i class="fas fa-info-circle mr-2"></i>{{ __('No Specifications Added') }}
+                                                </td>
+                                            </tr>
+                                        @endif
+                                        @if (!empty($item->tags))
+                                            <tr>
+                                                <th>{{ __('Tags / Keywords') }}</th>
+                                                <td>
+                                                    <div class="d-flex flex-wrap align-items-center" style="gap: 6px;">
+                                                        @foreach (array_filter(array_map('trim', explode(',', $item->tags))) as $tag)
+                                                            <a href="{{ route('front.catalog') . '?tag=' . urlencode($tag) }}" 
+                                                               class="badge border text-dark py-1 px-2 text-decoration-none" 
+                                                               style="font-size: 12px; font-weight: 500; border-radius: 6px; background: #ffffff; border-color: #cbd5e1 !important; transition: all 0.2s;"
+                                                               onmouseover="this.style.background='#0d6efd'; this.style.color='#fff'; this.style.borderColor='#0d6efd';"
+                                                               onmouseout="this.style.background='#ffffff'; this.style.color='#1e293b'; this.style.borderColor='#cbd5e1';">
+                                                                #{{ $tag }}
+                                                            </a>
+                                                        @endforeach
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @endif
