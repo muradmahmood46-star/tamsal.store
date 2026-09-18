@@ -694,20 +694,32 @@ $(function ($) {
 
 
         // catalog js start
+        function closeMobileFilterSidebar() {
+            $('.sidebar-offcanvas').removeClass('open');
+            $('.sidebar-toggle').removeClass('sidebar-open');
+            $('body').removeClass('offcanvas-open');
+        }
+
         $(document).on("click", ".brand-select", function () {
             $('.brand-select').prop('checked', false);
             let brand = $(this).val();
             $(this).prop('checked', true);
             $("#search_form #brand").val(brand);
+            closeMobileFilterSidebar();
             removePage();
             $("#search_button").click();
         });
 
-        $(document).on("click", "#price_filter", function () {
+        $(document).on("click", "#price_filter, #mobile_apply_filters", function () {
             let min_price = parseInt($(".min_price").html());
             let max_price = parseInt($(".max_price").html());
-            $("#search_form #minPrice").val(min_price);
-            $("#search_form #maxPrice").val(max_price);
+            if (!isNaN(min_price)) {
+                $("#search_form #minPrice").val(min_price);
+            }
+            if (!isNaN(max_price)) {
+                $("#search_form #maxPrice").val(max_price);
+            }
+            closeMobileFilterSidebar();
             removePage();
             $("#search_button").click();
         });
@@ -729,6 +741,7 @@ $(function ($) {
                 $("#search_form #minPrice").val('');
                 $("#search_form #maxPrice").val('');
             }
+            closeMobileFilterSidebar();
             removePage();
             $("#search_button").click();
         });
@@ -751,6 +764,7 @@ $(function ($) {
                 filter = $(this).attr('data-href');
             }
             $("#search_form #quick_filter").val(filter);
+            closeMobileFilterSidebar();
             removePage();
             $("#search_button").click();
         });
@@ -791,6 +805,7 @@ $(function ($) {
             $("#search_form #childcategory").val('');
             $("#search_form #subcategory").val('');
             $("#search_form #category").val(category);
+            closeMobileFilterSidebar();
             $("#search_button").click();
         });
 
@@ -804,8 +819,10 @@ $(function ($) {
             } else {
                 category = $(this).attr('data-href');
             }
+            removePage();
             $("#search_form #childcategory").val('');
             $("#search_form #subcategory").val(category);
+            closeMobileFilterSidebar();
             $("#search_button").click();
         });
 
@@ -820,6 +837,7 @@ $(function ($) {
             }
             removePage();
             $("#search_form #childcategory").val(childcategory);
+            closeMobileFilterSidebar();
             $("#search_button").click();
         });
 
@@ -848,6 +866,7 @@ $(function ($) {
             });
             removePage();
             $("#search_form #option").val(option);
+            closeMobileFilterSidebar();
             $("#search_button").click();
         });
 

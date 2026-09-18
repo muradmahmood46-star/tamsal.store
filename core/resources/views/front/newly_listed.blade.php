@@ -1,4 +1,4 @@
-﻿@extends('master.front')
+@extends('master.front')
 
 @section('title')
     {{ __('Newly Listed Products') }}
@@ -82,7 +82,7 @@
                             @endif
                         </div>
                         <h3 class="product-title"><a href="{{route('front.product',$item->slug)}}">
-                            {{ Str::limit($item->name, 35) }}
+                            {{ Str::limit($item->name, 70) }}
                         </a></h3>
                         <div class="rating-stars">
                             {!! Helper::renderStarRating($item) !!}

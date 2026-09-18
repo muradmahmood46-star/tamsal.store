@@ -135,7 +135,7 @@
               <div class="ui-range-slider"></div>
               <footer class="ui-range-slider-footer">
                 <div class="column">
-                  <button class="btn btn-primary btn-sm" id="price_filter" type="button"><span>{{__('Filter')}}</span></button>
+                  <button class="btn btn-primary btn-sm font-weight-bold px-3 shadow-sm" id="price_filter" type="button"><i class="fas fa-check-circle mr-1"></i> <span>{{__('Apply Filters')}}</span></button>
                 </div>
                 <div class="column">
                   <div class="ui-range-values">
@@ -152,6 +152,11 @@
           </section>
           @endif
 
+          <div class="p-3 text-center d-block d-lg-none">
+            <button class="btn btn-primary btn-block font-weight-bold py-2 shadow-sm" id="mobile_apply_filters" type="button">
+              <i class="fas fa-check-circle mr-1"></i> {{ __('Apply Filters') }}
+            </button>
+          </div>
 
         </aside>
       </div>

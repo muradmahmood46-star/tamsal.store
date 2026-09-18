@@ -88,7 +88,7 @@
                                             @endif
                                         </div>
                                         <h3 class="product-title"><a href="{{route('front.product',$item->slug)}}">
-                                            {{ Str::limit($item->name, 38) }}
+                                            {{ Str::limit($item->name, 70) }}
                                         </a></h3>
                                         <div class="rating-stars">
                                             {!! Helper::renderStarRating($item) !!}
@@ -150,7 +150,7 @@
                                                 @endif
                                             </div>
                                             <h3 class="product-title"><a href="{{route('front.product',$item->slug)}}">
-                                                {{ Str::limit($item->name, 52) }}
+                                                {{ Str::limit($item->name, 70) }}
                                             </a></h3>
                                             <div class="rating-stars">
                                                 {!! Helper::renderStarRating($item) !!}

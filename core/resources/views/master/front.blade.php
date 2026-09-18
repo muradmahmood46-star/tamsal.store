@@ -212,22 +212,46 @@
         }
 
         .product-card .product-title {
-            min-height: 40px !important;
-            line-height: 1.35 !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            line-height: 1.4 !important;
+            min-height: 39px !important;
             display: -webkit-box !important;
             -webkit-line-clamp: 2 !important;
             -webkit-box-orient: vertical !important;
             overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            word-break: break-word !important;
+            margin-top: 2px !important;
             margin-bottom: 6px !important;
         }
 
         .product-card .product-title a {
             color: #1e293b !important;
+            font-size: inherit !important;
+            line-height: inherit !important;
+            text-decoration: none !important;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 2 !important;
+            -webkit-box-orient: vertical !important;
+            overflow: hidden !important;
             transition: color 0.2s ease !important;
         }
 
         .product-card .product-title a:hover {
             color: #2563eb !important;
+        }
+
+        .product-card .rating-stars {
+            display: flex !important;
+            align-items: center !important;
+            flex-wrap: nowrap !important;
+            gap: 2px !important;
+            margin-top: 0 !important;
+            margin-bottom: 6px !important;
+            line-height: 1 !important;
+            min-height: 18px !important;
+            clear: both !important;
         }
 
         .product-card .product-price {
@@ -398,36 +422,67 @@
             .product-card .product-card-body,
             .product-card .product-card-inner {
                 padding: 6px 8px 8px !important;
+                display: flex !important;
+                flex-direction: column !important;
+                flex: 1 1 auto !important;
+                justify-content: flex-start !important;
+                box-sizing: border-box !important;
             }
             .product-card .product-category {
-                margin-bottom: 2px !important;
+                margin-bottom: 3px !important;
             }
             .product-card .product-category a {
                 font-size: 10px !important;
-                line-height: 1.1 !important;
+                line-height: 1.15 !important;
+                padding: 2px 6px !important;
             }
             .product-card .product-title {
                 font-size: 12px !important;
-                line-height: 1.25 !important;
-                min-height: 30px !important;
-                max-height: 30px !important;
-                margin-bottom: 3px !important;
+                font-weight: 600 !important;
+                line-height: 1.35 !important;
+                min-height: 33px !important;
+                max-height: 33px !important;
+                height: 33px !important;
+                margin-top: 2px !important;
+                margin-bottom: 5px !important;
+                display: -webkit-box !important;
                 -webkit-line-clamp: 2 !important;
+                -webkit-box-orient: vertical !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                word-break: break-word !important;
+                clear: both !important;
             }
             .product-card .product-title a {
                 font-size: 12px !important;
+                line-height: 1.35 !important;
+                display: -webkit-box !important;
+                -webkit-line-clamp: 2 !important;
+                -webkit-box-orient: vertical !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                color: #1e293b !important;
             }
             .product-card .rating-stars {
-                margin-bottom: 2px !important;
+                display: flex !important;
+                align-items: center !important;
+                flex-wrap: nowrap !important;
+                gap: 2px !important;
+                margin-top: 0 !important;
+                margin-bottom: 4px !important;
                 font-size: 10px !important;
                 line-height: 1 !important;
+                min-height: 16px !important;
+                clear: both !important;
             }
             .product-card .rating-stars i {
                 font-size: 9px !important;
             }
             .product-card .product-price {
                 font-size: 13px !important;
-                padding-top: 1px !important;
+                margin-top: auto !important;
+                margin-bottom: 0 !important;
+                padding-top: 2px !important;
                 font-weight: 700 !important;
             }
             .product-card .product-price del {
