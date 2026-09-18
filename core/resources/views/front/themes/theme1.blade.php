@@ -148,6 +148,192 @@
         </section>
     @endif
 
+    {{-- Home Action Cards: View Products & Open My Store --}}
+    <style>
+        .home-promo-actions-section {
+            margin-top: 10px;
+            margin-bottom: 25px;
+        }
+        .home-promo-card {
+            position: relative;
+            border-radius: 16px;
+            padding: 22px 26px;
+            overflow: hidden;
+            transition: all 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            display: block;
+            text-decoration: none !important;
+        }
+        .promo-card-shop {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #334155 100%);
+            color: #ffffff !important;
+        }
+        .promo-card-seller {
+            background: linear-gradient(135deg, #18181b 0%, #27272a 60%, #3f3f46 100%);
+            color: #ffffff !important;
+        }
+        .home-promo-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            color: #ffffff !important;
+        }
+        .promo-card-shop:hover {
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+        .promo-card-seller:hover {
+            border-color: rgba(245, 158, 11, 0.5);
+        }
+        .promo-card-inner {
+            position: relative;
+            z-index: 2;
+        }
+        .promo-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: #60a5fa;
+            margin-bottom: 8px;
+        }
+        .promo-badge-seller {
+            color: #fbbf24;
+        }
+        .promo-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff !important;
+            margin-bottom: 6px;
+            line-height: 1.2;
+        }
+        .promo-desc {
+            font-size: 13px;
+            color: #cbd5e1;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            max-width: 90%;
+        }
+        .promo-btn-link {
+            display: inline-flex;
+            align-items: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: #93c5fd;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+        .promo-btn-seller {
+            color: #fde047;
+        }
+        .home-promo-card:hover .promo-btn-link {
+            transform: translateX(4px);
+            color: #ffffff;
+        }
+        .promo-card-icon-wrap {
+            flex-shrink: 0;
+            margin-left: 15px;
+        }
+        .promo-icon-circle {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(37, 99, 235, 0.1) 100%);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            color: #60a5fa;
+            transition: transform 0.3s ease;
+        }
+        .promo-icon-seller {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(217, 119, 6, 0.1) 100%);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            color: #fbbf24;
+        }
+        .home-promo-card:hover .promo-icon-circle {
+            transform: scale(1.08) rotate(5deg);
+        }
+        @media (max-width: 575px) {
+            .home-promo-actions-section {
+                margin-top: 5px;
+                margin-bottom: 15px;
+            }
+            .home-promo-card {
+                padding: 14px 16px;
+                border-radius: 12px;
+            }
+            .promo-title {
+                font-size: 16px;
+                margin-bottom: 4px;
+            }
+            .promo-desc {
+                font-size: 11.5px;
+                margin-bottom: 6px;
+                max-width: 100%;
+            }
+            .promo-btn-link {
+                font-size: 12px;
+            }
+            .promo-icon-circle {
+                width: 44px;
+                height: 44px;
+                font-size: 18px;
+            }
+        }
+    </style>
+    <div class="home-promo-actions-section">
+        <div class="container">
+            <div class="row g-3 gx-2 gx-md-3">
+                <!-- Card 1: View Products / Shop -->
+                <div class="col-12 col-md-6 mb-2 mb-md-0">
+                    <a href="{{ route('front.catalog') }}" class="home-promo-card promo-card-shop">
+                        <div class="promo-card-inner d-flex align-items-center justify-content-between">
+                            <div class="promo-card-text">
+                                <span class="promo-badge"><i class="fas fa-shopping-bag mr-1"></i> {{ __('Trending Collection') }}</span>
+                                <h3 class="promo-title">{{ __('View Products') }}</h3>
+                                <p class="promo-desc">{{ __('Discover thousands of premium products at unbeatable prices') }}</p>
+                                <span class="promo-btn-link">
+                                    {{ __('Shop Now') }} <i class="fas fa-arrow-right ml-1"></i>
+                                </span>
+                            </div>
+                            <div class="promo-card-icon-wrap">
+                                <div class="promo-icon-circle">
+                                    <i class="fas fa-shopping-basket"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Card 2: Open My Store -->
+                <div class="col-12 col-md-6">
+                    <a href="{{ route('user.store.apply') }}" class="home-promo-card promo-card-seller">
+                        <div class="promo-card-inner d-flex align-items-center justify-content-between">
+                            <div class="promo-card-text">
+                                <span class="promo-badge promo-badge-seller"><i class="fas fa-rocket mr-1"></i> {{ __('Sell on Sabhee') }}</span>
+                                <h3 class="promo-title">{{ __('Open My Store') }}</h3>
+                                <p class="promo-desc">{{ __('Start your business today & sell to thousands of customers') }}</p>
+                                <span class="promo-btn-link promo-btn-seller">
+                                    {{ __('Open Store Now') }} <i class="fas fa-arrow-right ml-1"></i>
+                                </span>
+                            </div>
+                            <div class="promo-card-icon-wrap">
+                                <div class="promo-icon-circle promo-icon-seller">
+                                    <i class="fas fa-store"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     @if ($setting->campaign_status == 1)
         <div class="deal-of-day-section mt-20">
@@ -612,68 +798,6 @@
         </div>
         @include('front.deals.countdown-script')
         @endif
-    @endif
-
-    @if ($setting->is_two_column_category == 1)
-        <div class="flash-sell-area mt-50">
-            <div class="container">
-                <div class="row gx-3 justify-content-center">
-                    @foreach ($two_column_categoriess as $two_column_key => $two_column_category)
-                        <div class="col-xl-4 col-lg-6">
-                            <div class="section-title">
-                                <h2 class="h3">{{ $two_column_category['name']->name }}</h2>
-                            </div>
-                            <div class="main-content">
-                                <div class="newproduct-slider owl-carousel">
-                                    @foreach ($two_column_categoriess[$two_column_key]['items']->chunk(4) as $two_column_category_itemt)
-                                        <div class="slider-item">
-                                            @foreach ($two_column_category_itemt as $two_column_category_item)
-                                                <div class="product-card p-col">
-                                                    <a class="product-thumb"
-                                                        href="{{ route('front.product', $two_column_category_item->slug) }}">
-                                                        @if (!$two_column_category_item->is_stock())
-                                                            <div
-                                                                class="product-badge bg-secondary border-default text-body
-                                                    ">
-                                                                {{ __('out of stock') }}</div>
-                                                        @endif
-
-                                                        <img src="{{ url('/core/public/storage/images/' . ($two_column_category_item->photo ?: $two_column_category_item->thumbnail)) }}" class="lazy"
-                                                            data-src="{{ url('/core/public/storage/images/' . ($two_column_category_item->photo ?: $two_column_category_item->thumbnail)) }}"
-                                                            alt="{{ $two_column_category_item->name ?? 'Product' }}">
-                                                    </a>
-                                                    <div class="product-card-body">
-                                                        <h3 class="product-title"><a
-                                                                href="{{ route('front.product', $two_column_category_item->slug) }}">
-                                                                {{ Str::limit($two_column_category_item->name, 40) }}
-                                                            </a></h3>
-                                                         <div class="rating-stars">
-                                                             {!! Helper::renderStarRating($two_column_category_item) !!}
-                                                             @if($two_column_category_item->rating > 0)
-                                                                 <span class="text-muted ml-1" style="font-size: 11px; font-weight: 600;">({{ number_format($two_column_category_item->rating, 1) }})</span>
-                                                             @endif
-                                                         </div>
-                                                        <h4 class="product-price">
-                                                            @if ($two_column_category_item->previous_price != 0)
-                                                                <del>{{ PriceHelper::setPreviousPrice($two_column_category_item->previous_price) }}</del>
-                                                            @endif
-                                                            {{ PriceHelper::grandCurrencyPrice($two_column_category_item) }}
-                                                        </h4>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-
-                                        </div>
-                                    @endforeach
-                                </div>
-
-                            </div>
-                        </div>
-                    @endforeach
-
-                </div>
-            </div>
-        </div>
     @endif
 
     @if ($setting->is_two_c_b == 1)
