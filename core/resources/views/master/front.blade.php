@@ -316,6 +316,57 @@
             width: 100% !important;
         }
 
+        /* ==========================================================================
+           Deal / Bundle Card Styles & Hover Effects
+           ========================================================================== */
+        .deal-card {
+            display: flex !important;
+            flex-direction: column !important;
+            height: 100% !important;
+            background: #ffffff !important;
+            border-radius: 10px !important;
+            overflow: hidden !important;
+            position: relative !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.3s ease !important;
+            box-sizing: border-box !important;
+        }
+
+        .deal-card:hover {
+            transform: translateY(-6px) !important;
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12) !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        .deal-card .card-img-top,
+        .deal-card img {
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+
+        .deal-card:hover .card-img-top,
+        .deal-card:hover img {
+            transform: scale(1.08) !important;
+        }
+
+        .deal-card .deal-title a {
+            color: #1e293b !important;
+            transition: color 0.2s ease !important;
+        }
+
+        .deal-card:hover .deal-title a {
+            color: #2563eb !important;
+        }
+
+        .deal-card .btn {
+            transition: all 0.2s ease !important;
+        }
+
+        .deal-card .btn:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15) !important;
+        }
+
         @media (max-width: 767px) {
             /* Product Card Mobile Height Reduction */
             .product-card {
