@@ -136,10 +136,10 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="end_date">{{ __('Deal End Date & Time') }} * <span class="badge badge-info">{{ __('Within 20 Days') }}</span></label>
-                                    <input type="datetime-local" class="form-control" name="end_date" id="end_date" value="{{ old('end_date', optional($deal->end_date)->format('Y-m-d\\TH:i')) }}" required>
+                                    <label for="duration_days">{{ __('Deal Duration (Days)') }} * <span class="badge badge-info">{{ __('Max 20 Days') }}</span></label>
+                                    <input type="number" min="1" max="20" class="form-control" name="duration_days" id="duration_days" value="{{ old('duration_days', $deal->duration_days) }}" required>
                                     <small class="form-text text-muted">
-                                        <i class="fas fa-clock text-warning"></i> {{ __('Deal will automatically expire and be removed once this time is reached.') }}
+                                        <i class="fas fa-clock text-warning"></i> {{ __('Choose how many days this deal should remain active.') }}
                                     </small>
                                 </div>
 

@@ -65,7 +65,7 @@ class SellerDealController extends Controller
             'item_ids.*' => 'required|exists:items,id',
             'discount_type' => 'required|in:fixed,percent',
             'discount_value' => 'required|numeric|min:0.01',
-            'end_date' => 'required|date|after:now|before_or_equal:' . Carbon::now()->addDays(20)->format('Y-m-d H:i:s'),
+            'duration_days' => 'required|integer|min:1|max:20',
         ]);
 
         // Ensure all selected items belong strictly to this vendor
@@ -106,9 +106,9 @@ class SellerDealController extends Controller
         $finalDiscountedPrice = max(0, round($totalOriginalPrice - $discountAmount, 2));
         $discountRatio = $totalOriginalPrice > 0 ? ($discountAmount / $totalOriginalPrice) : 0;
 
+        $durationDays = (int) $request->duration_days;
         $startDate = Carbon::now();
-        $endDate = Carbon::parse($request->end_date);
-        $durationDays = max(1, (int) ceil($startDate->diffInMinutes($endDate) / 1440));
+        $endDate = (clone $startDate)->addDays($durationDays);
 
         $baseSlug = Str::slug($request->name);
         $slug = $baseSlug;
@@ -182,7 +182,7 @@ class SellerDealController extends Controller
             'item_ids.*' => 'required|exists:items,id',
             'discount_type' => 'required|in:fixed,percent',
             'discount_value' => 'required|numeric|min:0.01',
-            'end_date' => 'required|date|after:now|before_or_equal:' . Carbon::now()->addDays(20)->format('Y-m-d H:i:s'),
+            'duration_days' => 'required|integer|min:1|max:20',
         ]);
 
         $selectedItems = Item::whereIn('id', $request->item_ids)
@@ -218,9 +218,9 @@ class SellerDealController extends Controller
         $finalDiscountedPrice = max(0, round($totalOriginalPrice - $discountAmount, 2));
         $discountRatio = $totalOriginalPrice > 0 ? ($discountAmount / $totalOriginalPrice) : 0;
 
-        $startDate = $deal->start_date ?: Carbon::now();
-        $endDate = Carbon::parse($request->end_date);
-        $durationDays = max(1, (int) ceil(Carbon::now()->diffInMinutes($endDate) / 1440));
+        $durationDays = (int) $request->duration_days;
+        $startDate = Carbon::now();
+        $endDate = (clone $startDate)->addDays($durationDays);
 
         $deal->update([
             'name' => $request->name,
