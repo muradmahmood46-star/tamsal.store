@@ -88,13 +88,13 @@ class FrontendController extends Controller
         $home_customize = HomeCutomize::first();
         // popular category
 
-        $popular_category_ids = json_decode($home_customize->popular_category, true);
-        $popular_category_title = $popular_category_ids['popular_title'];
+        $popular_category_ids = ($home_customize && !empty($home_customize->popular_category)) ? json_decode($home_customize->popular_category, true) : [];
+        $popular_category_title = $popular_category_ids['popular_title'] ?? __('Popular Categories');
 
         $popular_category = [];
         for ($i = 1; $i <= 4; $i++) {
-            if (!in_array($popular_category_ids['category_id' . $i], $popular_category)) {
-                if ($popular_category_ids['category_id' . $i]) {
+            if (!empty($popular_category_ids['category_id' . $i])) {
+                if (!in_array($popular_category_ids['category_id' . $i], $popular_category)) {
                     $popular_category[] = $popular_category_ids['category_id' . $i];
                 }
             }
@@ -109,26 +109,32 @@ class FrontendController extends Controller
 
         if (count($popular_categories) > 0) {
             $index = '';
+            $firstCatId = $popular_category_ids['category_id1'] ?? ($popular_categories[0]->id ?? null);
             foreach ($popular_categories as $key => $data) {
-                if ($data->id == $popular_category_ids['category_id1']) {
+                if ($data->id == $firstCatId) {
                     $index = $key;
                 }
             }
+            if ($index === '' && count($popular_categories) > 0) {
+                $index = 0;
+            }
+
             $pupular_cateogry_home4 = null;
             if ($setting->theme == 'theme4') {
-                $pupular_cateogries_home4 = json_decode($home_customize->home_4_popular_category, true);
+                $pupular_cateogries_home4 = !empty($home_customize->home_4_popular_category) ? json_decode($home_customize->home_4_popular_category, true) : [];
                 $pupular_cateogry_home4 = [];
-                foreach ($pupular_cateogries_home4 as $home4category) {
-                    $h4_cat = Category::with('items')->find($home4category);
-                    if($h4_cat) $pupular_cateogry_home4[] = $h4_cat;
+                if (is_array($pupular_cateogries_home4)) {
+                    foreach ($pupular_cateogries_home4 as $home4category) {
+                        $h4_cat = Category::with('items')->find($home4category);
+                        if($h4_cat) $pupular_cateogry_home4[] = $h4_cat;
+                    }
                 }
             }
 
-            // dd($pupular_cateogry_home4);
-            if($index !== '') {
+            if($index !== '' && isset($popular_categories[$index])) {
                 $category = $popular_categories[$index]->id;
-                $subcategory = $popular_category_ids['subcategory_id1'];
-                $childcategory = $popular_category_ids['childcategory_id1'];
+                $subcategory = $popular_category_ids['subcategory_id1'] ?? null;
+                $childcategory = $popular_category_ids['childcategory_id1'] ?? null;
 
                 $popular_category_items = Item::when($category, function ($query, $category) {
                     return $query->where('category_id', $category);
@@ -147,50 +153,46 @@ class FrontendController extends Controller
 
 
         // two column category
-        $two_column_category_ids = json_decode($home_customize->two_column_category, true);
+        $two_column_category_ids = ($home_customize && !empty($home_customize->two_column_category)) ? json_decode($home_customize->two_column_category, true) : [];
 
         $two_column_category = [];
         for ($i = 1; $i <= 3; $i++) {
-            if (isset($two_column_category_ids['category_id' . $i]) && !in_array($two_column_category_ids['category_id' . $i], $two_column_category)) {
-                if ($two_column_category_ids['category_id' . $i]) {
-                    $two_column_category[] = $two_column_category_ids['category_id' . $i];
-                }
+            if (!empty($two_column_category_ids['category_id' . $i]) && !in_array($two_column_category_ids['category_id' . $i], $two_column_category)) {
+                $two_column_category[] = $two_column_category_ids['category_id' . $i];
             }
         }
 
         $two_column_categories = Category::whereStatus(1)->whereIn('id', $two_column_category)->orderby('id', 'desc')->get();
 
         $two_column_category_items1 = [];
-        if ($two_column_category_ids['category_id1']) {
+        if (!empty($two_column_category_ids['category_id1'])) {
             $two_column_category_items1 = Item::where('category_id', $two_column_category_ids['category_id1'])->orderby('id', 'desc')->whereStatus(1)->take(10)->get();
-        }
-        if ($two_column_category_ids['subcategory_id1']) {
-            $two_column_category_items1 = Item::where('subcategory_id', $two_column_category_ids['subcategory_id1'])->whereStatus(1)->where('category_id', $two_column_category_ids['category_id1'])->orderby('id', 'desc')->take(10)->get();
-        }
-        if ($two_column_category_ids['childcategory_id1']) {
-            $two_column_category_items1 = Item::where('childcategory_id', $two_column_category_ids['childcategory_id1'])->whereStatus(1)->where('category_id', $two_column_category_ids['category_id1'])->orderby('id', 'desc')->take(10)->get();
+            if (!empty($two_column_category_ids['subcategory_id1'])) {
+                $two_column_category_items1 = Item::where('subcategory_id', $two_column_category_ids['subcategory_id1'])->whereStatus(1)->where('category_id', $two_column_category_ids['category_id1'])->orderby('id', 'desc')->take(10)->get();
+            }
+            if (!empty($two_column_category_ids['childcategory_id1'])) {
+                $two_column_category_items1 = Item::where('childcategory_id', $two_column_category_ids['childcategory_id1'])->whereStatus(1)->where('category_id', $two_column_category_ids['category_id1'])->orderby('id', 'desc')->take(10)->get();
+            }
         }
 
         $two_column_category_items2 = [];
-        if ($two_column_category_ids['category_id2']) {
+        if (!empty($two_column_category_ids['category_id2'])) {
             $two_column_category_items2 = Item::where('category_id', $two_column_category_ids['category_id2'])->orderby('id', 'desc')->whereStatus(1)->take(10)->get();
-        }
-        if ($two_column_category_ids['subcategory_id2']) {
-            $two_column_category_items2 = Item::where('subcategory_id', $two_column_category_ids['subcategory_id2'])->whereStatus(1)->where('category_id', $two_column_category_ids['category_id2'])->orderby('id', 'desc')->take(10)->get();
-        }
-        if ($two_column_category_ids['childcategory_id2']) {
-            $two_column_category_items2 = Item::where('childcategory_id', $two_column_category_ids['childcategory_id2'])->whereStatus(1)->where('category_id', $two_column_category_ids['category_id2'])->orderby('id', 'desc')->take(10)->get();
+            if (!empty($two_column_category_ids['subcategory_id2'])) {
+                $two_column_category_items2 = Item::where('subcategory_id', $two_column_category_ids['subcategory_id2'])->whereStatus(1)->where('category_id', $two_column_category_ids['category_id2'])->orderby('id', 'desc')->take(10)->get();
+            }
+            if (!empty($two_column_category_ids['childcategory_id2'])) {
+                $two_column_category_items2 = Item::where('childcategory_id', $two_column_category_ids['childcategory_id2'])->whereStatus(1)->where('category_id', $two_column_category_ids['category_id2'])->orderby('id', 'desc')->take(10)->get();
+            }
         }
 
         $two_column_category_items3 = [];
-        if (isset($two_column_category_ids['category_id3'])) {
-            if ($two_column_category_ids['category_id3']) {
-                $two_column_category_items3 = Item::where('category_id', $two_column_category_ids['category_id3'])->orderby('id', 'desc')->whereStatus(1)->take(10)->get();
-            }
-            if ($two_column_category_ids['subcategory_id3']) {
+        if (!empty($two_column_category_ids['category_id3'])) {
+            $two_column_category_items3 = Item::where('category_id', $two_column_category_ids['category_id3'])->orderby('id', 'desc')->whereStatus(1)->take(10)->get();
+            if (!empty($two_column_category_ids['subcategory_id3'])) {
                 $two_column_category_items3 = Item::where('subcategory_id', $two_column_category_ids['subcategory_id3'])->whereStatus(1)->where('category_id', $two_column_category_ids['category_id3'])->orderby('id', 'desc')->take(10)->get();
             }
-            if ($two_column_category_ids['childcategory_id3']) {
+            if (!empty($two_column_category_ids['childcategory_id3'])) {
                 $two_column_category_items3 = Item::where('childcategory_id', $two_column_category_ids['childcategory_id3'])->whereStatus(1)->where('category_id', $two_column_category_ids['category_id3'])->orderby('id', 'desc')->take(10)->get();
             }
         }

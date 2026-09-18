@@ -52,50 +52,78 @@ class CategoryRepository
     {
         try {
             $home = HomeCutomize::first();
-            $popular_category = ($home && !empty($home->popular_category)) ? json_decode($home->popular_category, true) : [];
-            $feature_category = ($home && !empty($home->feature_category)) ? json_decode($home->feature_category, true) : [];
-            $two_column_category = ($home && !empty($home->two_column_category)) ? json_decode($home->two_column_category, true) : [];
-            $home_4_popular_category = ($home && !empty($home->home_4_popular_category)) ? json_decode($home->home_4_popular_category, true) : [];
-            $check = false;
+            if ($home) {
+                $needsUpdate = false;
 
-            if (is_array($popular_category)) {
-                for ($i = 1; $i <= 4; $i++) {
-                    if (isset($popular_category['category_id' . $i]) && $popular_category['category_id' . $i] == $category->id) {
-                        $check = true;
-                        break;
+                // 1. Popular Category
+                if (!empty($home->popular_category)) {
+                    $popular_category = json_decode($home->popular_category, true);
+                    if (is_array($popular_category)) {
+                        for ($i = 1; $i <= 4; $i++) {
+                            if (isset($popular_category['category_id' . $i]) && $popular_category['category_id' . $i] == $category->id) {
+                                $popular_category['category_id' . $i] = null;
+                                $popular_category['subcategory_id' . $i] = null;
+                                $popular_category['childcategory_id' . $i] = null;
+                                $needsUpdate = true;
+                            }
+                        }
+                        if ($needsUpdate) {
+                            $home->popular_category = json_encode($popular_category);
+                        }
                     }
                 }
-            }
 
-            if (is_array($feature_category)) {
-                for ($i = 1; $i <= 4; $i++) {
-                    if (isset($feature_category['category_id' . $i]) && $feature_category['category_id' . $i] == $category->id) {
-                        $check = true;
-                        break;
+                // 2. Feature Category
+                if (!empty($home->feature_category)) {
+                    $feature_category = json_decode($home->feature_category, true);
+                    if (is_array($feature_category)) {
+                        for ($i = 1; $i <= 4; $i++) {
+                            if (isset($feature_category['category_id' . $i]) && $feature_category['category_id' . $i] == $category->id) {
+                                $feature_category['category_id' . $i] = null;
+                                $feature_category['subcategory_id' . $i] = null;
+                                $feature_category['childcategory_id' . $i] = null;
+                                $needsUpdate = true;
+                            }
+                        }
+                        if ($needsUpdate) {
+                            $home->feature_category = json_encode($feature_category);
+                        }
                     }
                 }
-            }
 
-            if (is_array($two_column_category)) {
-                for ($i = 1; $i <= 2; $i++) {
-                    if (isset($two_column_category['category_id' . $i]) && $two_column_category['category_id' . $i] == $category->id) {
-                        $check = true;
-                        break;
+                // 3. Two / Three Column Category
+                if (!empty($home->two_column_category)) {
+                    $two_column_category = json_decode($home->two_column_category, true);
+                    if (is_array($two_column_category)) {
+                        for ($i = 1; $i <= 3; $i++) {
+                            if (isset($two_column_category['category_id' . $i]) && $two_column_category['category_id' . $i] == $category->id) {
+                                $two_column_category['category_id' . $i] = null;
+                                $two_column_category['subcategory_id' . $i] = null;
+                                $two_column_category['childcategory_id' . $i] = null;
+                                $needsUpdate = true;
+                            }
+                        }
+                        if ($needsUpdate) {
+                            $home->two_column_category = json_encode($two_column_category);
+                        }
                     }
                 }
-            }
 
-            if (is_array($home_4_popular_category)) {
-                if (in_array($category->id, $home_4_popular_category)) {
-                    $check = true;
+                // 4. Home 4 Popular Category
+                if (!empty($home->home_4_popular_category)) {
+                    $home_4_popular_category = json_decode($home->home_4_popular_category, true);
+                    if (is_array($home_4_popular_category) && in_array($category->id, $home_4_popular_category)) {
+                        $home_4_popular_category = array_values(array_filter($home_4_popular_category, function ($id) use ($category) {
+                            return $id != $category->id;
+                        }));
+                        $home->home_4_popular_category = json_encode($home_4_popular_category);
+                        $needsUpdate = true;
+                    }
                 }
-            }
 
-            if ($check) {
-                return [
-                    'message' => __('This Category is currently used in the Home Page section. Please change this category in Home Page settings before deleting it.'),
-                    'status' => 0
-                ];
+                if ($needsUpdate) {
+                    $home->save();
+                }
             }
 
             // Safely unlink or clean up related childcategories and subcategories
