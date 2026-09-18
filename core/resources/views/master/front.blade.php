@@ -316,18 +316,153 @@
             width: 100% !important;
         }
 
-        @media (max-width: 575px) {
+        @media (max-width: 767px) {
+            /* Product Card Mobile Height Reduction */
+            .product-card {
+                border-radius: 8px !important;
+            }
+            .product-card .product-thumb {
+                height: 135px !important;
+                min-height: 135px !important;
+                max-height: 135px !important;
+                aspect-ratio: unset !important;
+                padding: 6px !important;
+            }
+            .product-card .product-thumb img,
+            .product-card .product-thumb > img {
+                max-height: 122px !important;
+                width: auto !important;
+                max-width: 100% !important;
+                object-fit: contain !important;
+            }
+            .product-card .product-card-body,
+            .product-card .product-card-inner {
+                padding: 6px 8px 8px !important;
+            }
+            .product-card .product-category {
+                margin-bottom: 2px !important;
+            }
+            .product-card .product-category a {
+                font-size: 10px !important;
+                line-height: 1.1 !important;
+            }
+            .product-card .product-title {
+                font-size: 12px !important;
+                line-height: 1.25 !important;
+                min-height: 30px !important;
+                max-height: 30px !important;
+                margin-bottom: 3px !important;
+                -webkit-line-clamp: 2 !important;
+            }
+            .product-card .product-title a {
+                font-size: 12px !important;
+            }
+            .product-card .rating-stars {
+                margin-bottom: 2px !important;
+                font-size: 10px !important;
+                line-height: 1 !important;
+            }
+            .product-card .rating-stars i {
+                font-size: 9px !important;
+            }
+            .product-card .product-price {
+                font-size: 13px !important;
+                padding-top: 1px !important;
+                font-weight: 700 !important;
+            }
+            .product-card .product-price del {
+                font-size: 10px !important;
+            }
+            .product-card .product-button-group {
+                bottom: 4px !important;
+            }
+            .product-card .product-button-group .product-button {
+                width: 26px !important;
+                height: 26px !important;
+                line-height: 26px !important;
+                font-size: 11px !important;
+                margin: 0 2px !important;
+            }
             .product-card.product-list {
                 flex-direction: column !important;
             }
             .product-card.product-list .product-thumb {
                 width: 100% !important;
                 min-width: 100% !important;
-                height: 220px !important;
+                height: 150px !important;
                 border-radius: 8px 8px 0 0 !important;
             }
-            .product-card .product-thumb {
-                height: 190px !important;
+
+            /* Bundle / Deal Card Mobile Height Reduction */
+            .deal-card {
+                border-radius: 8px !important;
+            }
+            .deal-card .card-header {
+                padding: 4px 6px !important;
+                font-size: 10px !important;
+            }
+            .deal-card .card-header .deal-countdown {
+                font-size: 10.5px !important;
+            }
+            .deal-card .card-header .badge {
+                font-size: 9.5px !important;
+                padding: 2px 4px !important;
+            }
+            .deal-card img.card-img-top {
+                height: 115px !important;
+                max-height: 115px !important;
+                padding: 4px !important;
+                object-fit: contain !important;
+            }
+            .deal-card .card-body {
+                padding: 6px 8px 8px !important;
+            }
+            .deal-card h3.deal-title,
+            .deal-card h3.h6 {
+                font-size: 12px !important;
+                line-height: 1.25 !important;
+                min-height: 30px !important;
+                max-height: 30px !important;
+                display: -webkit-box !important;
+                -webkit-line-clamp: 2 !important;
+                -webkit-box-orient: vertical !important;
+                overflow: hidden !important;
+                margin-bottom: 4px !important;
+            }
+            .deal-card del {
+                font-size: 10.5px !important;
+            }
+            .deal-card .deal-price,
+            .deal-card strong.h5 {
+                font-size: 13px !important;
+            }
+            .deal-card .badge {
+                font-size: 9.5px !important;
+                padding: 2px 4px !important;
+            }
+            .deal-card .btn {
+                font-size: 11px !important;
+                padding: 3px 4px !important;
+                border-radius: 4px !important;
+            }
+            .deal-card .btn-outline-primary {
+                margin-bottom: 4px !important;
+            }
+
+            /* Section Spacing on Mobile */
+            .deal-of-day-section,
+            .popular-category-sec,
+            .flash-sell-new-section {
+                margin-top: 25px !important;
+            }
+            .section-title h2.h3 {
+                font-size: 16px !important;
+            }
+            .mobile-product-grid .col-6,
+            .mobile-bundle-grid .col-6 {
+                padding-left: 4px !important;
+                padding-right: 4px !important;
+                margin-bottom: 8px !important;
             }
         }
 
