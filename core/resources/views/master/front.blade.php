@@ -130,6 +130,11 @@
         /* ==========================================================================
            Universal Product Card Image Fitting & Card Height Equalization
            ========================================================================== */
+        .product-card,
+        .deal-card {
+            cursor: pointer !important;
+        }
+
         .product-card {
             display: flex !important;
             flex-direction: column !important;
@@ -1575,6 +1580,40 @@ body_theme4 @endif
                     m.classList.remove('show-dropdown');
                 });
             });
+
+            // Global Clickable Product & Deal Cards
+            if (window.jQuery) {
+                $(document).on('click', '.product-card, .deal-card', function(e) {
+                    // Ignore clicks on specific interactive action elements or links
+                    if ($(e.target).closest('.product-button-group, .product-button, .wishlist_store, .product_compare, .add_to_single_cart, .add_to_cart, .quick_view_btn, .product-category a, button, form, input, select, .no-card-click').length) {
+                        return;
+                    }
+
+                    var isDealCard = $(this).hasClass('deal-card');
+                    var targetUrl = null;
+
+                    if (isDealCard) {
+                        targetUrl = $(this).find('a[href*="/bundle/"], a[href*="/deal/"]').first().attr('href') || $(this).data('href');
+                    } else {
+                        targetUrl = $(this).find('.product-title a').attr('href') 
+                            || $(this).find('a[href*="/product/"]').first().attr('href') 
+                            || $(this).data('href');
+                    }
+
+                    if (targetUrl && targetUrl !== '#' && targetUrl !== 'javascript:;') {
+                        var clickedLink = $(e.target).closest('a');
+                        if (clickedLink.length && clickedLink.attr('href') === targetUrl) {
+                            return; // Let native link click event proceed
+                        }
+
+                        if (e.which === 2 || e.ctrlKey || e.metaKey) {
+                            window.open(targetUrl, '_blank');
+                        } else {
+                            window.location.href = targetUrl;
+                        }
+                    }
+                });
+            }
         });
     </script>
 </body>
