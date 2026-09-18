@@ -16,6 +16,8 @@ class Deal extends Model
         'discount_value',
         'original_price',
         'discounted_price',
+        'delivery_charge',
+        'is_free_delivery',
         'duration_days',
         'start_date',
         'end_date',
@@ -29,6 +31,8 @@ class Deal extends Model
         'original_price' => 'float',
         'discounted_price' => 'float',
         'discount_value' => 'float',
+        'delivery_charge' => 'float',
+        'is_free_delivery' => 'boolean',
         'orders_count' => 'integer',
         'status' => 'integer',
         'duration_days' => 'integer',
@@ -54,7 +58,12 @@ class Deal extends Model
     public function scopeActive($query)
     {
         return $query->where('status', 1)
-                     ->where('end_date', '>', Carbon::now());
+                     ->where(function ($q) {
+                         $q->whereNull('start_date')->orWhere('start_date', '<=', now());
+                     })
+                     ->where(function ($q) {
+                         $q->whereNull('end_date')->orWhere('end_date', '>', now());
+                     });
     }
 
     public function scopeExpired($query)
