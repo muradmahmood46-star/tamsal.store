@@ -5,8 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $setting->title }}</title>
-    <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
-    <link rel="icon" type="image/x-icon" href="{{ url('/core/public/storage/images/' . $setting->favicon) }}?v={{ !empty($setting->favicon) ? md5($setting->favicon) : time() }}" />
+    @php
+        $favPath = $setting->favicon ?? '';
+        $favUrl = !empty($favPath)
+            ? (\Illuminate\Support\Str::startsWith($favPath, 'images/') ? url('/core/public/storage/' . $favPath) : url('/core/public/storage/images/' . $favPath))
+            : asset('favicon.ico');
+        $favVersion = !empty($favPath) ? md5($favPath) : time();
+    @endphp
+    <link rel="icon" type="image/x-icon" href="{{ $favUrl }}?v={{ $favVersion }}" />
 
     <!-- Fonts and icons -->
     <script src="{{ asset('assets/back/js/plugin/webfont/webfont.min.js') }}"></script>

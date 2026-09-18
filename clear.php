@@ -242,6 +242,29 @@ if (!empty($dbname)) {
             $dbStatus[] = "✔ Database table `deal_items` created successfully!";
         }
 
+        // Favicon Sync
+        try {
+            $favStmt = $pdo->query("SELECT `favicon` FROM `settings` WHERE `id` = 1 LIMIT 1");
+            if ($favStmt && $row = $favStmt->fetch(PDO::FETCH_ASSOC)) {
+                $favFile = $row['favicon'] ?? null;
+                if ($favFile) {
+                    $srcCandidates = [
+                        __DIR__ . '/core/public/storage/images/' . $favFile,
+                        __DIR__ . '/core/storage/app/public/images/' . $favFile,
+                        __DIR__ . '/assets/images/' . $favFile
+                    ];
+                    foreach ($srcCandidates as $cand) {
+                        if (file_exists($cand)) {
+                            @copy($cand, __DIR__ . '/favicon.ico');
+                            @copy($cand, __DIR__ . '/core/public/favicon.ico');
+                            $dbStatus[] = "✔ Favicon synced to root `favicon.ico` successfully!";
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch (\Throwable $e) {}
+
         if (empty($dbStatus)) {
             $dbStatus[] = "✔ All database columns (variants, rating management, bundles & WhatsApp) are up to date.";
         }

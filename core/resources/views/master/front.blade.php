@@ -35,12 +35,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <!-- Favicon Icons-->
-    <link rel="icon" href="{{ url('/core/public/storage/images/' . $setting->favicon) }}?v={{ !empty($setting->favicon) ? md5($setting->favicon) : time() }}">
-    <link rel="shortcut icon" href="{{ url('/core/public/storage/images/' . $setting->favicon) }}?v={{ !empty($setting->favicon) ? md5($setting->favicon) : time() }}">
-    <link rel="apple-touch-icon" href="{{ url('/core/public/storage/images/' . $setting->favicon) }}?v={{ !empty($setting->favicon) ? md5($setting->favicon) : time() }}">
-    <link rel="apple-touch-icon" sizes="152x152" href="{{ url('/core/public/storage/images/' . $setting->favicon) }}?v={{ !empty($setting->favicon) ? md5($setting->favicon) : time() }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ url('/core/public/storage/images/' . $setting->favicon) }}?v={{ !empty($setting->favicon) ? md5($setting->favicon) : time() }}">
-    <link rel="apple-touch-icon" sizes="167x167" href="{{ url('/core/public/storage/images/' . $setting->favicon) }}?v={{ !empty($setting->favicon) ? md5($setting->favicon) : time() }}">
+    @php
+        $favPath = $setting->favicon ?? '';
+        $favUrl = !empty($favPath)
+            ? (\Illuminate\Support\Str::startsWith($favPath, 'images/') ? url('/core/public/storage/' . $favPath) : url('/core/public/storage/images/' . $favPath))
+            : asset('favicon.ico');
+        $favVersion = !empty($favPath) ? md5($favPath) : time();
+    @endphp
+    <link rel="icon" type="image/x-icon" href="{{ $favUrl }}?v={{ $favVersion }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ $favUrl }}?v={{ $favVersion }}">
+    <link rel="apple-touch-icon" href="{{ $favUrl }}?v={{ $favVersion }}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ $favUrl }}?v={{ $favVersion }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ $favUrl }}?v={{ $favVersion }}">
+    <link rel="apple-touch-icon" sizes="167x167" href="{{ $favUrl }}?v={{ $favVersion }}">
 
     <!-- Vendor Styles including: Bootstrap, Font Icons, Plugins, etc.-->
     <link rel="stylesheet" media="screen" href="{{ asset('assets/front/css/plugins.min.css') }}">

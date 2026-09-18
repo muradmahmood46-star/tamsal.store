@@ -28,6 +28,24 @@ class SettingRepository
         foreach ($image_files as $image_file) {
             if ($file = $request->file($image_file)) {
                 $input[$image_file] = ImageHelper::handleUpdatedUploadedImage($file, 'images', $data, 'images/', $image_file);
+                if ($image_file === 'favicon') {
+                    try {
+                        $newFav = $input[$image_file];
+                        $srcCandidates = [
+                            public_path('storage/images/' . $newFav),
+                            storage_path('app/public/images/' . $newFav),
+                            base_path('../assets/images/' . $newFav)
+                        ];
+                        foreach ($srcCandidates as $cand) {
+                            if (file_exists($cand)) {
+                                @copy($cand, base_path('../favicon.ico'));
+                                @copy($cand, public_path('favicon.ico'));
+                                @copy($cand, base_path('favicon.ico'));
+                                break;
+                            }
+                        }
+                    } catch (\Throwable $e) {}
+                }
             }
         }
 
