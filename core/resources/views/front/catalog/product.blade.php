@@ -162,8 +162,12 @@
                             <span id="main_price" class="main-price">{{ PriceHelper::grandCurrencyPrice($item) }}</span>
                         </span>
 
-                        <p class="text-muted">{{ $item->sort_details }} <a href="#details"
-                                class="scroll-to">{{ __('Read more') }}</a></p>
+                        <div class="product-short-description text-muted mb-2" style="white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word; line-height: 1.7; font-size: 14.5px;">{{ $item->sort_details }}</div>
+                        @if(!empty($item->details))
+                            <div class="mb-3">
+                                <a href="#details" class="scroll-to font-weight-bold text-primary" style="font-size: 13.5px;"><i class="fas fa-chevron-circle-down mr-1"></i> {{ __('Read full details & specifications') }}</a>
+                            </div>
+                        @endif
 
                         <style>
                             /* Product Gallery Frame & Sizing */
@@ -538,7 +542,7 @@
                     <div class="tab-content card">
                         <div class="tab-pane fade show active" id="description" role="tabpanel"
                             aria-labelledby="description-tab">
-                            {!! $item->details !!}
+                            <div class="product-full-description p-3 p-md-4" style="white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word; line-height: 1.85; font-size: 15px; color: #1e293b; font-family: inherit;">{!! $item->details !!}</div>
                         </div>
                         <div class="tab-pane fade show" id="specification" role="tabpanel"
                             aria-labelledby="specification-tab">
@@ -611,7 +615,7 @@
                                             @foreach (array_combine($sec_name, $sec_details) as $sname => $sdetail)
                                                 <tr>
                                                     <th>{{ $sname }}</th>
-                                                    <td>{{ $sdetail }}</td>
+                                                    <td style="white-space: pre-wrap; word-break: break-word; line-height: 1.6;">{{ $sdetail }}</td>
                                                 </tr>
                                             @endforeach
                                         @elseif(empty($item->tags))
