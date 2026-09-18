@@ -13,7 +13,7 @@
             <div class="mt-auto">
                 <del class="text-muted">{{ PriceHelper::setCurrencyPrice($deal->original_price) }}</del>
                 <strong class="d-block text-success h5 mb-2">{{ PriceHelper::setCurrencyPrice($deal->discounted_price) }}</strong>
-                <a href="{{ route('front.deal.details', $deal->slug) }}" class="btn btn-primary btn-sm btn-block">{{ __('View Deal') }}</a>
+                <a href="{{ route('front.deal.details', $deal->slug) }}" class="btn btn-primary btn-sm btn-block">{{ __('View Bundle') }}</a>
             </div>
         </div>
     </article>
