@@ -59,7 +59,9 @@
     <h2 class="h4 mb-3">{{ __('Included Products') }}</h2>
     <div class="row">
         @foreach($deal->dealItems as $dealItem)
-            @php($item = $dealItem->item)
+            @php
+                $item = $dealItem->item ?? null;
+            @endphp
             @if($item)
             <div class="col-md-6 mb-4">
                 <div class="card h-100">

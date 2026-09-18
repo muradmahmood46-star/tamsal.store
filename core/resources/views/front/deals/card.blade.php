@@ -21,7 +21,9 @@
                 @endphp
                 <img class="card-img-top p-3" style="height:160px;object-fit:contain" src="{{ $cardImg }}" alt="{{ $deal->name }}">
             @else
-                @php($firstItem = $deal->dealItems->first()->item ?? null)
+                @php
+                    $firstItem = $deal->dealItems->first()->item ?? null;
+                @endphp
                 @if($firstItem)
                     @php
                         $firstThumb = $firstItem->photo ?: $firstItem->thumbnail;
