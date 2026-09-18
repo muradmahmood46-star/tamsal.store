@@ -12,9 +12,18 @@
                     </h4>
                     <p class="text-muted small mb-0">{{ __('Monitor all active conversations between customers and vendor stores, and post admin support messages if needed.') }}</p>
                 </div>
-                <div class="mt-2 mt-sm-0">
-                    <span class="badge badge-primary px-3 py-2 font-weight-bold" style="font-size: 13px; border-radius: 20px;">
-                        <i class="fas fa-exchange-alt mr-1"></i> {{ $totalBuyerSellerChats }} {{ __('Vendor Conversations') }}
+                <div class="mt-2 mt-sm-0 d-flex align-items-center flex-wrap" style="gap: 6px;">
+                    @if(isset($unreadCount) && $unreadCount > 0)
+                        <span class="badge badge-danger px-3 py-2 font-weight-bold shadow-sm" style="font-size: 13px; border-radius: 20px;">
+                            <i class="fas fa-envelope-open-text mr-1"></i> {{ $unreadCount }} {{ __('New Unread Messages') }}
+                        </span>
+                    @else
+                        <span class="badge badge-success px-3 py-2 font-weight-bold shadow-sm" style="font-size: 13px; border-radius: 20px;">
+                            <i class="fas fa-check-circle mr-1"></i> 0 {{ __('New Unread Messages') }}
+                        </span>
+                    @endif
+                    <span class="badge badge-primary px-3 py-2 font-weight-bold shadow-sm" style="font-size: 13px; border-radius: 20px;">
+                        <i class="fas fa-comments mr-1"></i> {{ $totalBuyerSellerChats }} {{ __('Total Vendor Chats') }}
                     </span>
                 </div>
             </div>
@@ -43,35 +52,49 @@
             background: #f8fafc;
         }
         .admin-chat-sidebar-header {
-            padding: 14px 16px;
+            padding: 12px 14px;
             background: #ffffff;
             border-bottom: 1px solid #e2e8f0;
         }
         .admin-chat-list {
             flex-grow: 1;
             overflow-y: auto;
+            padding: 10px;
+            background: #f1f5f9;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
         .admin-chat-item {
             display: flex;
             align-items: center;
-            padding: 10px 14px;
-            border-bottom: 1px solid #f1f5f9;
+            padding: 12px 14px;
+            background: #ffffff;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             text-decoration: none !important;
             color: inherit;
-            min-height: 64px;
+            min-height: 68px;
+            border-left: 4px solid transparent;
         }
         .admin-chat-item:hover {
-            background: #f1f5f9;
+            background: #ffffff;
+            border-color: #93c5fd;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+            transform: translateY(-1px);
         }
         .admin-chat-item.active {
             background: #eff6ff;
-            border-left: 4px solid #1572e8;
+            border-color: #3b82f6;
+            border-left: 5px solid #1572e8 !important;
+            box-shadow: 0 2px 8px rgba(21, 114, 232, 0.16);
         }
         .admin-chat-avatar {
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             background: #1572e8;
             color: #ffffff;
@@ -82,7 +105,7 @@
             font-size: 15px;
             margin-right: 12px;
             flex-shrink: 0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.12);
         }
         .admin-chat-main {
             flex-grow: 1;
@@ -340,9 +363,11 @@
                         $buyerName = $conv->buyer_name;
                         $storeLabel = $conv->store_name;
                         $isDirectAdmin = ($conv->user_id == 0 || empty($conv->user_id));
+                        $hasUnread = ($conv->vendor_unread_count > 0 || $conv->user_unread_count > 0);
+                        $unreadTotal = ($conv->vendor_unread_count ?: 0) + ($conv->user_unread_count ?: 0);
                     @endphp
                     <a href="{{ route('back.buyer_seller_chat.index', ['chat_id' => $conv->id]) }}" class="admin-chat-item {{ $isActive ? 'active' : '' }}" data-search="{{ strtolower($buyerName . ' ' . $storeLabel . ' ' . ($conv->item ? $conv->item->name : '')) }}">
-                        <div class="admin-chat-avatar" style="background: {{ $isDirectAdmin ? '#0d6efd' : '#198754' }};">
+                        <div class="admin-chat-avatar" style="background: {{ $isDirectAdmin ? 'linear-gradient(135deg, #1572e8, #0d56b3)' : 'linear-gradient(135deg, #10b981, #059669)' }};">
                             <i class="fas {{ $isDirectAdmin ? 'fa-user-shield' : 'fa-store' }}" style="font-size: 16px;"></i>
                         </div>
                         <div style="flex-grow: 1; overflow: hidden; min-width: 0;">
@@ -350,44 +375,44 @@
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <div class="d-flex align-items-center" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex-grow: 1; margin-right: 8px;">
                                     @if($isDirectAdmin)
-                                        <span class="badge badge-primary px-2 py-1 text-white mr-1 shadow-sm" style="font-size: 11px; font-weight: 700; border-radius: 4px;">
+                                        <span class="badge badge-primary px-2 py-1 text-white mr-1 shadow-sm font-weight-bold" style="font-size: 11px; border-radius: 4px;">
                                             <i class="fas fa-shield-alt mr-1"></i>{{ __('Admin') }}
                                         </span>
                                         <span class="text-muted mx-1 font-weight-bold" style="font-size: 11px;">↔</span>
-                                        <span class="badge badge-success px-2 py-1 text-white text-truncate shadow-sm" style="font-size: 11px; font-weight: 700; border-radius: 4px; max-width: 140px;">
+                                        <span class="badge badge-success px-2 py-1 text-white text-truncate shadow-sm font-weight-bold" style="font-size: 11px; border-radius: 4px; max-width: 140px;">
                                             <i class="fas fa-store mr-1"></i>{{ $storeLabel }}
                                         </span>
                                     @else
-                                        <span class="badge badge-success px-2 py-1 text-white mr-1 text-truncate shadow-sm" style="font-size: 11px; font-weight: 700; border-radius: 4px; max-width: 130px;">
+                                        <span class="badge badge-success px-2 py-1 text-white mr-1 text-truncate shadow-sm font-weight-bold" style="font-size: 11px; border-radius: 4px; max-width: 130px;">
                                             <i class="fas fa-store mr-1"></i>{{ $storeLabel }}
                                         </span>
                                         <span class="text-muted mx-1 font-weight-bold" style="font-size: 11px;">↔</span>
-                                        <span class="badge badge-primary px-2 py-1 text-white text-truncate shadow-sm" style="font-size: 11px; font-weight: 700; border-radius: 4px; max-width: 120px;">
+                                        <span class="badge badge-primary px-2 py-1 text-white text-truncate shadow-sm font-weight-bold" style="font-size: 11px; border-radius: 4px; max-width: 120px;">
                                             <i class="fas fa-user mr-1"></i>{{ $buyerName }}
                                         </span>
                                     @endif
                                 </div>
                                 <small class="text-muted flex-shrink-0" style="font-size: 10.5px;">
-                                    {{ $conv->last_message_at ? $conv->last_message_at->diffForHumans(null, true) : '' }}
+                                    <i class="far fa-clock mr-1 text-secondary"></i>{{ $conv->last_message_at ? $conv->last_message_at->diffForHumans(null, true) : '' }}
                                 </small>
                             </div>
 
-                            <!-- Row 2: Message preview -->
+                            <!-- Row 2: Message preview & Unread badge -->
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="text-muted text-truncate" style="font-size: 12px; line-height: 1.25; flex-grow: 1; min-width: 0;">
-                                    @if($isDirectAdmin)
-                                        <span class="text-primary font-weight-bold mr-1" style="font-size: 10.5px;">[{{ __('Direct') }}]</span>
+                                <span class="text-muted text-truncate" style="font-size: 12px; line-height: 1.3; flex-grow: 1; min-width: 0; color: #475569 !important;">
+                                    @if($conv->item && $conv->item->name)
+                                        <span class="badge badge-light border text-primary font-weight-bold mr-1" style="font-size: 10.5px; padding: 1px 5px;"><i class="fas fa-tag mr-1"></i>{{ Str::limit($conv->item->name, 18) }}</span>
                                     @endif
-                                    {{ $conv->last_message ?: __('No messages') }}
+                                    {{ $conv->last_message ?: __('No messages yet') }}
                                 </span>
-                                @if($conv->vendor_unread_count > 0 || $conv->user_unread_count > 0)
-                                    <span class="badge badge-danger rounded-circle ml-2 flex-shrink-0" style="font-size: 9.5px; padding: 2px 6px;">{{ $conv->vendor_unread_count ?: $conv->user_unread_count }}</span>
+                                @if(!$isActive && $hasUnread)
+                                    <span class="badge badge-danger font-weight-bold ml-2 flex-shrink-0 shadow-sm" style="font-size: 10px; border-radius: 10px; padding: 2px 7px;"><i class="fas fa-circle mr-1" style="font-size: 6px;"></i>{{ $unreadTotal }} New</span>
                                 @endif
                             </div>
                         </div>
                     </a>
                 @empty
-                    <div class="text-center py-5 text-muted small">
+                    <div class="text-center py-5 text-muted small bg-white rounded-lg p-4 border" style="border-radius: 10px;">
                         <i class="fas fa-comments fa-3x mb-2 d-block text-secondary"></i>
                         {{ __('No buyer-seller conversations found.') }}
                     </div>

@@ -62,18 +62,16 @@ class BuyerSellerChatController extends Controller
 
         if ($activeChat) {
             // Clear unread count for active chat in DB and in memory
-            if ($activeChat->user_id == 0 || $activeChat->user_unread_count > 0 || $activeChat->vendor_unread_count > 0) {
-                $activeChat->update([
-                    'user_unread_count' => 0,
-                    'vendor_unread_count' => 0
-                ]);
-                $activeChat->user_unread_count = 0;
-                $activeChat->vendor_unread_count = 0;
+            $activeChat->update([
+                'user_unread_count' => 0,
+                'vendor_unread_count' => 0
+            ]);
+            $activeChat->user_unread_count = 0;
+            $activeChat->vendor_unread_count = 0;
 
-                ChatMessage::where('conversation_id', $activeChat->id)
-                    ->where('is_read', 0)
-                    ->update(['is_read' => 1]);
-            }
+            ChatMessage::where('conversation_id', $activeChat->id)
+                ->where('is_read', 0)
+                ->update(['is_read' => 1]);
 
             // Also reset in conversations collection so active item has no red badge
             foreach ($conversations as $conv) {
@@ -90,12 +88,23 @@ class BuyerSellerChatController extends Controller
 
         $totalBuyerSellerChats = Conversation::whereNotNull('vendor_id')->where('vendor_id', '>', 0)->count();
 
+        $bsConvIds = $conversations->pluck('id');
+        $unreadMessagesCount = ChatMessage::whereIn('conversation_id', $bsConvIds)
+            ->where('is_read', 0)
+            ->where('sender_type', '!=', 'admin')
+            ->count();
+
+        $convUnreadSum = $conversations->sum(function($c) {
+            return ($c->vendor_unread_count ?: 0) + ($c->user_unread_count ?: 0);
+        });
+        $unreadCount = max($unreadMessagesCount, $convUnreadSum);
+
         // Mark buyer-seller chats as seen by admin
         $now = Carbon::now()->toDateTimeString();
         session(['admin_buyer_seller_last_seen' => $now]);
         \Illuminate\Support\Facades\Cache::put('admin_buyer_seller_last_seen', $now, 60 * 24 * 365);
 
-        return view('back.buyer_seller_chat.index', compact('conversations', 'activeChat', 'messages', 'totalBuyerSellerChats'));
+        return view('back.buyer_seller_chat.index', compact('conversations', 'activeChat', 'messages', 'totalBuyerSellerChats', 'unreadCount'));
     }
 
     /**
