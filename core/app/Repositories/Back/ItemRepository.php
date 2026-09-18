@@ -546,9 +546,22 @@ class ItemRepository
 
     public function galleriesUpdate($request, $item_id = null)
     {
-        $data = $this->storeImageData($request, $item_id);
-        if (!empty($data)) {
-            Gallery::insert($data);
+        $targetItemId = $item_id ?: ($request->item_id ?? ($request['item_id'] ?? null));
+        if ($galleries = $request->file('galleries')) {
+            if (!is_array($galleries)) {
+                $galleries = [$galleries];
+            }
+            foreach ($galleries as $gallery) {
+                if ($gallery && $gallery->isValid()) {
+                    $photoName = ImageHelper::handleUploadedImage($gallery, 'images');
+                    if (!empty($photoName) && !empty($targetItemId)) {
+                        Gallery::create([
+                            'item_id' => $targetItemId,
+                            'photo'   => $photoName
+                        ]);
+                    }
+                }
+            }
         }
     }
 

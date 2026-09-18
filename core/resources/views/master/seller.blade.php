@@ -1109,7 +1109,7 @@
     <script src="{{ asset('assets/back/js/ready.min.js') }}"></script>
 
     @yield('scripts')
-    <script src="{{ asset('assets/back/js/custom.js') }}"></script>
+    <script src="{{ asset('assets/back/js/custom.js') }}?v={{ time() }}"></script>
 
     <script>
         $(document).ready(function() {

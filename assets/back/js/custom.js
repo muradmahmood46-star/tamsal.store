@@ -774,8 +774,10 @@
 
     let galleryDataTransfer = new DataTransfer();
 
-    $(document).on('change', '#gallery_file', function () {
+    $(document).on('change', '#gallery_file, #galleries', function () {
         if (!this.files || this.files.length === 0) return;
+
+        let activeInput = this;
 
         for (let i = 0; i < this.files.length; ++i) {
             let file = this.files[i];
@@ -804,7 +806,7 @@
         }
 
         // Sync file input with all accumulated files
-        this.files = galleryDataTransfer.files;
+        activeInput.files = galleryDataTransfer.files;
     });
 
     $(document).on('click', '.reader_file_remove', function () {
@@ -818,7 +820,7 @@
         galleryDataTransfer = new DataTransfer();
         currentFiles.forEach(f => galleryDataTransfer.items.add(f));
 
-        let inputEl = document.getElementById('gallery_file');
+        let inputEl = document.getElementById('gallery_file') || document.getElementById('galleries');
         if (inputEl) {
             inputEl.files = galleryDataTransfer.files;
         }
