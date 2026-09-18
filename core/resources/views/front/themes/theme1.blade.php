@@ -245,100 +245,66 @@
 
 
     @if ($setting->is_three_c_b_first == 1)
-        <style>
-            @media (max-width: 575px) {
-                .mobile-banner-col {
-                    padding-right: 4px !important;
-                    padding-left: 4px !important;
-                    margin-bottom: 2px !important;
-                }
-                .mobile-banner-row {
-                    margin-right: -4px !important;
-                    margin-left: -4px !important;
-                }
-                .mobile-banner-col .genius-banner {
-                    height: 140px !important;
-                    display: flex !important;
-                    align-items: center !important;
-                    justify-content: flex-end !important;
-                    position: relative !important;
-                }
-                .mobile-banner-col .genius-banner img {
-                    height: 90% !important;
-                    width: 50% !important; 
-                    aspect-ratio: auto !important;
-                    object-fit: contain !important;
-                    object-position: right center !important;
-                    margin-right: 5px !important;
-                }
-                .mobile-banner-col .inner-content {
-                    position: absolute !important;
-                    left: 10px !important;
-                    top: 50% !important;
-                    transform: translateY(-50%) !important;
-                    width: 50% !important;
-                    z-index: 2 !important;
-                }
-                .mobile-banner-col .inner-content h4 {
-                    font-size: 16px !important;
-                }
-                .mobile-banner-col .inner-content p {
-                    font-size: 13px !important;
-                }
-            }
-        </style>
         <div class="bannner-section mt-60">
             <div class="container ">
                 <div class="row gx-3 mobile-banner-row">
                     <div class="col-6 col-md-3 mb-3 mobile-banner-col">
-                        <a href="{{ $banner_first['firsturl1'] ?? '#' }}" class="genius-banner" style="background-color: #fff;">
-                            <img src="{{ url('/core/public/storage/images/' . ($banner_first['img1'] ?? '')) }}" alt="" style="width: 100%; aspect-ratio: 496 / 204; object-fit: contain; object-position: right center;">
-                            <div class="inner-content">
-                                @if (isset($banner_first['subtitle1']))
-                                    <p style="font-size: 12px; margin-bottom: 2px;">{{ $banner_first['subtitle1'] }}</p>
+                        <a href="{{ $banner_first['firsturl1'] ?? '#' }}" class="genius-banner modern-banner-card">
+                            <div class="banner-text-content">
+                                @if (!empty($banner_first['subtitle1']))
+                                    <span class="banner-subtitle">{{ $banner_first['subtitle1'] }}</span>
                                 @endif
-                                @if (isset($banner_first['title1']))
-                                    <h4 style="font-size: 14px;">{{ $banner_first['title1'] }}</h4>
+                                @if (!empty($banner_first['title1']))
+                                    <h4 class="banner-title">{{ $banner_first['title1'] }}</h4>
                                 @endif
+                            </div>
+                            <div class="banner-img-box">
+                                <img src="{{ url('/core/public/storage/images/' . ($banner_first['img1'] ?? '')) }}" alt="{{ $banner_first['title1'] ?? '' }}">
                             </div>
                         </a>
                     </div>
                     <div class="col-6 col-md-3 mb-3 mobile-banner-col">
-                        <a href="{{ $banner_first['firsturl2'] ?? '#' }}" class="genius-banner" style="background-color: #fff;">
-                            <img src="{{ url('/core/public/storage/images/' . ($banner_first['img2'] ?? '')) }}" alt="" style="width: 100%; aspect-ratio: 496 / 204; object-fit: contain; object-position: right center;">
-                            <div class="inner-content">
-                                @if (isset($banner_first['subtitle2']))
-                                    <p style="font-size: 12px; margin-bottom: 2px;">{{ $banner_first['subtitle2'] }}</p>
+                        <a href="{{ $banner_first['firsturl2'] ?? '#' }}" class="genius-banner modern-banner-card">
+                            <div class="banner-text-content">
+                                @if (!empty($banner_first['subtitle2']))
+                                    <span class="banner-subtitle">{{ $banner_first['subtitle2'] }}</span>
                                 @endif
-                                @if (isset($banner_first['title2']))
-                                    <h4 style="font-size: 14px;">{{ $banner_first['title2'] }}</h4>
+                                @if (!empty($banner_first['title2']))
+                                    <h4 class="banner-title">{{ $banner_first['title2'] }}</h4>
                                 @endif
+                            </div>
+                            <div class="banner-img-box">
+                                <img src="{{ url('/core/public/storage/images/' . ($banner_first['img2'] ?? '')) }}" alt="{{ $banner_first['title2'] ?? '' }}">
                             </div>
                         </a>
                     </div>
                     <div class="col-6 col-md-3 mb-3 mobile-banner-col">
-                        <a href="{{ $banner_first['firsturl3'] ?? '#' }}" class="genius-banner" style="background-color: #fff;">
-                            <img src="{{ url('/core/public/storage/images/' . ($banner_first['img3'] ?? '')) }}" alt="" style="width: 100%; aspect-ratio: 496 / 204; object-fit: contain; object-position: right center;">
-                            <div class="inner-content">
-                                @if (isset($banner_first['subtitle3']))
-                                    <p style="font-size: 12px; margin-bottom: 2px;">{{ $banner_first['subtitle3'] }} </p>
+                        <a href="{{ $banner_first['firsturl3'] ?? '#' }}" class="genius-banner modern-banner-card">
+                            <div class="banner-text-content">
+                                @if (!empty($banner_first['subtitle3']))
+                                    <span class="banner-subtitle">{{ $banner_first['subtitle3'] }}</span>
                                 @endif
-                                @if (isset($banner_first['title3']))
-                                    <h4 style="font-size: 14px;">{{ $banner_first['title3'] }}</h4>
+                                @if (!empty($banner_first['title3']))
+                                    <h4 class="banner-title">{{ $banner_first['title3'] }}</h4>
                                 @endif
+                            </div>
+                            <div class="banner-img-box">
+                                <img src="{{ url('/core/public/storage/images/' . ($banner_first['img3'] ?? '')) }}" alt="{{ $banner_first['title3'] ?? '' }}">
                             </div>
                         </a>
                     </div>
                     <div class="col-6 col-md-3 mb-3 mobile-banner-col">
-                        <a href="{{ $banner_first['firsturl4'] ?? ($banner_first['firsturl3'] ?? '#') }}" class="genius-banner" style="background-color: #fff;">
-                            <img src="{{ url('/core/public/storage/images/' . ($banner_first['img4'] ?? ($banner_first['img3'] ?? ''))) }}" alt="" style="width: 100%; aspect-ratio: 496 / 204; object-fit: contain; object-position: right center;">
-                            <div class="inner-content">
-                                @if (isset($banner_first['subtitle4']) || isset($banner_first['subtitle3']))
-                                    <p style="font-size: 12px; margin-bottom: 2px;">{{ $banner_first['subtitle4'] ?? $banner_first['subtitle3'] }} </p>
+                        <a href="{{ $banner_first['firsturl4'] ?? ($banner_first['firsturl3'] ?? '#') }}" class="genius-banner modern-banner-card">
+                            <div class="banner-text-content">
+                                @if (!empty($banner_first['subtitle4']) || !empty($banner_first['subtitle3']))
+                                    <span class="banner-subtitle">{{ $banner_first['subtitle4'] ?? ($banner_first['subtitle3'] ?? '') }}</span>
                                 @endif
-                                @if (isset($banner_first['title4']) || isset($banner_first['title3']))
-                                    <h4 style="font-size: 14px;">{{ $banner_first['title4'] ?? $banner_first['title3'] }}</h4>
+                                @if (!empty($banner_first['title4']) || !empty($banner_first['title3']))
+                                    <h4 class="banner-title">{{ $banner_first['title4'] ?? ($banner_first['title3'] ?? '') }}</h4>
                                 @endif
+                            </div>
+                            <div class="banner-img-box">
+                                <img src="{{ url('/core/public/storage/images/' . ($banner_first['img4'] ?? ($banner_first['img3'] ?? ''))) }}" alt="{{ $banner_first['title4'] ?? ($banner_first['title3'] ?? '') }}">
                             </div>
                         </a>
                     </div>

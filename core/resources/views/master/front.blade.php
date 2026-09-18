@@ -323,6 +323,155 @@
                 height: 190px !important;
             }
         }
+
+        /* ==========================================================================
+           4-Column First Banner Modern Side-by-Side Card Layout
+           ========================================================================== */
+        .bannner-section .modern-banner-card,
+        .modern-banner-card {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 12px !important;
+            padding: 14px 16px !important;
+            min-height: 104px !important;
+            height: 100% !important;
+            position: relative !important;
+            overflow: hidden !important;
+            text-decoration: none !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03) !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            box-sizing: border-box !important;
+        }
+
+        .bannner-section .modern-banner-card:hover,
+        .modern-banner-card:hover {
+            transform: translateY(-3px) !important;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07) !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        /* Left Side Text Content */
+        .bannner-section .modern-banner-card .banner-text-content,
+        .modern-banner-card .banner-text-content {
+            flex: 1 1 58% !important;
+            max-width: 60% !important;
+            padding-right: 10px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            align-items: flex-start !important;
+            text-align: left !important;
+            z-index: 2 !important;
+            position: static !important;
+            transform: none !important;
+        }
+
+        .bannner-section .modern-banner-card .banner-subtitle,
+        .modern-banner-card .banner-subtitle {
+            font-size: 11.5px !important;
+            font-weight: 700 !important;
+            color: #2563eb !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+            margin-bottom: 4px !important;
+            line-height: 1.2 !important;
+            display: inline-block !important;
+        }
+
+        .bannner-section .modern-banner-card .banner-title,
+        .modern-banner-card .banner-title {
+            font-size: 14.5px !important;
+            font-weight: 700 !important;
+            color: #0f172a !important;
+            line-height: 1.3 !important;
+            margin: 0 !important;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 2 !important;
+            -webkit-box-orient: vertical !important;
+            overflow: hidden !important;
+            word-break: break-word !important;
+        }
+
+        /* Right Side Image Box */
+        .bannner-section .modern-banner-card .banner-img-box,
+        .modern-banner-card .banner-img-box {
+            flex: 0 0 40% !important;
+            width: 40% !important;
+            max-width: 40% !important;
+            height: 75px !important;
+            max-height: 80px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            overflow: hidden !important;
+            margin-left: auto !important;
+        }
+
+        .bannner-section .modern-banner-card .banner-img-box img,
+        .modern-banner-card .banner-img-box img {
+            max-width: 100% !important;
+            max-height: 100% !important;
+            width: auto !important;
+            height: auto !important;
+            object-fit: contain !important;
+            object-position: center !important;
+            display: block !important;
+            margin: auto !important;
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            transform: scale(1) !important;
+        }
+
+        .bannner-section .modern-banner-card:hover .banner-img-box img,
+        .modern-banner-card:hover .banner-img-box img {
+            transform: scale(1.08) !important;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 575px) {
+            .bannner-section .mobile-banner-row {
+                margin-right: -4px !important;
+                margin-left: -4px !important;
+            }
+            .bannner-section .mobile-banner-col {
+                padding-right: 4px !important;
+                padding-left: 4px !important;
+                margin-bottom: 8px !important;
+            }
+            .bannner-section .modern-banner-card,
+            .modern-banner-card {
+                padding: 8px 10px !important;
+                min-height: 84px !important;
+                border-radius: 10px !important;
+            }
+            .bannner-section .modern-banner-card .banner-text-content,
+            .modern-banner-card .banner-text-content {
+                flex: 1 1 56% !important;
+                max-width: 58% !important;
+                padding-right: 6px !important;
+            }
+            .bannner-section .modern-banner-card .banner-subtitle,
+            .modern-banner-card .banner-subtitle {
+                font-size: 10px !important;
+                margin-bottom: 2px !important;
+            }
+            .bannner-section .modern-banner-card .banner-title,
+            .modern-banner-card .banner-title {
+                font-size: 12px !important;
+                line-height: 1.25 !important;
+            }
+            .bannner-section .modern-banner-card .banner-img-box,
+            .modern-banner-card .banner-img-box {
+                flex: 0 0 42% !important;
+                width: 42% !important;
+                max-width: 42% !important;
+                height: 62px !important;
+                max-height: 65px !important;
+            }
+        }
     </style>
     {{-- Google AdSense Start --}}
     @if ($setting->is_google_adsense == '1')

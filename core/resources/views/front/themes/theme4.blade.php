@@ -138,42 +138,48 @@
     <div class="bannner-section mt-60">
         <div class="container ">
             <div class="row gx-3">
-                <div class="col-md-4">
-                    <a href="{{$banner_first['firsturl1']}}" class="genius-banner">
-                        <img src="{{ url('/core/public/storage/images/'.$banner_first['img1']) }}" alt="">
-                        <div class="inner-content">
-                            @if (isset($banner_first['subtitle1']))
-                                <p>{{$banner_first['subtitle1']}}</p>
+                <div class="col-md-4 mb-3">
+                    <a href="{{$banner_first['firsturl1']}}" class="genius-banner modern-banner-card">
+                        <div class="banner-text-content">
+                            @if (!empty($banner_first['subtitle1']))
+                                <span class="banner-subtitle">{{$banner_first['subtitle1']}}</span>
                             @endif
-                            @if (isset($banner_first['title1']))
-                                <h4>{{$banner_first['title1']}}</h4>
+                            @if (!empty($banner_first['title1']))
+                                <h4 class="banner-title">{{$banner_first['title1']}}</h4>
                             @endif
+                        </div>
+                        <div class="banner-img-box">
+                            <img src="{{ url('/core/public/storage/images/'.$banner_first['img1']) }}" alt="{{ $banner_first['title1'] ?? '' }}">
                         </div>
                     </a>
                 </div>
-                <div class="col-md-4">
-                    <a href="{{$banner_first['firsturl2']}}" class="genius-banner">
-                        <img src="{{ url('/core/public/storage/images/'.$banner_first['img2']) }}" alt="">
-                        <div class="inner-content">
-                            @if (isset($banner_first['subtitle2']))
-                                <p>{{$banner_first['subtitle2']}}</p>
+                <div class="col-md-4 mb-3">
+                    <a href="{{$banner_first['firsturl2']}}" class="genius-banner modern-banner-card">
+                        <div class="banner-text-content">
+                            @if (!empty($banner_first['subtitle2']))
+                                <span class="banner-subtitle">{{$banner_first['subtitle2']}}</span>
                             @endif
-                            @if (isset($banner_first['title2']))
-                                <h4>{{$banner_first['title2']}}</h4>
+                            @if (!empty($banner_first['title2']))
+                                <h4 class="banner-title">{{$banner_first['title2']}}</h4>
                             @endif
+                        </div>
+                        <div class="banner-img-box">
+                            <img src="{{ url('/core/public/storage/images/'.$banner_first['img2']) }}" alt="{{ $banner_first['title2'] ?? '' }}">
                         </div>
                     </a>
                 </div>
-                <div class="col-md-4">
-                    <a href="{{$banner_first['firsturl3']}}" class="genius-banner">
-                        <img src="{{ url('/core/public/storage/images/'.$banner_first['img3']) }}" alt="">
-                        <div class="inner-content">
-                            @if (isset($banner_first['subtitle3']))
-                                <p>{{$banner_first['subtitle3']}} </p>
+                <div class="col-md-4 mb-3">
+                    <a href="{{$banner_first['firsturl3']}}" class="genius-banner modern-banner-card">
+                        <div class="banner-text-content">
+                            @if (!empty($banner_first['subtitle3']))
+                                <span class="banner-subtitle">{{$banner_first['subtitle3']}}</span>
                             @endif
-                            @if (isset($banner_first['title3']))
-                                <h4>{{$banner_first['title3']}}</h4>
+                            @if (!empty($banner_first['title3']))
+                                <h4 class="banner-title">{{$banner_first['title3']}}</h4>
                             @endif
+                        </div>
+                        <div class="banner-img-box">
+                            <img src="{{ url('/core/public/storage/images/'.$banner_first['img3']) }}" alt="{{ $banner_first['title3'] ?? '' }}">
                         </div>
                     </a>
                 </div>
