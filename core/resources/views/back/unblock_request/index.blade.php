@@ -23,10 +23,10 @@
 
     @include('alerts.alerts')
 
-    <!-- Status Tabs -->
+    <!-- Status Tabs & Search -->
     <div class="row mb-3">
-        <div class="col-12 d-flex flex-wrap align-items-center justify-content-between gap-2">
-            <div class="btn-group flex-wrap" role="group">
+        <div class="col-xl-7 col-lg-6 col-12 mb-2 mb-lg-0">
+            <div class="btn-group flex-wrap w-100 w-lg-auto" role="group">
                 <a href="{{ route('back.unblock_request.index') }}" class="btn btn-sm {{ empty($status) ? 'btn-primary font-weight-bold' : 'btn-outline-primary' }}">
                     {{ __('All Stores') }} <span class="badge badge-light ml-1">{{ $counts['all'] }}</span>
                 </a>
@@ -43,18 +43,25 @@
                     <i class="fas fa-check-circle mr-1"></i> {{ __('Unblocked') }} <span class="badge badge-success ml-1">{{ $counts['unblocked'] }}</span>
                 </a>
             </div>
+        </div>
 
+        <div class="col-xl-5 col-lg-6 col-12">
             <!-- Search Form -->
-            <form action="{{ route('back.unblock_request.index') }}" method="GET" class="form-inline mt-2 mt-md-0">
+            <form action="{{ route('back.unblock_request.index') }}" method="GET" class="d-flex w-100">
                 @if($status)
                     <input type="hidden" name="status" value="{{ $status }}">
                 @endif
-                <div class="input-group input-group-sm">
-                    <input type="text" name="search" class="form-control" placeholder="{{ __('Search store, name, email...') }}" value="{{ request('search') }}" style="border-radius: 20px 0 0 20px;">
+                <div class="input-group input-group-sm w-100">
+                    <input type="text" name="search" class="form-control" placeholder="{{ __('Search store, name, email...') }}" value="{{ request('search') }}" style="border-radius: 20px 0 0 20px; font-size: 13.5px; height: 38px;">
                     <div class="input-group-append">
-                        <button class="btn btn-primary btn-sm" type="submit" style="border-radius: 0 20px 20px 0;">
+                        <button class="btn btn-primary px-3" type="submit" style="{{ request('search') ? '' : 'border-radius: 0 20px 20px 0;' }} height: 38px;">
                             <i class="fas fa-search"></i>
                         </button>
+                        @if(request('search'))
+                            <a href="{{ route('back.unblock_request.index', $status ? ['status' => $status] : []) }}" class="btn btn-secondary px-3" style="border-radius: 0 20px 20px 0; height: 38px;" title="{{ __('Clear Filter') }}">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        @endif
                     </div>
                 </div>
             </form>

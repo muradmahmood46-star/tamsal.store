@@ -227,6 +227,81 @@
             color: #ffffff;
             border-color: #1572e8;
         }
+
+        @media (max-width: 767.98px) {
+            .admin-chat-container {
+                height: calc(100vh - 140px) !important;
+                min-height: 480px !important;
+                border-radius: 8px !important;
+                flex-direction: column !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+
+            @if($activeChat)
+                .admin-chat-sidebar {
+                    display: none !important;
+                }
+                .admin-chat-main {
+                    display: flex !important;
+                    width: 100% !important;
+                    height: 100% !important;
+                }
+            @else
+                .admin-chat-sidebar {
+                    display: flex !important;
+                    width: 100% !important;
+                    height: 100% !important;
+                    min-width: 0 !important;
+                    border-right: none !important;
+                }
+                .admin-chat-main {
+                    display: none !important;
+                }
+            @endif
+
+            .admin-chat-header {
+                padding: 10px 12px !important;
+            }
+
+            .admin-chat-product-bar {
+                padding: 8px 12px !important;
+                flex-wrap: wrap !important;
+                gap: 6px !important;
+            }
+
+            .admin-chat-product-bar > div {
+                max-width: calc(100% - 95px) !important;
+            }
+
+            .admin-chat-stream {
+                padding: 12px 10px !important;
+            }
+
+            .bubble-buyer, .bubble-seller {
+                max-width: 88% !important;
+                font-size: 13.5px !important;
+            }
+
+            .admin-chat-footer {
+                padding: 8px 10px !important;
+            }
+
+            .admin-chat-input {
+                font-size: 13px !important;
+                padding: 8px 14px !important;
+            }
+
+            .admin-chat-send {
+                width: 38px !important;
+                height: 38px !important;
+                font-size: 14px !important;
+            }
+
+            .admin-quick-replies {
+                padding: 6px 10px !important;
+            }
+        }
     </style>
 
     <div class="admin-chat-container">
@@ -293,32 +368,35 @@
                 @endphp
                 <!-- Header -->
                 <div class="admin-chat-header">
-                    <div class="d-flex align-items-center">
-                        <div class="admin-chat-avatar mr-3">
+                    <div class="d-flex align-items-center" style="min-width: 0;">
+                        <a href="{{ route('back.message.index') }}" class="btn btn-sm btn-light border mr-2 d-md-none text-dark shadow-sm" style="border-radius: 6px; padding: 5px 10px; flex-shrink: 0;" title="{{ __('Back to Chats') }}">
+                            <i class="fas fa-arrow-left"></i>
+                        </a>
+                        <div class="admin-chat-avatar mr-2 mr-md-3">
                             {{ strtoupper(substr($activeBuyer, 0, 1)) }}
                         </div>
-                        <div>
+                        <div style="min-width: 0;">
                             <div class="d-flex align-items-center flex-wrap">
-                                <span class="badge badge-primary text-white px-3 py-2 shadow-sm" style="font-size: 13px; font-weight: 700; border-radius: 6px;">
+                                <span class="badge badge-primary text-white px-2 px-md-3 py-1 py-md-2 shadow-sm mr-1" style="font-size: 12px; font-weight: 700; border-radius: 6px;">
                                     <i class="fas fa-user mr-1"></i> {{ $activeBuyer }}
                                 </span>
-                                <span class="text-secondary mx-2 font-weight-bold" style="font-size: 17px;">↔</span>
-                                <span class="badge badge-dark text-white px-3 py-2 shadow-sm" style="font-size: 13px; font-weight: 700; border-radius: 6px;">
-                                    <i class="fas fa-shield-alt mr-1"></i> {{ __('Platform Administration Support') }}
+                                <span class="text-secondary mx-1 d-none d-sm-inline font-weight-bold" style="font-size: 15px;">↔</span>
+                                <span class="badge badge-dark text-white px-2 px-md-3 py-1 py-md-2 shadow-sm d-none d-sm-inline-block" style="font-size: 12px; font-weight: 700; border-radius: 6px;">
+                                    <i class="fas fa-shield-alt mr-1"></i> {{ __('Admin Support') }}
                                 </span>
                             </div>
-                            <div class="small text-muted mt-1">
+                            <div class="small text-muted mt-1 text-truncate" style="max-width: 200px;">
                                 <span><i class="fas fa-envelope mr-1 text-primary"></i> {{ $activeChat->user ? $activeChat->user->email : 'N/A' }}</span>
                                 @if($activeChat->user && $activeChat->user->phone)
-                                    <span class="mx-2">|</span>
+                                    <span class="mx-1">•</span>
                                     <span><i class="fas fa-phone mr-1 text-success"></i> {{ $activeChat->user->phone }}</span>
                                 @endif
                             </div>
                         </div>
                     </div>
-                    <div>
+                    <div class="flex-shrink-0 ml-2">
                         <a href="{{ route('back.message.delete', $activeChat->id) }}" class="btn btn-outline-danger btn-sm" onclick="return confirm('{{ __('Are you sure you want to delete this chat conversation?') }}')">
-                            <i class="fas fa-trash-alt mr-1"></i> {{ __('Delete') }}
+                            <i class="fas fa-trash-alt mr-1"></i> <span class="d-none d-sm-inline">{{ __('Delete') }}</span>
                         </a>
                     </div>
                 </div>

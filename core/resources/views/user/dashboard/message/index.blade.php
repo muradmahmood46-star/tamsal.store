@@ -174,6 +174,76 @@
         cursor: pointer;
         flex-shrink: 0;
     }
+
+    @media (max-width: 767.98px) {
+        .user-chat-box {
+            height: calc(100vh - 140px) !important;
+            min-height: 480px !important;
+            border-radius: 8px !important;
+            flex-direction: column !important;
+            width: 100% !important;
+        }
+
+        @if($activeChat)
+            .user-chat-sidebar {
+                display: none !important;
+            }
+            .user-chat-main {
+                display: flex !important;
+                width: 100% !important;
+                height: 100% !important;
+            }
+        @else
+            .user-chat-sidebar {
+                display: flex !important;
+                width: 100% !important;
+                height: 100% !important;
+                min-width: 0 !important;
+                border-right: none !important;
+            }
+            .user-chat-main {
+                display: none !important;
+            }
+        @endif
+
+        .user-chat-header {
+            padding: 10px 12px !important;
+        }
+
+        .user-chat-product-banner {
+            padding: 8px 12px !important;
+            flex-wrap: wrap !important;
+            gap: 6px !important;
+        }
+
+        .user-chat-product-banner > div {
+            max-width: calc(100% - 95px) !important;
+        }
+
+        .user-chat-stream {
+            padding: 12px 10px !important;
+        }
+
+        .user-bubble {
+            max-width: 88% !important;
+            font-size: 13.5px !important;
+        }
+
+        .user-chat-footer {
+            padding: 8px 10px !important;
+        }
+
+        .user-chat-input {
+            font-size: 13px !important;
+            padding: 8px 14px !important;
+        }
+
+        .user-chat-send {
+            width: 38px !important;
+            height: 38px !important;
+            font-size: 14px !important;
+        }
+    }
 </style>
 
 <div class="container padding-bottom-3x mb-1">
@@ -227,23 +297,26 @@
                     @if($activeChat)
                         <!-- Header -->
                         <div class="user-chat-header">
-                            <div class="d-flex align-items-center">
-                                <div class="user-chat-avatar">
+                            <div class="d-flex align-items-center" style="min-width: 0;">
+                                <a href="{{ route('user.message.index') }}" class="btn btn-sm btn-light border mr-2 d-md-none text-dark shadow-sm" style="border-radius: 6px; padding: 5px 10px; flex-shrink: 0;" title="{{ __('Back to Chats') }}">
+                                    <i class="fas fa-arrow-left"></i>
+                                </a>
+                                <div class="user-chat-avatar mr-2" style="width: 38px; height: 38px; font-size: 15px;">
                                     <i class="fas fa-store"></i>
                                 </div>
-                                <div>
-                                    <h6 class="mb-0 font-weight-bold text-dark">
+                                <div style="min-width: 0;">
+                                    <h6 class="mb-0 font-weight-bold text-dark text-truncate" style="font-size: 14px;">
                                         {{ $activeChat->store_name }}
-                                        <span class="badge badge-success ml-1 py-1 px-2 font-weight-normal" style="font-size: 11px;">
+                                        <span class="badge badge-success ml-1 py-1 px-2 font-weight-normal d-none d-sm-inline-block" style="font-size: 11px;">
                                             <i class="fas fa-check-circle mr-1"></i>{{ ($activeChat->vendor_id > 0) ? __('Verified Store') : __('Official Store') }}
                                         </span>
                                     </h6>
-                                    <small class="text-muted">{{ __('Direct Chat with Store Seller') }}</small>
+                                    <small class="text-muted d-block text-truncate" style="font-size: 11px;">{{ __('Direct Chat with Store Seller') }}</small>
                                 </div>
                             </div>
-                            <div>
+                            <div class="flex-shrink-0 ml-2">
                                 <a href="{{ route('user.message.delete', $activeChat->id) }}" class="btn btn-outline-danger btn-sm" onclick="return confirm('{{ __('Are you sure you want to delete this chat?') }}')">
-                                    <i class="fas fa-trash-alt mr-1"></i> {{ __('Delete') }}
+                                    <i class="fas fa-trash-alt mr-1"></i> <span class="d-none d-sm-inline">{{ __('Delete') }}</span>
                                 </a>
                             </div>
                         </div>

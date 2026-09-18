@@ -246,6 +246,81 @@
             color: #ffffff;
             border-color: #1572e8;
         }
+
+        @media (max-width: 767.98px) {
+            .admin-chat-container {
+                height: calc(100vh - 140px) !important;
+                min-height: 480px !important;
+                border-radius: 8px !important;
+                flex-direction: column !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+
+            @if($activeChat)
+                .admin-chat-sidebar {
+                    display: none !important;
+                }
+                .admin-chat-main {
+                    display: flex !important;
+                    width: 100% !important;
+                    height: 100% !important;
+                }
+            @else
+                .admin-chat-sidebar {
+                    display: flex !important;
+                    width: 100% !important;
+                    height: 100% !important;
+                    min-width: 0 !important;
+                    border-right: none !important;
+                }
+                .admin-chat-main {
+                    display: none !important;
+                }
+            @endif
+
+            .admin-chat-header {
+                padding: 10px 12px !important;
+            }
+
+            .admin-chat-product-bar {
+                padding: 8px 12px !important;
+                flex-wrap: wrap !important;
+                gap: 6px !important;
+            }
+
+            .admin-chat-product-bar > div {
+                max-width: calc(100% - 95px) !important;
+            }
+
+            .admin-chat-stream {
+                padding: 12px 10px !important;
+            }
+
+            .bubble-buyer, .bubble-seller, .bubble-admin {
+                max-width: 88% !important;
+                font-size: 13.5px !important;
+            }
+
+            .admin-chat-footer {
+                padding: 8px 10px !important;
+            }
+
+            .admin-chat-input {
+                font-size: 13px !important;
+                padding: 8px 14px !important;
+            }
+
+            .admin-chat-send {
+                width: 38px !important;
+                height: 38px !important;
+                font-size: 14px !important;
+            }
+
+            .admin-quick-replies {
+                padding: 6px 10px !important;
+            }
+        }
     </style>
 
     <div class="admin-chat-container">
@@ -326,49 +401,48 @@
                 @endphp
                 <!-- Header -->
                 <div class="admin-chat-header">
-                    <div class="d-flex align-items-center">
-                        <div class="admin-chat-avatar mr-3" style="background: {{ $isDirectAdmin ? '#0d6efd' : '#198754' }};">
-                            <i class="fas {{ $isDirectAdmin ? 'fa-user-shield' : 'fa-store' }}" style="font-size: 18px;"></i>
+                    <div class="d-flex align-items-center" style="min-width: 0;">
+                        <a href="{{ route('back.buyer_seller_chat.index') }}" class="btn btn-sm btn-light border mr-2 d-md-none text-dark shadow-sm" style="border-radius: 6px; padding: 5px 10px; flex-shrink: 0;" title="{{ __('Back to Chats') }}">
+                            <i class="fas fa-arrow-left"></i>
+                        </a>
+                        <div class="admin-chat-avatar mr-2 mr-md-3" style="background: {{ $isDirectAdmin ? '#0d6efd' : '#198754' }};">
+                            <i class="fas {{ $isDirectAdmin ? 'fa-user-shield' : 'fa-store' }}" style="font-size: 16px;"></i>
                         </div>
-                        <div>
+                        <div style="min-width: 0;">
                             <div class="d-flex align-items-center flex-wrap">
                                 @if($isDirectAdmin)
-                                    <span class="badge badge-primary text-white px-3 py-2 shadow-sm" style="font-size: 13px; font-weight: 700; border-radius: 6px;">
+                                    <span class="badge badge-primary text-white px-2 px-md-3 py-1 py-md-2 shadow-sm mr-1" style="font-size: 12px; font-weight: 700; border-radius: 6px;">
                                         <i class="fas fa-shield-alt mr-1"></i> {{ __('Admin') }}
                                     </span>
-                                    <span class="text-secondary mx-2 font-weight-bold" style="font-size: 17px;">↔</span> 
-                                    <a href="{{ $activeChat->store_url }}" target="_blank" class="badge badge-success text-white px-3 py-2 shadow-sm text-decoration-none" style="font-size: 13px; font-weight: 700; border-radius: 6px;" title="{{ __('Open Store Page in New Tab') }}">
+                                    <span class="text-secondary mx-1 font-weight-bold" style="font-size: 15px;">↔</span> 
+                                    <a href="{{ $activeChat->store_url }}" target="_blank" class="badge badge-success text-white px-2 px-md-3 py-1 py-md-2 shadow-sm text-decoration-none mr-1" style="font-size: 12px; font-weight: 700; border-radius: 6px;" title="{{ __('Open Store Page in New Tab') }}">
                                         <i class="fas fa-store mr-1"></i> {{ $activeStore }} <i class="fas fa-external-link-alt ml-1" style="font-size: 9px;"></i>
                                     </a>
-                                    <span class="badge badge-light border text-dark ml-2 px-2 py-1" style="font-size: 12px; font-weight: 600;">
+                                    <span class="badge badge-light border text-dark px-2 py-1 d-none d-sm-inline-block" style="font-size: 11.5px; font-weight: 600;">
                                         <i class="fas fa-user-tie text-muted mr-1"></i> {{ $activeBuyer }}
                                     </span>
                                 @else
-                                    <a href="{{ $activeChat->store_url }}" target="_blank" class="badge badge-success text-white px-3 py-2 shadow-sm text-decoration-none mr-1" style="font-size: 13px; font-weight: 700; border-radius: 6px;" title="{{ __('Open Store Page in New Tab') }}">
+                                    <a href="{{ $activeChat->store_url }}" target="_blank" class="badge badge-success text-white px-2 px-md-3 py-1 py-md-2 shadow-sm text-decoration-none mr-1" style="font-size: 12px; font-weight: 700; border-radius: 6px;" title="{{ __('Open Store Page in New Tab') }}">
                                         <i class="fas fa-store mr-1"></i> {{ $activeStore }} <i class="fas fa-external-link-alt ml-1" style="font-size: 9px;"></i>
                                     </a>
-                                    <span class="text-secondary mx-2 font-weight-bold" style="font-size: 17px;">↔</span> 
-                                    <span class="badge badge-primary text-white px-3 py-2 shadow-sm" style="font-size: 13px; font-weight: 700; border-radius: 6px;">
-                                        <i class="fas fa-user mr-1"></i> {{ $activeBuyer }} <span class="badge badge-light text-primary ml-1" style="font-size: 10px;">{{ __('Customer') }}</span>
+                                    <span class="text-secondary mx-1 font-weight-bold" style="font-size: 15px;">↔</span> 
+                                    <span class="badge badge-primary text-white px-2 px-md-3 py-1 py-md-2 shadow-sm" style="font-size: 12px; font-weight: 700; border-radius: 6px;">
+                                        <i class="fas fa-user mr-1"></i> {{ $activeBuyer }} <span class="badge badge-light text-primary ml-1 d-none d-sm-inline-block" style="font-size: 10px;">{{ __('Customer') }}</span>
                                     </span>
                                 @endif
                             </div>
-                            <div class="small text-muted mt-1">
+                            <div class="small text-muted mt-1 text-truncate" style="max-width: 200px;">
                                 @if($isDirectAdmin)
-                                    <span><i class="fas fa-shield-alt mr-1 text-primary"></i> <strong>Admin</strong> ({{ __('Administration') }})</span>
-                                    <span class="mx-2">|</span>
-                                    <span><i class="fas fa-store mr-1 text-success"></i> <strong>{{ $activeStore }}</strong> • Owner: <strong>{{ $activeBuyer }}</strong> ({{ $activeChat->vendor ? $activeChat->vendor->email : 'N/A' }}{{ ($activeChat->vendor && $activeChat->vendor->phone) ? ' • ' . $activeChat->vendor->phone : '' }})</span>
+                                    <span><i class="fas fa-store mr-1 text-success"></i> <strong>{{ $activeStore }}</strong> ({{ $activeChat->vendor ? $activeChat->vendor->email : 'N/A' }})</span>
                                 @else
-                                    <span><i class="fas fa-store mr-1 text-success"></i> <strong>Store</strong>: {{ $activeStore }} ({{ $activeChat->vendor ? $activeChat->vendor->email : 'N/A' }})</span>
-                                    <span class="mx-2">|</span>
-                                    <span><i class="fas fa-user mr-1 text-primary"></i> <strong>Customer</strong>: {{ $activeBuyer }} ({{ $activeChat->user ? $activeChat->user->email : 'N/A' }}{{ ($activeChat->user && $activeChat->user->phone) ? ' • ' . $activeChat->user->phone : '' }})</span>
+                                    <span><i class="fas fa-store mr-1 text-success"></i> {{ $activeStore }} <span class="mx-1">•</span> <i class="fas fa-user mr-1 text-primary"></i> {{ $activeBuyer }}</span>
                                 @endif
                             </div>
                         </div>
                     </div>
-                    <div>
+                    <div class="flex-shrink-0 ml-2">
                         <a href="{{ route('back.buyer_seller_chat.delete', $activeChat->id) }}" class="btn btn-outline-danger btn-sm" onclick="return confirm('{{ __('Are you sure you want to delete this chat conversation?') }}')">
-                            <i class="fas fa-trash-alt mr-1"></i> {{ __('Delete') }}
+                            <i class="fas fa-trash-alt mr-1"></i> <span class="d-none d-sm-inline">{{ __('Delete') }}</span>
                         </a>
                     </div>
                 </div>

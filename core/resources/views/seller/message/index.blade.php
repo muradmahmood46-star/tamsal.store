@@ -344,19 +344,19 @@
             @if($activeChat)
                 <!-- Chat Header -->
                 <div class="chat-header">
-                    <div class="d-flex align-items-center">
-                        <a href="{{ route('seller.message.index') }}" class="btn btn-outline-primary btn-sm d-md-none mr-2 px-2 py-1" title="{{ __('Back to Chats') }}">
-                            <i class="fas fa-arrow-left mr-1"></i> {{ __('Chats') }}
+                    <div class="d-flex align-items-center" style="min-width: 0;">
+                        <a href="{{ route('seller.message.index') }}" class="btn btn-sm btn-light border mr-2 d-md-none text-dark shadow-sm" style="border-radius: 6px; padding: 5px 10px; flex-shrink: 0;" title="{{ __('Back to Chats') }}">
+                            <i class="fas fa-arrow-left"></i>
                         </a>
-                        <div class="chat-avatar" style="background: #008069; color: #fff;">
+                        <div class="chat-avatar mr-2" style="background: #008069; color: #fff; width: 38px; height: 38px; font-size: 15px;">
                             {{ strtoupper(substr($activeChat->buyer_name, 0, 1)) ?: 'C' }}
                         </div>
-                        <div>
-                            <h6 class="mb-0 font-weight-bold text-dark">{{ $activeChat->buyer_name }}</h6>
-                            <small class="text-muted">
-                                <i class="fas fa-envelope mr-1"></i> {{ $activeChat->user->email ?? 'N/A' }} 
+                        <div style="min-width: 0;">
+                            <h6 class="mb-0 font-weight-bold text-dark text-truncate" style="font-size: 14px;">{{ $activeChat->buyer_name }}</h6>
+                            <small class="text-muted text-truncate d-block" style="font-size: 11px;">
+                                <span><i class="fas fa-envelope mr-1 text-primary"></i> {{ $activeChat->user->email ?? 'N/A' }}</span>
                                 @if($activeChat->user && $activeChat->user->phone)
-                                    <span class="mx-1">•</span> <i class="fas fa-phone mr-1"></i> {{ $activeChat->user->phone }}
+                                    <span class="mx-1">•</span> <span><i class="fas fa-phone mr-1 text-success"></i> {{ $activeChat->user->phone }}</span>
                                 @endif
                             </small>
                         </div>
