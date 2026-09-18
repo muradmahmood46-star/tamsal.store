@@ -146,9 +146,9 @@
                                 @foreach($advance_discount_details as $detail)
                                     @if($detail['discount'] > 0)
                                         <div class="d-flex justify-content-between align-items-start py-1" style="border-bottom: 1px dotted #fed7d7; text-align: left;">
-                                            <div style="text-align: left; flex: 1;">
-                                                <div class="font-weight-bold text-dark text-left" style="font-size: 12px; text-align: left !important; margin: 0; padding: 0;">• {{ \Illuminate\Support\Str::limit($detail['name'], 22) }}</div>
-                                                <div class="text-muted text-left" style="font-size: 11px; text-align: left !important; margin: 0; padding: 0;">Price: {{ PriceHelper::setCurrencyPrice($detail['price']) }}</div>
+                                            <div style="text-align: left; flex: 1; padding-right: 6px;">
+                                                <div class="font-weight-bold text-dark text-left" style="font-size: 12px; text-align: left !important; margin: 0; padding: 0;">• {{ \Illuminate\Support\Str::limit($detail['name'], 30) }}</div>
+                                                <div class="text-muted text-left" style="font-size: 11px; text-align: left !important; margin: 0; padding: 0;">{{ __('Price') }}: {{ PriceHelper::setCurrencyPrice($detail['price']) }}</div>
                                             </div>
                                             <div class="text-danger font-weight-bold text-right" style="font-size: 12px; white-space: nowrap; text-align: right;">
                                                 -{{ PriceHelper::setCurrencyPrice($detail['discount']) }}
@@ -177,7 +177,51 @@
 
     <section class="card widget widget-featured-posts widget-featured-products p-4">
         <h3 class="widget-title">{{ __('Items In Your Cart') }}</h3>
-        @foreach ($cart as $key => $item)
+        @php
+            $bundleGroups = [];
+            $standaloneItems = [];
+            foreach ($cart as $key => $item) {
+                if (!empty($item['deal_id'])) {
+                    $dealId = $item['deal_id'];
+                    $bundleGroups[$dealId]['deal_name'] = $item['deal_name'] ?? __('Bundle Deal');
+                    $bundleGroups[$dealId]['items'][$key] = $item;
+                } else {
+                    $standaloneItems[$key] = $item;
+                }
+            }
+        @endphp
+
+        @foreach($bundleGroups as $dealId => $group)
+            <div class="mb-3 p-2 rounded" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+                <div class="d-flex align-items-center mb-2 pb-1" style="border-bottom: 2px solid #007bff;">
+                    <span class="badge badge-primary mr-2" style="font-size: 11px;"><i class="fas fa-layer-group"></i> {{ __('Bundle') }}</span>
+                    <strong class="text-dark" style="font-size: 13px;">{{ $group['deal_name'] }}</strong>
+                </div>
+                @foreach($group['items'] as $key => $item)
+                    <div class="entry pl-2 mb-2 pb-2" style="border-bottom: 1px dotted #e2e8f0;">
+                        <div class="entry-thumb"><a href="{{ route('front.product', $item['slug']) }}"><img
+                                    src="{{ url('/core/public/storage/images/' . $item['photo']) }}" alt="Product"></a>
+                        </div>
+                        <div class="entry-content">
+                            <h4 class="entry-title"><a href="{{ route('front.product', $item['slug']) }}">
+                                    {{ Str::limit($item['name'], 45) }}
+                                </a></h4>
+                            <span class="entry-meta">{{ $item['qty'] }} x
+                                {{ PriceHelper::setCurrencyPrice($item['main_price']) }}</span>
+
+                            @if(isset($item['attribute']['option_name']))
+                                @foreach ($item['attribute']['option_name'] as $optionkey => $option_name)
+                                    <span class="entry-meta"><b>{{ $option_name }}</b> :
+                                        {{ PriceHelper::setCurrencySign() }}{{ $item['attribute']['option_price'][$optionkey] ?? '' }}</span>
+                                @endforeach
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endforeach
+
+        @foreach ($standaloneItems as $key => $item)
             <div class="entry">
                 <div class="entry-thumb"><a href="{{ route('front.product', $item['slug']) }}"><img
                             src="{{ url('/core/public/storage/images/' . $item['photo']) }}" alt="Product"></a>
@@ -185,15 +229,16 @@
                 <div class="entry-content">
                     <h4 class="entry-title"><a href="{{ route('front.product', $item['slug']) }}">
                             {{ Str::limit($item['name'], 45) }}
-
                         </a></h4>
                     <span class="entry-meta">{{ $item['qty'] }} x
-                        {{ PriceHelper::setCurrencyPrice($item['main_price']) }}.</span>
+                        {{ PriceHelper::setCurrencyPrice($item['main_price']) }}</span>
 
-                    @foreach ($item['attribute']['option_name'] as $optionkey => $option_name)
-                        <span class="entry-meta"><b>{{ $option_name }}</b> :
-                            {{ PriceHelper::setCurrencySign() }}{{ $item['attribute']['option_price'][$optionkey] }}</span>
-                    @endforeach
+                    @if(isset($item['attribute']['option_name']))
+                        @foreach ($item['attribute']['option_name'] as $optionkey => $option_name)
+                            <span class="entry-meta"><b>{{ $option_name }}</b> :
+                                {{ PriceHelper::setCurrencySign() }}{{ $item['attribute']['option_price'][$optionkey] ?? '' }}</span>
+                        @endforeach
+                    @endif
                 </div>
             </div>
         @endforeach

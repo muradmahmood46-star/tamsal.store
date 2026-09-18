@@ -174,6 +174,14 @@
                                     <input type="number" min="0" step="0.01" class="form-control" name="delivery_charge" id="delivery_charge" value="{{ old('delivery_charge', PriceHelper::setPrice($deal->delivery_charge)) }}">
                                 </div>
 
+                                <div class="form-group">
+                                    <label for="advance_discount">{{ __('Advance Payment Offer Discount / Less (PKR)') }}</label>
+                                    <input type="number" min="0" step="0.01" class="form-control" name="advance_discount" id="advance_discount" value="{{ old('advance_discount', PriceHelper::setPrice($deal->advance_discount ?? 0)) }}" placeholder="{{ __('e.g. 600') }}">
+                                    <small class="form-text text-muted">
+                                        <i class="fas fa-gift text-danger"></i> {{ __('Extra discount deducted when buyer pays via online/advance payment methods on checkout.') }}
+                                    </small>
+                                </div>
+
                             </div>
                         </div>
 

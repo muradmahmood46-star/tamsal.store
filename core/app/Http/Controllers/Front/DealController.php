@@ -58,6 +58,7 @@ class DealController extends Controller
                 'deal_name'           => $deal->name,
                 'deal_delivery_charge'=> (bool)$deal->is_free_delivery ? 0 : (float)$deal->delivery_charge,
                 'deal_free_delivery'  => (bool)$deal->is_free_delivery,
+                'deal_advance_discount'=> (float)($deal->advance_discount ?? 0),
             ];
         }
 

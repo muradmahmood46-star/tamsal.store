@@ -147,8 +147,32 @@
                             $advance_discount_details = [];
                             $has_advance_payment = false;
                             $default_currency = \App\Models\Currency::where('is_default', 1)->first();
+                            $curr_val = PriceHelper::setCurrencyValue();
+
                             if($cart) {
+                                $processedDeals = [];
                                 foreach($cart as $key => $item) {
+                                    if (!empty($item['deal_id'])) {
+                                        $dealId = $item['deal_id'];
+                                        if (!isset($processedDeals[$dealId])) {
+                                            $dealAdv = (float)($item['deal_advance_discount'] ?? 0);
+                                            if ($dealAdv <= 0 && class_exists(\App\Models\Deal::class)) {
+                                                $d = \App\Models\Deal::find($dealId);
+                                                if ($d && $d->advance_discount > 0) {
+                                                    $dealAdv = (float)$d->advance_discount;
+                                                }
+                                            }
+                                            $processedDeals[$dealId] = [
+                                                'name' => $item['deal_name'] ?? __('Bundle Deal'),
+                                                'total_price' => 0,
+                                                'advance_discount' => $dealAdv
+                                            ];
+                                        }
+                                        $item_total_price = ($item['main_price'] + ($item['attribute_price'] ?? 0)) * $item['qty'];
+                                        $processedDeals[$dealId]['total_price'] += $item_total_price;
+                                        continue;
+                                    }
+
                                     $itemId = explode('-', $key)[0];
                                     $product = \App\Models\Item::find($itemId);
                                     $item_total_price = ($item['main_price'] + ($item['attribute_price'] ?? 0)) * $item['qty'];
@@ -157,7 +181,6 @@
                                         if ($product->advance_payment_type == 'percentage') {
                                             $adv_discount = ($item_total_price * $product->advance_payment_amount) / 100;
                                         } else {
-                                            $curr_val = PriceHelper::setCurrencyValue();
                                             $adv_discount = ($curr_val > 0 ? ($product->advance_payment_amount / $curr_val) : $product->advance_payment_amount) * $item['qty'];
                                         }
                                         $total_advance_discount += $adv_discount;
@@ -165,6 +188,20 @@
                                             'name' => $item['name'] ?? ($product->name ?? 'Product'),
                                             'price' => $item_total_price,
                                             'qty' => $item['qty'],
+                                            'discount' => $adv_discount
+                                        ];
+                                    }
+                                }
+
+                                foreach ($processedDeals as $dealId => $dInfo) {
+                                    if ($dInfo['advance_discount'] > 0) {
+                                        $has_advance_payment = true;
+                                        $adv_discount = ($curr_val > 0 ? ($dInfo['advance_discount'] / $curr_val) : $dInfo['advance_discount']);
+                                        $total_advance_discount += $adv_discount;
+                                        $advance_discount_details[] = [
+                                            'name' => $dInfo['name'],
+                                            'price' => $dInfo['total_price'],
+                                            'qty' => 1,
                                             'discount' => $adv_discount
                                         ];
                                     }

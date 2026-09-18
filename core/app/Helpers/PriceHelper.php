@@ -695,7 +695,27 @@ class PriceHelper
         }
         $total_discount = 0;
         if (!empty($cart) && is_array($cart)) {
+            $processedDeals = [];
             foreach ($cart as $key => $item) {
+                if (!empty($item['deal_id'])) {
+                    $dealId = $item['deal_id'];
+                    if (!in_array($dealId, $processedDeals)) {
+                        $processedDeals[] = $dealId;
+                        $dealAdvDiscount = self::parsePrice($item['deal_advance_discount'] ?? 0);
+                        if ($dealAdvDiscount <= 0 && class_exists(\App\Models\Deal::class)) {
+                            $d = \App\Models\Deal::find($dealId);
+                            if ($d && $d->advance_discount > 0) {
+                                $dealAdvDiscount = self::parsePrice($d->advance_discount);
+                            }
+                        }
+                        if ($dealAdvDiscount > 0) {
+                            $curr_val = self::parsePrice(self::setCurrencyValue());
+                            $total_discount += ($curr_val > 0 ? ($dealAdvDiscount / $curr_val) : $dealAdvDiscount);
+                        }
+                    }
+                    continue;
+                }
+
                 $itemId = explode('-', $key)[0];
                 $product = Item::find($itemId);
                 if ($product && self::parsePrice($product->advance_payment_amount) > 0) {

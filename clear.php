@@ -211,6 +211,12 @@ if (!empty($dbname)) {
                 $dbStatus[] = "✔ Database column `deals.is_free_delivery` created successfully!";
             }
 
+            $stmt = $pdo->query("SHOW COLUMNS FROM `deals` LIKE 'advance_discount'");
+            if ($stmt && $stmt->rowCount() == 0) {
+                $pdo->exec("ALTER TABLE `deals` ADD COLUMN `advance_discount` DECIMAL(12,2) DEFAULT 0.00 AFTER `is_free_delivery`");
+                $dbStatus[] = "✔ Database column `deals.advance_discount` created successfully!";
+            }
+
             $stmt = $pdo->query("SHOW COLUMNS FROM `deals` LIKE 'duration_days'");
             if ($stmt && $stmt->rowCount() == 0) {
                 $pdo->exec("ALTER TABLE `deals` ADD COLUMN `duration_days` INT DEFAULT 1 AFTER `is_free_delivery`");

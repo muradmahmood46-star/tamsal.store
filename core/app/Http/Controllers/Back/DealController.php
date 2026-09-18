@@ -66,6 +66,7 @@ class DealController extends Controller
             'discount_value' => 'required|numeric|min:0.01',
             'delivery_charge' => 'nullable|numeric|min:0',
             'is_free_delivery' => 'nullable|boolean',
+            'advance_discount' => 'nullable|numeric|min:0',
             'duration_days' => 'required|integer|min:1|max:20',
         ], [
             'photo.mimes' => __('The photo must be a valid image file (jpeg, jpg, png, svg, webp, gif, jfif, etc.).'),
@@ -105,6 +106,7 @@ class DealController extends Controller
             : (float) $request->discount_value;
         $isFreeDelivery = $request->boolean('is_free_delivery');
         $deliveryCharge = $isFreeDelivery ? 0 : PriceHelper::convertPrice($request->delivery_charge ?? 0);
+        $advanceDiscount = PriceHelper::convertPrice($request->advance_discount ?? 0);
 
         if ($discountType === 'percent') {
             if ($discountValue >= 100) {
@@ -154,6 +156,7 @@ class DealController extends Controller
                 'discounted_price' => $finalDiscountedPrice,
                 'delivery_charge' => $deliveryCharge,
                 'is_free_delivery' => $isFreeDelivery,
+                'advance_discount' => $advanceDiscount,
                 'duration_days' => $durationDays,
                 'start_date' => $startDate,
                 'end_date' => $endDate,
@@ -224,6 +227,7 @@ class DealController extends Controller
             'discount_value' => 'required|numeric|min:0.01',
             'delivery_charge' => 'nullable|numeric|min:0',
             'is_free_delivery' => 'nullable|boolean',
+            'advance_discount' => 'nullable|numeric|min:0',
             'duration_days' => 'required|integer|min:1|max:20',
         ], [
             'photo.mimes' => __('The photo must be a valid image file (jpeg, jpg, png, svg, webp, gif, jfif, etc.).'),
@@ -265,6 +269,7 @@ class DealController extends Controller
             : (float) $request->discount_value;
         $isFreeDelivery = $request->boolean('is_free_delivery');
         $deliveryCharge = $isFreeDelivery ? 0 : PriceHelper::convertPrice($request->delivery_charge ?? 0);
+        $advanceDiscount = PriceHelper::convertPrice($request->advance_discount ?? 0);
 
         if ($discountType === 'percent') {
             if ($discountValue >= 100) {
@@ -302,6 +307,7 @@ class DealController extends Controller
                 'discounted_price' => $finalDiscountedPrice,
                 'delivery_charge' => $deliveryCharge,
                 'is_free_delivery' => $isFreeDelivery,
+                'advance_discount' => $advanceDiscount,
                 'duration_days' => $durationDays,
                 'end_date' => $endDate,
             ]);
