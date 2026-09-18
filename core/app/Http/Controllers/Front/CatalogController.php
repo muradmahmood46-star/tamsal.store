@@ -134,7 +134,8 @@ class CatalogController extends Controller
             }else{
                 return $query->orderby('discount_price','desc');
             }
-
+        }, function($query) {
+            return $query->orderby('category_id', 'asc')->orderby('id', 'desc');
         })
 
         ->when($attr_item_ids, function($query, $attr_item_ids) {
@@ -145,8 +146,16 @@ class CatalogController extends Controller
         })
 
         ->where('status',1)
+        ->where(function ($query) {
+            $query->where('approval_status', 'Approved')
+                ->orWhereNull('approval_status');
+        })
+        ->where(function ($query) {
+            $query->whereNull('is_hidden_by_block')
+                ->orWhere('is_hidden_by_block', 0);
+        })
 
-        ->orderby('id','desc')->paginate($setting->view_product);
+        ->paginate($setting->view_product);
 
      
         $attrubutes_check =[];
