@@ -13,9 +13,15 @@
     @foreach($deal->dealItems as $dealItem)
         @php($item = $dealItem->item)
         @if($item)
-        <div class="col-md-6 mb-4"><div class="card h-100"><div class="row no-gutters"><div class="col-4 p-2"><img class="img-fluid" style="height:140px;width:100%;object-fit:contain" src="{{ url('/core/public/storage/images/' . ($item->photo ?: $item->thumbnail)) }}" alt="{{ $item->name }}"></div><div class="col-8"><div class="card-body py-3"><h3 class="h6"><a href="{{ route('front.product', $item->slug) }}">{{ $item->name }}</a></h3><del class="small text-muted">{{ PriceHelper::setCurrencyPrice($dealItem->original_price) }}</del><strong class="d-block text-success">{{ PriceHelper::setCurrencyPrice($dealItem->discounted_price) }}</strong><div class="mt-2 d-flex"><form action="{{ route('front.cart.submit') }}" method="post" class="mr-2">@csrf<input type="hidden" name="item_id" value="{{ $item->id }}"><input type="hidden" name="deal_id" value="{{ $deal->id }}"><input type="hidden" name="quantity" value="1"><input type="hidden" name="type" value="1"><input type="hidden" name="addtocart" value="1"><button class="btn btn-outline-primary btn-sm">{{ __('Add to Cart') }}</button></form><form action="{{ route('front.cart.submit') }}" method="post">@csrf<input type="hidden" name="item_id" value="{{ $item->id }}"><input type="hidden" name="deal_id" value="{{ $deal->id }}"><input type="hidden" name="quantity" value="1"><input type="hidden" name="type" value="1"><button class="btn btn-primary btn-sm">{{ __('Buy Now') }}</button></form></div></div></div></div></div></div>
+        <div class="col-md-6 mb-4"><div class="card h-100"><div class="row no-gutters"><div class="col-4 p-2"><img class="img-fluid" style="height:140px;width:100%;object-fit:contain" src="{{ url('/core/public/storage/images/' . ($item->photo ?: $item->thumbnail)) }}" alt="{{ $item->name }}"></div><div class="col-8"><div class="card-body py-3"><h3 class="h6"><a href="{{ route('front.product', $item->slug) }}">{{ $item->name }}</a></h3><del class="small text-muted">{{ PriceHelper::setCurrencyPrice($dealItem->original_price) }}</del><strong class="d-block text-success">{{ PriceHelper::setCurrencyPrice($dealItem->discounted_price) }}</strong></div></div></div></div></div>
         @endif
     @endforeach
+    </div>
+    <div class="text-center mt-3">
+        <form action="{{ route('front.deal.add_to_cart', $deal->slug) }}" method="post">
+            @csrf
+            <button class="btn btn-primary btn-lg"><i class="icon-shopping-cart"></i> {{ __('Add Bundle to Cart') }}</button>
+        </form>
     </div>
 </div>
 @endsection
