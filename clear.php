@@ -357,14 +357,15 @@ if (!empty($dbname)) {
             }
         }
 
-        echo "\n=== .HTACCESS ===\n";
-        $htFile = __DIR__ . '/.htaccess';
-        if (file_exists($htFile)) {
-            echo file_get_contents($htFile);
+        echo "\n=== LARAVEL LOG (LAST 200 LINES) ===\n";
+        $logFile = __DIR__ . '/core/storage/logs/laravel.log';
+        if (file_exists($logFile)) {
+            $logLines = file($logFile);
+            $lastLines = array_slice($logLines, -200);
+            echo htmlspecialchars(implode('', $lastLines));
         } else {
-            echo "*** .htaccess NOT FOUND ***\n";
+            echo "laravel.log not found";
         }
-
     } catch (Exception $e) {
         echo "Debug DB Error: " . $e->getMessage() . "\n";
     }
