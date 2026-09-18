@@ -278,10 +278,10 @@ class FrontendController extends Controller
             'feature_categories' => $feature_categories,
             'feature_category_title' => $feature_category_title,
 
-            // feature category
-            'popular_category_items' => $popular_category_items,
+            // top rated products
+            'popular_category_items' => Helper::getTopRatedProducts(4),
             'popular_categories' => $popular_categories,
-            'popular_category_title' => $popular_category_title,
+            'popular_category_title' => __('Top Rated Products'),
 
             // two column category
             'two_column_categoriess' => $two_column_categoriess,
@@ -480,6 +480,17 @@ class FrontendController extends Controller
     }
 
     // -------------------------------- CAMPAIGN ----------------------------------------
+
+
+    // -------------------------------- TOP RATED PRODUCTS ----------------------------------------
+
+    public function topRatedProduct()
+    {
+        $top_rated_items = Helper::getTopRatedProducts(5);
+        return view('front.top_rated', ['items' => $top_rated_items]);
+    }
+
+    // -------------------------------- TOP RATED PRODUCTS ----------------------------------------
 
 
     // -------------------------------- CURRENCY ----------------------------------------

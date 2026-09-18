@@ -335,20 +335,12 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="section-title section-title2 section-title3">
-                            <h2 class="h3">{{ $popular_category_title }}</h2>
-
-                        </div>
-                        <div class="popular-category theme3">
-                            <div class="links">
-                                @foreach ($popular_categories as $key => $popular_categorie)
-                                <a class="category_get {{$loop->first ? 'active' : ''}}" data-target="popular_category_view" data-href="{{route('front.popular.category',[$popular_categorie->slug,'popular_category','slider'])}}"  href="javascript:;" class="{{$loop->first ? 'active' : ''}}">{{$popular_categorie->name}}</a>
-                                @endforeach
+                            <h2 class="h3">{{ __('Top Rated Products') }}</h2>
+                            <div class="right-area">
+                                <a class="right_link" href="{{ route('front.top_rated') }}">{{ __('View All') }} <i class="icon-chevron-right"></i></a>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="popular_category_view d-none">
-                    <img  src="{{url('/core/public/storage/images/ajax_loader.gif')}}" alt="">
                 </div>
 
                 <div class="row" id="popular_category_view">
