@@ -6,6 +6,7 @@ use App\Helpers\Helper;
 use App\Helpers\PriceHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Deal;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
 class DealController extends Controller
@@ -26,7 +27,7 @@ class DealController extends Controller
         return view('front.deals.show', compact('deal'));
     }
 
-    public function addToCart($slug)
+    public function addToCart(Request $request, $slug)
     {
         $deal = Deal::with(['dealItems.item'])->where('status', 1)->where('slug', $slug)->firstOrFail();
 
@@ -60,6 +61,10 @@ class DealController extends Controller
         }
 
         Session::put('cart', $cart);
+
+        if ($request->has('buy_now') || $request->input('action') === 'buy_now') {
+            return redirect()->route('front.checkout.billing')->with('success', __('Bundle added to cart! Proceeding to checkout.'));
+        }
 
         return redirect()->route('front.cart')->with('success', __('Bundle added to cart!'));
     }

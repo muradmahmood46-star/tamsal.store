@@ -58,7 +58,7 @@ class DealController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'photo' => 'nullable|mimes:jpeg,jpg,png,svg,webp,gif,bmp,tiff,tif,avif,ico,jfif,heic,heif|max:20480',
             'item_ids' => 'required|array|min:2',
             'item_ids.*' => 'required|exists:items,id',
             'discount_type' => 'required|in:fixed,percent',
@@ -66,6 +66,10 @@ class DealController extends Controller
             'delivery_charge' => 'nullable|numeric|min:0',
             'is_free_delivery' => 'nullable|boolean',
             'duration_days' => 'required|integer|min:1|max:20',
+        ], [
+            'photo.mimes' => __('The photo must be a valid image file (jpeg, jpg, png, svg, webp, gif, jfif, etc.).'),
+            'photo.max' => __('The photo size may not be greater than 20MB.'),
+            'photo.uploaded' => __('Failed to upload photo. Please check image format and size (max 20MB).'),
         ]);
 
         $itemIds = array_values(array_unique($request->item_ids));
@@ -212,7 +216,7 @@ class DealController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'photo' => 'nullable|mimes:jpeg,jpg,png,svg,webp,gif,bmp,tiff,tif,avif,ico,jfif,heic,heif|max:20480',
             'item_ids' => 'required|array|min:2',
             'item_ids.*' => 'required|exists:items,id',
             'discount_type' => 'required|in:fixed,percent',
@@ -220,6 +224,10 @@ class DealController extends Controller
             'delivery_charge' => 'nullable|numeric|min:0',
             'is_free_delivery' => 'nullable|boolean',
             'duration_days' => 'required|integer|min:1|max:20',
+        ], [
+            'photo.mimes' => __('The photo must be a valid image file (jpeg, jpg, png, svg, webp, gif, jfif, etc.).'),
+            'photo.max' => __('The photo size may not be greater than 20MB.'),
+            'photo.uploaded' => __('Failed to upload photo. Please check image format and size (max 20MB).'),
         ]);
 
         $itemIds = array_values(array_unique($request->item_ids));

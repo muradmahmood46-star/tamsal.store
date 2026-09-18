@@ -7,7 +7,12 @@
     <div class="card border-0 shadow-sm mt-3 mb-4">
         <div class="card-body">
             @if($deal->photo)
-                <img src="{{ url('/core/public/storage/' . $deal->photo) }}" alt="{{ $deal->name }}" style="max-height:250px;object-fit:cover;width:100%;border-radius:8px;" class="mb-3">
+                @php
+                    $dealBanner = \Illuminate\Support\Str::startsWith($deal->photo, 'images/')
+                        ? url('/core/public/storage/' . $deal->photo)
+                        : url('/core/public/storage/images/' . $deal->photo);
+                @endphp
+                <img src="{{ $dealBanner }}" alt="{{ $deal->name }}" style="max-height:280px;object-fit:cover;width:100%;border-radius:8px;" class="mb-3">
             @endif
             <span class="badge badge-warning text-dark float-right">{{ $deal->discount_badge }}</span>
             <h1 class="h3">{{ $deal->name }}</h1>
@@ -27,6 +32,18 @@
                         <span class="badge badge-light border text-dark px-2 py-1"><i class="fas fa-truck text-primary"></i> {{ __('Delivery') }}: {{ PriceHelper::setCurrencyPrice($deal->delivery_charge) }}</span>
                     @endif
                 </div>
+            </div>
+
+            <div class="mt-3 pt-3 border-top d-flex align-items-center flex-wrap" style="gap:12px;">
+                <form action="{{ route('front.deal.add_to_cart', $deal->slug) }}" method="post" class="d-inline">
+                    @csrf
+                    <button type="submit" class="btn btn-primary btn-md"><i class="icon-shopping-cart mr-1"></i> {{ __('Add Bundle to Cart') }}</button>
+                </form>
+                <form action="{{ route('front.deal.add_to_cart', $deal->slug) }}" method="post" class="d-inline">
+                    @csrf
+                    <input type="hidden" name="buy_now" value="1">
+                    <button type="submit" class="btn btn-success btn-md"><i class="fas fa-bolt mr-1"></i> {{ __('Buy Bundle Now') }}</button>
+                </form>
             </div>
         </div>
     </div>
@@ -61,10 +78,15 @@
         @endforeach
     </div>
 
-    <div class="text-center mt-3">
-        <form action="{{ route('front.deal.add_to_cart', $deal->slug) }}" method="post">
+    <div class="text-center mt-4 pt-3 border-top d-flex justify-content-center align-items-center flex-wrap" style="gap:15px;">
+        <form action="{{ route('front.deal.add_to_cart', $deal->slug) }}" method="post" class="d-inline">
             @csrf
-            <button class="btn btn-primary btn-lg"><i class="icon-shopping-cart"></i> {{ __('Add Bundle to Cart') }}</button>
+            <button type="submit" class="btn btn-primary btn-lg px-4 shadow-sm"><i class="icon-shopping-cart mr-1"></i> {{ __('Add Bundle to Cart') }}</button>
+        </form>
+        <form action="{{ route('front.deal.add_to_cart', $deal->slug) }}" method="post" class="d-inline">
+            @csrf
+            <input type="hidden" name="buy_now" value="1">
+            <button type="submit" class="btn btn-success btn-lg px-4 shadow-sm"><i class="fas fa-bolt mr-1"></i> {{ __('Buy Bundle Now') }}</button>
         </form>
     </div>
 </div>

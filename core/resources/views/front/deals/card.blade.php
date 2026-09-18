@@ -6,11 +6,22 @@
         </div>
         <a href="{{ route('front.deal.details', $deal->slug) }}">
             @if($deal->photo)
-                <img class="card-img-top p-3" style="height:160px;object-fit:contain" src="{{ url('/core/public/storage/' . $deal->photo) }}" alt="{{ $deal->name }}">
+                @php
+                    $cardImg = \Illuminate\Support\Str::startsWith($deal->photo, 'images/')
+                        ? url('/core/public/storage/' . $deal->photo)
+                        : url('/core/public/storage/images/' . $deal->photo);
+                @endphp
+                <img class="card-img-top p-3" style="height:160px;object-fit:contain" src="{{ $cardImg }}" alt="{{ $deal->name }}">
             @else
                 @php($firstItem = $deal->dealItems->first()->item ?? null)
                 @if($firstItem)
-                    <img class="card-img-top p-3" style="height:160px;object-fit:contain" src="{{ url('/core/public/storage/images/' . ($firstItem->photo ?: $firstItem->thumbnail)) }}" alt="{{ $deal->name }}">
+                    @php
+                        $firstThumb = $firstItem->photo ?: $firstItem->thumbnail;
+                        $firstImg = \Illuminate\Support\Str::startsWith($firstThumb, 'images/')
+                            ? url('/core/public/storage/' . $firstThumb)
+                            : url('/core/public/storage/images/' . $firstThumb);
+                    @endphp
+                    <img class="card-img-top p-3" style="height:160px;object-fit:contain" src="{{ $firstImg }}" alt="{{ $deal->name }}">
                 @endif
             @endif
         </a>
@@ -26,11 +37,18 @@
                         <span class="badge badge-light border text-dark" style="font-size:11px;"><i class="fas fa-truck"></i> {{ PriceHelper::setCurrencyPrice($deal->delivery_charge) }}</span>
                     @endif
                 </div>
-                <a href="{{ route('front.deal.details', $deal->slug) }}" class="btn btn-outline-primary btn-sm btn-block mb-1">{{ __('View Bundle') }}</a>
-                <form action="{{ route('front.deal.add_to_cart', $deal->slug) }}" method="post">
-                    @csrf
-                    <button class="btn btn-primary btn-sm btn-block"><i class="icon-shopping-cart"></i> {{ __('Add Bundle to Cart') }}</button>
-                </form>
+                <a href="{{ route('front.deal.details', $deal->slug) }}" class="btn btn-outline-primary btn-sm btn-block mb-2">{{ __('View Bundle') }}</a>
+                <div class="d-flex" style="gap:6px;">
+                    <form action="{{ route('front.deal.add_to_cart', $deal->slug) }}" method="post" class="flex-grow-1 mb-0">
+                        @csrf
+                        <button type="submit" class="btn btn-primary btn-sm btn-block text-nowrap" title="{{ __('Add Bundle to Cart') }}"><i class="icon-shopping-cart"></i> {{ __('Add to Cart') }}</button>
+                    </form>
+                    <form action="{{ route('front.deal.add_to_cart', $deal->slug) }}" method="post" class="flex-grow-1 mb-0">
+                        @csrf
+                        <input type="hidden" name="buy_now" value="1">
+                        <button type="submit" class="btn btn-success btn-sm btn-block text-nowrap" title="{{ __('Buy Bundle Now') }}"><i class="fas fa-bolt"></i> {{ __('Buy Now') }}</button>
+                    </form>
+                </div>
             </div>
         </div>
     </article>
