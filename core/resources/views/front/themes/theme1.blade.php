@@ -8,19 +8,223 @@
 
     @if ($setting->is_slider == 1)
         <style>
+            /* Hero Slider & Banner Visual Upgrades */
+            .hero-slider .item {
+                position: relative;
+                overflow: hidden;
+            }
+            .hero-slider .item::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(90deg, rgba(15, 23, 42, 0.45) 0%, rgba(15, 23, 42, 0.2) 60%, rgba(15, 23, 42, 0.05) 100%);
+                z-index: 1;
+                pointer-events: none;
+            }
+            .hero-slider .item-inner {
+                position: relative;
+                z-index: 2;
+                max-width: 580px;
+                padding: 40px 45px !important;
+            }
+            .hero-slider .title {
+                font-size: 34px !important;
+                font-weight: 800 !important;
+                color: #ffffff !important;
+                text-shadow: 0 2px 14px rgba(0, 0, 0, 0.65) !important;
+                line-height: 1.2 !important;
+                margin-bottom: 12px !important;
+                letter-spacing: -0.3px;
+                display: block;
+                animation: heroLoopFloat 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            }
+            .hero-slider .subtitle {
+                display: inline-block !important;
+                background: rgba(15, 23, 42, 0.65) !important;
+                backdrop-filter: blur(8px) !important;
+                -webkit-backdrop-filter: blur(8px) !important;
+                color: #ffffff !important;
+                padding: 6px 18px !important;
+                border-radius: 30px !important;
+                border: 1px solid rgba(255, 255, 255, 0.25) !important;
+                font-size: 14px !important;
+                font-weight: 600 !important;
+                line-height: 1.4 !important;
+                margin-bottom: 20px !important;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25) !important;
+                animation: heroBadgeLoop 4s cubic-bezier(0.4, 0, 0.2, 1) 0.2s infinite;
+            }
+            .hero-slider .btn {
+                border-radius: 30px !important;
+                padding: 10px 26px !important;
+                font-weight: 700 !important;
+                text-transform: uppercase !important;
+                letter-spacing: 0.5px !important;
+                box-shadow: 0 4px 16px rgba(37, 99, 235, 0.45) !important;
+                border: none !important;
+                background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+                animation: heroBtnLoop 4s cubic-bezier(0.4, 0, 0.2, 1) 0.4s infinite;
+            }
+            .hero-slider .btn:hover {
+                transform: translateY(-2px) scale(1.03) !important;
+                box-shadow: 0 8px 24px rgba(37, 99, 235, 0.6) !important;
+            }
+
+            /* Right Hero Banners */
+            .sright-image {
+                position: relative;
+                overflow: hidden;
+                border-radius: 14px !important;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                display: block;
+            }
+            .sright-image:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+            }
+            .sright-image .inner-content {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                left: 24px;
+                right: 20px;
+                z-index: 2;
+            }
+            .sright-image .inner-content p {
+                display: inline-block;
+                background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+                color: #ffffff !important;
+                padding: 3px 12px;
+                border-radius: 20px;
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+                margin-bottom: 6px;
+                box-shadow: 0 3px 10px rgba(37, 99, 235, 0.35);
+                animation: heroBadgeLoop 4s cubic-bezier(0.4, 0, 0.2, 1) 0.2s infinite;
+            }
+            .sright-image .inner-content h4 {
+                font-size: 19px !important;
+                font-weight: 800 !important;
+                color: #0f172a !important;
+                line-height: 1.25 !important;
+                margin-bottom: 0 !important;
+                text-shadow: 0 1px 4px rgba(255, 255, 255, 0.95);
+                animation: heroLoopFloat 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            }
+
+            /* 4-Column & Other Homepage Banners */
+            .modern-banner-card .banner-title,
+            .genius-banner h4 {
+                animation: heroLoopFloat 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            }
+            .modern-banner-card .banner-subtitle,
+            .genius-banner p {
+                animation: heroBadgeLoop 4s cubic-bezier(0.4, 0, 0.2, 1) 0.2s infinite;
+            }
+
+            /* Continuous Looping Keyframes with ~2-second Rest/Pause */
+            @keyframes heroLoopFloat {
+                0% {
+                    transform: translateY(0) scale(1);
+                    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.2));
+                }
+                12% {
+                    transform: translateY(-7px) scale(1.025);
+                    filter: drop-shadow(0 8px 18px rgba(37, 99, 235, 0.35));
+                }
+                24% {
+                    transform: translateY(0) scale(1);
+                    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.2));
+                }
+                100% {
+                    transform: translateY(0) scale(1);
+                    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.2));
+                }
+            }
+
+            @keyframes heroBadgeLoop {
+                0% {
+                    transform: translateY(0) scale(1);
+                    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+                }
+                12% {
+                    transform: translateY(-5px) scale(1.04);
+                    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+                }
+                24% {
+                    transform: translateY(0) scale(1);
+                    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+                }
+                100% {
+                    transform: translateY(0) scale(1);
+                    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+                }
+            }
+
+            @keyframes heroBtnLoop {
+                0% {
+                    transform: translateY(0) scale(1);
+                    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.45);
+                }
+                12% {
+                    transform: translateY(-4px) scale(1.05);
+                    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.65);
+                }
+                24% {
+                    transform: translateY(0) scale(1);
+                    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.45);
+                }
+                100% {
+                    transform: translateY(0) scale(1);
+                    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.45);
+                }
+            }
+
+            /* Responsive Mobile Screen */
             @media (max-width: 575px) {
                 .slider-area-wrapper {
                     padding-top: 10px;
                 }
                 .hero-slider {
                     margin: 0 10px !important;
-                    border-radius: 12px !important;
+                    border-radius: 14px !important;
                 }
                 .hero-slider .item {
                     height: auto !important;
                     aspect-ratio: 16 / 9 !important;
                     background-size: cover !important;
                     background-position: center !important;
+                    min-height: 200px !important;
+                }
+                .hero-slider .item-inner {
+                    padding: 16px 14px !important;
+                    max-width: 88% !important;
+                }
+                .hero-slider .title {
+                    font-size: 16px !important;
+                    margin-bottom: 5px !important;
+                    line-height: 1.2 !important;
+                }
+                .hero-slider .subtitle {
+                    font-size: 9.5px !important;
+                    padding: 2px 9px !important;
+                    margin-bottom: 8px !important;
+                    border-radius: 14px !important;
+                }
+                .hero-slider .btn {
+                    padding: 5px 14px !important;
+                    font-size: 10px !important;
+                    border-radius: 20px !important;
+                }
+                .brand-logo {
+                    max-width: 65px !important;
+                    margin-bottom: 3px !important;
                 }
             }
         </style>
