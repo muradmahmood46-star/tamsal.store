@@ -449,7 +449,11 @@
     @endif
 
     @if ($extra_settings->is_t1_falsh == 1)
-        @php $bundleDeals = \App\Models\Deal::where('status', 1)->with(['dealItems.item'])->get(); @endphp
+        @php
+            $bundleDeals = (isset($flash_deals) && $flash_deals->isNotEmpty())
+                ? $flash_deals
+                : (class_exists(\App\Models\Deal::class) ? \App\Models\Deal::where('status', 1)->with(['dealItems.item'])->get() : collect());
+        @endphp
         @if($bundleDeals->isNotEmpty())
         <div class="flash-sell-new-section mt-50">
             <div class="container">

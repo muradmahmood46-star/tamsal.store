@@ -1,5 +1,13 @@
 <div class="{{ $column ?? 'col-md-4 mb-4' }}">
-    <article class="card h-100 border-0 shadow-sm deal-card" data-deal-end="{{ $deal->end_date->toIso8601String() }}">
+    @php
+        $dealEndIso = '';
+        if (!empty($deal->end_date)) {
+            $dealEndIso = ($deal->end_date instanceof \Carbon\Carbon)
+                ? $deal->end_date->toIso8601String()
+                : \Carbon\Carbon::parse($deal->end_date)->toIso8601String();
+        }
+    @endphp
+    <article class="card h-100 border-0 shadow-sm deal-card" data-deal-end="{{ $dealEndIso }}">
         <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center py-2">
             <small class="font-weight-bold"><i class="icon-clock"></i> <span class="deal-countdown">--</span></small>
             <span class="badge badge-warning text-dark">{{ $deal->discount_badge }}</span>

@@ -376,18 +376,20 @@ class Helper
      */
     public static function getActiveDeals($limit = null)
     {
-        self::ensureDealsTable();
+        try {
+            $query = \App\Models\Deal::with(['items.category', 'dealItems.item', 'vendor'])
+                ->active()
+                ->orderBy('orders_count', 'desc')
+                ->orderBy('created_at', 'desc');
 
-        $query = \App\Models\Deal::with(['items.category', 'dealItems.item', 'vendor'])
-            ->active()
-            ->orderBy('orders_count', 'desc')
-            ->orderBy('created_at', 'desc');
+            if ($limit && $limit > 0) {
+                return $query->take($limit)->get();
+            }
 
-        if ($limit && $limit > 0) {
-            return $query->take($limit)->get();
+            return $query->get();
+        } catch (\Throwable $e) {
+            return collect();
         }
-
-        return $query->get();
     }
 
     /**

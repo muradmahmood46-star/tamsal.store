@@ -1,7 +1,15 @@
 @extends('master.front')
 @section('title', $deal->name)
 @section('content')
-<div class="container padding-bottom-3x mb-2 mt-4" data-deal-end="{{ $deal->end_date->toIso8601String() }}">
+@php
+    $dealEndIso = '';
+    if (!empty($deal->end_date)) {
+        $dealEndIso = ($deal->end_date instanceof \Carbon\Carbon)
+            ? $deal->end_date->toIso8601String()
+            : \Carbon\Carbon::parse($deal->end_date)->toIso8601String();
+    }
+@endphp
+<div class="container padding-bottom-3x mb-2 mt-4" data-deal-end="{{ $dealEndIso }}">
     <a class="small" href="{{ route('front.deal.index') }}"><i class="icon-arrow-left"></i> {{ __('All Bundles') }}</a>
 
     <div class="card border-0 shadow-sm mt-3 mb-4">

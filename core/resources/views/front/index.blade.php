@@ -14,6 +14,3 @@
     @includeIf('front.themes.theme4')
 
 @endif
-
-@php $debugDeals = \App\Models\Deal::where('status', 1)->with(['dealItems.item'])->get(); @endphp
-@includeIf('front.deals.preview', ['deals' => $debugDeals])

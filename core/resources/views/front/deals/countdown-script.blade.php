@@ -1,7 +1,10 @@
 <script>
 function updateDealCountdowns() {
     document.querySelectorAll('[data-deal-end]').forEach(function (card) {
-        var seconds = Math.max(0, Math.floor((new Date(card.dataset.dealEnd).getTime() - Date.now()) / 1000));
+        if (!card.dataset.dealEnd) return;
+        var endMs = new Date(card.dataset.dealEnd).getTime();
+        if (isNaN(endMs)) return;
+        var seconds = Math.max(0, Math.floor((endMs - Date.now()) / 1000));
         var days = Math.floor(seconds / 86400); seconds %= 86400;
         var hours = Math.floor(seconds / 3600); seconds %= 3600;
         var minutes = Math.floor(seconds / 60); seconds %= 60;
