@@ -177,9 +177,19 @@
 
                             <hr>
 
-                            <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="font-weight-bold text-dark" style="font-size: 16px;">{{ __('Final Deal Price:') }}</span>
                                 <span class="font-weight-bold text-success" style="font-size: 20px;" id="summary-final-price">PKR 0.00</span>
+                            </div>
+
+                            <div class="d-flex justify-content-between mb-2 text-secondary" id="summary-delivery-row" style="display:none!important">
+                                <span>{{ __('Delivery Charges:') }}</span>
+                                <strong id="summary-delivery">PKR 0.00</strong>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center" id="summary-total-row" style="display:none!important">
+                                <span class="font-weight-bold text-dark" style="font-size: 16px;">{{ __('Final Payment (with delivery):') }}</span>
+                                <span class="font-weight-bold text-primary" style="font-size: 20px;" id="summary-total-with-delivery">PKR 0.00</span>
                             </div>
                         </div>
 
@@ -233,10 +243,24 @@ $(document).ready(function() {
         savings = Math.min(savings, totalOriginal);
         finalPrice = Math.max(0, totalOriginal - savings);
 
+        let isFreeDelivery = $('#is_free_delivery').is(':checked');
+        let deliveryCharge = isFreeDelivery ? 0 : (parseFloat($('#delivery_charge').val()) || 0) / dealCurrencyValue;
+        let totalWithDelivery = finalPrice + deliveryCharge;
+
         $('#summary-original-price').text(formatDealPrice(totalOriginal));
         $('#summary-discount-badge').text(badgeText);
         $('#summary-savings').text(formatDealPrice(savings));
         $('#summary-final-price').text(formatDealPrice(finalPrice));
+
+        if (!isFreeDelivery && deliveryCharge > 0) {
+            $('#summary-delivery').text(formatDealPrice(deliveryCharge));
+            $('#summary-delivery-row').css('display', 'flex');
+            $('#summary-total-with-delivery').text(formatDealPrice(totalWithDelivery));
+            $('#summary-total-row').css('display', 'flex');
+        } else {
+            $('#summary-delivery-row').css('display', 'none');
+            $('#summary-total-row').css('display', 'none');
+        }
     }
 
     // Toggle discount label
@@ -254,10 +278,12 @@ $(document).ready(function() {
     // Checkbox changes & value input
     $(document).on('change', '.deal-product-checkbox', calculateDeal);
     $('#discount_value').on('input', calculateDeal);
+    $('#delivery_charge').on('input', calculateDeal);
 
     $('#is_free_delivery').on('change', function() {
         $('#delivery-charge-group').toggle(!this.checked);
         $('#delivery_charge').prop('disabled', this.checked);
+        calculateDeal();
     }).trigger('change');
 
     // Search filter for products
