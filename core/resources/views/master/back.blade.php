@@ -59,6 +59,42 @@
             opacity: 0.9;
         }
 
+        /* General Dropdown list & Notification Scrollable */
+        .dropdown-list {
+            width: 350px !important;
+            max-width: 90vw !important;
+            border-radius: 10px !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+        }
+
+        .notf-list-scrollable {
+            max-height: 300px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 #f8fafc;
+        }
+
+        .notf-list-scrollable::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .notf-list-scrollable::-webkit-scrollbar-track {
+            background: #f8fafc;
+        }
+
+        .notf-list-scrollable::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .notf-list-scrollable::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
         @media (max-width: 991.98px) {
             .wrapper {
                 overflow-x: hidden !important;
@@ -186,6 +222,9 @@
                 left: 0 !important;
                 right: 0 !important;
                 width: 100% !important;
+                max-height: calc(100vh - 65px) !important;
+                overflow-y: auto !important;
+                -webkit-overflow-scrolling: touch !important;
                 background: #0d56b3 !important;
                 box-shadow: 0 10px 25px rgba(0,0,0,0.25) !important;
                 border-radius: 0 0 12px 12px !important;
@@ -256,9 +295,16 @@
                 max-width: 100% !important;
                 float: none !important;
                 margin-top: 8px !important;
-                box-shadow: none !important;
-                border-radius: 8px !important;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.15) !important;
+                border-radius: 10px !important;
                 background: #ffffff !important;
+                overflow: hidden !important;
+            }
+
+            .main-header .navbar-header .dropdown-list .notf-list-scrollable {
+                max-height: 280px !important;
+                overflow-y: auto !important;
+                -webkit-overflow-scrolling: touch !important;
             }
 
             .main-header .navbar-header .dropdown-user .user-box {

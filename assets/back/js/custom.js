@@ -676,13 +676,18 @@
 
 
     // Notification
-
     $('#alertsDropdown').on('click', function () {
         $('#display-notf').load($('#display-notf').data('href'));
     });
 
-    $(document).on('click', '#clear-notf', function () {
-        $.get($(this).data('href'));
+    $(document).on('click', '#clear-notf', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var clearUrl = $(this).data('href');
+        $.get(clearUrl, function() {
+            $('#display-notf').load($('#display-notf').data('href'));
+            $('.badge-counter').text('0').hide();
+        });
     });
 
 
