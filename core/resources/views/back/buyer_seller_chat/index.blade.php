@@ -4,26 +4,26 @@
 <div class="container-fluid">
     <!-- Page Heading -->
     <div class="card mb-3 shadow-sm border-0" style="border-radius: 10px;">
-        <div class="card-body py-3">
-            <div class="d-sm-flex align-items-center justify-content-between">
+        <div class="card-body py-2 py-md-3">
+            <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between" style="gap: 8px;">
                 <div>
-                    <h4 class="mb-0 text-dark font-weight-bold">
+                    <h4 class="mb-0 text-dark font-weight-bold" style="font-size: 1.15rem;">
                         <i class="fas fa-comments text-primary mr-2"></i> {{ __('Buyer & Seller Live Chats') }}
                     </h4>
-                    <p class="text-muted small mb-0">{{ __('Monitor all active conversations between customers and vendor stores, and post admin support messages if needed.') }}</p>
+                    <p class="text-muted small mb-0 d-none d-sm-block">{{ __('Monitor all active conversations between customers and vendor stores, and post admin support messages if needed.') }}</p>
                 </div>
-                <div class="mt-2 mt-sm-0 d-flex align-items-center flex-wrap" style="gap: 6px;">
+                <div class="d-flex align-items-center flex-nowrap w-100 w-sm-auto" style="gap: 6px; overflow-x: auto;">
                     @if(isset($unreadCount) && $unreadCount > 0)
-                        <span class="badge badge-danger px-3 py-2 font-weight-bold shadow-sm" style="font-size: 13px; border-radius: 20px;">
-                            <i class="fas fa-envelope-open-text mr-1"></i> {{ $unreadCount }} {{ __('New Unread Messages') }}
+                        <span class="badge badge-danger px-2 px-sm-3 py-2 font-weight-bold shadow-sm text-nowrap flex-fill flex-sm-grow-0 text-center" style="font-size: 11.5px; border-radius: 20px;">
+                            <i class="fas fa-envelope-open-text mr-1"></i> {{ $unreadCount }} {{ __('New Unread') }}<span class="d-none d-sm-inline"> {{ __('Messages') }}</span>
                         </span>
                     @else
-                        <span class="badge badge-success px-3 py-2 font-weight-bold shadow-sm" style="font-size: 13px; border-radius: 20px;">
-                            <i class="fas fa-check-circle mr-1"></i> 0 {{ __('New Unread Messages') }}
+                        <span class="badge badge-success px-2 px-sm-3 py-2 font-weight-bold shadow-sm text-nowrap flex-fill flex-sm-grow-0 text-center" style="font-size: 11.5px; border-radius: 20px;">
+                            <i class="fas fa-check-circle mr-1"></i> 0 {{ __('New Unread') }}<span class="d-none d-sm-inline"> {{ __('Messages') }}</span>
                         </span>
                     @endif
-                    <span class="badge badge-primary px-3 py-2 font-weight-bold shadow-sm" style="font-size: 13px; border-radius: 20px;">
-                        <i class="fas fa-comments mr-1"></i> {{ $totalBuyerSellerChats }} {{ __('Total Vendor Chats') }}
+                    <span class="badge badge-primary px-2 px-sm-3 py-2 font-weight-bold shadow-sm text-nowrap flex-fill flex-sm-grow-0 text-center" style="font-size: 11.5px; border-radius: 20px;">
+                        <i class="fas fa-comments mr-1"></i> {{ $totalBuyerSellerChats }} {{ __('Total') }}<span class="d-none d-sm-inline"> {{ __('Vendor') }}</span> {{ __('Chats') }}
                     </span>
                 </div>
             </div>
