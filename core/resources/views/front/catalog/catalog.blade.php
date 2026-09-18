@@ -14,22 +14,33 @@
             @endphp
 
             <div class="col-12 catalog-category-block mb-4">
-                {{-- Category Header --}}
-                <div class="catalog-cat-header d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
-                    <div class="d-flex align-items-center flex-wrap">
-                        <span class="catalog-cat-indicator mr-2"></span>
-                        <h3 class="catalog-cat-name mb-0 font-weight-bold text-dark" style="font-size: 18px; letter-spacing: -0.2px;">
-                            <i class="fas fa-folder-open text-primary mr-2" style="font-size: 16px;"></i> {{ $catName }}
-                        </h3>
-                        <span class="badge badge-light border text-muted ml-2 px-2 py-1 font-weight-normal" style="font-size: 11.5px; border-radius: 6px;">
-                            {{ $catItems->count() }} {{ __('Products') }}
-                        </span>
+                {{-- Premium Modern Category Header Bar --}}
+                <div class="catalog-cat-header-bar mb-3">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap">
+                        <div class="d-flex align-items-center">
+                            <div class="catalog-cat-header-icon mr-2">
+                                @if($catModel && !empty($catModel->photo))
+                                    <img src="{{ url('/core/public/storage/images/' . $catModel->photo) }}" alt="{{ $catName }}" class="catalog-cat-avatar-img">
+                                @else
+                                    <i class="fas fa-layer-group"></i>
+                                @endif
+                            </div>
+                            <div>
+                                <h3 class="catalog-cat-title-text mb-0">
+                                    {{ $catName }}
+                                </h3>
+                                <span class="catalog-cat-count-badge">
+                                    {{ $catItems->count() }} {{ __('Products available') }}
+                                </span>
+                            </div>
+                        </div>
+                        @if($catSlug)
+                            <a href="{{ route('front.catalog', ['category' => $catSlug]) }}" class="catalog-cat-view-btn">
+                                <span>{{ __('Explore Category') }}</span>
+                                <i class="icon-chevron-right ml-1"></i>
+                            </a>
+                        @endif
                     </div>
-                    @if($catSlug)
-                        <a href="{{ route('front.catalog', ['category' => $catSlug]) }}" class="catalog-cat-link text-primary font-weight-bold small" style="text-decoration: none;">
-                            {{ __('View Category') }} <i class="icon-chevron-right"></i>
-                        </a>
-                    @endif
                 </div>
 
                 {{-- Products in this Category --}}
@@ -187,25 +198,152 @@
 
 <style>
 .catalog-category-block {
-    margin-bottom: 30px;
+    margin-bottom: 36px;
 }
-.catalog-cat-header {
-    border-bottom: 2px solid #f1f5f9 !important;
-    padding-bottom: 8px;
+
+/* Modern Category Header Bar */
+.catalog-cat-header-bar {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #2563eb;
+    border-radius: 14px;
+    padding: 12px 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    transition: all 0.25s ease;
 }
-.catalog-cat-indicator {
+.catalog-cat-header-bar:hover {
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.08);
+    border-color: #cbd5e1;
+    border-left-color: #1d4ed8;
+}
+
+.catalog-cat-header-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #eff6ff;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    border: 1px solid #dbeafe;
+    overflow: hidden;
+    margin-right: 12px;
+}
+
+.catalog-cat-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.catalog-cat-title-text {
+    font-size: 17px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.25;
+    letter-spacing: -0.2px;
+    margin: 0;
+}
+
+.catalog-cat-count-badge {
     display: inline-block;
-    width: 4px;
-    height: 18px;
-    background: #3b82f6;
-    border-radius: 2px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #64748b;
+    margin-top: 1px;
 }
-.catalog-cat-name {
+
+.catalog-cat-view-btn {
+    display: inline-flex;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #2563eb !important;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 20px;
+    text-decoration: none !important;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+.catalog-cat-view-btn:hover {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff !important;
+    transform: translateX(2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22);
+}
+
+/* Category Badge on Product Card */
+.product-card .product-category {
+    margin-bottom: 6px;
     display: flex;
     align-items: center;
 }
-.catalog-cat-link:hover {
-    text-decoration: underline !important;
-    color: #1d4ed8 !important;
+.product-card .product-category a {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.35px;
+    color: #2563eb !important;
+    background: #eff6ff;
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-decoration: none !important;
+    transition: all 0.2s ease;
+    border: 1px solid #dbeafe;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.3;
+}
+.product-card .product-category a:hover {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff !important;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 767.98px) {
+    .catalog-category-block {
+        margin-bottom: 24px;
+    }
+    .catalog-cat-header-bar {
+        padding: 9px 12px;
+        border-radius: 10px;
+    }
+    .catalog-cat-header-icon {
+        width: 34px;
+        height: 34px;
+        font-size: 14px;
+        border-radius: 8px;
+        margin-right: 10px;
+    }
+    .catalog-cat-title-text {
+        font-size: 14px;
+    }
+    .catalog-cat-count-badge {
+        font-size: 10.5px;
+    }
+    .catalog-cat-view-btn {
+        font-size: 11px;
+        padding: 4px 10px;
+        border-radius: 16px;
+    }
+    .product-card .product-category {
+        margin-bottom: 4px;
+    }
+    .product-card .product-category a {
+        font-size: 9px;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
 }
 </style>
