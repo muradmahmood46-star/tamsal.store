@@ -8,6 +8,7 @@ use App\{
     Models\Order,
 };
 use App\Helpers\PriceHelper;
+use App\Helpers\ImageHelper;
 use App\Models\Bcategory;
 use Illuminate\Support\Facades\Auth;
 
@@ -54,45 +55,39 @@ class FrontRepository
     public function reviewSubmit($request)
     {
         $user = Auth::user();
-    
-        // Check if the user already has a review for this item
-        $existingReview = $user->reviews()->where('item_id', $request->item_id)->first();
-    
-        if ($existingReview) {
-            // Update the existing review
-            $existingReview->update([
-                'subject' => $request->subject,
-                'rating' => $request->rating,
-                'review' => $request->review,
-                'status' => 1,
-            ]);
-            return __('Your Review Updated Successfully.');
-        }
-    
-        // Check if the user has purchased the product
-        $orders = Order::where('user_id', $user->id)->get();
-        $isProductPurchased = false;
-    
-        foreach ($orders as $order) {
-            $cart = json_decode($order->cart, true);
-            foreach ($cart as $key => $product) {
-                if ($request->item_id == PriceHelper::GetItemId($key)) {
-                    $isProductPurchased = true;
-                    break 2; // Exit both loops
-                }
-            }
-        }
-    
-        if (!$isProductPurchased) {
+        if (!$user) {
             return [
                 'errors' => [
-                    0 => __("Buy This Product First"),
+                    0 => __('Please login to submit a review.'),
                 ],
             ];
         }
-    
+
+        $input = [
+            'item_id' => $request->item_id,
+            'rating'  => $request->rating,
+            'subject' => $request->subject,
+            'review'  => $request->review,
+            'status'  => 1,
+        ];
+
+        if ($request->hasFile('photo')) {
+            $input['photo'] = ImageHelper::handleUploadedImage($request->file('photo'), 'images');
+        }
+
+        // Check if the user already has a review for this item
+        $existingReview = $user->reviews()->where('item_id', $request->item_id)->first();
+
+        if ($existingReview) {
+            if ($request->hasFile('photo') && !empty($existingReview->photo)) {
+                ImageHelper::handleUploadedImage(null, 'images', $existingReview->photo);
+            }
+            $existingReview->update($input);
+            return __('Your Review Updated Successfully.');
+        }
+
         // Create a new review
-        $user->reviews()->create($request->all());
+        $user->reviews()->create($input);
         return __('Your Review Submitted Successfully.');
     }
     

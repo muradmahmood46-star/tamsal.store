@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Review extends Model
 {
-    protected $fillable = ['user_id','item_id','customer_name','is_admin_added','review','rating','status','subject'];
+    protected $fillable = ['user_id','item_id','customer_name','is_admin_added','review','rating','status','subject','photo'];
 
     public function user()
     {
@@ -31,8 +31,8 @@ class Review extends Model
 
     public static function ratings($item_id){
         $item = Item::find($item_id);
-        if ($item && $item->is_custom_rating == 1 && $item->custom_rating !== null && $item->custom_rating > 0) {
-            return number_format((float)$item->custom_rating, 1, '.', '') * 20;
+        if ($item) {
+            return number_format((float)$item->rating, 1, '.', '') * 20;
         }
         $stars = Review::whereStatus(1)->whereItemId($item_id)->avg('rating');
         $ratings = number_format((float)$stars, 1, '.', '') * 20;

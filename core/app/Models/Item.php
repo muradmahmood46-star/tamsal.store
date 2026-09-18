@@ -12,18 +12,41 @@ class Item extends Model
 
     public function getRatingAttribute()
     {
-        if ($this->is_custom_rating == 1 && $this->custom_rating !== null && $this->custom_rating > 0) {
-            return (float) $this->custom_rating;
+        $hasCustom = ($this->is_custom_rating == 1 && $this->custom_rating !== null && $this->custom_rating > 0);
+        $customScore = $hasCustom ? (float) $this->custom_rating : 0.0;
+        $customCount = $hasCustom ? (int) ($this->custom_rating_count ?: 1) : 0;
+
+        if ($this->relationLoaded('reviews')) {
+            $activeReviews = $this->reviews->where('status', 1);
+            $realCount = $activeReviews->count();
+            $realSum = (float) $activeReviews->sum('rating');
+        } else {
+            $realCount = (int) $this->reviews()->where('status', 1)->count();
+            $realSum = (float) ($this->reviews()->where('status', 1)->sum('rating') ?: 0);
         }
-        return (float) ($this->reviews()->where('status', 1)->avg('rating') ?: 0);
+
+        $totalCount = $customCount + $realCount;
+        if ($totalCount <= 0) {
+            return 0.0;
+        }
+
+        $totalSum = ($customScore * $customCount) + $realSum;
+        $avg = round($totalSum / $totalCount, 1);
+        return min(5.0, max(0.0, (float) $avg));
     }
 
     public function getRatingCountAttribute()
     {
-        if ($this->is_custom_rating == 1 && $this->custom_rating_count !== null && $this->custom_rating_count > 0) {
-            return (int) $this->custom_rating_count;
+        $hasCustom = ($this->is_custom_rating == 1 && $this->custom_rating !== null && $this->custom_rating > 0);
+        $customCount = $hasCustom ? (int) ($this->custom_rating_count ?: 1) : 0;
+
+        if ($this->relationLoaded('reviews')) {
+            $realCount = $this->reviews->where('status', 1)->count();
+        } else {
+            $realCount = (int) $this->reviews()->where('status', 1)->count();
         }
-        return (int) $this->reviews()->where('status', 1)->count();
+
+        return $customCount + $realCount;
     }
 
     public function category()

@@ -753,9 +753,9 @@
                     <div class="card border-0 mb-3 modern-review-card shadow-sm" style="border-radius: 14px; background: #ffffff; border: 1px solid #edf2f7 !important; transition: all 0.2s ease;">
                         <div class="card-body p-3 p-md-4">
                             <div class="d-flex align-items-start">
-                                <!-- WhatsApp Style User Avatar -->
+                                <!-- User Avatar -->
                                 <div class="mr-3 mr-md-4" style="margin-right: 16px;">
-                                    @if ($review->user && $review->user->photo && file_exists('assets/images/' . $review->user->photo))
+                                    @if ($review->user && $review->user->photo)
                                         <img src="{{ url('/core/public/storage/images/' . $review->user->photo) }}" class="rounded-circle shadow-sm" style="width: 48px; height: 48px; min-width: 48px; object-fit: cover; border: 2px solid #ffffff;" alt="{{ $review->reviewer_name }}">
                                     @else
                                         <div class="whatsapp-no-dp-avatar" style="width: 48px; height: 48px; min-width: 48px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; border: 2px solid #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
@@ -772,7 +772,7 @@
                                         <div class="d-flex align-items-center flex-wrap">
                                             <h6 class="font-weight-bold text-dark mb-0 mr-2" style="font-size: 15.5px;">{{ $review->reviewer_name }}</h6>
                                             <span class="badge badge-pill badge-success mr-2" style="background-color: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; font-size: 11px; padding: 3px 8px; font-weight: 600;">
-                                                <i class="fas fa-check-circle mr-1"></i> {{ __('Verified Purchase') }}
+                                                <i class="fas fa-check-circle mr-1"></i> {{ __('Verified Buyer') }}
                                             </span>
                                         </div>
                                         <span class="text-muted small">
@@ -783,10 +783,10 @@
                                     <!-- Star Ratings -->
                                     <div class="mb-2" style="color: #f59e0b; font-size: 13.5px; letter-spacing: 1px;">
                                         @for ($i = 0; $i < $review->rating; $i++)
-                                            <i class="fas fa-star text-warning"></i>
+                                            <i class="fas fa-star text-warning" style="color: #f59e0b !important;"></i>
                                         @endfor
                                         @for ($i = $review->rating; $i < 5; $i++)
-                                            <i class="far fa-star text-muted" style="opacity: 0.35;"></i>
+                                            <i class="far fa-star text-muted" style="color: #cbd5e1 !important;"></i>
                                         @endfor
                                     </div>
 
@@ -794,9 +794,17 @@
                                         <h5 class="font-weight-bold text-dark mb-1" style="font-size: 15px; line-height: 1.3;">{{ $review->subject }}</h5>
                                     @endif
 
-                                    <p class="text-secondary mb-0" style="font-size: 14px; line-height: 1.6; color: #475569 !important;">
+                                    <p class="text-secondary mb-2" style="font-size: 14px; line-height: 1.6; color: #475569 !important;">
                                         {{ $review->review }}
                                     </p>
+
+                                    @if (!empty($review->photo))
+                                        <div class="review-photo-container mt-2 pt-1">
+                                            <a href="{{ url('/core/public/storage/images/' . $review->photo) }}" target="_blank" class="d-inline-block" title="{{ __('Click to view full image') }}">
+                                                <img src="{{ url('/core/public/storage/images/' . $review->photo) }}" alt="{{ __('Customer Review Photo') }}" class="img-thumbnail rounded shadow-sm" style="max-height: 120px; max-width: 150px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 1px solid #e2e8f0; transition: transform 0.2s ease;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
+                                            </a>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -859,20 +867,25 @@
                         <!-- 5 Star Breakdown Bars -->
                         <div class="rating-breakdown-bars">
                             @php
-                                $totalReviewsReal = $item->reviews->where('status', 1)->count();
+                                $hasCustom = ($item->is_custom_rating == 1 && $item->custom_rating !== null && $item->custom_rating > 0);
+                                $customStarRound = $hasCustom ? (int) round($item->custom_rating) : 0;
+                                $customCountBase = $hasCustom ? (int) ($item->custom_rating_count ?: 1) : 0;
+                                $totalAllRatings = $item->rating_count;
                             @endphp
 
                             @for ($star = 5; $star >= 1; $star--)
                                 @php
-                                    $starCount = $item->reviews->where('status', 1)->where('rating', $star)->count();
-                                    $starPercent = ($totalReviewsReal > 0) ? round(($starCount / $totalReviewsReal) * 100) : ($star == 5 && $item->is_custom_rating == 1 ? 85 : ($star == 4 && $item->is_custom_rating == 1 ? 15 : 0));
+                                    $realStarCount = $item->reviews->where('status', 1)->where('rating', $star)->count();
+                                    $customContribution = ($hasCustom && $star == $customStarRound) ? $customCountBase : 0;
+                                    $combinedStarCount = $realStarCount + $customContribution;
+                                    $starPercent = ($totalAllRatings > 0) ? round(($combinedStarCount / $totalAllRatings) * 100) : 0;
                                 @endphp
                                 <div class="d-flex align-items-center mb-2" style="font-size: 13px;">
-                                    <span class="text-dark font-weight-bold" style="width: 45px;">{{ $star }} <i class="fas fa-star text-warning" style="font-size: 11px;"></i></span>
+                                    <span class="text-dark font-weight-bold" style="width: 45px;">{{ $star }} <i class="fas fa-star text-warning" style="font-size: 11px; color: #f59e0b !important;"></i></span>
                                     <div class="progress flex-grow-1 mx-2" style="height: 7px; border-radius: 10px; background-color: #e2e8f0;">
                                         <div class="progress-bar" role="progressbar" style="width: {{ $starPercent }}%; background: linear-gradient(90deg, #f59e0b, #fbbf24); border-radius: 10px;" aria-valuenow="{{ $starPercent }}" aria-valuemin="0" aria-valuemax="100"></div>
                                     </div>
-                                    <span class="text-muted text-right" style="width: 35px;">{{ $starCount }}</span>
+                                    <span class="text-muted text-right" style="width: 35px;">{{ $combinedStarCount }}</span>
                                 </div>
                             @endfor
                         </div>
@@ -997,63 +1010,108 @@
 
     @auth
         <form class="modal fade ratingForm" action="{{ route('front.review.submit') }}" method="post" id="leaveReview"
-            tabindex="-1">
+            tabindex="-1" enctype="multipart/form-data">
             @csrf
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">{{ __('Leave a Review') }}</h4>
-                        <button class="close modal_close" type="button" data-bs-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden;">
+                    <div class="modal-header bg-light py-3 px-4" style="border-bottom: 1px solid #e2e8f0;">
+                        <h4 class="modal-title font-weight-bold text-dark mb-0" style="font-size: 18px;">
+                            <i class="fas fa-star text-warning mr-2" style="color: #f59e0b !important;"></i> {{ __('Leave a Review') }}
+                        </h4>
+                        <button class="close modal_close" type="button" data-bs-dismiss="modal" aria-label="Close" style="font-size: 24px; outline: none;">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body p-4">
                         @php
                             $user = Auth::user();
                         @endphp
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label for="review-name">{{ __('Your Name') }}</label>
-                                    <input class="form-control" type="text" id="review-name"
-                                        value="{{ $user->first_name }}" required>
-                                </div>
-                            </div>
-                            <input type="hidden" name="item_id" value="{{ $item->id }}">
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label for="review-email">{{ __('Your Email') }}</label>
-                                    <input class="form-control" type="email" id="review-email"
-                                        value="{{ $user->email }}" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label for="review-subject">{{ __('Subject') }}</label>
-                                    <input class="form-control" type="text" name="subject" id="review-subject" required>
+                        <input type="hidden" name="item_id" value="{{ $item->id }}">
+
+                        <div class="row mb-3">
+                            <div class="col-sm-6 mb-2 mb-sm-0">
+                                <div class="form-group mb-0">
+                                    <label class="font-weight-bold text-dark small mb-1" for="review-name">{{ __('Your Name') }}</label>
+                                    <input class="form-control" type="text" id="review-name" value="{{ trim($user->first_name . ' ' . $user->last_name) }}" readonly style="background-color: #f8fafc; border-radius: 8px;">
                                 </div>
                             </div>
                             <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label for="review-rating">{{ __('Rating') }}</label>
-                                    <select name="rating" class="form-control" id="review-rating">
-                                        <option value="5">5 {{ __('Stars') }}</option>
-                                        <option value="4">4 {{ __('Stars') }}</option>
-                                        <option value="3">3 {{ __('Stars') }}</option>
-                                        <option value="2">2 {{ __('Stars') }}</option>
-                                        <option value="1">1 {{ __('Star') }}</option>
-                                    </select>
+                                <div class="form-group mb-0">
+                                    <label class="font-weight-bold text-dark small mb-1" for="review-email">{{ __('Your Email') }}</label>
+                                    <input class="form-control" type="email" id="review-email" value="{{ $user->email }}" readonly style="background-color: #f8fafc; border-radius: 8px;">
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="review-message">{{ __('Review') }}</label>
-                            <textarea class="form-control" name="review" id="review-message" rows="8" required></textarea>
+
+                        <!-- Interactive Star Rating Selector -->
+                        <div class="card p-3 mb-3 border-0" style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border-radius: 12px; border: 1px solid #fde68a !important;">
+                            <label class="font-weight-bold text-dark mb-2 d-flex align-items-center justify-content-between">
+                                <span><i class="fas fa-star text-warning mr-1" style="color: #f59e0b !important;"></i> {{ __('Your Rating') }} <span class="text-danger">*</span></span>
+                                <span class="badge badge-warning text-dark font-weight-bold px-3 py-1" id="review-rating-label" style="font-size: 13px; border-radius: 20px; background-color: #fbbf24;">
+                                    5.0 - {{ __('Excellent') }}
+                                </span>
+                            </label>
+
+                            <div class="d-flex align-items-center flex-wrap">
+                                <div class="interactive-star-rating d-inline-flex align-items-center" id="interactive-star-picker" style="font-size: 32px; cursor: pointer; user-select: none;">
+                                    <i class="fas fa-star star-option active" data-score="1" style="color: #f59e0b; margin-right: 6px; transition: transform 0.15s ease;"></i>
+                                    <i class="fas fa-star star-option active" data-score="2" style="color: #f59e0b; margin-right: 6px; transition: transform 0.15s ease;"></i>
+                                    <i class="fas fa-star star-option active" data-score="3" style="color: #f59e0b; margin-right: 6px; transition: transform 0.15s ease;"></i>
+                                    <i class="fas fa-star star-option active" data-score="4" style="color: #f59e0b; margin-right: 6px; transition: transform 0.15s ease;"></i>
+                                    <i class="fas fa-star star-option active" data-score="5" style="color: #f59e0b; margin-right: 6px; transition: transform 0.15s ease;"></i>
+                                </div>
+                                <input type="hidden" name="rating" id="review-rating-input" value="5">
+                                <small class="text-muted ml-3 d-none d-md-inline" style="font-size: 12px;">({{ __('Click on stars to rate') }})</small>
+                            </div>
                         </div>
+
+                        <!-- Review Subject -->
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold text-dark small mb-1" for="review-subject">{{ __('Review Title / Subject') }} <span class="text-muted">({{ __('Optional') }})</span></label>
+                            <input class="form-control" type="text" name="subject" id="review-subject" placeholder="{{ __('e.g. Great quality and fast shipping!') }}" style="border-radius: 8px;">
+                        </div>
+
+                        <!-- Review Text Message -->
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold text-dark small mb-1" for="review-message">{{ __('Review Details') }} <span class="text-danger">*</span></label>
+                            <textarea class="form-control" name="review" id="review-message" rows="4" placeholder="{{ __('Share your genuine experience with this product, its build quality, performance, and features...') }}" required style="border-radius: 8px;"></textarea>
+                        </div>
+
+                        <!-- Optional Photo Upload with Instant Preview -->
+                        <div class="form-group mb-2">
+                            <label class="font-weight-bold text-dark small mb-1">
+                                <i class="fas fa-camera text-primary mr-1"></i> {{ __('Add Photo / Image (Optional)') }}
+                            </label>
+                            
+                            <div class="review-upload-box p-3 border text-center" id="review-drop-zone" style="background: #f8fafc; border: 2px dashed #cbd5e1 !important; border-radius: 12px; cursor: pointer; transition: all 0.2s ease;" onclick="document.getElementById('review-photo-input').click();">
+                                <input type="file" name="photo" id="review-photo-input" class="d-none" accept="image/jpeg,image/png,image/webp,image/jpg,image/gif" onchange="handleReviewPhotoSelect(this)">
+                                
+                                <div id="review-upload-prompt">
+                                    <div class="mb-1 text-primary" style="font-size: 26px;">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                    </div>
+                                    <p class="font-weight-bold text-dark mb-0 small">{{ __('Click here to upload product picture') }}</p>
+                                    <span class="text-muted" style="font-size: 11.5px;">{{ __('Supports JPG, PNG, WebP or GIF (Max 8MB)') }}</span>
+                                </div>
+
+                                <div id="review-image-preview-wrapper" class="d-none mt-2 position-relative d-inline-block">
+                                    <img id="review-image-preview-img" src="" alt="Review Preview" style="max-height: 120px; max-width: 180px; object-fit: contain; border-radius: 8px; border: 2px solid #e2e8f0; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
+                                    <button type="button" class="btn btn-danger btn-sm rounded-circle position-absolute shadow" style="top: -8px; right: -8px; width: 26px; height: 26px; padding: 0; line-height: 24px; font-size: 13px;" onclick="event.stopPropagation(); removeReviewPhoto();" title="{{ __('Remove photo') }}">
+                                        &times;
+                                    </button>
+                                    <div class="mt-1 small text-success font-weight-bold" id="review-photo-name"></div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-primary" type="submit"><span>{{ __('Submit Review') }}</span></button>
+                    <div class="modal-footer bg-light py-3 px-4 d-flex justify-content-between" style="border-top: 1px solid #e2e8f0;">
+                        <button class="btn btn-outline-secondary btn-sm px-4" type="button" data-bs-dismiss="modal" style="border-radius: 8px;">
+                            {{ __('Cancel') }}
+                        </button>
+                        <button class="btn btn-primary px-4 font-weight-bold shadow-sm" type="submit" style="border-radius: 8px;">
+                            <i class="fas fa-paper-plane mr-1"></i> <span>{{ __('Submit Review') }}</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1224,6 +1282,76 @@
 
             updateVariantStockAndCutMarks();
         });
+
+        // Review Modal Interactive Star Rating Handler
+        const ratingLabels = {
+            1: '1.0 - {{ __("Poor") }}',
+            2: '2.0 - {{ __("Fair") }}',
+            3: '3.0 - {{ __("Good") }}',
+            4: '4.0 - {{ __("Very Good") }}',
+            5: '5.0 - {{ __("Excellent") }}'
+        };
+
+        function setInteractiveRating(score) {
+            score = parseInt(score) || 5;
+            $('#review-rating-input').val(score);
+            $('#review-rating-label').text(ratingLabels[score] || (score + '.0'));
+
+            $('#interactive-star-picker .star-option').each(function() {
+                const starScore = parseInt($(this).attr('data-score'));
+                if (starScore <= score) {
+                    $(this).removeClass('far').addClass('fas active').css('color', '#f59e0b');
+                } else {
+                    $(this).removeClass('fas active').addClass('far').css('color', '#cbd5e1');
+                }
+            });
+        }
+
+        $(document).on('mouseenter', '#interactive-star-picker .star-option', function() {
+            const hoverScore = parseInt($(this).attr('data-score'));
+            $('#interactive-star-picker .star-option').each(function() {
+                const starScore = parseInt($(this).attr('data-score'));
+                if (starScore <= hoverScore) {
+                    $(this).removeClass('far').addClass('fas').css('color', '#fbbf24');
+                } else {
+                    $(this).removeClass('fas').addClass('far').css('color', '#e2e8f0');
+                }
+            });
+            $('#review-rating-label').text(ratingLabels[hoverScore] || (hoverScore + '.0'));
+        });
+
+        $(document).on('mouseleave', '#interactive-star-picker', function() {
+            const currentScore = parseInt($('#review-rating-input').val()) || 5;
+            setInteractiveRating(currentScore);
+        });
+
+        $(document).on('click', '#interactive-star-picker .star-option', function() {
+            const clickedScore = parseInt($(this).attr('data-score'));
+            setInteractiveRating(clickedScore);
+        });
+
+        // Review Photo Select & Instant Preview
+        function handleReviewPhotoSelect(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#review-image-preview-img').attr('src', e.target.result);
+                    $('#review-photo-name').text(file.name + ' (' + (file.size / (1024 * 1024)).toFixed(2) + ' MB)');
+                    $('#review-upload-prompt').addClass('d-none');
+                    $('#review-image-preview-wrapper').removeClass('d-none');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeReviewPhoto() {
+            $('#review-photo-input').val('');
+            $('#review-image-preview-img').attr('src', '');
+            $('#review-photo-name').text('');
+            $('#review-image-preview-wrapper').addClass('d-none');
+            $('#review-upload-prompt').removeClass('d-none');
+        }
     </script>
 
     @include('front.catalog.inc.whatsapp_chatbox')

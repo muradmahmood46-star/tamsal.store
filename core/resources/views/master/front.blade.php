@@ -119,6 +119,210 @@
             visibility: visible !important;
             display: block !important;
         }
+
+        /* ==========================================================================
+           Universal Product Card Image Fitting & Card Height Equalization
+           ========================================================================== */
+        .product-card {
+            display: flex !important;
+            flex-direction: column !important;
+            height: 100% !important;
+            background: #ffffff !important;
+            border-radius: 8px !important;
+            overflow: hidden !important;
+            position: relative !important;
+            transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+            box-sizing: border-box !important;
+        }
+
+        .product-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+        }
+
+        /* Product Card Thumbnail Box - Uniform Aspect Ratio & Centered */
+        .product-card .product-thumb {
+            position: relative !important;
+            width: 100% !important;
+            height: 220px !important;
+            min-height: 200px !important;
+            max-height: 240px !important;
+            aspect-ratio: 1 / 1 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background-color: #ffffff !important;
+            overflow: hidden !important;
+            padding: 10px !important;
+            box-sizing: border-box !important;
+            margin: 0 !important;
+        }
+
+        @supports (aspect-ratio: 1 / 1) {
+            .product-card .product-thumb {
+                height: auto !important;
+            }
+        }
+
+        /* Product Image - Automatic Clean Fit without Distortion or Awkward Cropping */
+        .product-card .product-thumb > img,
+        .product-card .product-thumb img {
+            max-width: 100% !important;
+            max-height: 100% !important;
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: contain !important;
+            object-position: center !important;
+            display: block !important;
+            margin: auto !important;
+            transform: scale(1) !important;
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+
+        .product-card:hover .product-thumb > img,
+        .product-card:hover .product-thumb img {
+            transform: scale(1.06) !important;
+        }
+
+        /* Card Body Equalization */
+        .product-card .product-card-body,
+        .product-card .product-card-inner {
+            display: flex !important;
+            flex-direction: column !important;
+            flex: 1 1 auto !important;
+            justify-content: space-between !important;
+            padding: 12px 14px 14px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .product-card .product-title {
+            min-height: 40px !important;
+            line-height: 1.35 !important;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 2 !important;
+            -webkit-box-orient: vertical !important;
+            overflow: hidden !important;
+            margin-bottom: 6px !important;
+        }
+
+        .product-card .product-title a {
+            color: #1e293b !important;
+            transition: color 0.2s ease !important;
+        }
+
+        .product-card .product-title a:hover {
+            color: #2563eb !important;
+        }
+
+        .product-card .product-price {
+            margin-top: auto !important;
+            margin-bottom: 0 !important;
+            padding-top: 4px !important;
+        }
+
+        /* Owl Carousel Equal Heights for Product Cards */
+        .owl-carousel .owl-stage {
+            display: flex !important;
+        }
+
+        .owl-carousel .owl-item {
+            display: flex !important;
+            flex-direction: column !important;
+            height: auto !important;
+        }
+
+        .owl-carousel .slider-item {
+            display: flex !important;
+            flex-direction: column !important;
+            height: 100% !important;
+            width: 100% !important;
+        }
+
+        /* Horizontal Small Column Product Cards (.product-card.p-col) */
+        .product-card.p-col {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            height: auto !important;
+        }
+
+        .product-card.p-col .product-thumb {
+            width: 90px !important;
+            min-width: 90px !important;
+            max-width: 90px !important;
+            height: 90px !important;
+            min-height: 90px !important;
+            max-height: 90px !important;
+            aspect-ratio: 1 / 1 !important;
+            padding: 4px !important;
+            margin-right: 12px !important;
+            border-radius: 6px !important;
+        }
+
+        .product-card.p-col .product-thumb img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: contain !important;
+        }
+
+        .product-card.p-col .product-card-body {
+            flex: 1 !important;
+            padding: 4px 8px !important;
+        }
+
+        .product-card.p-col .product-title {
+            min-height: unset !important;
+        }
+
+        /* Catalog List View Product Cards (.product-card.product-list) */
+        .product-card.product-list,
+        .product-card.list-view {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            height: auto !important;
+        }
+
+        .product-card.product-list .product-thumb,
+        .product-card.list-view .product-thumb {
+            width: 190px !important;
+            min-width: 190px !important;
+            max-width: 190px !important;
+            height: 190px !important;
+            min-height: 190px !important;
+            max-height: 190px !important;
+            aspect-ratio: 1 / 1 !important;
+            padding: 8px !important;
+            border-radius: 8px 0 0 8px !important;
+        }
+
+        .product-card.product-list .product-thumb img,
+        .product-card.list-view .product-thumb img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: contain !important;
+        }
+
+        .product-card.product-list .product-card-inner,
+        .product-card.list-view .product-card-inner {
+            flex: 1 !important;
+            width: 100% !important;
+        }
+
+        @media (max-width: 575px) {
+            .product-card.product-list {
+                flex-direction: column !important;
+            }
+            .product-card.product-list .product-thumb {
+                width: 100% !important;
+                min-width: 100% !important;
+                height: 220px !important;
+                border-radius: 8px 8px 0 0 !important;
+            }
+            .product-card .product-thumb {
+                height: 190px !important;
+            }
+        }
     </style>
     {{-- Google AdSense Start --}}
     @if ($setting->is_google_adsense == '1')
