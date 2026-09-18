@@ -221,6 +221,23 @@
                 }
             }
             @media (max-width: 575px) {
+                .sright-image {
+                    height: 105px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .sright-image dotlottie-player,
+                .sright-image lottie-player {
+                    width: 100% !important;
+                    height: 105px !important;
+                    object-fit: contain !important;
+                }
+                .sright-image img {
+                    width: 100% !important;
+                    height: 105px !important;
+                    object-fit: cover !important;
+                }
                 .slider-area-wrapper {
                     padding-top: 10px;
                 }
