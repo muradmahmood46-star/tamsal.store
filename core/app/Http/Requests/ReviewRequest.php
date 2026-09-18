@@ -29,9 +29,11 @@ class ReviewRequest extends FormRequest
     public function rules()
     {
         return [
-            'rating' => 'required|numeric|min:1|max:5',
-            'review' => 'required',
-            'photo'  => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:8192'
+            'rating'   => 'required|numeric|min:1|max:5',
+            'review'   => 'required',
+            'photos'   => 'nullable|array|max:3',
+            'photos.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:8192',
+            'photo'    => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:8192',
         ];
     }
 
@@ -43,11 +45,15 @@ class ReviewRequest extends FormRequest
     public function messages()
     {
         return [
-            'rating.required'   =>  __('Rating field is required.'),
-            'review.required'   =>  __('Review field is required.'),
-            'photo.image'       =>  __('The uploaded file must be an image.'),
-            'photo.mimes'       =>  __('The photo must be a JPG, PNG, WebP, or GIF image.'),
-            'photo.max'         =>  __('The photo size must not exceed 8MB.')
+            'rating.required'    => __('Rating field is required.'),
+            'review.required'    => __('Review field is required.'),
+            'photos.max'         => __('You can upload a maximum of 3 photos.'),
+            'photos.*.image'     => __('The uploaded file must be an image.'),
+            'photos.*.mimes'     => __('The photo must be a JPG, PNG, WebP, or GIF image.'),
+            'photos.*.max'       => __('Each photo size must not exceed 8MB.'),
+            'photo.image'        => __('The uploaded file must be an image.'),
+            'photo.mimes'        => __('The photo must be a JPG, PNG, WebP, or GIF image.'),
+            'photo.max'          => __('The photo size must not exceed 8MB.')
         ];
     }
 

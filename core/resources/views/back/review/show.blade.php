@@ -52,6 +52,20 @@
                                 <th>{{ __("Review") }}</th>
                                 <td>{{$review->review}}</td>
                             </tr>
+                            @if (!empty($review->review_photos))
+                            <tr>
+                                <th>{{ __("Review Photos") }}</th>
+                                <td>
+                                    <div class="d-flex flex-wrap gap-2" style="gap: 10px;">
+                                        @foreach ($review->review_photos as $rPhoto)
+                                            <a href="{{ url('/core/public/storage/images/' . $rPhoto) }}" target="_blank">
+                                                <img src="{{ url('/core/public/storage/images/' . $rPhoto) }}" class="img-thumbnail" style="height: 90px; width: 90px; object-fit: cover; border-radius: 8px;">
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                </td>
+                            </tr>
+                            @endif
                         </table>
                     </div>
 				</div>

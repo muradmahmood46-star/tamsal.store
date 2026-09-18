@@ -15,7 +15,7 @@ class AddPhotoToReviewsTable extends Migration
     {
         if (!Schema::hasColumn('reviews', 'photo')) {
             Schema::table('reviews', function (Blueprint $table) {
-                $table->string('photo')->nullable()->after('subject');
+                $table->text('photo')->nullable()->after('subject');
             });
         }
     }

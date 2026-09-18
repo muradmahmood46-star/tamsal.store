@@ -798,11 +798,13 @@
                                         {{ $review->review }}
                                     </p>
 
-                                    @if (!empty($review->photo))
-                                        <div class="review-photo-container mt-2 pt-1">
-                                            <a href="{{ url('/core/public/storage/images/' . $review->photo) }}" target="_blank" class="d-inline-block" title="{{ __('Click to view full image') }}">
-                                                <img src="{{ url('/core/public/storage/images/' . $review->photo) }}" alt="{{ __('Customer Review Photo') }}" class="img-thumbnail rounded shadow-sm" style="max-height: 120px; max-width: 150px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 1px solid #e2e8f0; transition: transform 0.2s ease;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
-                                            </a>
+                                    @if (!empty($review->review_photos))
+                                        <div class="review-photos-container d-flex flex-wrap mt-2 pt-1" style="gap: 10px;">
+                                            @foreach ($review->review_photos as $rPhoto)
+                                                <a href="{{ url('/core/public/storage/images/' . $rPhoto) }}" target="_blank" class="d-inline-block position-relative" title="{{ __('Click to view full image') }}">
+                                                    <img src="{{ url('/core/public/storage/images/' . $rPhoto) }}" alt="{{ __('Customer Review Photo') }}" class="img-thumbnail rounded shadow-sm" style="height: 85px; width: 85px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 1px solid #e2e8f0; transition: transform 0.2s ease, box-shadow 0.2s ease;" onmouseover="this.style.transform='scale(1.06)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
+                                                </a>
+                                            @endforeach
                                         </div>
                                     @endif
                                 </div>
@@ -1077,29 +1079,34 @@
                             <textarea class="form-control" name="review" id="review-message" rows="4" placeholder="{{ __('Share your genuine experience with this product, its build quality, performance, and features...') }}" required style="border-radius: 8px;"></textarea>
                         </div>
 
-                        <!-- Optional Photo Upload with Instant Preview -->
+                        <!-- Optional Photo Upload with Instant Multi-Photo Preview (Max 3) -->
                         <div class="form-group mb-2">
-                            <label class="font-weight-bold text-dark small mb-1">
-                                <i class="fas fa-camera text-primary mr-1"></i> {{ __('Add Photo / Image (Optional)') }}
-                            </label>
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label class="font-weight-bold text-dark small mb-0">
+                                    <i class="fas fa-camera text-primary mr-1"></i> {{ __('Add Photos (Optional)') }}
+                                </label>
+                                <span class="text-muted small" id="review-photo-count-badge" style="font-size: 11.5px;">(Max 3 pictures)</span>
+                            </div>
                             
-                            <div class="review-upload-box p-3 border text-center" id="review-drop-zone" style="background: #f8fafc; border: 2px dashed #cbd5e1 !important; border-radius: 12px; cursor: pointer; transition: all 0.2s ease;" onclick="document.getElementById('review-photo-input').click();">
-                                <input type="file" name="photo" id="review-photo-input" class="d-none" accept="image/jpeg,image/png,image/webp,image/jpg,image/gif" onchange="handleReviewPhotoSelect(this)">
+                            <div class="review-upload-box p-3 border text-center position-relative" id="review-drop-zone" style="background: #f8fafc; border: 2px dashed #cbd5e1 !important; border-radius: 12px; transition: all 0.2s ease;">
+                                <input type="file" name="photos[]" id="review-photo-input" class="d-none" accept="image/jpeg,image/png,image/webp,image/jpg,image/gif" multiple onchange="handleReviewPhotosSelect(this)">
                                 
-                                <div id="review-upload-prompt">
-                                    <div class="mb-1 text-primary" style="font-size: 26px;">
+                                <div id="review-upload-prompt" style="cursor: pointer;" onclick="document.getElementById('review-photo-input').click();">
+                                    <div class="mb-1 text-primary" style="font-size: 28px;">
                                         <i class="fas fa-cloud-upload-alt"></i>
                                     </div>
-                                    <p class="font-weight-bold text-dark mb-0 small">{{ __('Click here to upload product picture') }}</p>
-                                    <span class="text-muted" style="font-size: 11.5px;">{{ __('Supports JPG, PNG, WebP or GIF (Max 8MB)') }}</span>
+                                    <p class="font-weight-bold text-dark mb-0 small">{{ __('Click to browse & select up to 3 pictures') }}</p>
+                                    <span class="text-muted" style="font-size: 11.5px;">{{ __('Supports JPG, PNG, WebP or GIF (Max 8MB each)') }}</span>
                                 </div>
 
-                                <div id="review-image-preview-wrapper" class="d-none mt-2 position-relative d-inline-block">
-                                    <img id="review-image-preview-img" src="" alt="Review Preview" style="max-height: 120px; max-width: 180px; object-fit: contain; border-radius: 8px; border: 2px solid #e2e8f0; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
-                                    <button type="button" class="btn btn-danger btn-sm rounded-circle position-absolute shadow" style="top: -8px; right: -8px; width: 26px; height: 26px; padding: 0; line-height: 24px; font-size: 13px;" onclick="event.stopPropagation(); removeReviewPhoto();" title="{{ __('Remove photo') }}">
-                                        &times;
+                                <div id="review-images-grid" class="d-none mt-2 d-flex flex-wrap justify-content-center align-items-center" style="gap: 12px;">
+                                    <!-- Dynamic Preview Thumbnails rendered by JS -->
+                                </div>
+
+                                <div id="review-add-more-container" class="d-none mt-2">
+                                    <button type="button" class="btn btn-outline-primary btn-sm px-3" style="border-radius: 20px; font-size: 12px;" onclick="document.getElementById('review-photo-input').click();">
+                                        <i class="fas fa-plus mr-1"></i> {{ __('Add Another Picture') }}
                                     </button>
-                                    <div class="mt-1 small text-success font-weight-bold" id="review-photo-name"></div>
                                 </div>
                             </div>
                         </div>
@@ -1330,28 +1337,103 @@
             setInteractiveRating(clickedScore);
         });
 
-        // Review Photo Select & Instant Preview
-        function handleReviewPhotoSelect(input) {
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    $('#review-image-preview-img').attr('src', e.target.result);
-                    $('#review-photo-name').text(file.name + ' (' + (file.size / (1024 * 1024)).toFixed(2) + ' MB)');
-                    $('#review-upload-prompt').addClass('d-none');
-                    $('#review-image-preview-wrapper').removeClass('d-none');
-                };
-                reader.readAsDataURL(file);
+        // Review Multi-Photo Upload & Preview Handler (Max 3)
+        let reviewSelectedFiles = [];
+
+        function handleReviewPhotosSelect(input) {
+            if (input.files && input.files.length > 0) {
+                const newFiles = Array.from(input.files);
+                
+                for (let i = 0; i < newFiles.length; i++) {
+                    if (reviewSelectedFiles.length >= 3) {
+                        dangerNotification("{{ __('You can upload a maximum of 3 pictures.') }}");
+                        break;
+                    }
+                    if (newFiles[i].type.startsWith('image/')) {
+                        reviewSelectedFiles.push(newFiles[i]);
+                    }
+                }
+                
+                syncReviewFileInput();
+                renderReviewThumbnails();
             }
         }
 
-        function removeReviewPhoto() {
-            $('#review-photo-input').val('');
-            $('#review-image-preview-img').attr('src', '');
-            $('#review-photo-name').text('');
-            $('#review-image-preview-wrapper').addClass('d-none');
-            $('#review-upload-prompt').removeClass('d-none');
+        function removeReviewPhoto(index) {
+            if (index >= 0 && index < reviewSelectedFiles.length) {
+                reviewSelectedFiles.splice(index, 1);
+                syncReviewFileInput();
+                renderReviewThumbnails();
+            }
         }
+
+        function syncReviewFileInput() {
+            const input = document.getElementById('review-photo-input');
+            if (!input) return;
+            
+            try {
+                const dt = new DataTransfer();
+                reviewSelectedFiles.forEach(file => dt.items.add(file));
+                input.files = dt.files;
+            } catch (e) {
+                console.error("DataTransfer error: ", e);
+            }
+        }
+
+        function renderReviewThumbnails() {
+            const $grid = $('#review-images-grid');
+            const $prompt = $('#review-upload-prompt');
+            const $addMore = $('#review-add-more-container');
+            const $countBadge = $('#review-photo-count-badge');
+
+            $grid.empty();
+
+            if (reviewSelectedFiles.length === 0) {
+                $grid.addClass('d-none');
+                $addMore.addClass('d-none');
+                $prompt.removeClass('d-none');
+                $countBadge.text('(Max 3 pictures)').removeClass('text-primary font-weight-bold');
+                return;
+            }
+
+            $prompt.addClass('d-none');
+            $grid.removeClass('d-none');
+            $countBadge.text('(' + reviewSelectedFiles.length + '/3 pictures selected)').addClass('text-primary font-weight-bold');
+
+            if (reviewSelectedFiles.length < 3) {
+                $addMore.removeClass('d-none');
+            } else {
+                $addMore.addClass('d-none');
+            }
+
+            reviewSelectedFiles.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const thumbHtml = `
+                        <div class="review-thumb-item position-relative text-center" style="width: 95px; margin: 4px;">
+                            <div style="width: 95px; height: 95px; border-radius: 10px; overflow: hidden; border: 2px solid #e2e8f0; background: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.06); display: flex; align-items: center; justify-content: center; padding: 4px;">
+                                <img src="${e.target.result}" alt="Preview" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                            </div>
+                            <button type="button" class="btn btn-danger btn-sm rounded-circle position-absolute shadow" style="top: -6px; right: -6px; width: 22px; height: 22px; padding: 0; line-height: 20px; font-size: 12px; z-index: 5;" onclick="removeReviewPhoto(${index})" title="{{ __('Remove photo') }}">
+                                &times;
+                            </button>
+                            <div class="text-truncate mt-1 small text-muted" style="font-size: 11px; max-width: 95px;" title="${file.name}">
+                                ${(file.size / (1024 * 1024)).toFixed(1)} MB
+                            </div>
+                        </div>
+                    `;
+                    $grid.append(thumbHtml);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        $(document).on('hidden.bs.modal', '#leaveReview', function () {
+            reviewSelectedFiles = [];
+            syncReviewFileInput();
+            renderReviewThumbnails();
+            setInteractiveRating(5);
+        });
     </script>
 
     @include('front.catalog.inc.whatsapp_chatbox')

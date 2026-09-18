@@ -71,16 +71,42 @@ class FrontRepository
             'status'  => 1,
         ];
 
-        if ($request->hasFile('photo')) {
-            $input['photo'] = ImageHelper::handleUploadedImage($request->file('photo'), 'images');
+        // Handle up to 3 uploaded photos
+        $uploadedPhotos = [];
+        if ($request->hasFile('photos')) {
+            $files = is_array($request->file('photos')) ? $request->file('photos') : [$request->file('photos')];
+            $files = array_slice($files, 0, 3);
+            foreach ($files as $file) {
+                if ($file) {
+                    $savedName = ImageHelper::handleUploadedImage($file, 'images');
+                    if ($savedName) {
+                        $uploadedPhotos[] = $savedName;
+                    }
+                }
+            }
+        } elseif ($request->hasFile('photo')) {
+            $savedName = ImageHelper::handleUploadedImage($request->file('photo'), 'images');
+            if ($savedName) {
+                $uploadedPhotos[] = $savedName;
+            }
+        }
+
+        if (!empty($uploadedPhotos)) {
+            $input['photo'] = json_encode($uploadedPhotos);
         }
 
         // Check if the user already has a review for this item
         $existingReview = $user->reviews()->where('item_id', $request->item_id)->first();
 
         if ($existingReview) {
-            if ($request->hasFile('photo') && !empty($existingReview->photo)) {
-                ImageHelper::handleUploadedImage(null, 'images', $existingReview->photo);
+            if (!empty($uploadedPhotos) && !empty($existingReview->photo)) {
+                $oldPhotos = json_decode($existingReview->photo, true);
+                if (!is_array($oldPhotos)) {
+                    $oldPhotos = [$existingReview->photo];
+                }
+                foreach ($oldPhotos as $oldP) {
+                    ImageHelper::handleUploadedImage(null, 'images', $oldP);
+                }
             }
             $existingReview->update($input);
             return __('Your Review Updated Successfully.');

@@ -29,6 +29,20 @@ class Review extends Model
         return __('Verified Buyer');
     }
 
+    public function getReviewPhotosAttribute()
+    {
+        if (empty($this->photo)) {
+            return [];
+        }
+
+        $decoded = json_decode($this->photo, true);
+        if (is_array($decoded)) {
+            return $decoded;
+        }
+
+        return [$this->photo];
+    }
+
     public static function ratings($item_id){
         $item = Item::find($item_id);
         if ($item) {
