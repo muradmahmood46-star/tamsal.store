@@ -42,9 +42,18 @@ class OrderHelper
         $overallCartTotal = 0;
 
         foreach ($cart as $key => $item) {
-            $itemId = explode('-', $key)[0];
-            $product = Item::find($itemId);
-            $vendorId = ($product && $product->vendor_id) ? (int)$product->vendor_id : 0;
+            $vendorId = 0;
+            if (!empty($item['deal_id'])) {
+                $dealModel = \App\Models\Deal::find($item['deal_id']);
+                if ($dealModel && $dealModel->vendor_id) {
+                    $vendorId = (int)$dealModel->vendor_id;
+                }
+            }
+            if ($vendorId === 0) {
+                $itemId = explode('-', $key)[0];
+                $product = Item::find($itemId);
+                $vendorId = ($product && $product->vendor_id) ? (int)$product->vendor_id : 0;
+            }
             $vendorGroups[$vendorId][$key] = $item;
 
             $itemPrice = $item['main_price'] ?? 0;
@@ -207,9 +216,20 @@ class OrderHelper
             $createdOrders[] = $order;
         }
 
-        // 4. Post-order actions: decrease stock & license qty, handle coupon
+        // 4. Post-order actions: decrease stock & license qty, increment deal orders_count, handle coupon
         PriceHelper::LicenseQtyDecrese($cart);
         PriceHelper::stockDecrese();
+
+        $processedDealIds = [];
+        foreach ($cart as $cItem) {
+            if (!empty($cItem['deal_id'])) {
+                $dId = (int)$cItem['deal_id'];
+                if (!in_array($dId, $processedDealIds, true)) {
+                    $processedDealIds[] = $dId;
+                    \App\Models\Deal::where('id', $dId)->increment('orders_count');
+                }
+            }
+        }
 
         if ($coupon && !empty($coupon['code']['id'])) {
             $promo = PromoCode::find($coupon['code']['id']);
