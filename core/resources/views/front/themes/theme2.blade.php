@@ -242,14 +242,16 @@
                                             @else
                                                 <img src="{{ url('/core/public/storage/images/' . $img1) }}" alt="" style="width: 100%; height: 215px; object-fit: cover;">
                                             @endif
-                                            <div class="inner-content">
-                                                @if (isset($hero_banner['subtitle1']) && !empty($hero_banner['subtitle1']))
-                                                    <p>{{ $hero_banner['subtitle1'] }}</p>
-                                                @endif
-                                                @if (isset($hero_banner['title1']) && !empty($hero_banner['title1']))
-                                                    <h4>{{ $hero_banner['title1'] }}</h4>
-                                                @endif
-                                            </div>
+                                            @if (!empty($hero_banner['title1']) || !empty($hero_banner['subtitle1']))
+                                                <div class="inner-content">
+                                                    @if (isset($hero_banner['subtitle1']) && !empty($hero_banner['subtitle1']))
+                                                        <p>{{ $hero_banner['subtitle1'] }}</p>
+                                                    @endif
+                                                    @if (isset($hero_banner['title1']) && !empty($hero_banner['title1']))
+                                                        <h4>{{ $hero_banner['title1'] }}</h4>
+                                                    @endif
+                                                </div>
+                                            @endif
                                         </a>
                                     </div>
                                 @endif
@@ -268,14 +270,16 @@
                                             @else
                                                 <img src="{{ url('/core/public/storage/images/' . $img2) }}" alt="" style="width: 100%; height: 215px; object-fit: cover;">
                                             @endif
-                                            <div class="inner-content">
-                                                @if (isset($hero_banner['subtitle2']) && !empty($hero_banner['subtitle2']))
-                                                    <p>{{ $hero_banner['subtitle2'] }}</p>
-                                                @endif
-                                                @if (isset($hero_banner['title2']) && !empty($hero_banner['title2']))
-                                                    <h4>{{ $hero_banner['title2'] }}</h4>
-                                                @endif
-                                            </div>
+                                            @if (!empty($hero_banner['title2']) || !empty($hero_banner['subtitle2']))
+                                                <div class="inner-content">
+                                                    @if (isset($hero_banner['subtitle2']) && !empty($hero_banner['subtitle2']))
+                                                        <p>{{ $hero_banner['subtitle2'] }}</p>
+                                                    @endif
+                                                    @if (isset($hero_banner['title2']) && !empty($hero_banner['title2']))
+                                                        <h4>{{ $hero_banner['title2'] }}</h4>
+                                                    @endif
+                                                </div>
+                                            @endif
                                         </a>
                                     </div>
                                 @endif
