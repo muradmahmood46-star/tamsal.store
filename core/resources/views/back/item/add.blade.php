@@ -1,5 +1,22 @@
 @extends('master.back')
 
+@section('styles')
+    <style>
+        .product-type-card .card-body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 205px;
+            text-align: center;
+        }
+        .product-type-card .product-type-content,
+        .product-type-card .card-title {
+            width: 100%;
+            text-align: center !important;
+        }
+    </style>
+@endsection
+
 @section('content')
 
 <div class="container-fluid">
@@ -34,9 +51,9 @@
 @else
     <div class="row">
         <div class="col-sm-6 col-md-6">
-            <a href="{{route('back.item.create')}}" class="card card-stats card-round">
+            <a href="{{route('back.item.create')}}" class="card card-stats card-round product-type-card">
                 <div class="card-body">
-                    <div class="text-center py-3">
+                    <div class="product-type-content py-3">
                         <div class="d-inline-block">
                             <div class="icon-big text-center icon-primary bubble-shadow-small  px-3">
                                 <i class="fab fa-product-hunt"></i>
@@ -52,9 +69,9 @@
             </a>
         </div>
         <div class="col-sm-6 col-md-6">
-            <a href="{{ route('back.digital.item.create') }}" class="card card-stats card-round">
+            <a href="{{ route('back.digital.item.create') }}" class="card card-stats card-round product-type-card">
                 <div class="card-body">
-                    <div class="text-center py-3">
+                    <div class="product-type-content py-3">
                         <div class="d-inline-block">
                             <div class="icon-big text-center icon-info bubble-shadow-small  px-3">
                                 <i class="fab fa-digital-ocean"></i>
@@ -70,9 +87,9 @@
             </a>
         </div>
         <div class="col-sm-6 col-md-6">
-            <a href="{{ route('back.license.item.create') }}" class="card card-stats card-round">
+            <a href="{{ route('back.license.item.create') }}" class="card card-stats card-round product-type-card">
                 <div class="card-body">
-                    <div class="text-center py-3">
+                    <div class="product-type-content py-3">
                         <div class="d-inline-block">
                             <div class="icon-big text-center icon-success bubble-shadow-small  px-3">
                                 <i class="far fa-copyright"></i>
@@ -88,9 +105,9 @@
             </a>
         </div>
         <div class="col-sm-6 col-md-6">
-            <a href="{{ route('back.affiliate.create') }}" class="card card-stats card-round">
+            <a href="{{ route('back.affiliate.create') }}" class="card card-stats card-round product-type-card">
                 <div class="card-body">
-                    <div class="text-center py-3">
+                    <div class="product-type-content py-3">
                         <div class="d-inline-block">
                             <div class="icon-big text-center icon-success bubble-shadow-small  px-3">
                                 <i class="fab fa-affiliatetheme"></i>

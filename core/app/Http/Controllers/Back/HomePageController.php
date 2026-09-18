@@ -85,7 +85,9 @@ class HomePageController extends Controller
         unset($input['_token']);
         $data = HomeCutomize::first();
         foreach(json_decode($data->hero_banner,true) as $key => $value){
-            if(isset($input[$key])){
+            // Empty form fields are converted to null by Laravel.  Preserve that
+            // intentional value instead of restoring the previously saved text.
+            if(array_key_exists($key, $input)){
                 $input[$key] =  $input[$key];
             }else{
                 $input[$key] = $value;
