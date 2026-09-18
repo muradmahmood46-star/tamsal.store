@@ -37,20 +37,41 @@
 
 									@if ($slider->home_page != 'theme4')
 									<div class="form-group">
-										<label id="change_label" for="name">{{ $slider->home_page == 'theme3' || $slider->home_page == 'theme4' ? __('Feature Image') : __('Logo') }}</label>
+										<label id="change_label" for="name">{{ $slider->home_page == 'theme3' || $slider->home_page == 'theme4' ? __('Feature Image') : __('Brand Logo') }} <small class="text-muted">({{ __('Optional - Slider can be without logo') }})</small></label>
 										<br>
-											<img class="admin-img"
-												src="{{ $slider->logo ? url('/core/public/storage/images/'.$slider->logo) : url('/core/public/storage/images/placeholder.png') }}"
-												alt="No Image Found">
+											@if ($slider->logo)
+												<div class="d-flex align-items-center mb-2" style="gap: 15px; flex-wrap: wrap;">
+													<div class="border rounded p-2 bg-light d-inline-block shadow-sm">
+														<img class="admin-img mb-0" style="max-height: 50px; max-width: 140px; object-fit: contain;"
+															src="{{ url('/core/public/storage/images/'.$slider->logo) }}"
+															alt="Slider Logo">
+													</div>
+													<a href="{{ route('back.slider.delete.logo', $slider->id) }}" 
+													   onclick="return confirm('{{ __('Are you sure you want to delete this logo from the slider?') }}')" 
+													   class="btn btn-danger btn-sm shadow-sm">
+														<i class="fas fa-trash-alt mr-1"></i> {{ __('Delete / Remove Logo') }}
+													</a>
+												</div>
+												<div class="custom-control custom-checkbox mb-2">
+													<input type="checkbox" class="custom-control-input" id="remove_logo" name="remove_logo" value="1">
+													<label class="custom-control-label text-danger font-weight-bold" for="remove_logo">
+														<i class="fas fa-times-circle mr-1"></i> {{ __('Remove Logo on form update') }}
+													</label>
+												</div>
+											@else
+												<div class="alert alert-light border py-2 px-3 d-inline-flex align-items-center mb-2 text-muted" style="border-radius: 6px;">
+													<i class="fas fa-info-circle mr-2 text-primary"></i> {{ __('No logo currently set. Slider will display cleanly without any logo.') }}
+												</div>
+											@endif
 										<br>
-										<span id="change_message" class="mt-1">{{ $slider->home_page == 'theme3' || $slider->home_page == 'theme4' ? __('Image Size Should Be 435 x 530')  :  __('Image Size Should Be 130 x 40')}}</span>
+										<span id="change_message" class="mt-1 text-muted">{{ $slider->home_page == 'theme3' || $slider->home_page == 'theme4' ? __('Image Size Should Be 435 x 530')  :  __('Image Size Should Be 130 x 40 (Optional - Leave empty if no logo is needed)')}}</span>
 									</div>
 
 									<div class="form-group position-relative ">
 										<label class="file">
-											<input type="file"  accept="image/*"  class="upload-photo" name="logo" id="file"
+											<input type="file"  accept="image/*,.json,.lottie,application/json"  class="upload-photo" name="logo" id="file"
 												aria-label="File browser example">
-											<span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+											<span class="file-custom text-left">{{ __('Upload New Logo (Optional)...') }}</span>
 										</label>
 									</div>
 									<div class="form-group">

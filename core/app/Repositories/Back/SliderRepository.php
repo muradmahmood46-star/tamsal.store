@@ -40,8 +40,24 @@ class SliderRepository
         }
         if ($file = $request->file('logo')) {
             $input['logo'] = ImageHelper::handleUpdatedUploadedImage($file,'images/',$slider,'images/','logo');
+        } elseif ($request->has('remove_logo') && $request->remove_logo == 1) {
+            ImageHelper::handleDeletedImage($slider,'logo','images');
+            $input['logo'] = null;
         }
         $slider->update($input);
+    }
+
+    /**
+     * Delete slider logo.
+     *
+     * @param  \App\Models\Slider $slider
+     * @return void
+     */
+    public function deleteLogo($slider)
+    {
+        ImageHelper::handleDeletedImage($slider,'logo','images');
+        $slider->logo = null;
+        $slider->save();
     }
 
     /**

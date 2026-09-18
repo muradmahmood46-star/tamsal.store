@@ -47,7 +47,9 @@
                         <div class="col-xl-7 col-lg-6 order-first order-lg-last">
                         <div class="layer-4">
                             <div class="right-img">
+                            @if (!empty($slider->logo))
                             <img class="img-fluid full-img" src="{{ url('/core/public/storage/images/' . $slider->logo) }}" alt="">
+                            @endif
                             </div>
                         </div>
                         </div>

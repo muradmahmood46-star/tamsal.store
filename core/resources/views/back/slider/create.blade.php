@@ -51,19 +51,19 @@
                                         <input type="hidden" name="home_page" value="theme1" id="">
                                         @include('alerts.alerts')
                                         <div class="form-group">
-                                            <label id="change_label" for="name">{{ __('Brand Logo') }} </label>
+                                            <label id="change_label" for="name">{{ __('Brand Logo') }} <small class="text-muted">({{ __('Optional') }})</small></label>
                                             <br>
                                                 <img class="admin-img" src="{{  url('/core/public/storage/images/placeholder.png') }}"
                                                     alt="No Image Found">
                                             <br>
-                                            <span id="change_message" class="mt-1">{{ __('Image Size Should Be 130 x 40') }}</span>
+                                            <span id="change_message" class="mt-1 text-muted">{{ __('Image Size Should Be 130 x 40 (Optional - Leave empty if no logo is needed)') }}</span>
                                         </div>
 
                                         <div class="form-group position-relative">
                                             <label class="file">
-                                                <input type="file"  accept="image/*"  class="upload-photo" name="logo" id="file"
+                                                <input type="file"  accept="image/*,.json,.lottie,application/json"  class="upload-photo" name="logo" id="file"
                                                     aria-label="File browser example" >
-                                                <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+                                                <span class="file-custom text-left">{{ __('Upload Image (Optional)...') }}</span>
                                             </label>
                                         </div>
 
@@ -118,19 +118,19 @@
                                         <input type="hidden" name="home_page" value="theme2" id="">
                                         @include('alerts.alerts')
                                         <div class="form-group">
-                                            <label id="change_label" for="name">{{ __('Brand Logo') }} </label>
+                                            <label id="change_label" for="name">{{ __('Brand Logo') }} <small class="text-muted">({{ __('Optional') }})</small></label>
                                             <br>
                                                 <img class="admin-img" src="{{  url('/core/public/storage/images/placeholder.png') }}"
                                                     alt="No Image Found">
                                             <br>
-                                            <span id="change_message" class="mt-1">{{ __('Image Size Should Be 130 x 40') }}</span>
+                                            <span id="change_message" class="mt-1 text-muted">{{ __('Image Size Should Be 130 x 40 (Optional - Leave empty if no logo is needed)') }}</span>
                                         </div>
 
                                         <div class="form-group position-relative">
                                             <label class="file">
-                                                <input type="file"  accept="image/*"  class="upload-photo" name="logo" id="file"
+                                                <input type="file"  accept="image/*,.json,.lottie,application/json"  class="upload-photo" name="logo" id="file"
                                                     aria-label="File browser example" >
-                                                <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+                                                <span class="file-custom text-left">{{ __('Upload Image (Optional)...') }}</span>
                                             </label>
                                         </div>
 
@@ -185,19 +185,19 @@
                                         <input type="hidden" name="home_page" value="theme3" id="">
                                         @include('alerts.alerts')
                                         <div class="form-group">
-                                            <label id="change_label" for="name">{{ __('Feature Image') }} </label>
+                                            <label id="change_label" for="name">{{ __('Feature Image') }} <small class="text-muted">({{ __('Optional') }})</small></label>
                                             <br>
                                                 <img class="admin-img" src="{{  url('/core/public/storage/images/placeholder.png') }}"
                                                     alt="No Image Found">
                                             <br>
-                                            <span id="change_message" class="mt-1">{{ __('Image Size Should Be 320 x 320') }}</span>
+                                            <span id="change_message" class="mt-1 text-muted">{{ __('Image Size Should Be 320 x 320 (Optional)') }}</span>
                                         </div>
 
                                         <div class="form-group position-relative">
                                             <label class="file">
-                                                <input type="file"  accept="image/*"  class="upload-photo" name="logo" id="file"
+                                                <input type="file"  accept="image/*,.json,.lottie,application/json"  class="upload-photo" name="logo" id="file"
                                                     aria-label="File browser example" >
-                                                <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+                                                <span class="file-custom text-left">{{ __('Upload Image (Optional)...') }}</span>
                                             </label>
                                         </div>
 

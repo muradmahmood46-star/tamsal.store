@@ -374,6 +374,7 @@ Route::group(['middleware' => ['adminlocalize', 'demo']], function () {
             Route::get('language/status/{id}/{status}', 'Back\LanguageController@status')->name('back.language.status');
 
             //------------ SLIDER ------------
+            Route::get('slider/delete-logo/{slider}', 'Back\SliderController@deleteLogo')->name('back.slider.delete.logo');
             Route::resource('slider', 'Back\SliderController', ['as' => 'back', 'except' => 'show']);
 
             //------------ SERVICE ------------

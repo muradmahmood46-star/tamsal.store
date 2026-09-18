@@ -102,6 +102,18 @@ class SliderController extends Controller
     }
 
     /**
+     * Delete slider logo only.
+     *
+     * @param  \App\Models\Slider  $slider
+     * @return \Illuminate\Http\Response
+     */
+    public function deleteLogo(Slider $slider)
+    {
+        $this->repository->deleteLogo($slider);
+        return redirect()->back()->withSuccess(__('Slider logo deleted successfully.'));
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
