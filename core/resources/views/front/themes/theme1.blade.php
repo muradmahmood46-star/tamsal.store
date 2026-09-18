@@ -1024,7 +1024,7 @@
                                 </p>
                             </div>
                             <div class="right-area">
-                                <a class="right_link" href="{{ route('front.catalog') }}">
+                                <a class="right_link" href="javascript:;" id="openAllCategoriesBtn" role="button" aria-label="{{ __('View All Categories') }}">
                                     {{ __('View All') }} <i class="icon-chevron-right"></i>
                                 </a>
                             </div>
@@ -1032,9 +1032,10 @@
                     </div>
                 </div>
 
-                <div class="row g-2 g-md-3 browse-cat-grid">
-                    @foreach ($browse_categories as $bcategory)
-                        <div class="col-4 col-md-3 col-lg-2 mb-2 mb-md-3">
+                {{-- Homepage Grid: Max 10 on Desktop (5 per row), Max 9 on Mobile (3 per row) --}}
+                <div class="browse-cat-grid">
+                    @foreach ($browse_categories->take(10) as $index => $bcategory)
+                        <div class="browse-cat-item {{ $index >= 9 ? 'browse-cat-desktop-only' : '' }}">
                             <a href="{{ route('front.catalog', ['category' => $bcategory->slug]) }}" class="browse-cat-card">
                                 <div class="browse-cat-thumb">
                                     @if(!empty($bcategory->photo))
@@ -1060,13 +1061,99 @@
             </div>
         </section>
 
+        <!-- All Categories Modal -->
+        <div class="modal fade" id="allCategoriesModal" tabindex="-1" role="dialog" aria-labelledby="allCategoriesModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
+                <div class="modal-content all-cat-modal-content">
+                    <div class="modal-header border-0 pb-2 pt-3 px-3 px-md-4 bg-white">
+                        <div class="d-flex align-items-center">
+                            <div class="cat-modal-header-icon mr-2">
+                                <i class="fas fa-th-large text-primary"></i>
+                            </div>
+                            <div>
+                                <h5 class="modal-title font-weight-bold text-dark mb-0" id="allCategoriesModalLabel" style="font-size: 18px;">
+                                    {{ __('All Categories') }}
+                                </h5>
+                                <span class="text-muted small">{{ $browse_categories->count() }} {{ __('Categories Available') }}</span>
+                            </div>
+                        </div>
+                        <button type="button" class="close custom-modal-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close">
+                            <i class="icon-x"></i>
+                        </button>
+                    </div>
+
+                    {{-- Search Input inside Modal --}}
+                    <div class="px-3 px-md-4 py-2 border-bottom" style="background: #f8fafc;">
+                        <div class="input-group cat-modal-search-box">
+                            <span class="input-group-text bg-transparent border-0 text-muted px-3">
+                                <i class="icon-search"></i>
+                            </span>
+                            <input type="text" id="allCatModalSearch" class="form-control border-0 bg-transparent py-2" placeholder="{{ __('Search category...') }}" style="box-shadow: none; font-size: 14px;">
+                            <button type="button" id="clearCatSearch" class="btn btn-link text-muted pr-3" style="text-decoration: none; display: none;">
+                                <i class="icon-x"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    {{-- Modal Body with All Categories --}}
+                    <div class="modal-body p-3 p-md-4" style="background: #f8fafc; max-height: 65vh; overflow-y: auto;">
+                        <div class="all-modal-cat-grid" id="modalCategoriesGrid">
+                            @foreach ($browse_categories as $bcat)
+                                <div class="modal-cat-item-wrap" data-name="{{ strtolower($bcat->name) }}">
+                                    <a href="{{ route('front.catalog', ['category' => $bcat->slug]) }}" class="modal-cat-card">
+                                        <div class="modal-cat-thumb">
+                                            @if(!empty($bcat->photo))
+                                                <img src="{{ url('/core/public/storage/images/' . $bcat->photo) }}" class="lazy" data-src="{{ url('/core/public/storage/images/' . $bcat->photo) }}" alt="{{ $bcat->name }}">
+                                            @else
+                                                <div class="modal-cat-icon-fallback">
+                                                    <i class="fas fa-th-large"></i>
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <div class="modal-cat-info">
+                                            <h5 class="modal-cat-title">{{ $bcat->name }}</h5>
+                                            @if(isset($bcat->items_count) && $bcat->items_count > 0)
+                                                <span class="modal-cat-count">{{ $bcat->items_count }} {{ __('Items') }}</span>
+                                            @else
+                                                <span class="modal-cat-count text-primary">{{ __('Shop Now →') }}</span>
+                                            @endif
+                                        </div>
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div id="noCategoriesFound" class="text-center py-5 d-none">
+                            <i class="icon-search text-muted mb-2" style="font-size: 32px; opacity: 0.5;"></i>
+                            <p class="text-muted mb-0 font-weight-500">{{ __('No categories matching your search.') }}</p>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer border-top bg-white px-3 px-md-4 py-2 d-flex justify-content-between align-items-center">
+                        <a href="{{ route('front.catalog') }}" class="btn btn-sm btn-outline-primary" style="border-radius: 8px; font-weight: 600;">
+                            <i class="icon-grid mr-1"></i> {{ __('View All Products in Shop') }}
+                        </a>
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal" data-dismiss="modal" style="border-radius: 8px;">
+                            {{ __('Close') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <style>
             /* Browse Categories Section Styles */
             .browse-categories-section {
                 position: relative;
             }
             .browse-cat-grid {
-                margin-top: 5px;
+                display: grid;
+                grid-template-columns: repeat(5, 1fr);
+                gap: 14px;
+                margin-top: 10px;
+            }
+            .browse-cat-item {
+                display: flex;
+                width: 100%;
             }
             .browse-cat-card {
                 display: flex;
@@ -1076,25 +1163,26 @@
                 background: #ffffff;
                 border: 1px solid #e9ecef;
                 border-radius: 16px;
-                padding: 18px 10px 14px;
+                padding: 16px 10px 14px;
                 text-align: center;
                 text-decoration: none !important;
                 color: #1e293b !important;
                 transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+                width: 100%;
                 height: 100%;
                 position: relative;
                 overflow: hidden;
             }
             .browse-cat-card:hover {
-                transform: translateY(-5px);
+                transform: translateY(-4px);
                 border-color: #3b82f6;
                 box-shadow: 0 10px 24px rgba(59, 130, 246, 0.12);
                 color: #2563eb !important;
             }
             .browse-cat-thumb {
-                width: 68px;
-                height: 68px;
+                width: 64px;
+                height: 64px;
                 border-radius: 50%;
                 background: #f8fafc;
                 display: flex;
@@ -1117,7 +1205,7 @@
                 object-fit: cover;
             }
             .browse-cat-icon-fallback {
-                font-size: 24px;
+                font-size: 22px;
                 color: #3b82f6;
             }
             .browse-cat-info {
@@ -1127,7 +1215,7 @@
                 align-items: center;
             }
             .browse-cat-title {
-                font-size: 13.5px;
+                font-size: 13px;
                 font-weight: 700;
                 line-height: 1.25;
                 margin-bottom: 4px;
@@ -1137,7 +1225,7 @@
                 -webkit-box-orient: vertical;
                 overflow: hidden;
                 text-overflow: ellipsis;
-                min-height: 34px;
+                min-height: 32px;
             }
             .browse-cat-count {
                 font-size: 11.5px;
@@ -1150,14 +1238,22 @@
                 font-weight: 600;
             }
 
+            /* Responsive Mobile View: 3 items per row, max 9 items total */
             @media (max-width: 767.98px) {
+                .browse-cat-grid {
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 8px;
+                }
+                .browse-cat-desktop-only {
+                    display: none !important;
+                }
                 .browse-cat-card {
                     padding: 10px 5px 8px;
                     border-radius: 12px;
                 }
                 .browse-cat-thumb {
-                    width: 48px;
-                    height: 48px;
+                    width: 46px;
+                    height: 46px;
                     margin-bottom: 6px;
                 }
                 .browse-cat-title {
@@ -1169,7 +1265,235 @@
                     font-size: 9.5px;
                 }
             }
+
+            /* All Categories Modal Styling */
+            .all-cat-modal-content {
+                border-radius: 20px;
+                overflow: hidden;
+                border: none;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            }
+            .cat-modal-header-icon {
+                width: 36px;
+                height: 36px;
+                border-radius: 10px;
+                background: #eff6ff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 16px;
+            }
+            .custom-modal-close {
+                background: #f1f5f9;
+                border-radius: 50%;
+                width: 32px;
+                height: 32px;
+                opacity: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: none;
+                cursor: pointer;
+                color: #475569;
+                font-size: 14px;
+                padding: 0;
+            }
+            .custom-modal-close:hover {
+                background: #e2e8f0;
+                color: #0f172a;
+            }
+            .cat-modal-search-box {
+                border-radius: 12px;
+                overflow: hidden;
+                border: 1px solid #e2e8f0;
+                background: #fff;
+            }
+            .all-modal-cat-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 12px;
+            }
+            @media (min-width: 992px) {
+                .all-modal-cat-grid {
+                    grid-template-columns: repeat(5, 1fr);
+                    gap: 12px;
+                }
+            }
+            @media (max-width: 767.98px) {
+                .all-modal-cat-grid {
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 8px;
+                }
+            }
+            .modal-cat-item-wrap {
+                display: flex;
+                width: 100%;
+            }
+            .modal-cat-card {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background: #ffffff;
+                border: 1px solid #e2e8f0;
+                border-radius: 14px;
+                padding: 12px 6px 10px;
+                text-align: center;
+                text-decoration: none !important;
+                color: #1e293b !important;
+                transition: all 0.2s ease;
+                width: 100%;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            }
+            .modal-cat-card:hover {
+                transform: translateY(-3px);
+                border-color: #3b82f6;
+                box-shadow: 0 8px 20px rgba(59, 130, 246, 0.12);
+                color: #2563eb !important;
+            }
+            .modal-cat-thumb {
+                width: 52px;
+                height: 52px;
+                border-radius: 50%;
+                background: #f8fafc;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 6px;
+                overflow: hidden;
+                border: 2px solid #edf2f7;
+                flex-shrink: 0;
+                transition: transform 0.2s ease;
+            }
+            .modal-cat-card:hover .modal-cat-thumb {
+                transform: scale(1.06);
+                border-color: #93c5fd;
+                background: #eff6ff;
+            }
+            .modal-cat-thumb img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            .modal-cat-icon-fallback {
+                font-size: 18px;
+                color: #3b82f6;
+            }
+            .modal-cat-info {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .modal-cat-title {
+                font-size: 12px;
+                font-weight: 700;
+                line-height: 1.25;
+                margin-bottom: 2px;
+                color: inherit;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                min-height: 28px;
+            }
+            .modal-cat-count {
+                font-size: 10.5px;
+                color: #64748b;
+                font-weight: 500;
+            }
+            .modal-cat-card:hover .modal-cat-count {
+                color: #2563eb;
+                font-weight: 600;
+            }
         </style>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var openBtn = document.getElementById('openAllCategoriesBtn');
+                var modalEl = document.getElementById('allCategoriesModal');
+                
+                if (openBtn && modalEl) {
+                    openBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (window.bootstrap && bootstrap.Modal) {
+                            var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                            modal.show();
+                        } else if (typeof jQuery !== 'undefined' && typeof jQuery.fn.modal !== 'undefined') {
+                            jQuery(modalEl).modal('show');
+                        } else {
+                            modalEl.style.display = 'block';
+                            modalEl.classList.add('show');
+                            document.body.classList.add('modal-open');
+                        }
+                    });
+                }
+
+                // Modal close handler fallback
+                document.querySelectorAll('.custom-modal-close, [data-bs-dismiss="modal"], [data-dismiss="modal"]').forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        if (window.bootstrap && bootstrap.Modal) {
+                            var modal = bootstrap.Modal.getInstance(modalEl);
+                            if (modal) modal.hide();
+                        }
+                        if (typeof jQuery !== 'undefined' && typeof jQuery.fn.modal !== 'undefined') {
+                            jQuery(modalEl).modal('hide');
+                        }
+                        if (modalEl) {
+                            modalEl.classList.remove('show');
+                            modalEl.style.display = 'none';
+                        }
+                        document.body.classList.remove('modal-open');
+                        var backdrops = document.querySelectorAll('.modal-backdrop');
+                        backdrops.forEach(function(b) { b.remove(); });
+                    });
+                });
+
+                // Real-time search filter for categories in modal
+                var searchInput = document.getElementById('allCatModalSearch');
+                var clearBtn = document.getElementById('clearCatSearch');
+                var noResults = document.getElementById('noCategoriesFound');
+                
+                if (searchInput) {
+                    searchInput.addEventListener('input', function() {
+                        var q = this.value.toLowerCase().trim();
+                        var items = document.querySelectorAll('#modalCategoriesGrid .modal-cat-item-wrap');
+                        var matched = 0;
+
+                        if (clearBtn) {
+                            clearBtn.style.display = q.length > 0 ? 'inline-block' : 'none';
+                        }
+
+                        items.forEach(function(item) {
+                            var catName = item.getAttribute('data-name') || '';
+                            if (catName.indexOf(q) !== -1) {
+                                item.style.display = 'flex';
+                                matched++;
+                            } else {
+                                item.style.display = 'none';
+                            }
+                        });
+
+                        if (noResults) {
+                            if (matched === 0 && q.length > 0) {
+                                noResults.classList.remove('d-none');
+                            } else {
+                                noResults.classList.add('d-none');
+                            }
+                        }
+                    });
+                }
+
+                if (clearBtn && searchInput) {
+                    clearBtn.addEventListener('click', function() {
+                        searchInput.value = '';
+                        searchInput.dispatchEvent(new Event('input'));
+                        searchInput.focus();
+                    });
+                }
+            });
+        </script>
     @endif
     <!-- Browse Categories Section End -->
 
