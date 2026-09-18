@@ -214,8 +214,8 @@ foreach($deals as $d) {
         'end'         => $d->end_date ? $d->end_date->format('M d, Y h:i A') : '-',
         'timeleft'    => $d->end_date ? $d->end_date->diffForHumans(['parts' => 2]) : '-',
         'expired'     => $d->isExpired(),
-        'store_url'   => route('front.deal.details', $d->slug),
-        'items'       => $d->dealItems->map(fn($di) => ['name' => $di->item->name ?? 'Product', 'original' => PriceHelper::setCurrencyPrice($di->original_price), 'price' => PriceHelper::setCurrencyPrice($di->discounted_price)])->toArray(),
+        'store_url'   => $d->slug ? route('front.deal.details', $d->slug) : '#',
+        'items'       => $d->dealItems->map(fn($di) => ['name' => optional($di->item)->name ?? 'Product', 'original' => PriceHelper::setCurrencyPrice($di->original_price), 'price' => PriceHelper::setCurrencyPrice($di->discounted_price)])->toArray(),
     ];
 }
 @endphp

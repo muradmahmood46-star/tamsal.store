@@ -66,7 +66,7 @@ foreach($rows as $d) {
         'end'         => $d->end_date ? $d->end_date->format('M d, Y h:i A') : '-',
         'timeleft'    => $d->end_date && !$d->isExpired() ? $d->end_date->diffForHumans(['parts' => 2]) : null,
         'expired'     => $d->isExpired(),
-        'items'       => $d->dealItems->map(fn($di) => ['name' => $di->item->name ?? 'Product', 'original' => PriceHelper::setCurrencyPrice($di->original_price), 'price' => PriceHelper::setCurrencyPrice($di->discounted_price)])->toArray(),
+        'items'       => $d->dealItems->map(fn($di) => ['name' => optional($di->item)->name ?? 'Product', 'original' => PriceHelper::setCurrencyPrice($di->original_price), 'price' => PriceHelper::setCurrencyPrice($di->discounted_price)])->toArray(),
     ];
 }
 @endphp

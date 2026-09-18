@@ -7,9 +7,12 @@ use App\Models\Deal;
 use App\Models\DealItem;
 use App\Models\Item;
 use App\Helpers\PriceHelper;
+use App\Helpers\ImageHelper;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class SellerDealController extends Controller
@@ -61,6 +64,7 @@ class SellerDealController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
             'item_ids' => 'required|array|min:2',
             'item_ids.*' => 'required|exists:items,id',
             'discount_type' => 'required|in:fixed,percent',
@@ -70,18 +74,24 @@ class SellerDealController extends Controller
             'duration_days' => 'required|integer|min:1|max:20',
         ]);
 
+        $itemIds = array_values(array_unique($request->item_ids));
+        if (count($itemIds) < 2) {
+            return back()->withInput()->withError(__('Please select at least 2 distinct products for this deal.'));
+        }
+
         // Ensure all selected items belong strictly to this vendor
-        $selectedItems = Item::whereIn('id', $request->item_ids)
+        $selectedItems = Item::whereIn('id', $itemIds)
             ->where('vendor_id', $vendorId)
             ->where('status', 1)
             ->get();
 
-        if ($selectedItems->count() != count($request->item_ids)) {
+        if ($selectedItems->count() != count($itemIds)) {
             return back()->withInput()->withError(__('You can only select products from your own store.'));
         }
 
         $totalOriginalPrice = $selectedItems->sum(function ($item) {
-            return $item->discount_price > 0 ? $item->discount_price : $item->previous_price;
+            $p = $item->discount_price > 0 ? $item->discount_price : $item->previous_price;
+            return PriceHelper::parsePrice($p);
         });
 
         if ($totalOriginalPrice <= 0) {
@@ -89,7 +99,7 @@ class SellerDealController extends Controller
         }
 
         $discountType = $request->discount_type;
-        $discountValue = $request->discount_type === 'fixed'
+        $discountValue = $discountType === 'fixed'
             ? PriceHelper::convertPrice($request->discount_value)
             : (float) $request->discount_value;
         $isFreeDelivery = $request->boolean('is_free_delivery');
@@ -114,7 +124,7 @@ class SellerDealController extends Controller
         $startDate = Carbon::now();
         $endDate = (clone $startDate)->addDays($durationDays);
 
-        $baseSlug = Str::slug($request->name);
+        $baseSlug = Str::slug($request->name) ?: 'bundle-' . time();
         $slug = $baseSlug;
         $counter = 1;
         while (Deal::where('slug', $slug)->exists()) {
@@ -122,38 +132,54 @@ class SellerDealController extends Controller
             $counter++;
         }
 
-        $deal = Deal::create([
-            'vendor_id' => $vendorId,
-            'name' => $request->name,
-            'slug' => $slug,
-            'description' => $request->description,
-            'discount_type' => $discountType,
-            'discount_value' => $discountValue,
-            'original_price' => $totalOriginalPrice,
-            'discounted_price' => $finalDiscountedPrice,
-            'delivery_charge' => $deliveryCharge,
-            'is_free_delivery' => $isFreeDelivery,
-            'duration_days' => $durationDays,
-            'start_date' => $startDate,
-            'end_date' => $endDate,
-            'status' => 1,
-            'orders_count' => 0,
-        ]);
+        try {
+            DB::beginTransaction();
 
-        foreach ($selectedItems as $item) {
-            $itemOriginalPrice = $item->discount_price > 0 ? $item->discount_price : $item->previous_price;
-            $itemDiscount = $itemOriginalPrice * $discountRatio;
-            $itemDiscountedPrice = max(0, round($itemOriginalPrice - $itemDiscount, 2));
+            $photo = null;
+            if ($request->hasFile('photo')) {
+                $photo = ImageHelper::handleUploadedImage($request->file('photo'), 'images');
+            }
 
-            DealItem::create([
-                'deal_id' => $deal->id,
-                'item_id' => $item->id,
-                'original_price' => $itemOriginalPrice,
-                'discounted_price' => $itemDiscountedPrice,
+            $deal = Deal::create([
+                'vendor_id' => $vendorId,
+                'name' => $request->name,
+                'slug' => $slug,
+                'photo' => $photo,
+                'description' => $request->description,
+                'discount_type' => $discountType,
+                'discount_value' => $discountValue,
+                'original_price' => $totalOriginalPrice,
+                'discounted_price' => $finalDiscountedPrice,
+                'delivery_charge' => $deliveryCharge,
+                'is_free_delivery' => $isFreeDelivery,
+                'duration_days' => $durationDays,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'status' => 1,
+                'orders_count' => 0,
             ]);
-        }
 
-        return redirect()->route('seller.deal.index')->withSuccess(__('Deal launched successfully!'));
+            foreach ($selectedItems as $item) {
+                $itemOriginalPrice = PriceHelper::parsePrice($item->discount_price > 0 ? $item->discount_price : $item->previous_price);
+                $itemDiscount = $itemOriginalPrice * $discountRatio;
+                $itemDiscountedPrice = max(0, round($itemOriginalPrice - $itemDiscount, 2));
+
+                DealItem::create([
+                    'deal_id' => $deal->id,
+                    'item_id' => $item->id,
+                    'original_price' => $itemOriginalPrice,
+                    'discounted_price' => $itemDiscountedPrice,
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect()->route('seller.deal.index')->withSuccess(__('Bundle launched successfully!'));
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Seller deal store error: ' . $e->getMessage(), ['exception' => $e]);
+            return back()->withInput()->withError(__('Failed to create bundle: ') . $e->getMessage());
+        }
     }
 
     public function edit($id)
@@ -184,6 +210,7 @@ class SellerDealController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
             'item_ids' => 'required|array|min:2',
             'item_ids.*' => 'required|exists:items,id',
             'discount_type' => 'required|in:fixed,percent',
@@ -193,21 +220,31 @@ class SellerDealController extends Controller
             'duration_days' => 'required|integer|min:1|max:20',
         ]);
 
-        $selectedItems = Item::whereIn('id', $request->item_ids)
+        $itemIds = array_values(array_unique($request->item_ids));
+        if (count($itemIds) < 2) {
+            return back()->withInput()->withError(__('Please select at least 2 distinct products for this deal.'));
+        }
+
+        $selectedItems = Item::whereIn('id', $itemIds)
             ->where('vendor_id', $vendorId)
             ->where('status', 1)
             ->get();
 
-        if ($selectedItems->count() != count($request->item_ids)) {
+        if ($selectedItems->count() != count($itemIds)) {
             return back()->withInput()->withError(__('You can only select products from your own store.'));
         }
 
         $totalOriginalPrice = $selectedItems->sum(function ($item) {
-            return $item->discount_price > 0 ? $item->discount_price : $item->previous_price;
+            $p = $item->discount_price > 0 ? $item->discount_price : $item->previous_price;
+            return PriceHelper::parsePrice($p);
         });
 
+        if ($totalOriginalPrice <= 0) {
+            return back()->withInput()->withError(__('Total price of selected products must be greater than zero.'));
+        }
+
         $discountType = $request->discount_type;
-        $discountValue = $request->discount_type === 'fixed'
+        $discountValue = $discountType === 'fixed'
             ? PriceHelper::convertPrice($request->discount_value)
             : (float) $request->discount_value;
         $isFreeDelivery = $request->boolean('is_free_delivery');
@@ -229,37 +266,52 @@ class SellerDealController extends Controller
         $discountRatio = $totalOriginalPrice > 0 ? ($discountAmount / $totalOriginalPrice) : 0;
 
         $durationDays = (int) $request->duration_days;
-        $startDate = Carbon::now();
-        $endDate = (clone $startDate)->addDays($durationDays);
+        $endDate = Carbon::now()->addDays($durationDays);
 
-        $deal->update([
-            'name' => $request->name,
-            'description' => $request->description,
-            'discount_type' => $discountType,
-            'discount_value' => $discountValue,
-            'original_price' => $totalOriginalPrice,
-            'discounted_price' => $finalDiscountedPrice,
-            'delivery_charge' => $deliveryCharge,
-            'is_free_delivery' => $isFreeDelivery,
-            'duration_days' => $durationDays,
-            'end_date' => $endDate,
-        ]);
+        try {
+            DB::beginTransaction();
 
-        DealItem::where('deal_id', $deal->id)->delete();
-        foreach ($selectedItems as $item) {
-            $itemOriginalPrice = $item->discount_price > 0 ? $item->discount_price : $item->previous_price;
-            $itemDiscount = $itemOriginalPrice * $discountRatio;
-            $itemDiscountedPrice = max(0, round($itemOriginalPrice - $itemDiscount, 2));
+            $photo = $deal->photo;
+            if ($request->hasFile('photo')) {
+                $photo = ImageHelper::handleUploadedImage($request->file('photo'), 'images', $deal->photo);
+            }
 
-            DealItem::create([
-                'deal_id' => $deal->id,
-                'item_id' => $item->id,
-                'original_price' => $itemOriginalPrice,
-                'discounted_price' => $itemDiscountedPrice,
+            $deal->update([
+                'name' => $request->name,
+                'photo' => $photo,
+                'description' => $request->description,
+                'discount_type' => $discountType,
+                'discount_value' => $discountValue,
+                'original_price' => $totalOriginalPrice,
+                'discounted_price' => $finalDiscountedPrice,
+                'delivery_charge' => $deliveryCharge,
+                'is_free_delivery' => $isFreeDelivery,
+                'duration_days' => $durationDays,
+                'end_date' => $endDate,
             ]);
-        }
 
-        return redirect()->route('seller.deal.index')->withSuccess(__('Deal updated successfully!'));
+            DealItem::where('deal_id', $deal->id)->delete();
+            foreach ($selectedItems as $item) {
+                $itemOriginalPrice = PriceHelper::parsePrice($item->discount_price > 0 ? $item->discount_price : $item->previous_price);
+                $itemDiscount = $itemOriginalPrice * $discountRatio;
+                $itemDiscountedPrice = max(0, round($itemOriginalPrice - $itemDiscount, 2));
+
+                DealItem::create([
+                    'deal_id' => $deal->id,
+                    'item_id' => $item->id,
+                    'original_price' => $itemOriginalPrice,
+                    'discounted_price' => $itemDiscountedPrice,
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect()->route('seller.deal.index')->withSuccess(__('Bundle updated successfully!'));
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Seller deal update error: ' . $e->getMessage(), ['exception' => $e]);
+            return back()->withInput()->withError(__('Failed to update bundle: ') . $e->getMessage());
+        }
     }
 
     public function status($id, $status)
@@ -269,15 +321,19 @@ class SellerDealController extends Controller
         $deal->status = (int) $status;
         $deal->save();
 
-        return redirect()->route('seller.deal.index')->withSuccess(__('Deal status updated successfully.'));
+        return redirect()->route('seller.deal.index')->withSuccess(__('Bundle status updated successfully.'));
     }
 
     public function destroy($id)
     {
         $vendorId = Auth::id();
         $deal = Deal::where('vendor_id', $vendorId)->findOrFail($id);
+        if ($deal->photo) {
+            ImageHelper::handleDeletedImage($deal, 'photo', 'images');
+        }
         $deal->delete();
 
-        return redirect()->route('seller.deal.index')->withSuccess(__('Deal deleted successfully.'));
+        return redirect()->route('seller.deal.index')->withSuccess(__('Bundle deleted successfully.'));
     }
 }
+

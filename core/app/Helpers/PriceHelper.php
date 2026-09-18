@@ -744,7 +744,21 @@ class PriceHelper
 
         $total_delivery_fee = 0;
         $curr_val = self::parsePrice(self::setCurrencyValue());
+        $processedDeals = [];
         foreach ($cart as $key => $item) {
+            // A deal has one delivery setting for all of its included products.
+            if (!empty($item['deal_id'])) {
+                $dealId = (int) $item['deal_id'];
+                if (in_array($dealId, $processedDeals, true)) {
+                    continue;
+                }
+                $processedDeals[] = $dealId;
+                if (!empty($item['deal_free_delivery'])) {
+                    continue;
+                }
+                $total_delivery_fee += self::parsePrice($item['deal_delivery_charge'] ?? 0);
+                continue;
+            }
             $itemId = explode('-', $key)[0];
             $product = Item::find($itemId);
             if ($product) {

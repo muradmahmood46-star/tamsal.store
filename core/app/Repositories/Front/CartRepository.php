@@ -63,6 +63,7 @@ class CartRepository
 
         $item = Item::where('id', $input['item_id'])->select('id', 'name', 'photo', 'discount_price', 'previous_price', 'slug', 'item_type', 'license_name', 'license_key', 'stock', 'item_variants', 'estimated_profit')->first();
 
+        $deal = null;
         $dealItem = null;
         if (!empty($input['deal_id'])) {
             $deal = Deal::active()->find($input['deal_id']);
@@ -226,7 +227,9 @@ class CartRepository
                 "item_type" => $item->item_type,
                 'item_l_n' => $item->item_type == 'license' ? end($license_name) : null,
                 'item_l_k' => $item->item_type == 'license' ? end($license_key) : null,
-                'deal_id' => $dealItem ? $dealItem->deal_id : null
+                'deal_id' => $dealItem ? $dealItem->deal_id : null,
+                'deal_delivery_charge' => $dealItem ? $deal->delivery_charge : null,
+                'deal_free_delivery' => $dealItem ? $deal->is_free_delivery : false,
             ];
 
             Session::put('cart', $cart);

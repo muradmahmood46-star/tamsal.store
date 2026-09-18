@@ -101,10 +101,14 @@
                                 @forelse ($items as $item)
                                     @php
                                         $price = $item->discount_price > 0 ? $item->discount_price : $item->previous_price;
+                                        $thumb = $item->photo ?: $item->thumbnail;
+                                        $itemImg = \Illuminate\Support\Str::startsWith($thumb, 'images/')
+                                            ? url('/core/public/storage/' . $thumb)
+                                            : url('/core/public/storage/images/' . $thumb);
                                     @endphp
                                     <label class="product-checkbox-item" data-name="{{ strtolower($item->name) }}" data-sku="{{ strtolower($item->sku ?? '') }}">
                                         <input type="checkbox" name="item_ids[]" value="{{ $item->id }}" data-price="{{ $price }}" data-name="{{ $item->name }}" class="deal-product-checkbox" {{ (is_array(old('item_ids')) && in_array($item->id, old('item_ids'))) ? 'checked' : '' }}>
-                                        <img src="{{ url('/core/public/storage/images/' . ($item->photo ?: $item->thumbnail)) }}" class="product-thumb-sm" alt="{{ $item->name }}">
+                                        <img src="{{ $itemImg }}" class="product-thumb-sm" alt="{{ $item->name }}" onerror="this.src='{{ asset('assets/images/placeholder.png') }}'">
                                         <div class="flex-grow-1">
                                             <div class="font-weight-bold text-dark" style="font-size: 13.5px;">{{ Str::limit($item->name, 50) }}</div>
                                             <small class="text-muted">SKU: {{ $item->sku ?? 'N/A' }} | Price: <strong class="text-primary">{{ PriceHelper::setCurrencyPrice($price) }}</strong></small>

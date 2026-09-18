@@ -160,8 +160,90 @@ if (!empty($dbname)) {
             $dbStatus[] = "✔ Database column `settings.whatsapp_template_canceled` created successfully!";
         }
 
+        // deals table check and creation
+        $stmt = $pdo->query("SHOW TABLES LIKE 'deals'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("CREATE TABLE `deals` (
+                `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                `vendor_id` bigint(20) unsigned NOT NULL DEFAULT 0,
+                `name` varchar(255) NOT NULL,
+                `slug` varchar(255) NOT NULL,
+                `photo` varchar(255) DEFAULT NULL,
+                `description` text DEFAULT NULL,
+                `discount_type` enum('fixed','percent') NOT NULL DEFAULT 'percent',
+                `discount_value` decimal(10,2) NOT NULL DEFAULT 0.00,
+                `original_price` decimal(12,2) NOT NULL DEFAULT 0.00,
+                `discounted_price` decimal(12,2) NOT NULL DEFAULT 0.00,
+                `delivery_charge` decimal(12,2) NOT NULL DEFAULT 0.00,
+                `is_free_delivery` tinyint(1) NOT NULL DEFAULT 0,
+                `duration_days` int(11) NOT NULL DEFAULT 1,
+                `start_date` datetime DEFAULT NULL,
+                `end_date` datetime DEFAULT NULL,
+                `status` tinyint(4) NOT NULL DEFAULT 1,
+                `orders_count` int(10) unsigned NOT NULL DEFAULT 0,
+                `created_at` timestamp NULL DEFAULT NULL,
+                `updated_at` timestamp NULL DEFAULT NULL,
+                PRIMARY KEY (`id`),
+                UNIQUE KEY `deals_slug_unique` (`slug`),
+                KEY `deals_vendor_id_index` (`vendor_id`),
+                KEY `deals_end_date_index` (`end_date`),
+                KEY `deals_status_index` (`status`),
+                KEY `deals_orders_count_index` (`orders_count`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+            $dbStatus[] = "✔ Database table `deals` created successfully!";
+        } else {
+            // Check individual columns of deals
+            $stmt = $pdo->query("SHOW COLUMNS FROM `deals` LIKE 'photo'");
+            if ($stmt && $stmt->rowCount() == 0) {
+                $pdo->exec("ALTER TABLE `deals` ADD COLUMN `photo` VARCHAR(255) NULL AFTER `slug`");
+                $dbStatus[] = "✔ Database column `deals.photo` created successfully!";
+            }
+
+            $stmt = $pdo->query("SHOW COLUMNS FROM `deals` LIKE 'delivery_charge'");
+            if ($stmt && $stmt->rowCount() == 0) {
+                $pdo->exec("ALTER TABLE `deals` ADD COLUMN `delivery_charge` DECIMAL(12,2) DEFAULT 0.00 AFTER `discounted_price`");
+                $dbStatus[] = "✔ Database column `deals.delivery_charge` created successfully!";
+            }
+
+            $stmt = $pdo->query("SHOW COLUMNS FROM `deals` LIKE 'is_free_delivery'");
+            if ($stmt && $stmt->rowCount() == 0) {
+                $pdo->exec("ALTER TABLE `deals` ADD COLUMN `is_free_delivery` TINYINT(1) DEFAULT 0 AFTER `delivery_charge`");
+                $dbStatus[] = "✔ Database column `deals.is_free_delivery` created successfully!";
+            }
+
+            $stmt = $pdo->query("SHOW COLUMNS FROM `deals` LIKE 'duration_days'");
+            if ($stmt && $stmt->rowCount() == 0) {
+                $pdo->exec("ALTER TABLE `deals` ADD COLUMN `duration_days` INT DEFAULT 1 AFTER `is_free_delivery`");
+                $dbStatus[] = "✔ Database column `deals.duration_days` created successfully!";
+            }
+
+            $stmt = $pdo->query("SHOW COLUMNS FROM `deals` LIKE 'orders_count'");
+            if ($stmt && $stmt->rowCount() == 0) {
+                $pdo->exec("ALTER TABLE `deals` ADD COLUMN `orders_count` INT UNSIGNED DEFAULT 0 AFTER `status`");
+                $dbStatus[] = "✔ Database column `deals.orders_count` created successfully!";
+            }
+        }
+
+        // deal_items table check and creation
+        $stmt = $pdo->query("SHOW TABLES LIKE 'deal_items'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("CREATE TABLE `deal_items` (
+                `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                `deal_id` bigint(20) unsigned NOT NULL,
+                `item_id` bigint(20) unsigned NOT NULL,
+                `original_price` decimal(12,2) NOT NULL DEFAULT 0.00,
+                `discounted_price` decimal(12,2) NOT NULL DEFAULT 0.00,
+                `created_at` timestamp NULL DEFAULT NULL,
+                `updated_at` timestamp NULL DEFAULT NULL,
+                PRIMARY KEY (`id`),
+                KEY `deal_items_deal_id_index` (`deal_id`),
+                KEY `deal_items_item_id_index` (`item_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+            $dbStatus[] = "✔ Database table `deal_items` created successfully!";
+        }
+
         if (empty($dbStatus)) {
-            $dbStatus[] = "✔ All database columns (variants, rating management & WhatsApp) are up to date.";
+            $dbStatus[] = "✔ All database columns (variants, rating management, bundles & WhatsApp) are up to date.";
         }
     } catch (\Exception $e) {
         $dbStatus[] = "DB Status Note: " . htmlspecialchars($e->getMessage());
