@@ -232,13 +232,23 @@ class HomePageController extends Controller
     {
         $request->validate([
             'feature_title' => 'required|max:255',
+            'limit' => 'nullable|integer|min:1|max:100',
         ]);
-        $input = $request->all();
-        unset($input['_token']);
+        $input = [
+            'feature_title' => $request->feature_title,
+            'limit' => $request->limit ? (int)$request->limit : 8,
+        ];
         $data = HomeCutomize::first();
-        $data->feature_category = json_encode($input,true);
+        $data->feature_category = json_encode($input, true);
         $data->update();
-        return redirect()->back()->withSuccess(__('Popular Category Update Successfully'));
+
+        if ($request->has('form_submitted')) {
+            \App\Models\Setting::find(1)->update([
+                'is_featured_category' => $request->has('is_featured_category') ? 1 : 0
+            ]);
+        }
+
+        return redirect()->back()->withSuccess(__('Newly Listed Products Setting Updated Successfully'));
     }
 
 

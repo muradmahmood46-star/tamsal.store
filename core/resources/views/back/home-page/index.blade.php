@@ -29,7 +29,7 @@
                         <a class="nav-link" id="v-pills-t2-tab" data-toggle="pill" href="#v-pills-t2" role="tab" aria-controls="v-pills-t2" aria-selected="false">{{ __('Popular Categories') }}</a>
                         <a class="nav-link" id="v-pills-t5-tab" data-toggle="pill" href="#v-pills-t5" role="tab" aria-controls="v-pills-t5" aria-selected="false">{{ __('3 column banner Second') }}</a>
                         <a class="nav-link" id="v-pills-t3-tab" data-toggle="pill" href="#v-pills-t3" role="tab" aria-controls="v-pills-t3" aria-selected="false">{{ __('Three column category') }}</a>
-                        <a class="nav-link" id="v-pills-t4-tab" data-toggle="pill" href="#v-pills-t4" role="tab" aria-controls="v-pills-t4" aria-selected="false">{{ __('Featured Categories') }}</a>
+                        <a class="nav-link" id="v-pills-t4-tab" data-toggle="pill" href="#v-pills-t4" role="tab" aria-controls="v-pills-t4" aria-selected="false">{{ __('Newly Listed Products') }}</a>
                         <a class="nav-link" id="v-pills-t6-tab" data-toggle="pill" href="#v-pills-t6" role="tab" aria-controls="v-pills-t6" aria-selected="false">{{ __('2 column banner') }}</a>
                         <a class="nav-link" id="v-pills-t-blogs-tab" data-toggle="pill" href="#v-pills-t-blogs" role="tab" aria-controls="v-pills-t-blogs" aria-selected="false">{{ __('Blogs Section') }}</a>
                         <a class="nav-link" id="v-pills-t7-tab" data-toggle="pill" href="#v-pills-t7" role="tab" aria-controls="v-pills-t7" aria-selected="false">{{ __('Home Page 4 Banner 5 Column') }}</a>
@@ -674,138 +674,48 @@
                         <div class="tab-pane fade" id="v-pills-t4" role="tabpanel" aria-labelledby="v-pills-t4-tab">
                             <form class="admin-form" action="{{route('back.feature.category.update')}}" method="POST">
                                 @csrf
+                                <input type="hidden" name="form_submitted" value="1">
+                                <div class="card mb-4 border-0 shadow-sm" style="background: #f8fafc; border: 1px solid #e2e8f0 !important; border-radius: 10px;">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex align-items-center justify-content-between flex-wrap">
+                                            <div>
+                                                <h5 class="mb-1 font-weight-bold text-dark"><i class="fas fa-toggle-on text-primary mr-2"></i>{{ __('Show Newly Listed Products on Home Page') }}</h5>
+                                                <small class="text-muted">{{ __('Toggle OFF to completely hide this section from homepage on both mobile and PC.') }}</small>
+                                            </div>
+                                            <div class="mt-2 mt-sm-0">
+                                                <label class="switch-primary mb-0">
+                                                    <input type="checkbox" class="switch switch-bootstrap status section-toggle-ajax" data-field="is_featured_category" name="is_featured_category" value="1" {{ $setting->is_featured_category == 1 ? 'checked' : '' }}>
+                                                    <span class="switch-body"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="form-group">
                                     <label for="feature_title">{{ __('Section Title') }} *</label>
                                     <input type="text" name="feature_title" class="form-control" id="feature_title"
-                                        placeholder="{{ __('Feture Category') }}" value="{{$feature_category['feature_title']}}" >
-                                </div>
-                                <hr>
-                                <h2 class=""><b>{{ __('Category 1 :') }}</b></h2>
-
-                                <div class="form-group">
-                                    <label for="feature_category_id1">{{ __('Select Category') }} *</label>
-                                    <select name="category_id1" id="feature_category_id1" data-href="{{route('back.get.subcategory')}}" class="form-control" >
-                                        <option value="" >{{__('Select One')}}</option>
-                                        @foreach(DB::table('categories')->whereStatus(1)->get() as $cat)
-                                        <option value="{{ $cat->id }}" {{$cat->id == $feature_category['category_id1'] ? 'selected' : ''}} >{{ $cat->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="feature_subcategory_id1">{{ __('Select Sub Category') }} </label>
-                                    <select name="subcategory_id1" id="feature_subcategory_id1" class="form-control" data-href="{{route('back.get.childcategory')}}">
-                                        <option value="">{{__('Select one')}}</option>
-                                        @foreach(DB::table('subcategories')->where('category_id',$feature_category['category_id1'])->whereStatus(1)->get() as $subcat)
-                                        <option value="{{ $subcat->id }}" {{ $subcat->id == $feature_category['subcategory_id1']? 'selected' : '' }}>{{ $subcat->name }}</option>
-                                        @endforeach
-                                    </select>
+                                        placeholder="{{ __('Newly Listed Products') }}" value="{{ $feature_category['feature_title'] ?? ($feature_category['title'] ?? __('Newly Listed Products')) }}" required>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="feature_childcategory_id1">{{ __('Select Child Category') }} </label>
-                                    <select name="childcategory_id1" id="feature_childcategory_id1" class="form-control">
-                                        <option value="">{{__('Select one')}}</option>
-                                        @foreach(DB::table('chield_categories')->where('category_id',$feature_category['category_id1'])->whereStatus(1)->get() as $chieldcategory)
-                                        <option value="{{ $chieldcategory->id }}" {{ $chieldcategory->id == $feature_category['childcategory_id1'] ? 'selected' : '' }}>{{ $chieldcategory->name }}</option>
-                                        @endforeach
+                                    <label for="newly_listed_limit">{{ __('Number of Products to Show on Home Page') }} *</label>
+                                    <select name="limit" id="newly_listed_limit" class="form-control">
+                                        @php
+                                            $currentLimit = isset($feature_category['limit']) ? (int)$feature_category['limit'] : 8;
+                                        @endphp
+                                        <option value="4" {{ $currentLimit == 4 ? 'selected' : '' }}>4 {{ __('Products') }} (1 {{ __('Row on PC') }}, 2 {{ __('Rows on Mobile') }})</option>
+                                        <option value="8" {{ $currentLimit == 8 ? 'selected' : '' }}>8 {{ __('Products') }} (2 {{ __('Rows on PC') }}, 4 {{ __('Rows on Mobile') }})</option>
+                                        <option value="12" {{ $currentLimit == 12 ? 'selected' : '' }}>12 {{ __('Products') }} (3 {{ __('Rows on PC') }}, 6 {{ __('Rows on Mobile') }})</option>
+                                        <option value="16" {{ $currentLimit == 16 ? 'selected' : '' }}>16 {{ __('Products') }} (4 {{ __('Rows on PC') }}, 8 {{ __('Rows on Mobile') }})</option>
+                                        <option value="20" {{ $currentLimit == 20 ? 'selected' : '' }}>20 {{ __('Products') }} (5 {{ __('Rows on PC') }}, 10 {{ __('Rows on Mobile') }})</option>
+                                        <option value="24" {{ $currentLimit == 24 ? 'selected' : '' }}>24 {{ __('Products') }} (6 {{ __('Rows on PC') }}, 12 {{ __('Rows on Mobile') }})</option>
                                     </select>
-                                </div>
-
-                                <hr>
-                                <h2 class=""><b>{{ __('Category 2 :') }}</b></h2>
-                                <div class="form-group">
-                                    <label for="feature_category_id2">{{ __('Select Category') }} *</label>
-                                    <select name="category_id2" id="feature_category_id2" data-href="{{route('back.get.subcategory')}}" class="form-control" >
-                                        <option value="" >{{__('Select One')}}</option>
-                                        @foreach(DB::table('categories')->whereStatus(1)->get() as $cat)
-                                        <option value="{{ $cat->id }}" {{$cat->id == $feature_category['category_id2'] ? 'selected' : ''}}>{{ $cat->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="feature_subcategory_id2">{{ __('Select Sub Category') }} </label>
-                                    <select name="subcategory_id2" id="feature_subcategory_id2" class="form-control" data-href="{{route('back.get.childcategory')}}">
-                                        <option value="">{{__('Select one')}}</option>
-                                        @foreach(DB::table('subcategories')->where('category_id',$feature_category['category_id2'])->whereStatus(1)->get() as $subcat)
-                                        <option value="{{ $subcat->id }}" {{ $subcat->id == $feature_category['subcategory_id2']? 'selected' : '' }}>{{ $subcat->name }}</option>
-                                        @endforeach
-                                    </select>
+                                    <small class="text-muted d-block mt-2"><i class="fas fa-info-circle mr-1"></i> {{ __('Desktop displays 4 products per row. Mobile displays 2 products per row. Automatically contains 25% Admin products and 75% Vendor products. A "View All" button links to the Top 100 Newly Listed Products.') }}</small>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="feature_childcategory_id2">{{ __('Select Child Category') }} </label>
-                                    <select name="childcategory_id2" id="feature_childcategory_id2" class="form-control">
-                                        <option value="">{{__('Select one')}}</option>
-                                        @foreach(DB::table('chield_categories')->where('category_id',$feature_category['category_id2'])->whereStatus(1)->get() as $chieldcategory)
-                                        <option value="{{ $chieldcategory->id }}" {{ $chieldcategory->id == $feature_category['childcategory_id2'] ? 'selected' : '' }}>{{ $chieldcategory->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <hr>
-                                <h2 class=""><b>{{ __('Category 3 :') }}</b></h2>
-                                <div class="form-group">
-                                    <label for="feature_category_id3">{{ __('Select Category') }} *</label>
-                                    <select name="category_id3" id="feature_category_id3" data-href="{{route('back.get.subcategory')}}" class="form-control" >
-                                        <option value="" >{{__('Select One')}}</option>
-                                        @foreach(DB::table('categories')->whereStatus(1)->get() as $cat)
-                                        <option value="{{ $cat->id }}" {{$cat->id == $feature_category['category_id3'] ? 'selected' : ''}} >{{ $cat->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="feature_subcategory_id3">{{ __('Select Sub Category') }} </label>
-                                    <select name="subcategory_id3" id="feature_subcategory_id3" class="form-control" data-href="{{route('back.get.childcategory')}}">
-                                        <option value="">{{__('Select one')}}</option>
-                                        @foreach(DB::table('subcategories')->where('category_id',$feature_category['category_id3'])->whereStatus(1)->get() as $subcat)
-                                        <option value="{{ $subcat->id }}" {{ $subcat->id == $feature_category['subcategory_id3']? 'selected' : '' }}>{{ $subcat->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="feature_childcategory_id3">{{ __('Select Child Category') }} </label>
-                                    <select name="childcategory_id3" id="feature_childcategory_id3" class="form-control">
-                                        <option value="">{{__('Select one')}}</option>
-                                        @foreach(DB::table('chield_categories')->where('category_id',$feature_category['category_id3'])->whereStatus(1)->get() as $chieldcategory)
-                                        <option value="{{ $chieldcategory->id }}" {{ $chieldcategory->id == $feature_category['childcategory_id3'] ? 'selected' : '' }}>{{ $chieldcategory->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <hr>
-                                <h2 class=""><b>{{ __('Category 4 :') }}</b></h2>
-                                <div class="form-group">
-                                    <label for="feature_category_id4">{{ __('Select Category') }} *</label>
-                                    <select name="category_id4" id="feature_category_id4" data-href="{{route('back.get.subcategory')}}" class="form-control" >
-                                        <option value="" >{{__('Select One')}}</option>
-                                        @foreach(DB::table('categories')->whereStatus(1)->get() as $cat)
-                                        <option value="{{ $cat->id }}" {{$cat->id == $feature_category['category_id4'] ? 'selected' : ''}}>{{ $cat->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="feature_subcategory_id4">{{ __('Select Sub Category') }} </label>
-                                    <select name="subcategory_id4" id="feature_subcategory_id4" class="form-control" data-href="{{route('back.get.childcategory')}}">
-                                        <option value="">{{__('Select one')}}</option>
-                                        @foreach(DB::table('subcategories')->where('category_id',$feature_category['category_id4'])->whereStatus(1)->get() as $subcat)
-                                        <option value="{{ $subcat->id }}" {{ $subcat->id == $feature_category['subcategory_id4']? 'selected' : '' }}>{{ $subcat->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="feature_childcategory_id4">{{ __('Select Child Category') }} </label>
-                                    <select name="childcategory_id4" id="feature_childcategory_id4" class="form-control">
-                                        <option value="">{{__('Select one')}}</option>
-                                        @foreach(DB::table('chield_categories')->where('category_id',$feature_category['category_id4'])->whereStatus(1)->get() as $chieldcategory)
-                                        <option value="{{ $chieldcategory->id }}" {{ $chieldcategory->id == $feature_category['childcategory_id4'] ? 'selected' : '' }}>{{ $chieldcategory->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-
-
-                                <div class="form-group">
-                                        <button type="submit" class="btn btn-secondary ">{{ __('Submit') }}</button>
+                                    <button type="submit" class="btn btn-secondary ">{{ __('Submit') }}</button>
                                 </div>
                             </form>
                         </div>

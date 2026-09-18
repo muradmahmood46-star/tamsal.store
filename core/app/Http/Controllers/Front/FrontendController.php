@@ -73,51 +73,12 @@ class FrontendController extends Controller
 
         $home_customize = HomeCutomize::first();
 
-        // feature category
-        $feature_category_ids = json_decode($home_customize->feature_category, true);
-        $feature_category_title = $feature_category_ids['feature_title'];
-        $feature_category = [];
-        for ($i = 1; $i <= 4; $i++) {
-            if (!in_array($feature_category_ids['category_id' . $i], $feature_category)) {
-                if ($feature_category_ids['category_id' . $i]) {
-                    $feature_category[] = $feature_category_ids['category_id' . $i];
-                }
-            }
-        }
-
+        // Newly Listed Products (formerly feature_category)
+        $feature_category_data = json_decode($home_customize->feature_category, true);
+        $feature_category_title = isset($feature_category_data['feature_title']) ? $feature_category_data['feature_title'] : (isset($feature_category_data['title']) ? $feature_category_data['title'] : __('Newly Listed Products'));
+        $feature_category_limit = isset($feature_category_data['limit']) ? (int)$feature_category_data['limit'] : 8;
+        $feature_category_items = Helper::getNewlyListedProducts($feature_category_limit);
         $feature_categories = [];
-        foreach ($feature_category as $key => $cat) {
-            $f_cat = Category::find($cat);
-            if($f_cat) $feature_categories[] = $f_cat;
-        }
-        $feature_category_items = [];
-        if (count($feature_categories)) {
-            $index = '';
-            foreach ($feature_categories as $key => $data) {
-                if ($data->id == $feature_category_ids['category_id1']) {
-                    $index = $key;
-                }
-            }
-
-            if($index !== '') {
-                $category = $feature_categories[$index]->id;
-                $subcategory = $feature_category_ids['subcategory_id1'];
-                $childcategory = $feature_category_ids['childcategory_id1'];
-
-                $feature_category_items = Item::when($category, function ($query, $category) {
-                    return $query->where('category_id', $category);
-                })
-                    ->when($subcategory, function ($query, $subcategory) {
-                        return $query->where('subcategory_id', $subcategory);
-                    })
-                    ->when($childcategory, function ($query, $childcategory) {
-                        return $query->where('childcategory_id', $childcategory);
-                    })
-                    ->whereStatus(1)->take(10)->orderby('id', 'desc')->get();
-            }
-        }
-
-
         // feature category end
         $home_customize = HomeCutomize::first();
         // popular category
@@ -493,6 +454,20 @@ class FrontendController extends Controller
     }
 
     // -------------------------------- TOP RATED PRODUCTS ----------------------------------------
+
+    // -------------------------------- NEWLY LISTED PRODUCTS ----------------------------------------
+
+    public function newlyListedProduct()
+    {
+        $setting = Setting::first();
+        $items = Helper::getNewlyListedProducts(100);
+        return view('front.newly_listed', [
+            'setting' => $setting,
+            'items' => $items
+        ]);
+    }
+
+    // -------------------------------- NEWLY LISTED PRODUCTS ----------------------------------------
 
 
     // -------------------------------- CURRENCY ----------------------------------------

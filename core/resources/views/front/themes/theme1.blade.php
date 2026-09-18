@@ -719,25 +719,17 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="section-title">
-                            <h2 class="h3">{{ $feature_category_title }}</h2>
-                            <div class="links">
-                                @foreach ($feature_categories as $key => $feature_category)
-                                    <a class="category_get {{ $loop->first ? 'active' : '' }}"
-                                        data-target="feature_category_view"
-                                        data-href="{{ route('front.popular.category', [$feature_category->slug, 'feature_category', 'normal']) }}"
-                                        href="javascript:;"
-                                        class="{{ $loop->first ? 'active' : '' }}">{{ $feature_category->name }}</a>
-                                @endforeach
+                            <h2 class="h3">{{ $feature_category_title ?? __('Newly Listed Products') }}</h2>
+                            <div class="right-area">
+                                <a class="right_link" href="{{ route('front.newly_listed') }}">{{ __('View All') }} <i
+                                        class="icon-chevron-right"></i></a>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="feature_category_view d-none">
-                    <img src="{{ url('/core/public/storage/images/ajax_loader.gif') }}" alt="">
-                </div>
-                <div class="row g-3" id="feature_category_view">
-                    @foreach ($feature_category_items as $feature_category_item)
-                        <div class="col-gd">
+                <div class="row g-3 gx-2 gx-md-3" id="feature_category_view">
+                    @forelse ($feature_category_items as $feature_category_item)
+                        <div class="col-6 col-md-4 col-lg-3 mb-3">
                             <div class="product-card">
                                 <div class="product-thumb">
 
@@ -791,7 +783,11 @@
 
                             </div>
                         </div>
-                    @endforeach
+                    @empty
+                        <div class="col-12 text-center py-5">
+                            <p class="text-muted">{{ __('No newly listed products found.') }}</p>
+                        </div>
+                    @endforelse
 
                 </div>
             </div>
