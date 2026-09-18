@@ -160,4 +160,29 @@ $input['is_checkout_notice'] = $request->is_checkout_notice;
     public function maintainance(){
         return view('back.settings.maintainance');
     }
+
+    public function toggleSection(Request $request)
+    {
+        $field = $request->input('field');
+        $status = $request->input('status', 0);
+        $allowedFields = [
+            'is_three_c_b_first',
+            'is_three_c_b_second',
+            'is_two_c_b',
+            'is_blogs',
+            'is_slider',
+            'is_popular_category',
+            'is_two_column_category',
+            'is_featured_category'
+        ];
+        if (in_array($field, $allowedFields)) {
+            \App\Models\Setting::find(1)->update([$field => $status ? 1 : 0]);
+            return response()->json([
+                'success' => true,
+                'status' => $status ? 1 : 0,
+                'message' => __('Setting updated successfully.')
+            ]);
+        }
+        return response()->json(['success' => false, 'message' => __('Invalid setting field.')], 400);
+    }
 }

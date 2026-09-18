@@ -274,6 +274,7 @@ Route::group(['middleware' => ['adminlocalize', 'demo']], function () {
             Route::resource('bcategory', 'Back\BcategoryController', ['as' => 'back', 'except' => 'show']);
 
             //------------ POST ------------
+            Route::post('post/toggle-home-blog', 'Back\PostController@toggleHomeBlog')->name('back.post.toggle.home');
             Route::resource('post', 'Back\PostController', ['as' => 'back', 'except' => 'show']);
             Route::delete('post/delete/{key}/{id}', 'Back\PostController@delete')->name('back.post.photo.delete');
         });
@@ -326,6 +327,7 @@ Route::group(['middleware' => ['adminlocalize', 'demo']], function () {
             Route::get('/setting/system', 'Back\SettingController@system')->name('back.setting.system');
             Route::post('/setting/update', 'Back\SettingController@update')->name('back.setting.update');
             Route::post('/setting/update/visiable', 'Back\SettingController@visiable')->name('back.setting.visible.update');
+            Route::post('/setting/toggle-section', 'Back\SettingController@toggleSection')->name('back.setting.toggle.section');
             Route::get('/announcement', 'Back\SettingController@announcement')->name('back.subscribers.announcement');
             Route::get('/cookie/alert', 'Back\SettingController@cookie')->name('back.cookie.alert');
             Route::get('/maintainance', 'Back\SettingController@maintainance')->name('back.setting.maintainance');

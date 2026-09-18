@@ -106,10 +106,17 @@ class HomePageController extends Controller
         }
 
         unset($input['_token']);
-
+        unset($input['is_three_c_b_first']);
 
         $data->banner_first = json_encode($input,true);
         $data->update();
+
+        if ($request->has('form_submitted')) {
+            \App\Models\Setting::find(1)->update([
+                'is_three_c_b_first' => $request->has('is_three_c_b_first') ? 1 : 0
+            ]);
+        }
+
         return redirect()->back()->withSuccess(__('Banner Update Successfully'));
 
     }
@@ -141,10 +148,17 @@ class HomePageController extends Controller
         }
 
         unset($input['_token']);
-
+        unset($input['is_three_c_b_second']);
 
         $data->banner_secend = json_encode($input,true);
         $data->update();
+
+        if ($request->has('form_submitted')) {
+            \App\Models\Setting::find(1)->update([
+                'is_three_c_b_second' => $request->has('is_three_c_b_second') ? 1 : 0
+            ]);
+        }
+
         return redirect()->back()->withSuccess(__('Banner Update Successfully'));
 
     }
@@ -174,12 +188,17 @@ class HomePageController extends Controller
             }
         }
         unset($input['_token']);
-
-
-
+        unset($input['is_two_c_b']);
 
         $data->banner_third = json_encode($input,true);
         $data->update();
+
+        if ($request->has('form_submitted')) {
+            \App\Models\Setting::find(1)->update([
+                'is_two_c_b' => $request->has('is_two_c_b') ? 1 : 0
+            ]);
+        }
+
         return redirect()->back()->withSuccess(__('Banner Update Successfully'));
 
     }

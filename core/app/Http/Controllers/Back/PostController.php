@@ -121,4 +121,18 @@ class PostController extends Controller
         return back()->withSuccess(__('Photo Deleted Successfully.'));
 
     }
+
+    public function toggleHomeBlog(Request $request)
+    {
+        $status = $request->input('status', 0);
+        \App\Models\Setting::find(1)->update(['is_blogs' => $status ? 1 : 0]);
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'status' => $status ? 1 : 0,
+                'message' => $status ? __('Home Page Blog Section Enabled') : __('Home Page Blog Section Disabled')
+            ]);
+        }
+        return redirect()->back()->withSuccess(__('Blog Section Status Updated Successfully.'));
+    }
 }

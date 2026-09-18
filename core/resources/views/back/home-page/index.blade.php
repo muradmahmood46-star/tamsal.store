@@ -31,6 +31,7 @@
                         <a class="nav-link" id="v-pills-t3-tab" data-toggle="pill" href="#v-pills-t3" role="tab" aria-controls="v-pills-t3" aria-selected="false">{{ __('Three column category') }}</a>
                         <a class="nav-link" id="v-pills-t4-tab" data-toggle="pill" href="#v-pills-t4" role="tab" aria-controls="v-pills-t4" aria-selected="false">{{ __('Featured Categories') }}</a>
                         <a class="nav-link" id="v-pills-t6-tab" data-toggle="pill" href="#v-pills-t6" role="tab" aria-controls="v-pills-t6" aria-selected="false">{{ __('2 column banner') }}</a>
+                        <a class="nav-link" id="v-pills-t-blogs-tab" data-toggle="pill" href="#v-pills-t-blogs" role="tab" aria-controls="v-pills-t-blogs" aria-selected="false">{{ __('Blogs Section') }}</a>
                         <a class="nav-link" id="v-pills-t7-tab" data-toggle="pill" href="#v-pills-t7" role="tab" aria-controls="v-pills-t7" aria-selected="false">{{ __('Home Page 4 Banner 5 Column') }}</a>
                         <a class="nav-link" id="v-pills-t8-tab" data-toggle="pill" href="#v-pills-t8" role="tab" aria-controls="v-pills-t8" aria-selected="false">{{ __('Home Page 4 Popular Categories') }}</a>
                     </div>
@@ -118,6 +119,23 @@
                         <div class="tab-pane fade show " id="v-pills-t1" role="tabpanel" aria-labelledby="v-pills-t1-tab">
                             <form class="admin-form" action="{{route('back.first.banner.update')}}" method="POST" enctype="multipart/form-data">
                                 @csrf
+                                <input type="hidden" name="form_submitted" value="1">
+                                <div class="card mb-4 border-0 shadow-sm" style="background: #f8fafc; border: 1px solid #e2e8f0 !important; border-radius: 10px;">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex align-items-center justify-content-between flex-wrap">
+                                            <div>
+                                                <h5 class="mb-1 font-weight-bold text-dark"><i class="fas fa-toggle-on text-primary mr-2"></i>{{ __('Show 4 Column Banner First on Home Page') }}</h5>
+                                                <small class="text-muted">{{ __('Toggle OFF to completely hide this banner section from homepage on both mobile and PC.') }}</small>
+                                            </div>
+                                            <div class="mt-2 mt-sm-0">
+                                                <label class="switch-primary mb-0">
+                                                    <input type="checkbox" class="switch switch-bootstrap status section-toggle-ajax" data-field="is_three_c_b_first" name="is_three_c_b_first" value="1" {{ $setting->is_three_c_b_first == 1 ? 'checked' : '' }}>
+                                                    <span class="switch-body"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                         <div class="form-group">
                                             <label for="name">{{ __('Image 1') }} *</label>
                                             <br>
@@ -406,6 +424,23 @@
                         <div class="tab-pane fade" id="v-pills-t5" role="tabpanel" aria-labelledby="v-pills-t5-tab">
                             <form class="admin-form" action="{{route('back.secend.banner.update')}}" method="POST" enctype="multipart/form-data">
                                 @csrf
+                                <input type="hidden" name="form_submitted" value="1">
+                                <div class="card mb-4 border-0 shadow-sm" style="background: #f8fafc; border: 1px solid #e2e8f0 !important; border-radius: 10px;">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex align-items-center justify-content-between flex-wrap">
+                                            <div>
+                                                <h5 class="mb-1 font-weight-bold text-dark"><i class="fas fa-toggle-on text-primary mr-2"></i>{{ __('Show 3 Column Banner Second on Home Page') }}</h5>
+                                                <small class="text-muted">{{ __('Toggle OFF to completely hide this banner section from homepage on both mobile and PC.') }}</small>
+                                            </div>
+                                            <div class="mt-2 mt-sm-0">
+                                                <label class="switch-primary mb-0">
+                                                    <input type="checkbox" class="switch switch-bootstrap status section-toggle-ajax" data-field="is_three_c_b_second" name="is_three_c_b_second" value="1" {{ $setting->is_three_c_b_second == 1 ? 'checked' : '' }}>
+                                                    <span class="switch-body"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                         <div class="form-group">
                                             <label for="name">{{ __('Image 1') }} *</label>
                                             <br>
@@ -775,10 +810,25 @@
                             </form>
                         </div>
                         <div class="tab-pane fade" id="v-pills-t6" role="tabpanel" aria-labelledby="v-pills-t6-tab">
-                            <form class="admin-form" action="{{route('back.third.banner.update')}}"
-
-                                method="post" enctype="multipart/form-data">
+                            <form class="admin-form" action="{{route('back.third.banner.update')}}" method="post" enctype="multipart/form-data">
                                 @csrf
+                                <input type="hidden" name="form_submitted" value="1">
+                                <div class="card mb-4 border-0 shadow-sm" style="background: #f8fafc; border: 1px solid #e2e8f0 !important; border-radius: 10px;">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex align-items-center justify-content-between flex-wrap">
+                                            <div>
+                                                <h5 class="mb-1 font-weight-bold text-dark"><i class="fas fa-toggle-on text-primary mr-2"></i>{{ __('Show 2 Column Banner on Home Page') }}</h5>
+                                                <small class="text-muted">{{ __('Toggle OFF to completely hide this banner section from homepage on both mobile and PC.') }}</small>
+                                            </div>
+                                            <div class="mt-2 mt-sm-0">
+                                                <label class="switch-primary mb-0">
+                                                    <input type="checkbox" class="switch switch-bootstrap status section-toggle-ajax" data-field="is_two_c_b" name="is_two_c_b" value="1" {{ $setting->is_two_c_b == 1 ? 'checked' : '' }}>
+                                                    <span class="switch-body"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                         <div class="form-group">
                                             <label for="name">{{ __('Image 1') }} *</label>
                                             <br>
@@ -1031,6 +1081,35 @@
                     </form>
                             </div>
 
+                        <div class="tab-pane fade" id="v-pills-t-blogs" role="tabpanel" aria-labelledby="v-pills-t-blogs-tab">
+                            <div class="card mb-4 border-0 shadow-sm" style="background: #f8fafc; border: 1px solid #e2e8f0 !important; border-radius: 10px;">
+                                <div class="card-body p-4">
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap">
+                                        <div class="d-flex align-items-center">
+                                            <div class="mr-3 text-primary">
+                                                <i class="fas fa-rss-square" style="font-size: 32px;"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="mb-1 font-weight-bold text-dark">{{ __('Show Blogs Section on Home Page') }}</h4>
+                                                <p class="text-muted mb-0">{{ __('Toggle ON/OFF to show or hide the "Our Blog" section on the homepage for both mobile and PC.') }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3 mt-sm-0">
+                                            <label class="switch-primary mb-0">
+                                                <input type="checkbox" class="switch switch-bootstrap status section-toggle-ajax" data-field="is_blogs" name="is_blogs" value="1" {{ $setting->is_blogs == 1 ? 'checked' : '' }}>
+                                                <span class="switch-body"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <hr class="my-4">
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap">
+                                        <span class="text-muted">{{ __('To add, edit or delete blog posts, visit the Manage Blogs page.') }}</span>
+                                        <a href="{{ route('back.post.index') }}" class="btn btn-primary btn-sm mt-2 mt-sm-0"><i class="fas fa-edit mr-1"></i> {{ __('Manage Blogs') }}</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         </div>
                     </div>
                 </div>
@@ -1053,5 +1132,49 @@
         $('#basic').select2({
 			theme: "bootstrap"
 		});
+
+        $(document).on('change', '.section-toggle-ajax', function() {
+            var $this = $(this);
+            var field = $this.data('field');
+            var status = $this.is(':checked') ? 1 : 0;
+            
+            $.ajax({
+                url: '{{ route("back.setting.toggle.section") }}',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    field: field,
+                    status: status
+                },
+                success: function(response) {
+                    $.notify({
+                        icon: 'flaticon-alarm-1',
+                        title: '{{ __("Success") }}',
+                        message: response.message || '{{ __("Setting updated successfully.") }}',
+                    },{
+                        type: 'secondary',
+                        placement: {
+                            from: "bottom",
+                            align: "right"
+                        },
+                        time: 1000,
+                    });
+                },
+                error: function(xhr) {
+                    $.notify({
+                        icon: 'flaticon-error',
+                        title: '{{ __("Error") }}',
+                        message: '{{ __("Failed to update status.") }}',
+                    },{
+                        type: 'danger',
+                        placement: {
+                            from: "bottom",
+                            align: "right"
+                        },
+                        time: 1000,
+                    });
+                }
+            });
+        });
     </script>
 @endsection
