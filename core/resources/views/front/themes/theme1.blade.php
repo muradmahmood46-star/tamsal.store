@@ -6,6 +6,8 @@
 
 @section('content')
 
+    <script type="module" src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs"></script>
+
     @if ($setting->is_slider == 1)
         <style>
             /* Hero Slider & Banner Visual Upgrades */
@@ -281,7 +283,9 @@
                                     $img1 = $hero_banner['img1'] ?? '';
                                     $ext1 = strtolower(pathinfo($img1, PATHINFO_EXTENSION));
                                 @endphp
-                                @if (in_array($ext1, ['json', 'lottie']))
+                                @if ($ext1 === 'lottie')
+                                    <dotlottie-player src="{{ url('/core/public/storage/images/' . $img1) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 215px; object-fit: contain;"></dotlottie-player>
+                                @elseif ($ext1 === 'json')
                                     <lottie-player src="{{ url('/core/public/storage/images/' . $img1) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 215px; object-fit: contain;"></lottie-player>
                                 @else
                                     <img src="{{ url('/core/public/storage/images/' . $img1) }}" alt="">
@@ -302,7 +306,9 @@
                                     $img2 = $hero_banner['img2'] ?? '';
                                     $ext2 = strtolower(pathinfo($img2, PATHINFO_EXTENSION));
                                 @endphp
-                                @if (in_array($ext2, ['json', 'lottie']))
+                                @if ($ext2 === 'lottie')
+                                    <dotlottie-player src="{{ url('/core/public/storage/images/' . $img2) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 215px; object-fit: contain;"></dotlottie-player>
+                                @elseif ($ext2 === 'json')
                                     <lottie-player src="{{ url('/core/public/storage/images/' . $img2) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 215px; object-fit: contain;"></lottie-player>
                                 @else
                                     <img src="{{ url('/core/public/storage/images/' . $img2) }}" alt="">
