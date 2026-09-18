@@ -86,7 +86,7 @@
                         <div class="form-group">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <label class="mb-0"><strong>{{ __('Select Products for this Deal (Admin Products Only)') }} *</strong></label>
-                                <small class="text-muted"><span id="selected-count">0</span> {{ __('products selected') }}</small>
+                                <small class="text-muted"><span id="selected-count">0</span> {{ __('products selected') }} <span id="min-products-warning" class="text-danger font-weight-bold" style="display:none">— {{ __('min. 2 required') }}</span></small>
                             </div>
 
                             <input type="text" id="product-search-input" class="form-control form-control-sm mb-2" placeholder="{{ __('Search products by name or SKU...') }}">
@@ -225,6 +225,11 @@ $(document).ready(function() {
         });
 
         $('#selected-count').text(count);
+        if (count < 2) {
+            $('#min-products-warning').show();
+        } else {
+            $('#min-products-warning').hide();
+        }
 
         let discountType = $('#discount_type').val();
         let discountValue = parseFloat($('#discount_value').val()) || 0;

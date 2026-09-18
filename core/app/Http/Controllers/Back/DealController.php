@@ -55,10 +55,12 @@ class DealController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'item_ids' => 'required|array|min:1',
+            'item_ids' => 'required|array|min:2',
             'item_ids.*' => 'required|exists:items,id',
             'discount_type' => 'required|in:fixed,percent',
             'discount_value' => 'required|numeric|min:0.01',
+            'delivery_charge' => 'nullable|numeric|min:0',
+            'is_free_delivery' => 'nullable|boolean',
             'duration_days' => 'required|integer|min:1|max:20',
         ]);
 
@@ -86,6 +88,8 @@ class DealController extends Controller
         $discountValue = $request->discount_type === 'fixed'
             ? PriceHelper::convertPrice($request->discount_value)
             : (float) $request->discount_value;
+        $isFreeDelivery = $request->boolean('is_free_delivery');
+        $deliveryCharge = $isFreeDelivery ? 0 : PriceHelper::convertPrice($request->delivery_charge ?? 0);
 
         if ($discountType === 'percent') {
             if ($discountValue >= 100) {
@@ -124,6 +128,8 @@ class DealController extends Controller
             'discount_value' => $discountValue,
             'original_price' => $totalOriginalPrice,
             'discounted_price' => $finalDiscountedPrice,
+            'delivery_charge' => $deliveryCharge,
+            'is_free_delivery' => $isFreeDelivery,
             'duration_days' => $durationDays,
             'start_date' => $startDate,
             'end_date' => $endDate,
@@ -176,10 +182,12 @@ class DealController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'item_ids' => 'required|array|min:1',
+            'item_ids' => 'required|array|min:2',
             'item_ids.*' => 'required|exists:items,id',
             'discount_type' => 'required|in:fixed,percent',
             'discount_value' => 'required|numeric|min:0.01',
+            'delivery_charge' => 'nullable|numeric|min:0',
+            'is_free_delivery' => 'nullable|boolean',
             'duration_days' => 'required|integer|min:1|max:20',
         ]);
 
@@ -205,6 +213,8 @@ class DealController extends Controller
         $discountValue = $request->discount_type === 'fixed'
             ? PriceHelper::convertPrice($request->discount_value)
             : (float) $request->discount_value;
+        $isFreeDelivery = $request->boolean('is_free_delivery');
+        $deliveryCharge = $isFreeDelivery ? 0 : PriceHelper::convertPrice($request->delivery_charge ?? 0);
 
         if ($discountType === 'percent') {
             if ($discountValue >= 100) {
@@ -232,6 +242,8 @@ class DealController extends Controller
             'discount_value' => $discountValue,
             'original_price' => $totalOriginalPrice,
             'discounted_price' => $finalDiscountedPrice,
+            'delivery_charge' => $deliveryCharge,
+            'is_free_delivery' => $isFreeDelivery,
             'duration_days' => $durationDays,
             'end_date' => $endDate,
         ]);
