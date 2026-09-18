@@ -183,9 +183,9 @@
                                                 <div class="product-badge product-badge2 bg-info">
                                                     -{{ PriceHelper::DiscountPercentage($item) }}</div>
                                             @endif
-                                            <img class="lazy"
-                                                data-src="{{ url('/core/public/storage/images/' . $item->thumbnail) }}"
-                                                alt="Product">
+                                            <img src="{{ url('/core/public/storage/images/' . ($item->photo ?: $item->thumbnail)) }}" class="lazy"
+                                                data-src="{{ url('/core/public/storage/images/' . ($item->photo ?: $item->thumbnail)) }}"
+                                                alt="{{ $item->name ?? 'Product' }}">
                                             <div class="product-button-group">
                                                 <a class="product-button wishlist_store"
                                                     href="{{ route('user.wishlist.store', $item->id) }}"
@@ -355,9 +355,9 @@
                                                 <div class="product-badge product-badge2 bg-info">
                                                     -{{ PriceHelper::DiscountPercentage($popular_category_item) }}</div>
                                             @endif
-                                            <img class="lazy"
-                                                data-src="{{ url('/core/public/storage/images/' . $popular_category_item->thumbnail) }}"
-                                                alt="Product">
+                                            <img src="{{ url('/core/public/storage/images/' . ($popular_category_item->photo ?: $popular_category_item->thumbnail)) }}" class="lazy"
+                                                data-src="{{ url('/core/public/storage/images/' . ($popular_category_item->photo ?: $popular_category_item->thumbnail)) }}"
+                                                alt="{{ $popular_category_item->name ?? 'Product' }}">
                                             <div class="product-button-group">
                                                 <a class="product-button wishlist_store"
                                                     href="{{ route('user.wishlist.store', $popular_category_item->id) }}"
@@ -497,9 +497,9 @@
                                                     <div class="product-badge product-badge2 bg-info">
                                                         -{{ PriceHelper::DiscountPercentage($item) }}</div>
                                                 @endif
-                                                <img class="lazy"
-                                                    data-src="{{ url('/core/public/storage/images/' . $item->thumbnail) }}"
-                                                    alt="Product">
+                                                <img src="{{ url('/core/public/storage/images/' . ($item->photo ?: $item->thumbnail)) }}" class="lazy"
+                                                    data-src="{{ url('/core/public/storage/images/' . ($item->photo ?: $item->thumbnail)) }}"
+                                                    alt="{{ $item->name ?? 'Product' }}">
                                                 <div class="product-button-group"><a class="product-button wishlist_store"
                                                         href="{{ route('user.wishlist.store', $item->id) }}"
                                                         title="{{ __('Wishlist') }}"><i class="icon-heart"></i></a>
@@ -574,9 +574,9 @@
                                                         <div class="product-badge product-badge2 bg-info">
                                                             -{{ PriceHelper::DiscountPercentage($item) }}</div>
                                                     @endif
-                                                    <img class="lazy"
-                                                        data-src="{{ url('/core/public/storage/images/' . $item->thumbnail) }}"
-                                                        alt="Product">
+                                                    <img src="{{ url('/core/public/storage/images/' . ($item->photo ?: $item->thumbnail)) }}" class="lazy"
+                                                        data-src="{{ url('/core/public/storage/images/' . ($item->photo ?: $item->thumbnail)) }}"
+                                                        alt="{{ $item->name ?? 'Product' }}">
                                                     <div class="product-button-group"><a
                                                             class="product-button wishlist_store"
                                                             href="{{ route('user.wishlist.store', $item->id) }}"
@@ -656,9 +656,9 @@
                                                                 {{ __('out of stock') }}</div>
                                                         @endif
 
-                                                        <img class="lazy"
-                                                            data-src="{{ url('/core/public/storage/images/' . $two_column_category_item->thumbnail) }}"
-                                                            alt="Product">
+                                                        <img src="{{ url('/core/public/storage/images/' . ($two_column_category_item->photo ?: $two_column_category_item->thumbnail)) }}" class="lazy"
+                                                            data-src="{{ url('/core/public/storage/images/' . ($two_column_category_item->photo ?: $two_column_category_item->thumbnail)) }}"
+                                                            alt="{{ $two_column_category_item->name ?? 'Product' }}">
                                                     </a>
                                                     <div class="product-card-body">
                                                         <h3 class="product-title"><a
@@ -769,9 +769,9 @@
                                         <div class="product-badge product-badge2 bg-info">
                                             -{{ PriceHelper::DiscountPercentage($feature_category_item) }}</div>
                                     @endif
-                                    <img class="lazy"
-                                        data-src="{{ url('/core/public/storage/images/' . $feature_category_item->thumbnail) }}"
-                                        alt="Product">
+                                    <img src="{{ url('/core/public/storage/images/' . ($feature_category_item->photo ?: $feature_category_item->thumbnail)) }}" class="lazy"
+                                        data-src="{{ url('/core/public/storage/images/' . ($feature_category_item->photo ?: $feature_category_item->thumbnail)) }}"
+                                        alt="{{ $feature_category_item->name ?? 'Product' }}">
                                     <div class="product-button-group"><a class="product-button wishlist_store"
                                             href="{{ route('user.wishlist.store', $feature_category_item->id) }}"
                                             title="{{ __('Wishlist') }}"><i class="icon-heart"></i></a>

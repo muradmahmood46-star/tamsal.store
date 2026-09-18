@@ -961,9 +961,9 @@
                                             -{{ PriceHelper::DiscountPercentage($related) }}</div>
                                     @endif
                                     <div class="product-thumb">
-                                        <img class="lazy"
-                                            data-src="{{ url('/core/public/storage/images/' . $related->thumbnail) }}"
-                                            alt="Product">
+                                        <img src="{{ url('/core/public/storage/images/' . ($related->photo ?: $related->thumbnail)) }}" class="lazy"
+                                            data-src="{{ url('/core/public/storage/images/' . ($related->photo ?: $related->thumbnail)) }}"
+                                            alt="{{ $related->name ?? 'Product' }}">
                                         <div class="product-button-group">
                                             <a class="product-button wishlist_store"
                                                 href="{{ route('user.wishlist.store', $related->id) }}"
