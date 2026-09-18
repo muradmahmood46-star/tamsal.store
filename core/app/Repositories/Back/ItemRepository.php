@@ -115,8 +115,8 @@ class ItemRepository
         $this->handleRatingManagement($item, $request);
         $this->handleReturnPolicy($item, $request);
 
-        if(isset($input['galleries'])){
-            $this->galleriesUpdate($request,$item_id);
+        if ($request->hasFile('galleries') || (isset($input['galleries']) && !empty($input['galleries']))) {
+            $this->galleriesUpdate($request, $item_id);
         }
 
         return $item_id;
@@ -230,8 +230,8 @@ class ItemRepository
         $this->handleRatingManagement($item, $request);
         $this->handleReturnPolicy($item, $request);
 
-        if(isset($input['galleries'])){
-            $this->galleriesUpdate($request,$item->id);
+        if ($request->hasFile('galleries') || (isset($input['galleries']) && !empty($input['galleries']))) {
+            $this->galleriesUpdate($request, $item->id);
         }
     }
 
@@ -544,9 +544,12 @@ class ItemRepository
      * @return void
      */
 
-    public function galleriesUpdate($request,$item_id=null)
+    public function galleriesUpdate($request, $item_id = null)
     {
-        Gallery::insert($this->storeImageData($request,$item_id));
+        $data = $this->storeImageData($request, $item_id);
+        if (!empty($data)) {
+            Gallery::insert($data);
+        }
     }
 
     /**
@@ -558,24 +561,36 @@ class ItemRepository
 
     public function galleryDelete($gallery)
     {
-        ImageHelper::handleDeletedImage($gallery,'photo','images');
+        ImageHelper::handleDeletedImage($gallery, 'photo', 'images');
         $gallery->delete();
     }
 
     /**
      * Custom Function.
-     * @return void
+     * @return array
      */
 
-    public function storeImageData($request,$item_id=null)
+    public function storeImageData($request, $item_id = null)
     {
         $storeData = [];
+        $targetItemId = $item_id ?: ($request->item_id ?? ($request['item_id'] ?? null));
+
         if ($galleries = $request->file('galleries')) {
-            foreach($galleries as $key => $gallery){
-                $storeData[$key] = [
-                    'photo'=>  ImageHelper::handleUploadedImage($gallery,'images'),
-                    'item_id' => $item_id ? $item_id : $request['item_id'],
-                ];
+            // Support single or multiple files
+            if (!is_array($galleries)) {
+                $galleries = [$galleries];
+            }
+
+            foreach ($galleries as $gallery) {
+                if ($gallery && $gallery->isValid()) {
+                    $photoName = ImageHelper::handleUploadedImage($gallery, 'images');
+                    if (!empty($photoName)) {
+                        $storeData[] = [
+                            'photo' => $photoName,
+                            'item_id' => $targetItemId,
+                        ];
+                    }
+                }
             }
         }
         return $storeData;

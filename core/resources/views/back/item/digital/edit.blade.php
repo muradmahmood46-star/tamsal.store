@@ -9,7 +9,12 @@
     <div class="card-body">
         <div class="d-sm-flex align-items-center justify-content-between">
             <h3 class="mb-0 bc-title"><b>{{ __('Update Digital Product') }}</b> </h3>
-            <a class="btn btn-primary   btn-sm" href="{{route('back.item.index')}}"><i class="fas fa-chevron-left"></i> {{ __('Back') }}</a>
+            <div>
+                <a class="btn btn-warning btn-sm font-weight-bold mr-2" href="{{ route('back.item.gallery', $item->id) }}">
+                    <i class="fas fa-images mr-1"></i> {{ __('Manage Gallery') }} ({{ $item->galleries->count() }})
+                </a>
+                <a class="btn btn-primary btn-sm" href="{{ route('back.item.index') }}"><i class="fas fa-chevron-left"></i> {{ __('Back') }}</a>
+            </div>
         </div>
     </div>
 </div>

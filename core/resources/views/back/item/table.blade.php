@@ -2,7 +2,14 @@
 <tr id="product-bulk-delete">
   <td><input type="checkbox" class="bulk-item" value="{{$data->id}}"></td>
     <td>
-        <img src="{{ $data->thumbnail ? url('/core/public/storage/images/'.$data->thumbnail) : url('/core/public/storage/images/placeholder.png') }}" alt="Image Not Found">
+        <div class="position-relative d-inline-block">
+            <img src="{{ $data->thumbnail ? url('/core/public/storage/images/'.$data->thumbnail) : url('/core/public/storage/images/placeholder.png') }}" alt="Image Not Found" style="width: 50px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0;">
+            @if($data->galleries && $data->galleries->count() > 0)
+                <a href="{{ route('back.item.gallery', $data->id) }}" class="badge badge-warning position-absolute shadow-sm" style="top: -6px; right: -8px; font-size: 10px; padding: 2px 5px; border-radius: 10px;" title="{{ __('Total Gallery Images') }}">
+                    <i class="fas fa-images"></i> +{{ $data->galleries->count() }}
+                </a>
+            @endif
+        </div>
     </td>
     <td>
         {{ $data->name }}
@@ -53,6 +60,7 @@
               @else
               <a class="dropdown-item" href="{{ route('back.license.item.edit',$data->id) }}"><i class="fas fa-angle-double-right"></i> {{ __('Edit') }}</a>
               @endif
+              <a class="dropdown-item" href="{{ route('back.item.gallery', $data->id) }}"><i class="fas fa-angle-double-right"></i> {{ __('Galleries') }} ({{ $data->galleries ? $data->galleries->count() : 0 }})</a>
                 @if($data->status == 1)
                 <a class="dropdown-item" target="_blank" href="{{ route('front.product',$data->slug) }}"><i class="fas fa-angle-double-right"></i> {{ __('View') }}</a>
               @endif
