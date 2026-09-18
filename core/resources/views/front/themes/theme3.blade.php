@@ -10,52 +10,74 @@
    
 
     @if ($extra_settings->is_t3_slider == 1)
-        <div  class="hero-area3" >
+        <div class="hero-area3">
             <div class="background"></div>
             <div class="heroarea-slider owl-carousel">
                 @foreach ($sliders as $slider)
-                <div class="item" style="background: url('{{ url('/core/public/storage/images/' . $slider->photo) }}')">
-                    <div class="container">
-                    <div class="row">
-                        <div class="col-xl-5 col-lg-6 d-flex align-self-center">
-                            <div class="left-content color-white">
-                                <div class="content">
-                                    <div class="layer-1">
-                                        <p class="subtitle">
-                                            {{ $slider->title }}
-                                        </p>
-                                    </div>
-                                    <div class="layer-2">
-                                        <h1 class="title">
-                                            {{ $slider->details }}
-                                        </h1>
-                                    </div>
-                                    @if($slider->link != '#')
-                                    <div class="layer-3">
-                                        <div class="links">
-                                        <a href="{{ $slider->link }}" class="btn btn-primary">
-                                            <span>
-                                                {{ __('Buy Now') }}
-                                            </span>
-                                        </a>
+                    @php
+                        $sliderPhoto = $slider->photo ?? '';
+                        $sliderExt = strtolower(pathinfo($sliderPhoto, PATHINFO_EXTENSION));
+                        $isLottieSlider = in_array($sliderExt, ['json', 'lottie']);
+
+                        $sliderLogo = $slider->logo ?? '';
+                        $logoExt = strtolower(pathinfo($sliderLogo, PATHINFO_EXTENSION));
+                        $isLottieLogo = in_array($logoExt, ['json', 'lottie']);
+                    @endphp
+                    <div class="item"
+                        @if (!$isLottieSlider)
+                            style="background: url('{{ url('/core/public/storage/images/' . $slider->photo) }}'); position: relative; overflow: hidden;"
+                        @else
+                            style="background: #f8fafc; position: relative; overflow: hidden;"
+                        @endif
+                    >
+                        @if ($isLottieSlider)
+                            <lottie-player src="{{ url('/core/public/storage/images/' . $slider->photo) }}" background="transparent" speed="1" loop autoplay style="position: absolute; top:0; left:0; width:100%; height:100%; object-fit:contain; z-index:1;"></lottie-player>
+                        @endif
+                        <div class="container" style="position: relative; z-index: 2;">
+                            <div class="row">
+                                <div class="col-xl-5 col-lg-6 d-flex align-self-center">
+                                    <div class="left-content color-white">
+                                        <div class="content">
+                                            <div class="layer-1">
+                                                <p class="subtitle">
+                                                    {{ $slider->title }}
+                                                </p>
+                                            </div>
+                                            <div class="layer-2">
+                                                <h1 class="title">
+                                                    {{ $slider->details }}
+                                                </h1>
+                                            </div>
+                                            @if($slider->link != '#')
+                                            <div class="layer-3">
+                                                <div class="links">
+                                                <a href="{{ $slider->link }}" class="btn btn-primary">
+                                                    <span>
+                                                        {{ __('Buy Now') }}
+                                                    </span>
+                                                </a>
+                                                </div>
+                                            </div>
+                                            @endif
                                         </div>
                                     </div>
-                                    @endif
+                                </div>
+                                <div class="col-xl-7 col-lg-6 order-first order-lg-last">
+                                    <div class="layer-4">
+                                        <div class="right-img">
+                                            @if (!empty($slider->logo))
+                                                @if ($isLottieLogo)
+                                                    <lottie-player src="{{ url('/core/public/storage/images/' . $slider->logo) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 350px; object-fit: contain;"></lottie-player>
+                                                @else
+                                                    <img class="img-fluid full-img" src="{{ url('/core/public/storage/images/' . $slider->logo) }}" alt="">
+                                                @endif
+                                            @endif
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xl-7 col-lg-6 order-first order-lg-last">
-                        <div class="layer-4">
-                            <div class="right-img">
-                            @if (!empty($slider->logo))
-                            <img class="img-fluid full-img" src="{{ url('/core/public/storage/images/' . $slider->logo) }}" alt="">
-                            @endif
-                            </div>
-                        </div>
-                        </div>
                     </div>
-                    </div>
-                </div>
                 @endforeach
             </div>
         </div>
@@ -68,7 +90,14 @@
                     @foreach ($services as $service)
                         <div class="col-lg-3 col-sm-6 text-center mb-30">
                             <div class="single-service single-service2">
-                                <img src="{{ url('/core/public/storage/images/'.$service->photo) }}" alt="Shipping">
+                                @php
+                                    $srv_ext = strtolower(pathinfo($service->photo ?? '', PATHINFO_EXTENSION));
+                                @endphp
+                                @if (in_array($srv_ext, ['json', 'lottie']))
+                                    <lottie-player src="{{ url('/core/public/storage/images/'.$service->photo) }}" background="transparent" speed="1" loop autoplay style="max-width: 50px; height: 50px; margin: 0 auto 15px; display: block;"></lottie-player>
+                                @else
+                                    <img src="{{ url('/core/public/storage/images/'.$service->photo) }}" alt="Shipping">
+                                @endif
                                 <div class="content">
                                     <h6 class="mb-2">{{ $service->title }}</h6>
                                     <p class="text-sm text-muted mb-0">{{ $service->details }}</p>
@@ -86,7 +115,7 @@
             <div class="container ">
                 <div class="row gx-3">
                     <div class="col-md-4 mb-3">
-                        <a href="{{$banner_first['firsturl1']}}" class="genius-banner modern-banner-card">
+                        <a href="{{$banner_first['firsturl1'] ?? '#'}}" class="genius-banner modern-banner-card">
                             <div class="banner-text-content">
                                 @if (!empty($banner_first['subtitle1']))
                                     <span class="banner-subtitle">{{$banner_first['subtitle1']}}</span>
@@ -96,12 +125,20 @@
                                 @endif
                             </div>
                             <div class="banner-img-box">
-                                <img src="{{ url('/core/public/storage/images/'.$banner_first['img1']) }}" alt="{{ $banner_first['title1'] ?? '' }}">
+                                @php
+                                    $b1_img1 = $banner_first['img1'] ?? '';
+                                    $b1_ext1 = strtolower(pathinfo($b1_img1, PATHINFO_EXTENSION));
+                                @endphp
+                                @if (in_array($b1_ext1, ['json', 'lottie']))
+                                    <lottie-player src="{{ url('/core/public/storage/images/'.$b1_img1) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 180px; object-fit: contain;"></lottie-player>
+                                @else
+                                    <img src="{{ url('/core/public/storage/images/'.$b1_img1) }}" alt="{{ $banner_first['title1'] ?? '' }}">
+                                @endif
                             </div>
                         </a>
                     </div>
                     <div class="col-md-4 mb-3">
-                        <a href="{{$banner_first['firsturl2']}}" class="genius-banner modern-banner-card">
+                        <a href="{{$banner_first['firsturl2'] ?? '#'}}" class="genius-banner modern-banner-card">
                             <div class="banner-text-content">
                                 @if (!empty($banner_first['subtitle2']))
                                     <span class="banner-subtitle">{{$banner_first['subtitle2']}}</span>
@@ -111,12 +148,20 @@
                                 @endif
                             </div>
                             <div class="banner-img-box">
-                                <img src="{{ url('/core/public/storage/images/'.$banner_first['img2']) }}" alt="{{ $banner_first['title2'] ?? '' }}">
+                                @php
+                                    $b1_img2 = $banner_first['img2'] ?? '';
+                                    $b1_ext2 = strtolower(pathinfo($b1_img2, PATHINFO_EXTENSION));
+                                @endphp
+                                @if (in_array($b1_ext2, ['json', 'lottie']))
+                                    <lottie-player src="{{ url('/core/public/storage/images/'.$b1_img2) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 180px; object-fit: contain;"></lottie-player>
+                                @else
+                                    <img src="{{ url('/core/public/storage/images/'.$b1_img2) }}" alt="{{ $banner_first['title2'] ?? '' }}">
+                                @endif
                             </div>
                         </a>
                     </div>
                     <div class="col-md-4 mb-3">
-                        <a href="{{$banner_first['firsturl3']}}" class="genius-banner modern-banner-card">
+                        <a href="{{$banner_first['firsturl3'] ?? '#'}}" class="genius-banner modern-banner-card">
                             <div class="banner-text-content">
                                 @if (!empty($banner_first['subtitle3']))
                                     <span class="banner-subtitle">{{$banner_first['subtitle3']}}</span>
@@ -126,7 +171,15 @@
                                 @endif
                             </div>
                             <div class="banner-img-box">
-                                <img src="{{ url('/core/public/storage/images/'.$banner_first['img3']) }}" alt="{{ $banner_first['title3'] ?? '' }}">
+                                @php
+                                    $b1_img3 = $banner_first['img3'] ?? '';
+                                    $b1_ext3 = strtolower(pathinfo($b1_img3, PATHINFO_EXTENSION));
+                                @endphp
+                                @if (in_array($b1_ext3, ['json', 'lottie']))
+                                    <lottie-player src="{{ url('/core/public/storage/images/'.$b1_img3) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 180px; object-fit: contain;"></lottie-player>
+                                @else
+                                    <img src="{{ url('/core/public/storage/images/'.$b1_img3) }}" alt="{{ $banner_first['title3'] ?? '' }}">
+                                @endif
                             </div>
                         </a>
                     </div>
@@ -285,8 +338,16 @@
         <div class="container ">
             <div class="row gx-3">
                 <div class="col-md-4">
-                    <a href="{{$banner_secend['url1']}}" class="genius-banner">
-                        <img class="lazy" data-src="{{ url('/core/public/storage/images/'.$banner_secend['img1']) }}" alt="">
+                    <a href="{{$banner_secend['url1'] ?? '#'}}" class="genius-banner">
+                        @php
+                            $b2_img1 = $banner_secend['img1'] ?? '';
+                            $b2_ext1 = strtolower(pathinfo($b2_img1, PATHINFO_EXTENSION));
+                        @endphp
+                        @if (in_array($b2_ext1, ['json', 'lottie']))
+                            <lottie-player src="{{ url('/core/public/storage/images/'.$b2_img1) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 180px; object-fit: contain;"></lottie-player>
+                        @else
+                            <img class="lazy" data-src="{{ url('/core/public/storage/images/'.$b2_img1) }}" alt="">
+                        @endif
                         <div class="inner-content">
                             @if (isset($banner_secend['subtitle1']))
                                 <p>{{$banner_secend['subtitle1']}}</p>
@@ -299,8 +360,16 @@
                     </a>
                 </div>
                 <div class="col-md-4">
-                    <a href="{{$banner_secend['url2']}}" class="genius-banner">
-                        <img class="lazy" data-src="{{ url('/core/public/storage/images/'.$banner_secend['img2']) }}" alt="">
+                    <a href="{{$banner_secend['url2'] ?? '#'}}" class="genius-banner">
+                        @php
+                            $b2_img2 = $banner_secend['img2'] ?? '';
+                            $b2_ext2 = strtolower(pathinfo($b2_img2, PATHINFO_EXTENSION));
+                        @endphp
+                        @if (in_array($b2_ext2, ['json', 'lottie']))
+                            <lottie-player src="{{ url('/core/public/storage/images/'.$b2_img2) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 180px; object-fit: contain;"></lottie-player>
+                        @else
+                            <img class="lazy" data-src="{{ url('/core/public/storage/images/'.$b2_img2) }}" alt="">
+                        @endif
                         <div class="inner-content">
                             @if (isset($banner_secend['subtitle2']))
                                 <p>{{$banner_secend['subtitle2']}}</p>
@@ -313,8 +382,16 @@
                     </a>
                 </div>
                 <div class="col-md-4">
-                    <a href="{{$banner_secend['url3']}}" class="genius-banner">
-                        <img class="lazy" data-src="{{ url('/core/public/storage/images/'.$banner_secend['img3']) }}" alt="">
+                    <a href="{{$banner_secend['url3'] ?? '#'}}" class="genius-banner">
+                        @php
+                            $b2_img3 = $banner_secend['img3'] ?? '';
+                            $b2_ext3 = strtolower(pathinfo($b2_img3, PATHINFO_EXTENSION));
+                        @endphp
+                        @if (in_array($b2_ext3, ['json', 'lottie']))
+                            <lottie-player src="{{ url('/core/public/storage/images/'.$b2_img3) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 180px; object-fit: contain;"></lottie-player>
+                        @else
+                            <img class="lazy" data-src="{{ url('/core/public/storage/images/'.$b2_img3) }}" alt="">
+                        @endif
                         <div class="inner-content">
                             @if (isset($banner_secend['subtitle3']))
                                 <p>{{$banner_secend['subtitle3']}} </p>
