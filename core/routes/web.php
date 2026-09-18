@@ -12,6 +12,7 @@ Route::group(['middleware' => ['adminlocalize', 'demo']], function () {
     Route::get('/clear-server-cache', function() {
         if(function_exists('opcache_reset')) { @opcache_reset(); }
         try {
+            \App\Helpers\Helper::ensureDealsTable();
             \Illuminate\Support\Facades\Artisan::call('optimize:clear');
             \Illuminate\Support\Facades\Artisan::call('view:clear');
             \Illuminate\Support\Facades\Artisan::call('cache:clear');
@@ -24,7 +25,7 @@ Route::group(['middleware' => ['adminlocalize', 'demo']], function () {
                 @unlink($file);
             }
         }
-        return "Server Cache (OPcache, Views, Config, Routes & Artisan) Cleared Successfully. You can go back now.";
+        return "Server Cache (OPcache, Views, Config, Routes, Database Tables & Artisan) Cleared Successfully. You can go back now.";
     });
     
     Route::prefix('admin')->group(function () { 

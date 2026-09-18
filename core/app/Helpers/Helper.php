@@ -376,6 +376,8 @@ class Helper
      */
     public static function getActiveDeals($limit = null)
     {
+        self::ensureDealsTable();
+
         $query = \App\Models\Deal::with(['items.category', 'dealItems.item', 'vendor'])
             ->active()
             ->orderBy('orders_count', 'desc')
@@ -388,6 +390,73 @@ class Helper
         return $query->get();
     }
 
+    /**
+     * Auto-ensure deals and deal_items tables and columns exist in database.
+     */
+    public static function ensureDealsTable()
+    {
+        try {
+            if (!\Illuminate\Support\Facades\Schema::hasTable('deals')) {
+                \Illuminate\Support\Facades\Schema::create('deals', function ($table) {
+                    $table->id();
+                    $table->unsignedBigInteger('vendor_id')->default(0)->index();
+                    $table->string('name');
+                    $table->string('slug')->unique();
+                    $table->string('photo')->nullable();
+                    $table->text('description')->nullable();
+                    $table->enum('discount_type', ['fixed', 'percent'])->default('percent');
+                    $table->decimal('discount_value', 12, 2)->default(0.00);
+                    $table->decimal('original_price', 12, 2)->default(0.00);
+                    $table->decimal('discounted_price', 12, 2)->default(0.00);
+                    $table->decimal('delivery_charge', 12, 2)->default(0.00);
+                    $table->boolean('is_free_delivery')->default(false);
+                    $table->integer('duration_days')->default(1);
+                    $table->dateTime('start_date')->nullable();
+                    $table->dateTime('end_date')->nullable()->index();
+                    $table->tinyInteger('status')->default(1)->index();
+                    $table->unsignedInteger('orders_count')->default(0)->index();
+                    $table->timestamps();
+                });
+            } else {
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('deals', 'photo')) {
+                    \Illuminate\Support\Facades\Schema::table('deals', function ($table) {
+                        $table->string('photo')->nullable()->after('slug');
+                    });
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('deals', 'delivery_charge')) {
+                    \Illuminate\Support\Facades\Schema::table('deals', function ($table) {
+                        $table->decimal('delivery_charge', 12, 2)->default(0.00)->after('discounted_price');
+                    });
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('deals', 'is_free_delivery')) {
+                    \Illuminate\Support\Facades\Schema::table('deals', function ($table) {
+                        $table->boolean('is_free_delivery')->default(false)->after('delivery_charge');
+                    });
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('deals', 'duration_days')) {
+                    \Illuminate\Support\Facades\Schema::table('deals', function ($table) {
+                        $table->integer('duration_days')->default(1)->after('is_free_delivery');
+                    });
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('deals', 'orders_count')) {
+                    \Illuminate\Support\Facades\Schema::table('deals', function ($table) {
+                        $table->unsignedInteger('orders_count')->default(0)->after('status')->index();
+                    });
+                }
+            }
+
+            if (!\Illuminate\Support\Facades\Schema::hasTable('deal_items')) {
+                \Illuminate\Support\Facades\Schema::create('deal_items', function ($table) {
+                    $table->id();
+                    $table->unsignedBigInteger('deal_id')->index();
+                    $table->unsignedBigInteger('item_id')->index();
+                    $table->decimal('original_price', 12, 2)->default(0.00);
+                    $table->decimal('discounted_price', 12, 2)->default(0.00);
+                    $table->timestamps();
+                });
+            }
+        } catch (\Throwable $e) {}
+    }
 }
 
 

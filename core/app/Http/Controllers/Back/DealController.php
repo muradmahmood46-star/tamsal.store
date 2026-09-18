@@ -20,6 +20,7 @@ class DealController extends Controller
     {
         $this->middleware('auth:admin');
         $this->middleware('adminlocalize');
+        \App\Helpers\Helper::ensureDealsTable();
     }
 
     public function index()

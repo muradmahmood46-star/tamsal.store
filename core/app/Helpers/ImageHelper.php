@@ -22,12 +22,26 @@ class ImageHelper
 
         if ($file) {
             if ($delete) {
-                Storage::delete($path . '/' . $delete);
+                try {
+                    Storage::delete($path . '/' . basename($delete));
+                    Storage::delete($delete);
+                } catch (\Throwable $e) {}
             }
 
             $ext = $file->getClientOriginalExtension() ?: 'png';
             $name = Str::random(6) . '_' . uniqid() . '.' . $ext;
-            Storage::putFileAs($path, $file, $name);
+
+            try {
+                Storage::putFileAs($path, $file, $name);
+            } catch (\Throwable $e) {
+                try {
+                    $targetDir = storage_path('app/public/' . $path);
+                    if (!file_exists($targetDir)) {
+                        @mkdir($targetDir, 0777, true);
+                    }
+                    @move_uploaded_file($file->getPathname(), $targetDir . '/' . $name);
+                } catch (\Throwable $ex) {}
+            }
 
             return $name;
         }

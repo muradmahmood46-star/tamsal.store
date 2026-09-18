@@ -14,6 +14,7 @@ class DealController extends Controller
     public function __construct()
     {
         $this->middleware('localize');
+        \App\Helpers\Helper::ensureDealsTable();
     }
 
     public function index()
