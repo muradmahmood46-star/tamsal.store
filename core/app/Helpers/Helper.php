@@ -245,14 +245,14 @@ class Helper
     }
 
     /**
-     * Get top rated products sorted by rating descending with proportional 20% Admin and 80% Vendor distribution.
+     * Get top rated products sorted by real customer rating descending with proportional 20% Admin and 80% Vendor distribution.
      *
-     * @param int|null $limit (e.g. 4 for homepage, 5 for view all)
+     * @param int|null $limit (e.g. 4 for homepage, 100 for view all)
      * @return \Illuminate\Support\Collection
      */
     public static function getTopRatedProducts($limit = null)
     {
-        // 1. Fetch active, approved items that are not blocked/hidden
+        // 1. Fetch active, approved items that are not blocked/hidden with reviews
         $allItems = Item::with(['category', 'tax', 'reviews'])
             ->where('status', 1)
             ->where(function ($query) {
@@ -265,16 +265,22 @@ class Helper
             })
             ->get();
 
+        // Attach computed customer_rating and customer_rating_count for sorting
+        foreach ($allItems as $item) {
+            $item->computed_customer_rating = $item->customer_rating;
+            $item->computed_customer_rating_count = $item->customer_rating_count;
+        }
+
         // 2. Separate into Admin items and Vendor items
-        // Sort each collection descending by rating, then by rating_count, then by id
+        // Sort each collection descending by customer_rating, then by customer_rating_count, then by id
         $adminItems = $allItems->filter(function ($item) {
             return empty($item->vendor_id) || $item->vendor_id == 0;
         })->sort(function ($a, $b) {
-            if ($b->rating != $a->rating) {
-                return $b->rating <=> $a->rating;
+            if ($b->computed_customer_rating != $a->computed_customer_rating) {
+                return $b->computed_customer_rating <=> $a->computed_customer_rating;
             }
-            if ($b->rating_count != $a->rating_count) {
-                return $b->rating_count <=> $a->rating_count;
+            if ($b->computed_customer_rating_count != $a->computed_customer_rating_count) {
+                return $b->computed_customer_rating_count <=> $a->computed_customer_rating_count;
             }
             return $b->id <=> $a->id;
         })->values();
@@ -282,11 +288,11 @@ class Helper
         $vendorItems = $allItems->filter(function ($item) {
             return !empty($item->vendor_id) && $item->vendor_id > 0;
         })->sort(function ($a, $b) {
-            if ($b->rating != $a->rating) {
-                return $b->rating <=> $a->rating;
+            if ($b->computed_customer_rating != $a->computed_customer_rating) {
+                return $b->computed_customer_rating <=> $a->computed_customer_rating;
             }
-            if ($b->rating_count != $a->rating_count) {
-                return $b->rating_count <=> $a->rating_count;
+            if ($b->computed_customer_rating_count != $a->computed_customer_rating_count) {
+                return $b->computed_customer_rating_count <=> $a->computed_customer_rating_count;
             }
             return $b->id <=> $a->id;
         })->values();
@@ -294,7 +300,7 @@ class Helper
         $adminCount = $adminItems->count();
         $vendorCount = $vendorItems->count();
 
-        // If limit is specified (e.g. 4 for homepage, 5 for view all):
+        // If limit is specified (e.g. 4 for homepage, 100 for view all):
         if ($limit && $limit > 0) {
             // Calculate 20% admin quota (at least 1 admin product if listed and limit >= 1)
             $targetAdmin = $adminCount > 0 ? max(1, (int) round($limit * 0.20)) : 0;
@@ -313,13 +319,13 @@ class Helper
             $adminSlice = $adminItems->take($targetAdmin);
             $vendorSlice = $vendorItems->take($targetVendor);
 
-            // Merge and sort overall by rating descending
+            // Merge and sort overall by customer rating descending
             $merged = $adminSlice->concat($vendorSlice)->sort(function ($a, $b) {
-                if ($b->rating != $a->rating) {
-                    return $b->rating <=> $a->rating;
+                if ($b->computed_customer_rating != $a->computed_customer_rating) {
+                    return $b->computed_customer_rating <=> $a->computed_customer_rating;
                 }
-                if ($b->rating_count != $a->rating_count) {
-                    return $b->rating_count <=> $a->rating_count;
+                if ($b->computed_customer_rating_count != $a->computed_customer_rating_count) {
+                    return $b->computed_customer_rating_count <=> $a->computed_customer_rating_count;
                 }
                 return $b->id <=> $a->id;
             })->values();
@@ -353,11 +359,11 @@ class Helper
             }
 
             $chunkSorted = $chunk->sort(function ($a, $b) {
-                if ($b->rating != $a->rating) {
-                    return $b->rating <=> $a->rating;
+                if ($b->computed_customer_rating != $a->computed_customer_rating) {
+                    return $b->computed_customer_rating <=> $a->computed_customer_rating;
                 }
-                if ($b->rating_count != $a->rating_count) {
-                    return $b->rating_count <=> $a->rating_count;
+                if ($b->computed_customer_rating_count != $a->computed_customer_rating_count) {
+                    return $b->computed_customer_rating_count <=> $a->computed_customer_rating_count;
                 }
                 return $b->id <=> $a->id;
             });

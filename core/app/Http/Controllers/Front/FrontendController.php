@@ -449,8 +449,12 @@ class FrontendController extends Controller
 
     public function topRatedProduct()
     {
-        $top_rated_items = Helper::getTopRatedProducts(5);
-        return view('front.top_rated', ['items' => $top_rated_items]);
+        $setting = Setting::first();
+        $top_rated_items = Helper::getTopRatedProducts(100);
+        return view('front.top_rated', [
+            'setting' => $setting,
+            'items' => $top_rated_items
+        ]);
     }
 
     // -------------------------------- TOP RATED PRODUCTS ----------------------------------------

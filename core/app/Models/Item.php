@@ -49,6 +49,45 @@ class Item extends Model
         return $customCount + $realCount;
     }
 
+    public function getCustomerRatingAttribute()
+    {
+        if ($this->relationLoaded('reviews')) {
+            $customerReviews = $this->reviews->where('status', 1)->filter(function ($r) {
+                return empty($r->is_admin_added) || $r->is_admin_added == 0;
+            });
+            $count = $customerReviews->count();
+            if ($count <= 0) {
+                return 0.0;
+            }
+            $sum = (float) $customerReviews->sum('rating');
+            return min(5.0, max(0.0, round($sum / $count, 1)));
+        }
+
+        $reviewsQuery = $this->reviews()->where('status', 1)->where(function ($q) {
+            $q->whereNull('is_admin_added')->orWhere('is_admin_added', 0);
+        });
+        $count = $reviewsQuery->count();
+        if ($count <= 0) {
+            return 0.0;
+        }
+        $avg = $reviewsQuery->avg('rating');
+        return min(5.0, max(0.0, round((float)$avg, 1)));
+    }
+
+    public function getCustomerRatingCountAttribute()
+    {
+        if ($this->relationLoaded('reviews')) {
+            $customerReviews = $this->reviews->where('status', 1)->filter(function ($r) {
+                return empty($r->is_admin_added) || $r->is_admin_added == 0;
+            });
+            return $customerReviews->count();
+        }
+
+        return (int) $this->reviews()->where('status', 1)->where(function ($q) {
+            $q->whereNull('is_admin_added')->orWhere('is_admin_added', 0);
+        })->count();
+    }
+
     public function category()
     {
         return $this->belongsTo('App\Models\Category')->withDefault();

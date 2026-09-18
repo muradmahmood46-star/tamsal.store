@@ -721,9 +721,9 @@
                                                     {{ Str::limit($popular_category_item->name, 35) }}
                                                 </a></h3>
                                              <div class="rating-stars">
-                                                 {!! Helper::renderStarRating($popular_category_item) !!}
-                                                 @if($popular_category_item->rating > 0)
-                                                     <span class="text-muted ml-1" style="font-size: 11px; font-weight: 600;">({{ number_format($popular_category_item->rating, 1) }})</span>
+                                                 {!! Helper::renderStarRating($popular_category_item->customer_rating) !!}
+                                                 @if($popular_category_item->customer_rating > 0)
+                                                     <span class="text-muted ml-1" style="font-size: 11px; font-weight: 600;">({{ number_format($popular_category_item->customer_rating, 1) }})</span>
                                                  @endif
                                              </div>
                                             <h4 class="product-price">
@@ -780,9 +780,9 @@
                                                     {{ Str::limit($popular_category_item->name, 35) }}
                                                 </a></h3>
                                              <div class="rating-stars">
-                                                 {!! Helper::renderStarRating($popular_category_item) !!}
-                                                 @if($popular_category_item->rating > 0)
-                                                     <span class="text-muted ml-1" style="font-size: 11px; font-weight: 600;">({{ number_format($popular_category_item->rating, 1) }})</span>
+                                                 {!! Helper::renderStarRating($popular_category_item->customer_rating) !!}
+                                                 @if($popular_category_item->customer_rating > 0)
+                                                     <span class="text-muted ml-1" style="font-size: 11px; font-weight: 600;">({{ number_format($popular_category_item->customer_rating, 1) }})</span>
                                                  @endif
                                              </div>
                                             <h4 class="product-price">

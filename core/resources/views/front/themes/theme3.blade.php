@@ -369,9 +369,12 @@
                                         <h3 class="product-title"><a href="{{route('front.product',$popular_category_item->slug)}}">
                                             {{ Str::limit($popular_category_item->name,35) }}
                                         </a></h3>
-                                        <div class="rating-stars">
-                                        <i class="fas fa-star filled"></i><i class="fas fa-star filled"></i><i class="fas fa-star filled"></i><i class="fas fa-star filled"></i><i class="fas fa-star filled"></i>
-                                        </div>
+                                         <div class="rating-stars">
+                                             {!! Helper::renderStarRating($popular_category_item->customer_rating) !!}
+                                             @if($popular_category_item->customer_rating > 0)
+                                                 <span class="text-muted ml-1" style="font-size: 11px; font-weight: 600;">({{ number_format($popular_category_item->customer_rating, 1) }})</span>
+                                             @endif
+                                         </div>
                                         <h4 class="product-price">
                                             @if ($popular_category_item->previous_price != 0)
                                             <del>{{PriceHelper::setPreviousPrice($popular_category_item->previous_price)}}</del>
