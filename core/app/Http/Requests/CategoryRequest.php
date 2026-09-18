@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 
 class CategoryRequest extends FormRequest
 {
@@ -17,21 +18,35 @@ class CategoryRequest extends FormRequest
     }
 
     /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation()
+    {
+        $rawSlug = $this->slug ?: $this->name;
+        $slug = Str::slug($rawSlug);
+        if (empty($slug)) {
+            $slug = 'category-' . time();
+        }
+
+        $this->merge([
+            'slug' => $slug,
+        ]);
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
      */
     public function rules()
     {
-
-        $id = $this->category ? ',' . $this->category->id : '';
         $required = $this->category ? '' : 'required';
 
         return [
-            'slug'      => [$required,'unique:categories,slug'. $id,'regex:/^[a-zA-Z0-9-]+$/'],
-            'photo'     => [$required,'mimes:jpeg,jpg,png,svg,webp,gif,bmp,tiff,tif,avif,ico,jfif,heic,heif'],
-            'name'      => 'required|max:255',
-            'meta_keywords'=> 'max:255',
+            'slug'          => 'nullable|string|max:255',
+            'photo'         => [$required,'mimes:jpeg,jpg,png,svg,webp,gif,bmp,tiff,tif,avif,ico,jfif,heic,heif'],
+            'name'          => 'required|max:255',
+            'meta_keywords' => 'nullable|max:255',
         ];
     }
 
@@ -43,9 +58,7 @@ class CategoryRequest extends FormRequest
     public function messages()
     {
         return [
-            'slug.required'  => __('Slug field is required.'),
-            'slug.unique'    => __('This slug has already been taken.'),
-            'slug.regex'     => __('Slug Must Not Have Any Special Characters.'),
+            'name.required'  => __('Category name is required.'),
             'photo.required' => __('Image field is required.'),
             'photo.mimes'    => __('Please upload a valid image file.'),
         ];

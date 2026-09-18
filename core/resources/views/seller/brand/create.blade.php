@@ -49,8 +49,8 @@
 								</div>
 
 								<div class="form-group">
-									<label for="slug">{{ __('Slug') }} *</label>
-									<input type="text" name="slug" class="form-control" id="slug" placeholder="{{ __('Enter Slug') }}" value="{{ old('slug') }}" required>
+									<label for="slug">{{ __('Slug') }}</label>
+									<input type="text" name="slug" class="form-control" id="slug" placeholder="{{ __('Enter Slug (Optional - Auto generated)') }}" value="{{ old('slug') }}">
 								</div>
 
 								<div class="form-group">
@@ -68,4 +68,18 @@
 
 </div>
 
+@endsection
+
+@section('scripts')
+<script>
+    $('.upload-photo').on('change', function () {
+        if (this.files && this.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('.admin-img').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+</script>
 @endsection

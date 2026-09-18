@@ -50,6 +50,18 @@ class BrandController extends Controller
         $input['status'] = 1;
         $input['is_popular'] = $request->is_popular ?? 0;
 
+        $slug = $request->slug ? Str::slug($request->slug) : Str::slug($request->name);
+        if (empty($slug)) {
+            $slug = 'brand-' . time();
+        }
+        $originalSlug = $slug;
+        $counter = 1;
+        while (Brand::where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $counter;
+            $counter++;
+        }
+        $input['slug'] = $slug;
+
         Brand::create($input);
         return redirect()->route('seller.brand.index')->withSuccess(__('New Brand Added Successfully.'));
     }
@@ -61,12 +73,15 @@ class BrandController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:brands,slug',
+            'slug' => 'nullable|string|max:255',
             'photo' => 'nullable|file|mimes:jpeg,jpg,png,svg,webp,gif,bmp,tiff,tif,avif,ico,jfif,heic,heif|max:10240'
         ]);
 
         $name = $request->name;
         $slug = $request->slug ? Str::slug($request->slug) : Str::slug($name);
+        if (empty($slug)) {
+            $slug = 'brand-' . time();
+        }
         
         $originalSlug = $slug;
         $counter = 1;
@@ -130,6 +145,18 @@ class BrandController extends Controller
         if ($file = $request->file('photo')) {
             $input['photo'] = ImageHelper::handleUpdatedUploadedImage($file, 'images', $brand, 'images/', 'photo');
         }
+
+        $slug = $request->slug ? Str::slug($request->slug) : Str::slug($request->name);
+        if (empty($slug)) {
+            $slug = $brand->slug ?: ('brand-' . $brand->id);
+        }
+        $originalSlug = $slug;
+        $counter = 1;
+        while (Brand::where('slug', $slug)->where('id', '!=', $brand->id)->exists()) {
+            $slug = $originalSlug . '-' . $counter;
+            $counter++;
+        }
+        $input['slug'] = $slug;
 
         $brand->update($input);
         return redirect()->route('seller.brand.index')->withSuccess(__('Brand Updated Successfully.'));

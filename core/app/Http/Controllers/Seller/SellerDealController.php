@@ -28,6 +28,8 @@ class SellerDealController extends Controller
         $vendorId = Auth::id();
         $deals = Deal::with('dealItems.item')
             ->where('vendor_id', $vendorId)
+            ->where('vendor_id', '>', 0)
+            ->whereNotNull('vendor_id')
             ->orderBy('id', 'desc')
             ->get();
 
@@ -40,6 +42,7 @@ class SellerDealController extends Controller
     {
         $vendorId = Auth::id();
         $items = Item::where('vendor_id', $vendorId)
+            ->where('vendor_id', '>', 0)
             ->where('status', 1)
             ->where(function ($query) {
                 $query->where('approval_status', 'Approved')
@@ -61,6 +64,9 @@ class SellerDealController extends Controller
     public function store(Request $request)
     {
         $vendorId = Auth::id();
+        if (!$vendorId) {
+            return redirect()->route('user.login');
+        }
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -87,6 +93,7 @@ class SellerDealController extends Controller
         // Ensure all selected items belong strictly to this vendor
         $selectedItems = Item::whereIn('id', $itemIds)
             ->where('vendor_id', $vendorId)
+            ->where('vendor_id', '>', 0)
             ->where('status', 1)
             ->get();
 
@@ -190,9 +197,10 @@ class SellerDealController extends Controller
     public function edit($id)
     {
         $vendorId = Auth::id();
-        $deal = Deal::where('vendor_id', $vendorId)->with('dealItems')->findOrFail($id);
+        $deal = Deal::where('vendor_id', $vendorId)->where('vendor_id', '>', 0)->with('dealItems')->findOrFail($id);
 
         $items = Item::where('vendor_id', $vendorId)
+            ->where('vendor_id', '>', 0)
             ->where('status', 1)
             ->select('id', 'name', 'discount_price', 'previous_price', 'photo', 'thumbnail', 'sku')
             ->orderBy('id', 'desc')
@@ -210,7 +218,7 @@ class SellerDealController extends Controller
     public function update(Request $request, $id)
     {
         $vendorId = Auth::id();
-        $deal = Deal::where('vendor_id', $vendorId)->findOrFail($id);
+        $deal = Deal::where('vendor_id', $vendorId)->where('vendor_id', '>', 0)->findOrFail($id);
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -236,6 +244,7 @@ class SellerDealController extends Controller
 
         $selectedItems = Item::whereIn('id', $itemIds)
             ->where('vendor_id', $vendorId)
+            ->where('vendor_id', '>', 0)
             ->where('status', 1)
             ->get();
 
@@ -326,7 +335,7 @@ class SellerDealController extends Controller
     public function status($id, $status)
     {
         $vendorId = Auth::id();
-        $deal = Deal::where('vendor_id', $vendorId)->findOrFail($id);
+        $deal = Deal::where('vendor_id', $vendorId)->where('vendor_id', '>', 0)->findOrFail($id);
         $deal->status = (int) $status;
         $deal->save();
 
@@ -336,7 +345,7 @@ class SellerDealController extends Controller
     public function destroy($id)
     {
         $vendorId = Auth::id();
-        $deal = Deal::where('vendor_id', $vendorId)->findOrFail($id);
+        $deal = Deal::where('vendor_id', $vendorId)->where('vendor_id', '>', 0)->findOrFail($id);
         if ($deal->photo) {
             ImageHelper::handleDeletedImage($deal, 'photo', 'images');
         }

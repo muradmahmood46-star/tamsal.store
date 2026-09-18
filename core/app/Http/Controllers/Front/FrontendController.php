@@ -66,6 +66,11 @@ class FrontendController extends Controller
 
     public function index()
     {
+        // Returning approved vendors should continue directly to their store.
+        // Guests and regular customers must still land on the public homepage.
+        if (Auth::check() && Auth::user()->isSeller()) {
+            return redirect()->route('seller.dashboard');
+        }
 
 
         $setting = Setting::first();
