@@ -142,6 +142,17 @@
                                     </small>
                                 </div>
 
+                                <div class="form-group mb-2">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" name="is_free_delivery" value="1" id="is_free_delivery" {{ old('is_free_delivery') ? 'checked' : '' }}>
+                                        <label class="custom-control-label font-weight-bold" for="is_free_delivery">{{ __('Free Delivery') }}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group" id="delivery-charge-group">
+                                    <label for="delivery_charge">{{ __('Delivery Charges (PKR)') }}</label>
+                                    <input type="number" min="0" step="0.01" class="form-control" name="delivery_charge" id="delivery_charge" value="{{ old('delivery_charge', 0) }}">
+                                </div>
+
                             </div>
                         </div>
 
@@ -160,7 +171,7 @@
                             </div>
 
                             <div class="d-flex justify-content-between mb-2 text-danger">
-                                <span>{{ __('You Save:') }}</span>
+                                <span>{{ __('Buyer Save:') }}</span>
                                 <strong id="summary-savings">PKR 0.00</strong>
                             </div>
 
@@ -243,6 +254,11 @@ $(document).ready(function() {
     // Checkbox changes & value input
     $(document).on('change', '.deal-product-checkbox', calculateDeal);
     $('#discount_value').on('input', calculateDeal);
+
+    $('#is_free_delivery').on('change', function() {
+        $('#delivery-charge-group').toggle(!this.checked);
+        $('#delivery_charge').prop('disabled', this.checked);
+    }).trigger('change');
 
     // Search filter for products
     $('#product-search-input').on('keyup', function() {
