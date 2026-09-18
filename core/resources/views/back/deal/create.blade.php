@@ -189,6 +189,11 @@
 @section('scripts')
 <script>
 $(document).ready(function() {
+    const dealCurrencyValue = {{ json_encode(PriceHelper::setCurrencyValue()) }};
+    const dealCurrencySign = @json(PriceHelper::setCurrencySign());
+    function formatDealPrice(basePrice) {
+        return dealCurrencySign + ' ' + (basePrice * dealCurrencyValue).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    }
     function calculateDeal() {
         let totalOriginal = 0;
         let count = 0;
@@ -210,17 +215,17 @@ $(document).ready(function() {
             savings = (totalOriginal * discountValue) / 100;
             badgeText = discountValue + '% OFF';
         } else {
-            savings = discountValue;
-            badgeText = '-' + discountValue.toLocaleString('en-US', {minimumFractionDigits: 2}) + ' OFF';
+            savings = discountValue / dealCurrencyValue;
+            badgeText = '-' + formatDealPrice(savings) + ' OFF';
         }
 
         savings = Math.min(savings, totalOriginal);
         finalPrice = Math.max(0, totalOriginal - savings);
 
-        $('#summary-original-price').text(totalOriginal.toLocaleString('en-US', {style: 'currency', currency: 'PKR'}).replace('PKR', 'PKR '));
+        $('#summary-original-price').text(formatDealPrice(totalOriginal));
         $('#summary-discount-badge').text(badgeText);
-        $('#summary-savings').text(savings.toLocaleString('en-US', {style: 'currency', currency: 'PKR'}).replace('PKR', 'PKR '));
-        $('#summary-final-price').text(finalPrice.toLocaleString('en-US', {style: 'currency', currency: 'PKR'}).replace('PKR', 'PKR '));
+        $('#summary-savings').text(formatDealPrice(savings));
+        $('#summary-final-price').text(formatDealPrice(finalPrice));
     }
 
     // Toggle discount label

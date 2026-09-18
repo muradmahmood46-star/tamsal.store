@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Deal;
 use App\Models\DealItem;
 use App\Models\Item;
+use App\Helpers\PriceHelper;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -82,7 +83,9 @@ class DealController extends Controller
         }
 
         $discountType = $request->discount_type;
-        $discountValue = (float) $request->discount_value;
+        $discountValue = $request->discount_type === 'fixed'
+            ? PriceHelper::convertPrice($request->discount_value)
+            : (float) $request->discount_value;
 
         if ($discountType === 'percent') {
             if ($discountValue >= 100) {
@@ -199,7 +202,9 @@ class DealController extends Controller
         });
 
         $discountType = $request->discount_type;
-        $discountValue = (float) $request->discount_value;
+        $discountValue = $request->discount_type === 'fixed'
+            ? PriceHelper::convertPrice($request->discount_value)
+            : (float) $request->discount_value;
 
         if ($discountType === 'percent') {
             if ($discountValue >= 100) {
