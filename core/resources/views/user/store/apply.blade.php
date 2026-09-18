@@ -129,32 +129,35 @@
     .store-hero-banner {
         display: flex !important;
         align-items: center !important;
-        padding: 16px 20px !important;
-        border-radius: 12px !important;
-        margin-bottom: 1.5rem !important;
+        padding: 18px 22px !important;
+        border-radius: 14px !important;
+        margin-bottom: 1.75rem !important;
         background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%) !important;
-        border: 1px solid #bfdbfe !important;
-        border-left: 5px solid #0d6efd !important;
-        box-shadow: 0 4px 18px rgba(13, 110, 253, 0.07) !important;
+        border: 1.5px solid #bfdbfe !important;
+        border-left: 6px solid #0d6efd !important;
+        box-shadow: 0 4px 18px rgba(13, 110, 253, 0.08) !important;
         position: relative !important;
         overflow: hidden !important;
         transition: transform 0.25s ease, box-shadow 0.25s ease !important;
     }
     .store-hero-banner:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 22px rgba(13, 110, 253, 0.12) !important;
+        box-shadow: 0 6px 24px rgba(13, 110, 253, 0.14) !important;
     }
     .store-hero-banner.is-free-banner {
-        background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%) !important;
-        border-color: #bbf7d0 !important;
-        border-left-color: #16a34a !important;
-        box-shadow: 0 4px 18px rgba(22, 163, 74, 0.07) !important;
+        background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 45%, #ffffff 100%) !important;
+        border: 1.5px solid #6ee7b7 !important;
+        border-left: 6px solid #059669 !important;
+        box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15) !important;
+    }
+    .store-hero-banner.is-free-banner:hover {
+        box-shadow: 0 6px 26px rgba(16, 185, 129, 0.22) !important;
     }
     .store-hero-icon-wrap {
-        width: 52px !important;
-        height: 52px !important;
-        min-width: 52px !important;
-        max-width: 52px !important;
+        width: 54px !important;
+        height: 54px !important;
+        min-width: 54px !important;
+        max-width: 54px !important;
         border-radius: 50% !important;
         display: flex !important;
         align-items: center !important;
@@ -166,13 +169,13 @@
         animation: pulseIconGlow 2.5s infinite ease-in-out !important;
     }
     .is-free-banner .store-hero-icon-wrap {
-        background: linear-gradient(135deg, #16a34a 0%, #15803d 100%) !important;
-        box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35) !important;
+        background: linear-gradient(135deg, #10b981 0%, #047857 100%) !important;
+        box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4) !important;
         animation: pulseFreeIconGlow 2.5s infinite ease-in-out !important;
     }
     .store-hero-icon-wrap i {
         color: #ffffff !important;
-        font-size: 22px !important;
+        font-size: 24px !important;
         line-height: 1 !important;
     }
     .store-hero-content {
@@ -180,26 +183,32 @@
         min-width: 0 !important;
     }
     .store-hero-title {
-        font-size: 16px !important;
+        font-size: 17px !important;
         font-weight: 700 !important;
         color: #1e293b !important;
-        margin-bottom: 4px !important;
+        margin-bottom: 5px !important;
         letter-spacing: -0.2px !important;
         display: flex !important;
         align-items: center !important;
-        gap: 8px !important;
+        gap: 10px !important;
         flex-wrap: wrap !important;
     }
+    .is-free-banner .store-hero-title {
+        color: #065f46 !important;
+    }
     .store-hero-subtitle {
-        font-size: 13.5px !important;
-        color: #475569 !important;
-        line-height: 1.45 !important;
+        font-size: 14px !important;
+        color: #334155 !important;
+        line-height: 1.5 !important;
         margin-bottom: 0 !important;
     }
+    .is-free-banner .store-hero-subtitle {
+        color: #064e3b !important;
+    }
     .store-hero-badge {
-        font-size: 11px !important;
+        font-size: 11.5px !important;
         font-weight: 700 !important;
-        padding: 3px 8px !important;
+        padding: 4px 10px !important;
         border-radius: 20px !important;
         text-transform: uppercase !important;
         letter-spacing: 0.4px !important;
@@ -207,8 +216,9 @@
         color: #0d6efd !important;
     }
     .is-free-banner .store-hero-badge {
-        background: rgba(22, 163, 74, 0.12) !important;
-        color: #16a34a !important;
+        background: #059669 !important;
+        color: #ffffff !important;
+        box-shadow: 0 2px 6px rgba(5, 150, 105, 0.3) !important;
     }
 
     @keyframes pulseIconGlow {
@@ -549,11 +559,11 @@
                             </div>
                             <div class="store-hero-content">
                                 <div class="store-hero-title">
-                                    {{ __('Free Store Opening Offer is Active!') }}
-                                    <span class="store-hero-badge">{{ __('Free') }}</span>
+                                    <span>🎉 {{ __('100% Free Store Opening — Start Selling Today!') }}</span>
+                                    <span class="store-hero-badge"><i class="fas fa-check-circle mr-1"></i>{{ __('NO REGISTRATION FEE') }}</span>
                                 </div>
                                 <p class="store-hero-subtitle">
-                                    {{ __('Open your store without any fees. Complete the 3-step application below to get your shop approved.') }}
+                                    {{ __('Great news! You can open your vendor store completely FREE with 0 registration charges. Complete the quick 3-step application (Steps 1–3) below to get your shop approved and start listing your products!') }}
                                 </p>
                             </div>
                         </div>
@@ -564,11 +574,11 @@
                             </div>
                             <div class="store-hero-content">
                                 <div class="store-hero-title">
-                                    {{ __('Open Shop / Seller Application') }}
-                                    <span class="store-hero-badge">{{ __('Easy Steps') }}</span>
+                                    <span>🏪 {{ __('Open Your Vendor Store & List Products') }}</span>
+                                    <span class="store-hero-badge">{{ __('Fee:') }} {{ PriceHelper::storeOpeningFee($setting->store_opening_fee ?? 0) }}</span>
                                 </div>
                                 <p class="store-hero-subtitle">
-                                    {{ __('Complete steps 1-4 and submit your application to open your store and list your products.') }}
+                                    {{ __('Complete steps 1–4 and submit your payment verification receipt to open your store and start listing your products.') }}
                                 </p>
                             </div>
                         </div>
