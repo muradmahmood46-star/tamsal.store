@@ -772,7 +772,12 @@
     })
 
 
-    let galleryDataTransfer = new DataTransfer();
+    let galleryDataTransfer = null;
+    try {
+        galleryDataTransfer = new DataTransfer();
+    } catch (e) {
+        galleryDataTransfer = null;
+    }
 
     $(document).on('change', '#gallery_file, #galleries', function () {
         if (!this.files || this.files.length === 0) return;
@@ -781,9 +786,13 @@
 
         for (let i = 0; i < this.files.length; ++i) {
             let file = this.files[i];
-            galleryDataTransfer.items.add(file);
+            if (galleryDataTransfer) {
+                try {
+                    galleryDataTransfer.items.add(file);
+                } catch (err) {}
+            }
 
-            let fIndex = galleryDataTransfer.files.length - 1;
+            let fIndex = galleryDataTransfer ? (galleryDataTransfer.files.length - 1) : i;
             let filereader = new FileReader();
 
             filereader.onload = (function(idx) {
@@ -805,24 +814,32 @@
             filereader.readAsDataURL(file);
         }
 
-        // Sync file input with all accumulated files
-        activeInput.files = galleryDataTransfer.files;
+        // Sync file input with all accumulated files if supported
+        if (galleryDataTransfer && galleryDataTransfer.files.length > 0) {
+            try {
+                activeInput.files = galleryDataTransfer.files;
+            } catch (err) {}
+        }
     });
 
     $(document).on('click', '.reader_file_remove', function () {
         let indexToRemove = parseInt($(this).data('index'), 10);
-        let currentFiles = Array.from(galleryDataTransfer.files);
         
-        if (!isNaN(indexToRemove) && indexToRemove >= 0 && indexToRemove < currentFiles.length) {
-            currentFiles.splice(indexToRemove, 1);
-        }
+        if (galleryDataTransfer) {
+            let currentFiles = Array.from(galleryDataTransfer.files);
+            if (!isNaN(indexToRemove) && indexToRemove >= 0 && indexToRemove < currentFiles.length) {
+                currentFiles.splice(indexToRemove, 1);
+            }
 
-        galleryDataTransfer = new DataTransfer();
-        currentFiles.forEach(f => galleryDataTransfer.items.add(f));
+            try {
+                galleryDataTransfer = new DataTransfer();
+                currentFiles.forEach(f => galleryDataTransfer.items.add(f));
 
-        let inputEl = document.getElementById('gallery_file') || document.getElementById('galleries');
-        if (inputEl) {
-            inputEl.files = galleryDataTransfer.files;
+                let inputEl = document.getElementById('gallery_file') || document.getElementById('galleries');
+                if (inputEl) {
+                    inputEl.files = galleryDataTransfer.files;
+                }
+            } catch (err) {}
         }
 
         $(this).closest('.new-gallery-item-preview').remove();

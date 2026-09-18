@@ -173,7 +173,12 @@
 
 @section('scripts')
 <script>
-let sellerGalleryDt = new DataTransfer();
+let sellerGalleryDt = null;
+try {
+    sellerGalleryDt = new DataTransfer();
+} catch (e) {
+    sellerGalleryDt = null;
+}
 
 document.addEventListener('DOMContentLoaded', function () {
     const input = document.getElementById('seller_galleries_input');
@@ -183,7 +188,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (input) {
         input.addEventListener('change', function () {
-            handleSelectedSellerFiles(this.files);
+            if (this.files && this.files.length > 0) {
+                handleSelectedSellerFiles(this.files);
+            }
         });
     }
 
@@ -216,14 +223,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (form) {
         form.addEventListener('submit', function (e) {
-            if (!sellerGalleryDt.files || sellerGalleryDt.files.length === 0) {
+            const hasDtFiles = (sellerGalleryDt && sellerGalleryDt.files && sellerGalleryDt.files.length > 0);
+            const hasInputFiles = (input && input.files && input.files.length > 0);
+
+            if (!hasDtFiles && !hasInputFiles) {
                 e.preventDefault();
                 alert('{{ __("Please select at least one image to upload.") }}');
                 return false;
             }
 
-            if (input) {
-                input.files = sellerGalleryDt.files;
+            if (sellerGalleryDt && sellerGalleryDt.files && sellerGalleryDt.files.length > 0 && input) {
+                try {
+                    input.files = sellerGalleryDt.files;
+                } catch (err) {
+                    console.warn('Could not assign DataTransfer to input.files', err);
+                }
             }
 
             if (submitBtn) {
@@ -237,15 +251,23 @@ document.addEventListener('DOMContentLoaded', function () {
 function handleSelectedSellerFiles(files) {
     if (!files || files.length === 0) return;
 
-    Array.from(files).forEach(file => {
-        if (file.type.startsWith('image/')) {
-            sellerGalleryDt.items.add(file);
-        }
-    });
+    if (sellerGalleryDt) {
+        Array.from(files).forEach(file => {
+            try {
+                sellerGalleryDt.items.add(file);
+            } catch (err) {
+                console.warn('Could not add file to DataTransfer', err);
+            }
+        });
 
-    const input = document.getElementById('seller_galleries_input');
-    if (input) {
-        input.files = sellerGalleryDt.files;
+        const input = document.getElementById('seller_galleries_input');
+        if (input && sellerGalleryDt.files.length > 0) {
+            try {
+                input.files = sellerGalleryDt.files;
+            } catch (err) {
+                console.warn('Could not sync input.files', err);
+            }
+        }
     }
 
     renderSellerGalleryPreviews();
@@ -260,11 +282,15 @@ function renderSellerGalleryPreviews() {
     if (!container) return;
     container.innerHTML = '';
 
-    if (sellerGalleryDt.files.length > 0) {
-        if (box) box.classList.remove('d-none');
-        if (countBadge) countBadge.innerText = sellerGalleryDt.files.length;
+    const currentFiles = (sellerGalleryDt && sellerGalleryDt.files && sellerGalleryDt.files.length > 0) 
+        ? sellerGalleryDt.files 
+        : (input && input.files ? input.files : []);
 
-        Array.from(sellerGalleryDt.files).forEach((file, idx) => {
+    if (currentFiles.length > 0) {
+        if (box) box.classList.remove('d-none');
+        if (countBadge) countBadge.innerText = currentFiles.length;
+
+        Array.from(currentFiles).forEach((file, idx) => {
             const reader = new FileReader();
             reader.onload = function (e) {
                 const thumb = document.createElement('div');
@@ -276,7 +302,7 @@ function renderSellerGalleryPreviews() {
                 thumb.style.justifyContent = 'center';
                 thumb.style.overflow = 'hidden';
                 thumb.innerHTML = `
-                    <img src="${e.target.result}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    <img src="${e.target.result}" style="max-width: 100%; max-height: 100%; object-fit: contain;" alt="${file.name}">
                     <span onclick="removePendingSellerGalleryFile(${idx})" class="badge badge-danger position-absolute" style="top: 2px; right: 2px; cursor: pointer; padding: 2px 5px; font-size: 11px; font-weight: bold; border-radius: 50%;" title="Remove">&times;</span>
                 `;
                 container.appendChild(thumb);
@@ -285,28 +311,40 @@ function renderSellerGalleryPreviews() {
         });
     } else {
         if (box) box.classList.add('d-none');
-        if (input) input.value = '';
     }
 }
 
 function removePendingSellerGalleryFile(idxToRemove) {
-    const currentFiles = Array.from(sellerGalleryDt.files);
-    currentFiles.splice(idxToRemove, 1);
-
-    sellerGalleryDt = new DataTransfer();
-    currentFiles.forEach(f => sellerGalleryDt.items.add(f));
-
     const input = document.getElementById('seller_galleries_input');
-    if (input) {
-        input.files = sellerGalleryDt.files;
+
+    if (sellerGalleryDt) {
+        const currentFiles = Array.from(sellerGalleryDt.files);
+        currentFiles.splice(idxToRemove, 1);
+
+        try {
+            sellerGalleryDt = new DataTransfer();
+            currentFiles.forEach(f => sellerGalleryDt.items.add(f));
+
+            if (input) {
+                input.files = sellerGalleryDt.files;
+            }
+        } catch (err) {
+            console.warn('Error rebuilding DataTransfer', err);
+        }
+    } else if (input) {
+        input.value = '';
     }
 
     renderSellerGalleryPreviews();
 }
 
 function clearAllPendingSellerGalleryFiles() {
-    sellerGalleryDt = new DataTransfer();
     const input = document.getElementById('seller_galleries_input');
+    if (sellerGalleryDt) {
+        try {
+            sellerGalleryDt = new DataTransfer();
+        } catch (err) {}
+    }
     if (input) {
         input.value = '';
     }

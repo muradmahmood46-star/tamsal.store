@@ -271,8 +271,9 @@
                             value="{{ old('video') }}">
                     </div>
                     <div class="form-group">
-                        <label for="estimated_profit" class="font-weight-bold text-success">
-                            <i class="fas fa-coins mr-1"></i> {{ __('Estimated Profit') }} <span class="badge badge-danger text-white ml-1" style="font-size: 11px;">{{ __('Only for Admin & Vendor Use') }}</span>
+                        <label for="estimated_profit" class="font-weight-bold text-success d-flex flex-wrap align-items-center justify-content-between" style="gap: 6px;">
+                            <span><i class="fas fa-coins mr-1"></i> {{ __('Estimated Profit') }}</span>
+                            <span class="badge badge-danger text-white" style="font-size: 11px; white-space: normal; line-height: 1.3; padding: 4px 8px; border-radius: 4px;">{{ __('Only for Admin & Vendor Use') }}</span>
                         </label>
                         <div class="input-group">
                             <div class="input-group-prepend">

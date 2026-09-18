@@ -201,7 +201,12 @@
 
 @section('scripts')
 <script>
-let galleryPageDt = new DataTransfer();
+let galleryPageDt = null;
+try {
+    galleryPageDt = new DataTransfer();
+} catch (e) {
+    galleryPageDt = null;
+}
 
 document.addEventListener('DOMContentLoaded', function () {
     const input = document.getElementById('galleries_input');
@@ -211,7 +216,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (input) {
         input.addEventListener('change', function () {
-            handleSelectedFiles(this.files);
+            if (this.files && this.files.length > 0) {
+                handleSelectedFiles(this.files);
+            }
         });
     }
 
@@ -244,14 +251,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (form) {
         form.addEventListener('submit', function (e) {
-            if (!galleryPageDt.files || galleryPageDt.files.length === 0) {
+            const hasDtFiles = (galleryPageDt && galleryPageDt.files && galleryPageDt.files.length > 0);
+            const hasInputFiles = (input && input.files && input.files.length > 0);
+
+            if (!hasDtFiles && !hasInputFiles) {
                 e.preventDefault();
                 alert('{{ __("Please select at least one image to upload.") }}');
                 return false;
             }
 
-            if (input) {
-                input.files = galleryPageDt.files;
+            if (galleryPageDt && galleryPageDt.files && galleryPageDt.files.length > 0 && input) {
+                try {
+                    input.files = galleryPageDt.files;
+                } catch (err) {
+                    console.warn('Could not assign DataTransfer to input.files', err);
+                }
             }
 
             if (submitBtn) {
@@ -265,15 +279,23 @@ document.addEventListener('DOMContentLoaded', function () {
 function handleSelectedFiles(files) {
     if (!files || files.length === 0) return;
 
-    Array.from(files).forEach(file => {
-        if (file.type.startsWith('image/')) {
-            galleryPageDt.items.add(file);
-        }
-    });
+    if (galleryPageDt) {
+        Array.from(files).forEach(file => {
+            try {
+                galleryPageDt.items.add(file);
+            } catch (err) {
+                console.warn('Could not add file to DataTransfer', err);
+            }
+        });
 
-    const input = document.getElementById('galleries_input');
-    if (input) {
-        input.files = galleryPageDt.files;
+        const input = document.getElementById('galleries_input');
+        if (input && galleryPageDt.files.length > 0) {
+            try {
+                input.files = galleryPageDt.files;
+            } catch (err) {
+                console.warn('Could not sync input.files', err);
+            }
+        }
     }
 
     renderGalleryPagePreviews();
@@ -288,11 +310,15 @@ function renderGalleryPagePreviews() {
     if (!container) return;
     container.innerHTML = '';
 
-    if (galleryPageDt.files.length > 0) {
-        if (box) box.classList.remove('d-none');
-        if (countBadge) countBadge.innerText = galleryPageDt.files.length;
+    const currentFiles = (galleryPageDt && galleryPageDt.files && galleryPageDt.files.length > 0) 
+        ? galleryPageDt.files 
+        : (input && input.files ? input.files : []);
 
-        Array.from(galleryPageDt.files).forEach((file, idx) => {
+    if (currentFiles.length > 0) {
+        if (box) box.classList.remove('d-none');
+        if (countBadge) countBadge.innerText = currentFiles.length;
+
+        Array.from(currentFiles).forEach((file, idx) => {
             const reader = new FileReader();
             reader.onload = function (e) {
                 const thumb = document.createElement('div');
@@ -304,7 +330,7 @@ function renderGalleryPagePreviews() {
                 thumb.style.justifyContent = 'center';
                 thumb.style.overflow = 'hidden';
                 thumb.innerHTML = `
-                    <img src="${e.target.result}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    <img src="${e.target.result}" style="max-width: 100%; max-height: 100%; object-fit: contain;" alt="${file.name}">
                     <span onclick="removePendingGalleryFile(${idx})" class="badge badge-danger position-absolute" style="top: 2px; right: 2px; cursor: pointer; padding: 2px 5px; font-size: 11px; font-weight: bold; border-radius: 50%;" title="Remove">&times;</span>
                 `;
                 container.appendChild(thumb);
@@ -313,28 +339,40 @@ function renderGalleryPagePreviews() {
         });
     } else {
         if (box) box.classList.add('d-none');
-        if (input) input.value = '';
     }
 }
 
 function removePendingGalleryFile(idxToRemove) {
-    const currentFiles = Array.from(galleryPageDt.files);
-    currentFiles.splice(idxToRemove, 1);
-
-    galleryPageDt = new DataTransfer();
-    currentFiles.forEach(f => galleryPageDt.items.add(f));
-
     const input = document.getElementById('galleries_input');
-    if (input) {
-        input.files = galleryPageDt.files;
+
+    if (galleryPageDt) {
+        const currentFiles = Array.from(galleryPageDt.files);
+        currentFiles.splice(idxToRemove, 1);
+
+        try {
+            galleryPageDt = new DataTransfer();
+            currentFiles.forEach(f => galleryPageDt.items.add(f));
+
+            if (input) {
+                input.files = galleryPageDt.files;
+            }
+        } catch (err) {
+            console.warn('Error rebuilding DataTransfer', err);
+        }
+    } else if (input) {
+        input.value = '';
     }
 
     renderGalleryPagePreviews();
 }
 
 function clearAllPendingGalleryFiles() {
-    galleryPageDt = new DataTransfer();
     const input = document.getElementById('galleries_input');
+    if (galleryPageDt) {
+        try {
+            galleryPageDt = new DataTransfer();
+        } catch (err) {}
+    }
     if (input) {
         input.value = '';
     }

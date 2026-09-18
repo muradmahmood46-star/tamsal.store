@@ -24,7 +24,9 @@ class GalleryRequest extends FormRequest
     public function rules()
     {
         return [
-            'galleries.*' => 'mimes:jpeg,jpg,png,svg,webp,gif,bmp,tiff,tif,avif,ico,jfif,heic,heif'
+            'item_id' => 'required',
+            'galleries' => 'nullable',
+            'galleries.*' => 'nullable|file|max:20480'
         ];
     }
 
