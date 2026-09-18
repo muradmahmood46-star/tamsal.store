@@ -157,12 +157,15 @@
         .home-promo-card {
             position: relative;
             border-radius: 16px;
-            padding: 22px 26px;
+            padding: 20px 24px;
             overflow: hidden;
             transition: all 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
             border: 1px solid rgba(0, 0, 0, 0.06);
-            display: block;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
             text-decoration: none !important;
         }
         .promo-card-shop {
@@ -187,6 +190,7 @@
         .promo-card-inner {
             position: relative;
             z-index: 2;
+            width: 100%;
         }
         .promo-badge {
             display: inline-flex;
@@ -236,18 +240,18 @@
         }
         .promo-card-icon-wrap {
             flex-shrink: 0;
-            margin-left: 15px;
+            margin-left: 12px;
         }
         .promo-icon-circle {
-            width: 64px;
-            height: 64px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             background: linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(37, 99, 235, 0.1) 100%);
             border: 1px solid rgba(96, 165, 250, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
+            font-size: 24px;
             color: #60a5fa;
             transition: transform 0.3s ease;
         }
@@ -259,43 +263,64 @@
         .home-promo-card:hover .promo-icon-circle {
             transform: scale(1.08) rotate(5deg);
         }
-        @media (max-width: 575px) {
+
+        /* Mobile: 2 Cards in 1 Line (Side-by-Side) */
+        @media (max-width: 767px) {
             .home-promo-actions-section {
                 margin-top: 5px;
                 margin-bottom: 15px;
             }
-            .home-promo-card {
-                padding: 14px 16px;
-                border-radius: 12px;
+            .home-promo-actions-section .row {
+                margin-left: -5px;
+                margin-right: -5px;
             }
-            .promo-title {
-                font-size: 16px;
+            .home-promo-actions-section .col-6 {
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+            .home-promo-card {
+                padding: 12px 10px;
+                border-radius: 12px;
+                min-height: 105px;
+            }
+            .promo-badge {
+                padding: 2px 6px;
+                font-size: 8.5px;
                 margin-bottom: 4px;
             }
+            .promo-title {
+                font-size: 13px;
+                font-weight: 700;
+                margin-bottom: 4px;
+                line-height: 1.2;
+            }
             .promo-desc {
-                font-size: 11.5px;
-                margin-bottom: 6px;
-                max-width: 100%;
+                display: none;
             }
             .promo-btn-link {
-                font-size: 12px;
+                font-size: 10.5px;
+                font-weight: 700;
+                margin-top: 2px;
+            }
+            .promo-card-icon-wrap {
+                margin-left: 4px;
             }
             .promo-icon-circle {
-                width: 44px;
-                height: 44px;
-                font-size: 18px;
+                width: 34px;
+                height: 34px;
+                font-size: 14px;
             }
         }
     </style>
     <div class="home-promo-actions-section">
         <div class="container">
-            <div class="row g-3 gx-2 gx-md-3">
+            <div class="row g-2 g-md-3">
                 <!-- Card 1: View Products / Shop -->
-                <div class="col-12 col-md-6 mb-2 mb-md-0">
+                <div class="col-6 col-md-6">
                     <a href="{{ route('front.catalog') }}" class="home-promo-card promo-card-shop">
                         <div class="promo-card-inner d-flex align-items-center justify-content-between">
                             <div class="promo-card-text">
-                                <span class="promo-badge"><i class="fas fa-shopping-bag mr-1"></i> {{ __('Trending Collection') }}</span>
+                                <span class="promo-badge"><i class="fas fa-shopping-bag mr-1"></i> {{ __('Trending') }}</span>
                                 <h3 class="promo-title">{{ __('View Products') }}</h3>
                                 <p class="promo-desc">{{ __('Discover thousands of premium products at unbeatable prices') }}</p>
                                 <span class="promo-btn-link">
@@ -312,7 +337,7 @@
                 </div>
 
                 <!-- Card 2: Open My Store -->
-                <div class="col-12 col-md-6">
+                <div class="col-6 col-md-6">
                     <a href="{{ route('user.store.apply') }}" class="home-promo-card promo-card-seller">
                         <div class="promo-card-inner d-flex align-items-center justify-content-between">
                             <div class="promo-card-text">
