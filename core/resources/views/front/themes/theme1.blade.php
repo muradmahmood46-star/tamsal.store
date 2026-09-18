@@ -1010,6 +1010,169 @@
         </section>
     @endif
 
+    <!-- Browse Categories Section Start -->
+    @if(isset($browse_categories) && $browse_categories->count() > 0)
+        <section class="browse-categories-section page_section mt-50 mb-30">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="section-title">
+                            <div>
+                                <h2 class="h3">{{ __('Browse Categories') }}</h2>
+                                <p class="text-muted mb-0 d-none d-md-block" style="font-size: 13.5px; margin-top: 2px;">
+                                    {{ __('Explore our wide range of categories and collections') }}
+                                </p>
+                            </div>
+                            <div class="right-area">
+                                <a class="right_link" href="{{ route('front.catalog') }}">
+                                    {{ __('View All') }} <i class="icon-chevron-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-2 g-md-3 browse-cat-grid">
+                    @foreach ($browse_categories as $bcategory)
+                        <div class="col-4 col-md-3 col-lg-2 mb-2 mb-md-3">
+                            <a href="{{ route('front.catalog', ['category' => $bcategory->slug]) }}" class="browse-cat-card">
+                                <div class="browse-cat-thumb">
+                                    @if(!empty($bcategory->photo))
+                                        <img src="{{ url('/core/public/storage/images/' . $bcategory->photo) }}" class="lazy" data-src="{{ url('/core/public/storage/images/' . $bcategory->photo) }}" alt="{{ $bcategory->name }}">
+                                    @else
+                                        <div class="browse-cat-icon-fallback">
+                                            <i class="fas fa-th-large"></i>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="browse-cat-info">
+                                    <h4 class="browse-cat-title">{{ $bcategory->name }}</h4>
+                                    @if(isset($bcategory->items_count) && $bcategory->items_count > 0)
+                                        <span class="browse-cat-count">{{ $bcategory->items_count }} {{ __('Items') }}</span>
+                                    @else
+                                        <span class="browse-cat-count text-primary">{{ __('Shop Now →') }}</span>
+                                    @endif
+                                </div>
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+
+        <style>
+            /* Browse Categories Section Styles */
+            .browse-categories-section {
+                position: relative;
+            }
+            .browse-cat-grid {
+                margin-top: 5px;
+            }
+            .browse-cat-card {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background: #ffffff;
+                border: 1px solid #e9ecef;
+                border-radius: 16px;
+                padding: 18px 10px 14px;
+                text-align: center;
+                text-decoration: none !important;
+                color: #1e293b !important;
+                transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+                height: 100%;
+                position: relative;
+                overflow: hidden;
+            }
+            .browse-cat-card:hover {
+                transform: translateY(-5px);
+                border-color: #3b82f6;
+                box-shadow: 0 10px 24px rgba(59, 130, 246, 0.12);
+                color: #2563eb !important;
+            }
+            .browse-cat-thumb {
+                width: 68px;
+                height: 68px;
+                border-radius: 50%;
+                background: #f8fafc;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 10px;
+                overflow: hidden;
+                border: 2px solid #edf2f7;
+                transition: all 0.25s ease;
+                flex-shrink: 0;
+            }
+            .browse-cat-card:hover .browse-cat-thumb {
+                transform: scale(1.08);
+                border-color: #93c5fd;
+                background: #eff6ff;
+            }
+            .browse-cat-thumb img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            .browse-cat-icon-fallback {
+                font-size: 24px;
+                color: #3b82f6;
+            }
+            .browse-cat-info {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .browse-cat-title {
+                font-size: 13.5px;
+                font-weight: 700;
+                line-height: 1.25;
+                margin-bottom: 4px;
+                color: inherit;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                min-height: 34px;
+            }
+            .browse-cat-count {
+                font-size: 11.5px;
+                color: #64748b;
+                font-weight: 500;
+                line-height: 1;
+            }
+            .browse-cat-card:hover .browse-cat-count {
+                color: #2563eb;
+                font-weight: 600;
+            }
+
+            @media (max-width: 767.98px) {
+                .browse-cat-card {
+                    padding: 10px 5px 8px;
+                    border-radius: 12px;
+                }
+                .browse-cat-thumb {
+                    width: 48px;
+                    height: 48px;
+                    margin-bottom: 6px;
+                }
+                .browse-cat-title {
+                    font-size: 11px;
+                    min-height: 26px;
+                    margin-bottom: 2px;
+                }
+                .browse-cat-count {
+                    font-size: 9.5px;
+                }
+            }
+        </style>
+    @endif
+    <!-- Browse Categories Section End -->
+
     @if ($setting->is_blogs == 1)
         <div class="blog-section-h page_section mt-50 mb-30">
             <div class="container">

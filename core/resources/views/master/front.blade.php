@@ -977,18 +977,17 @@ body_theme4 @endif
                                         </a>
                                     </div>
                                 </div>
-                                <ul class="nav nav-tabs" role="tablist">
-                                    <li class="nav-item" role="presentation99">
-                                        <span class="active" id="mmenu-tab" data-bs-toggle="tab"
-                                            data-bs-target="#mmenu" role="tab" aria-controls="mmenu"
-                                            aria-selected="true">{{ __('Menu') }}</span>
+                                <ul class="nav nav-tabs mobile-drawer-tabs" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="mmenu-tab" data-bs-toggle="tab"
+                                            data-bs-target="#mmenu" type="button" role="tab" aria-controls="mmenu"
+                                            aria-selected="true"><i class="icon-menu mr-1"></i> {{ __('Menu') }}</button>
                                     </li>
-                                    <li class="nav-item" role="presentation99">
-                                        <span class="" id="mcat-tab" data-bs-toggle="tab"
-                                            data-bs-target="#mcat" role="tab" aria-controls="mcat"
-                                            aria-selected="false">{{ __('Category') }}</span>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="mcat-tab" data-bs-toggle="tab"
+                                            data-bs-target="#mcat" type="button" role="tab" aria-controls="mcat"
+                                            aria-selected="false"><i class="icon-grid mr-1"></i> {{ __('Category') }}</button>
                                     </li>
-
                                 </ul>
                                 <div class="tab-content p-0">
                                     <div class="tab-pane fade show active" id="mmenu" role="tabpanel"
@@ -1058,10 +1057,9 @@ body_theme4 @endif
                                     </div>
                                     <div class="tab-pane fade" id="mcat" role="tabpanel"
                                         aria-labelledby="mcat-tab">
-                                        <nav class="slideable-menu">
+                                        <div class="mobile-cat-scroll-wrap">
                                             @include('includes.mobile-category')
-
-                                        </nav>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1613,9 +1611,209 @@ body_theme4 @endif
                         }
                     }
                 });
+
+                // Mobile Drawer Tab Switching (Menu vs Category)
+                $(document).on('click', '#mmenu-tab, #mcat-tab', function(e) {
+                    e.preventDefault();
+                    var isCat = $(this).attr('id') === 'mcat-tab';
+                    $('#mmenu-tab').toggleClass('active', !isCat).attr('aria-selected', !isCat ? 'true' : 'false');
+                    $('#mcat-tab').toggleClass('active', isCat).attr('aria-selected', isCat ? 'true' : 'false');
+                    
+                    if (isCat) {
+                        $('#mmenu').removeClass('show active');
+                        $('#mcat').addClass('show active');
+                    } else {
+                        $('#mcat').removeClass('show active');
+                        $('#mmenu').addClass('show active');
+                    }
+                });
+
+                // Mobile Category Subcategory Accordion Toggle
+                $(document).on('click', '.mobile-sub-toggle', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var $btn = $(this);
+                    var $subList = $btn.closest('.mobile-cat-nav-item').find('> .mobile-subcat-nav-list');
+                    $btn.toggleClass('open');
+                    $subList.slideToggle(200);
+                });
+
+                // Mobile Category Childcategory Accordion Toggle
+                $(document).on('click', '.mobile-child-toggle', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var $btn = $(this);
+                    var $childList = $btn.closest('.mobile-subcat-nav-item').find('> .mobile-childcat-nav-list');
+                    $btn.toggleClass('open');
+                    $childList.slideToggle(200);
+                });
             }
         });
     </script>
+    <style>
+        /* Mobile Menu Tabs & Drawer Styling */
+        .mobile-drawer-tabs {
+            border-bottom: 2px solid #e2e8f0 !important;
+            display: flex !important;
+            background: #f8fafc !important;
+            padding: 4px 8px 0 !important;
+            margin-bottom: 0 !important;
+        }
+        .mobile-drawer-tabs .nav-item {
+            flex: 1 !important;
+            text-align: center !important;
+            list-style: none !important;
+        }
+        .mobile-drawer-tabs .nav-link {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 100% !important;
+            padding: 10px 12px !important;
+            font-size: 13.5px !important;
+            font-weight: 700 !important;
+            color: #64748b !important;
+            border: none !important;
+            border-bottom: 3px solid transparent !important;
+            background: transparent !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+            border-radius: 8px 8px 0 0 !important;
+        }
+        .mobile-drawer-tabs .nav-link.active {
+            color: #2563eb !important;
+            background: #ffffff !important;
+            border-bottom-color: #2563eb !important;
+            box-shadow: 0 -2px 6px rgba(0,0,0,0.03) !important;
+        }
+
+        /* Mobile Categories Drawer Content */
+        .mobile-cat-scroll-wrap {
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .mobile-categories-drawer {
+            padding: 6px 0 30px;
+        }
+        .mobile-cat-nav-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .mobile-cat-nav-item {
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .mobile-cat-nav-row {
+            padding: 11px 14px;
+            transition: background 0.15s ease;
+        }
+        .mobile-cat-nav-row:active {
+            background: #f1f5f9;
+        }
+        .mobile-cat-nav-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none !important;
+            color: #1e293b !important;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .mobile-cat-nav-img {
+            width: 32px;
+            height: 32px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 12px;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            flex-shrink: 0;
+        }
+        .mobile-cat-nav-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            margin-right: 12px;
+            background: #eff6ff;
+            color: #3b82f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .mobile-sub-toggle,
+        .mobile-child-toggle {
+            background: rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 12px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-left: 8px;
+            flex-shrink: 0;
+        }
+        .mobile-sub-toggle.open,
+        .mobile-child-toggle.open {
+            background: #3b82f6;
+            color: #fff;
+            border-color: #3b82f6;
+            transform: rotate(180deg);
+        }
+        .mobile-subcat-nav-list {
+            background: #f8fafc;
+            border-top: 1px solid #edf2f7;
+            padding: 4px 0 6px 14px;
+        }
+        .mobile-subcat-nav-item {
+            border-bottom: 1px solid #edf2f7;
+        }
+        .mobile-subcat-nav-item:last-child {
+            border-bottom: none;
+        }
+        .mobile-subcat-nav-row {
+            padding: 9px 12px;
+        }
+        .mobile-subcat-nav-link {
+            font-size: 13px;
+            font-weight: 500;
+            color: #475569 !important;
+            text-decoration: none !important;
+            display: flex;
+            align-items: center;
+        }
+        .mobile-subcat-nav-link:hover {
+            color: #2563eb !important;
+        }
+        .mobile-childcat-nav-list {
+            background: #f1f5f9;
+            padding: 4px 0 6px 16px;
+        }
+        .mobile-childcat-nav-item {
+            padding: 7px 10px;
+        }
+        .mobile-childcat-nav-link {
+            font-size: 12.5px;
+            color: #64748b !important;
+            display: block;
+            text-decoration: none !important;
+        }
+        .mobile-childcat-nav-link:hover {
+            color: #2563eb !important;
+        }
+        .view-all-cat-item .mobile-cat-nav-link {
+            color: #2563eb !important;
+            font-weight: 700;
+        }
+    </style>
 </body>
 
 </html>

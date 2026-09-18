@@ -248,6 +248,11 @@ class FrontendController extends Controller
             // two column category
             'two_column_categoriess' => $two_column_categoriess,
             'flash_deals' => Helper::getActiveDeals(8),
+            'browse_categories' => Category::withCount(['items' => function($q) {
+                $q->where('status', 1)->where(function($sq) {
+                    $sq->where('approval_status', 'Approved')->orWhereNull('approval_status');
+                });
+            }])->whereStatus(1)->orderby('serial','asc')->get(),
 
         ]);
     }
