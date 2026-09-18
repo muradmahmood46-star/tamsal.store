@@ -41,6 +41,18 @@
     </div>
     <!-- Page Content-->
     <div class="container padding-bottom-1x mb-1">
+        @if($item->status != 1 || (isset($item->approval_status) && $item->approval_status != 'Approved'))
+            <div class="alert alert-warning d-flex flex-wrap align-items-center justify-content-between p-3 mb-4 rounded shadow-sm" style="border-left: 5px solid #ffc107; background: #fff8e1; color: #856404;">
+                <div class="mb-2 mb-md-0">
+                    <i class="fas fa-eye-slash fa-lg mr-2"></i>
+                    <strong>{{ __('Admin / Vendor Preview Mode:') }}</strong>
+                    {{ __('This product is currently :status (:approval). It is visible in preview mode to you and not yet live to regular shoppers.', ['status' => $item->status == 1 ? 'Active' : 'Unpublished/Inactive', 'approval' => $item->approval_status ?? 'Pending']) }}
+                </div>
+                @if(\Illuminate\Support\Facades\Auth::guard('admin')->check())
+                    <a href="{{ route('back.vendor.product.index', ['search' => $item->name]) }}" class="btn btn-sm btn-primary">{{ __('Manage in Admin Panel') }}</a>
+                @endif
+            </div>
+        @endif
         <div class="row">
             <!-- Poduct Gallery-->
             <div class="col-xxl-5 col-lg-6 col-md-6">
@@ -944,9 +956,11 @@
                                         </div>
                                     </div>
                                     <div class="product-card-body">
-                                        <div class="product-category"><a
-                                                href="{{ route('front.catalog') . '?category=' . $related->category->slug }}">{{ $related->category->name }}</a>
-                                        </div>
+                                        @if($related->category)
+                                            <div class="product-category"><a
+                                                    href="{{ route('front.catalog') . '?category=' . $related->category->slug }}">{{ $related->category->name }}</a>
+                                            </div>
+                                        @endif
                                         <h3 class="product-title"><a
                                                 href="{{ route('front.product', $related->slug) }}">
                                                 {{ Str::limit($related->name, 35) }}

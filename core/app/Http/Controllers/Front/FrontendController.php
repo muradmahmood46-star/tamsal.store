@@ -33,8 +33,10 @@ use App\Models\TrackOrder;
 use Illuminate\Support\Facades\Config;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class FrontendController extends Controller
 {
@@ -304,9 +306,60 @@ class FrontendController extends Controller
 
     public function product($slug)
     {
+        $cleanSlug = trim(urldecode($slug));
+        $slugified = Str::slug($cleanSlug);
 
-        $item = Item::with('category')->whereStatus(1)->whereSlug($slug)->firstOrFail();
-        $video = explode('=', $item->video);
+        // 1. Try finding by slug (exact, lowercase, or slugified)
+        $item = Item::with(['category', 'galleries', 'attributes.options', 'reviews'])
+            ->where(function ($q) use ($cleanSlug, $slugified) {
+                $q->where('slug', $cleanSlug)
+                  ->orWhereRaw('LOWER(slug) = ?', [strtolower($cleanSlug)])
+                  ->orWhere('slug', $slugified)
+                  ->orWhereRaw('LOWER(slug) = ?', [strtolower($slugified)]);
+            })
+            ->first();
+
+        // 2. If not found and slug is numeric, check by product ID
+        if (!$item && is_numeric($cleanSlug)) {
+            $item = Item::with(['category', 'galleries', 'attributes.options', 'reviews'])->find($cleanSlug);
+        }
+
+        // 3. Fallback: Search by prefix or name
+        if (!$item) {
+            $nameFromSlug = str_replace(['-', '_'], ' ', $cleanSlug);
+            $item = Item::with(['category', 'galleries', 'attributes.options', 'reviews'])
+                ->where(function ($q) use ($nameFromSlug, $slugified) {
+                    $q->where('name', 'like', '%' . $nameFromSlug . '%')
+                      ->orWhere('slug', 'like', $slugified . '%')
+                      ->orWhere('slug', 'like', '%' . $slugified . '%');
+                })
+                ->first();
+        }
+
+        if (!$item) {
+            abort(404);
+        }
+
+        // Permissions: Active items (status 1) are visible to everyone.
+        // Inactive/draft/pending items can be previewed by logged-in Admins or the product's Seller.
+        $isAdmin = Auth::guard('admin')->check();
+        $user = Auth::user();
+        $isOwnerVendor = $user && ($user->id == $item->vendor_id || $user->is_seller == 2);
+
+        if ($item->status != 1 && !$isAdmin && !$isOwnerVendor) {
+            abort(404);
+        }
+
+        $video = explode('=', $item->video ?? '');
+        $related_items = collect([]);
+        if ($item->category) {
+            $related_items = $item->category->items()
+                ->whereStatus(1)
+                ->where('id', '!=', $item->id)
+                ->take(8)
+                ->get();
+        }
+
         return view('front.catalog.product', [
             'item'          => $item,
             'reviews'       => $item->reviews()->where('status', 1)->paginate(3),
@@ -315,7 +368,7 @@ class FrontendController extends Controller
             'sec_name'      => isset($item->specification_name) ? json_decode($item->specification_name, true) : [],
             'sec_details'   => isset($item->specification_description) ? json_decode($item->specification_description, true) : [],
             'attributes'    => $item->attributes,
-            'related_items' => $item->category->items()->whereStatus(1)->where('id', '!=', $item->id)->take(8)->get()
+            'related_items' => $related_items
         ]);
     }
 
