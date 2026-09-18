@@ -726,11 +726,13 @@
                 <div class="sidebar-content">
                     <div class="user">
                         <div class="avatar-sm float-left mr-2">
-                            <img src="{{ Auth::guard('admin')->user()->photo ? url('/core/public/storage/images/' . Auth::guard('admin')->user()->photo) : url('/core/public/storage/images/noimage.png') }}"
-                                alt="..." class="avatar-img rounded-circle">
+                            <a href="{{ route('back.profile') }}" title="{{ __('Update Profile Photo') }}">
+                                <img src="{{ Auth::guard('admin')->user()->photo ? url('/core/public/storage/images/' . Auth::guard('admin')->user()->photo) : url('/core/public/storage/images/noimage.png') }}"
+                                    alt="..." class="avatar-img rounded-circle shadow-sm">
+                            </a>
                         </div>
                         <div class="info">
-                            <a data-toggle="collapse" href="#collapseExample" aria-expanded="true">
+                            <a href="{{ route('back.profile') }}" title="{{ __('Update Profile') }}">
                                 <span>
                                     {{ Auth::guard('admin')->user()->name }}
                                     <span class="user-level">{{ __('Administrator') }}</span>
