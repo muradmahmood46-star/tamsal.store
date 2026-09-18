@@ -719,6 +719,13 @@
         `;
         $('#demo_reviews_container').append(html);
     }
+
+    // Auto slug generator for product name
+    $(document).on('keyup change input', '#name, .item-name', function () {
+        var val = $(this).val();
+        var slug = val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        $('#slug').val(slug);
+    });
 </script>
 
 @endsection

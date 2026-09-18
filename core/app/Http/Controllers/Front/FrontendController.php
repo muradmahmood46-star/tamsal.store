@@ -308,14 +308,22 @@ class FrontendController extends Controller
     {
         $cleanSlug = trim(urldecode($slug));
         $slugified = Str::slug($cleanSlug);
+        $withSpaces = str_replace(['-', '_'], ' ', $cleanSlug);
+        $lowerSlug = strtolower($cleanSlug);
+        $lowerSlugified = strtolower($slugified);
+        $lowerSpaces = strtolower($withSpaces);
 
-        // 1. Try finding by slug (exact, lowercase, or slugified)
+        // 1. Match by exact slug, lowercase slug, space-normalized slug, or slugified
         $item = Item::with(['category', 'galleries', 'attributes.options', 'reviews'])
-            ->where(function ($q) use ($cleanSlug, $slugified) {
+            ->where(function ($q) use ($cleanSlug, $slugified, $withSpaces, $lowerSlug, $lowerSlugified, $lowerSpaces) {
                 $q->where('slug', $cleanSlug)
-                  ->orWhereRaw('LOWER(slug) = ?', [strtolower($cleanSlug)])
                   ->orWhere('slug', $slugified)
-                  ->orWhereRaw('LOWER(slug) = ?', [strtolower($slugified)]);
+                  ->orWhere('slug', $withSpaces)
+                  ->orWhereRaw('LOWER(slug) = ?', [$lowerSlug])
+                  ->orWhereRaw('LOWER(slug) = ?', [$lowerSlugified])
+                  ->orWhereRaw('LOWER(slug) = ?', [$lowerSpaces])
+                  ->orWhereRaw("REPLACE(LOWER(slug), ' ', '-') = ?", [$lowerSlugified])
+                  ->orWhereRaw("REPLACE(LOWER(slug), '-', ' ') = ?", [$lowerSpaces]);
             })
             ->first();
 
@@ -326,26 +334,41 @@ class FrontendController extends Controller
 
         // 3. Fallback: Search by prefix or name
         if (!$item) {
-            $nameFromSlug = str_replace(['-', '_'], ' ', $cleanSlug);
             $item = Item::with(['category', 'galleries', 'attributes.options', 'reviews'])
-                ->where(function ($q) use ($nameFromSlug, $slugified) {
-                    $q->where('name', 'like', '%' . $nameFromSlug . '%')
-                      ->orWhere('slug', 'like', $slugified . '%')
-                      ->orWhere('slug', 'like', '%' . $slugified . '%');
+                ->where(function ($q) use ($lowerSpaces, $lowerSlugified) {
+                    $q->whereRaw('LOWER(name) LIKE ?', ['%' . $lowerSpaces . '%'])
+                      ->orWhereRaw('LOWER(slug) LIKE ?', [$lowerSlugified . '%'])
+                      ->orWhereRaw('LOWER(slug) LIKE ?', ['%' . $lowerSlugified . '%']);
                 })
                 ->first();
+        }
+
+        // 4. Fallback: Multi-word keyword match
+        if (!$item) {
+            $words = array_values(array_filter(explode(' ', preg_replace('/[^a-zA-Z0-9]+/', ' ', $cleanSlug)), function($w) { return strlen($w) >= 3; }));
+            if (count($words) >= 2) {
+                $item = Item::with(['category', 'galleries', 'attributes.options', 'reviews'])
+                    ->where(function ($q) use ($words) {
+                        foreach ($words as $w) {
+                            $q->where('name', 'like', '%' . $w . '%');
+                        }
+                    })
+                    ->first();
+            }
         }
 
         if (!$item) {
             abort(404);
         }
 
-        // Permissions: Active items (status 1) are visible to everyone.
+        // Permissions:
+        // Active items (status 1) are visible to all buyers.
         // Inactive/draft/pending items can be previewed by logged-in Admins or the product's Seller.
         $isAdmin = Auth::guard('admin')->check();
         $user = Auth::user();
         $isOwnerVendor = $user && ($user->id == $item->vendor_id || $user->is_seller == 2);
 
+        // If product is unpublished/pending and user is not admin/vendor owner, return 404
         if ($item->status != 1 && !$isAdmin && !$isOwnerVendor) {
             abort(404);
         }

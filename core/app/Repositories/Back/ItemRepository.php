@@ -92,6 +92,12 @@ class ItemRepository
         }
 
 
+        if (empty($input['slug'])) {
+            $input['slug'] = \Illuminate\Support\Str::slug($input['name'] ?? 'product');
+        } else {
+            $input['slug'] = \Illuminate\Support\Str::slug($input['slug']);
+        }
+
         $input['is_type'] = 'undefine';
         $input['advance_payment_type'] = !empty($input['advance_payment_type']) ? $input['advance_payment_type'] : 'percentage';
         $input['advance_payment_amount'] = (isset($input['advance_payment_amount']) && $input['advance_payment_amount'] !== '' && $input['advance_payment_amount'] !== null) ? (float)$input['advance_payment_amount'] : 0.00;
@@ -102,6 +108,7 @@ class ItemRepository
         $input['is_custom_rating'] = !empty($input['is_custom_rating']) ? 1 : 0;
         $input['custom_rating'] = (isset($input['custom_rating']) && $input['custom_rating'] !== '' && $input['custom_rating'] !== null) ? (float)$input['custom_rating'] : 5.00;
         $input['custom_rating_count'] = (isset($input['custom_rating_count']) && $input['custom_rating_count'] !== '' && $input['custom_rating_count'] !== null) ? (int)$input['custom_rating_count'] : 0;
+        $input['status'] = isset($input['status']) ? (int)$input['status'] : 1;
         $input['vendor_id'] = $input['vendor_id'] ?? 0;
         $input['is_hidden_by_block'] = $input['is_hidden_by_block'] ?? 0;
         $input['approval_status'] = $input['approval_status'] ?? 'Approved';
@@ -222,6 +229,9 @@ class ItemRepository
         }
         if (isset($input['estimated_profit'])) {
             $input['estimated_profit'] = ($input['estimated_profit'] !== '' && $input['estimated_profit'] !== null) ? (float)$input['estimated_profit'] : 0.00;
+        }
+        if (isset($input['slug'])) {
+            $input['slug'] = !empty($input['slug']) ? \Illuminate\Support\Str::slug($input['slug']) : \Illuminate\Support\Str::slug($item->name);
         }
 
         $item->update($input);
