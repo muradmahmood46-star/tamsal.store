@@ -74,20 +74,31 @@
 									</div>
 
 									<div class="form-group">
-										<label id="slider_text" for="name">{{ $slider->home_page == 'theme3' || $slider->home_page == 'theme4' ? __('Set Background Image') :__('Current Slider Image') }} *</label>
+										<label id="slider_text" for="name">{{ $slider->home_page == 'theme3' || $slider->home_page == 'theme4' ? __('Set Background Image') :__('Current Slider Image / Lottie') }} *</label>
 										<br>
-											<img class="admin-img"
-												src="{{ $slider->photo ? url('/core/public/storage/images/'.$slider->photo) : url('/core/public/storage/images/placeholder.png') }}"
-												alt="No Image Found">
+											@php
+												$sliderPhotoVal = $slider->photo ?? '';
+												$isLottieSliderPhoto = !empty($sliderPhotoVal) && \Illuminate\Support\Str::endsWith(strtolower($sliderPhotoVal), ['.json', '.lottie']);
+											@endphp
+											@if($isLottieSliderPhoto)
+												<div style="max-width: 300px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; padding: 10px; margin-bottom: 8px;">
+													<lottie-player src="{{ url('/core/public/storage/images/'.$sliderPhotoVal) }}" background="transparent" speed="1" style="width: 100%; height: 140px;" loop autoplay></lottie-player>
+													<span class="badge badge-info mt-1"><i class="fas fa-play-circle mr-1"></i> Lottie Animation ({{ $sliderPhotoVal }})</span>
+												</div>
+											@else
+												<img class="admin-img"
+													src="{{ $slider->photo ? url('/core/public/storage/images/'.$slider->photo) : url('/core/public/storage/images/placeholder.png') }}"
+													alt="No Image Found">
+											@endif
 										<br>
-										<span id="chenge_label2" class="mt-1">{{$slider->home_page == 'theme3' || $slider->home_page == 'theme4' ? __('Image Size Should Be 1920 x 750') : __('Image Size Should Be 1000 x 530') }}</span>
+										<span id="chenge_label2" class="mt-1">{{$slider->home_page == 'theme3' || $slider->home_page == 'theme4' ? __('Image Size Should Be 1920 x 750') : __('Image Size Should Be 1000 x 530 or .json / .lottie animation file') }}</span>
 									</div>
 
 									<div class="form-group position-relative ">
 										<label class="file">
-											<input type="file"  accept="image/*"  class="upload-photo" name="photo" id="file"
+											<input type="file"  accept="image/*,.json,.lottie,application/json"  class="upload-photo" name="photo" id="file"
 												aria-label="File browser example">
-											<span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+											<span class="file-custom text-left">{{ __('Upload Image or Lottie File (.json, .lottie)...') }}</span>
 										</label>
 									</div>
 
@@ -103,20 +114,31 @@
 									<input type="hidden" name="title" class="form-control" id="title"
                                     placeholder="{{ __('Enter Title') }}" value="theme 4" >
 									<div class="form-group">
-										<label id="slider_text" for="name">{{ $slider->home_page == 'theme3' || $slider->home_page == 'theme4' ? __('Set Background Image') :__('Current Slider Image') }} *</label>
+										<label id="slider_text" for="name">{{ $slider->home_page == 'theme3' || $slider->home_page == 'theme4' ? __('Set Background Image') :__('Current Slider Image / Lottie') }} *</label>
 										<br>
-											<img class="admin-img"
-												src="{{ $slider->photo ? url('/core/public/storage/images/'.$slider->photo) : url('/core/public/storage/images/placeholder.png') }}"
-												alt="No Image Found">
+											@php
+												$sliderPhotoVal = $slider->photo ?? '';
+												$isLottieSliderPhoto = !empty($sliderPhotoVal) && \Illuminate\Support\Str::endsWith(strtolower($sliderPhotoVal), ['.json', '.lottie']);
+											@endphp
+											@if($isLottieSliderPhoto)
+												<div style="max-width: 300px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; padding: 10px; margin-bottom: 8px;">
+													<lottie-player src="{{ url('/core/public/storage/images/'.$sliderPhotoVal) }}" background="transparent" speed="1" style="width: 100%; height: 140px;" loop autoplay></lottie-player>
+													<span class="badge badge-info mt-1"><i class="fas fa-play-circle mr-1"></i> Lottie Animation ({{ $sliderPhotoVal }})</span>
+												</div>
+											@else
+												<img class="admin-img"
+													src="{{ $slider->photo ? url('/core/public/storage/images/'.$slider->photo) : url('/core/public/storage/images/placeholder.png') }}"
+													alt="No Image Found">
+											@endif
 										<br>
-										<span id="chenge_label2" class="mt-1">{{$slider->home_page == 'theme3' || $slider->home_page == 'theme4' ? __('Image Size Should Be 1920 x 750') : __('Image Size Should Be 1000 x 530') }}</span>
+										<span id="chenge_label2" class="mt-1">{{$slider->home_page == 'theme3' || $slider->home_page == 'theme4' ? __('Image Size Should Be 1920 x 750') : __('Image Size Should Be 1000 x 530 or .json / .lottie animation file') }}</span>
 									</div>
 
 									<div class="form-group position-relative ">
 										<label class="file">
-											<input type="file"  accept="image/*"  class="upload-photo" name="photo" id="file"
+											<input type="file"  accept="image/*,.json,.lottie,application/json"  class="upload-photo" name="photo" id="file"
 												aria-label="File browser example">
-											<span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+											<span class="file-custom text-left">{{ __('Upload Image or Lottie File (.json, .lottie)...') }}</span>
 										</label>
 									</div>
 									@endif

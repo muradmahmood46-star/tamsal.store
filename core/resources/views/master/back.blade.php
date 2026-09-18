@@ -31,6 +31,8 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('assets/back/css/custom.css') }}">
 
+    <!-- Lottie Web Animation Player -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 
     @if (DB::table('languages')->where('type', 'Dashboard')->where('is_default', 1)->first()->rtl == 1)
         <link rel="stylesheet" href="{{ asset('assets/back/css/rtl.css') }}">

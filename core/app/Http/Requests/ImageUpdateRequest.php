@@ -24,7 +24,7 @@ class ImageUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'photo'  => 'mimes:jpeg,jpg,png,svg,webp,gif,bmp,tiff,tif,avif,ico,jfif,heic,heif'
+            'photo'  => 'nullable|mimes:jpeg,jpg,png,svg,webp,gif,bmp,tiff,tif,avif,ico,jfif,heic,heif,json,lottie,txt'
         ];
     }
 

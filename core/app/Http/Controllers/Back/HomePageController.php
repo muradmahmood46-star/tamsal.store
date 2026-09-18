@@ -41,13 +41,13 @@ class HomePageController extends Controller
     public function hero_banner_update(Request $request)
     {
         $request->validate([
-            'img1' => 'image',
-            'img2' => 'image',
-            'title1' => 'required|max:200',
-            'title2' => 'required|max:200',
-            'subtitle1' => 'required|max:200',
-            'url1' => 'required|max:200',
-            'url2' => 'required|max:200',
+            'img1' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
+            'img2' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
+            'title1' => 'nullable|max:200',
+            'title2' => 'nullable|max:200',
+            'subtitle1' => 'nullable|max:200',
+            'url1' => 'nullable|max:200',
+            'url2' => 'nullable|max:200',
 
         ]);
         $all_images_names = ['img1','img2'];
@@ -79,14 +79,14 @@ class HomePageController extends Controller
     public function first_banner_update(Request $request)
     {
         $request->validate([
-            'img1' => 'image',
-            'img2' => 'image',
-            'img3' => 'image',
-            'img4' => 'image',
-            'firsturl1' => 'required|max:200',
-            'firsturl2' => 'required|max:200',
-            'firsturl3' => 'required|max:200',
-            'firsturl4' => 'required|max:200',
+            'img1' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
+            'img2' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
+            'img3' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
+            'img4' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
+            'firsturl1' => 'nullable|max:200',
+            'firsturl2' => 'nullable|max:200',
+            'firsturl3' => 'nullable|max:200',
+            'firsturl4' => 'nullable|max:200',
         ]);
         $all_images_names = ['img1','img2','img3','img4'];
 
@@ -124,12 +124,12 @@ class HomePageController extends Controller
     public function secend_banner_update(Request $request)
     {
         $request->validate([
-            'img1' => 'image',
-            'img2' => 'image',
-            'img3' => 'image',
-            'url1' => 'required|max:200',
-            'url2' => 'required|max:200',
-            'url3' => 'required|max:200',
+            'img1' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
+            'img2' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
+            'img3' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
+            'url1' => 'nullable|max:200',
+            'url2' => 'nullable|max:200',
+            'url3' => 'nullable|max:200',
         ]);
         $all_images_names = ['img1','img2','img3'];
         $input = $request->all();
@@ -167,10 +167,10 @@ class HomePageController extends Controller
     {
 
         $request->validate([
-            'img1' => 'image',
-            'img2' => 'image',
-            'url1' => 'required|max:200',
-            'url2' => 'required|max:200',
+            'img1' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
+            'img2' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
+            'url1' => 'nullable|max:200',
+            'url2' => 'nullable|max:200',
         ]);
         $all_images_names = ['img1','img2'];
 

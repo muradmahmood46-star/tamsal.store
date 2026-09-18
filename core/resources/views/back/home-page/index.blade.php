@@ -43,24 +43,35 @@
                                 @include('alerts.alerts')
                                 @csrf
                                         <div class="form-group">
-                                            <label for="name">{{ __('Image 1') }} *</label>
+                                            <label for="name">{{ __('Image 1 / Lottie Animation') }} *</label>
                                             <br>
+                                            @php
+                                                $img1Val = $hero_banner['img1'] ?? '';
+                                                $isLottie1 = !empty($img1Val) && \Illuminate\Support\Str::endsWith(strtolower($img1Val), ['.json', '.lottie']);
+                                            @endphp
+                                            @if($isLottie1)
+                                                <div style="max-width: 250px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; padding: 10px; margin-bottom: 8px;">
+                                                    <lottie-player src="{{ url('/core/public/storage/images/'.$img1Val) }}" background="transparent" speed="1" style="width: 100%; height: 120px;" loop autoplay></lottie-player>
+                                                    <span class="badge badge-info mt-1"><i class="fas fa-play-circle mr-1"></i> Lottie Animation ({{ $img1Val }})</span>
+                                                </div>
+                                            @else
                                                 <img class="admin-img"
                                                     src="{{isset($hero_banner['img1']) ? url('/core/public/storage/images/'.$hero_banner['img1']) : url('/core/public/storage/images/placeholder.png') }}"
                                                     alt="No Image Found">
+                                            @endif
                                             <br>
-                                            <span class="mt-1">{{ __('Image Size Should Be 496 x 204.') }}</span>
+                                            <span class="mt-1">{{ __('Image Size: 496 x 204 or upload .json / .lottie animation file.') }}</span>
                                         </div>
                                         <div class="form-group position-relative">
                                             <label class="file">
-                                                <input type="file"  accept="image/*"  class="upload-photo" name="img1" id="file"
+                                                <input type="file" accept="image/*,.json,.lottie,application/json" class="upload-photo" name="img1" id="file"
                                                     aria-label="File browser example">
-                                                <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+                                                <span class="file-custom text-left">{{ __('Upload Image or Lottie File (.json, .lottie)...') }}</span>
                                             </label>
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="title1">{{ __('Title') }} *</label>
+                                            <label for="title1">{{ __('Title') }} </label>
                                             <input type="text" name="title1" class="form-control" id="title1"
                                                 placeholder="{{ __('Enter Title') }}"  value="{{isset($hero_banner['title1']) ? $hero_banner['title1'] : ''}}" >
                                         </div>
@@ -70,7 +81,7 @@
                                                 placeholder="{{ __('Enter Subtitle') }}"  value="{{isset($hero_banner['subtitle1']) ? $hero_banner['subtitle1'] : ''}}" >
                                         </div>
                                         <div class="form-group">
-                                            <label for="url1">{{ __('URL 1') }} *</label>
+                                            <label for="url1">{{ __('URL 1') }} </label>
                                             <input type="text" name="url1" class="form-control" id="url1"
                                                 placeholder="{{ __('Enter Url') }}"  value="{{isset($hero_banner['url1']) ? $hero_banner['url1'] : ''}}" >
                                         </div>
@@ -78,24 +89,35 @@
                                         <hr>
 
                                         <div class="form-group">
-                                            <label for="name">{{ __('Image 2') }} *</label>
+                                            <label for="name">{{ __('Image 2 / Lottie Animation') }} *</label>
                                             <br>
+                                            @php
+                                                $img2Val = $hero_banner['img2'] ?? '';
+                                                $isLottie2 = !empty($img2Val) && \Illuminate\Support\Str::endsWith(strtolower($img2Val), ['.json', '.lottie']);
+                                            @endphp
+                                            @if($isLottie2)
+                                                <div style="max-width: 250px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; padding: 10px; margin-bottom: 8px;">
+                                                    <lottie-player src="{{ url('/core/public/storage/images/'.$img2Val) }}" background="transparent" speed="1" style="width: 100%; height: 120px;" loop autoplay></lottie-player>
+                                                    <span class="badge badge-info mt-1"><i class="fas fa-play-circle mr-1"></i> Lottie Animation ({{ $img2Val }})</span>
+                                                </div>
+                                            @else
                                                 <img class="admin-img"
                                                     src="{{isset($hero_banner['img2']) ? url('/core/public/storage/images/'.$hero_banner['img2']) : url('/core/public/storage/images/placeholder.png') }}"
                                                     alt="No Image Found">
+                                            @endif
                                             <br>
-                                            <span class="mt-1">{{ __('Image Size Should Be 496 x 204.') }}</span>
+                                            <span class="mt-1">{{ __('Image Size: 496 x 204 or upload .json / .lottie animation file.') }}</span>
                                         </div>
                                         <div class="form-group position-relative">
                                             <label class="file">
-                                                <input type="file"  accept="image/*"  class="upload-photo" name="img2" id="file"
+                                                <input type="file" accept="image/*,.json,.lottie,application/json" class="upload-photo" name="img2" id="file"
                                                     aria-label="File browser example">
-                                                <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+                                                <span class="file-custom text-left">{{ __('Upload Image or Lottie File (.json, .lottie)...') }}</span>
                                             </label>
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="title2">{{ __('Title') }} *</label>
+                                            <label for="title2">{{ __('Title') }} </label>
                                             <input type="text" name="title2" class="form-control" id="title2"
                                                 placeholder="{{ __('Enter Title') }}"  value="{{isset($hero_banner['title2']) ? $hero_banner['title2'] : ''}}" >
                                         </div>
@@ -105,7 +127,7 @@
                                                 placeholder="{{ __('Enter Subtitle') }}"  value="{{isset($hero_banner['subtitle2']) ? $hero_banner['subtitle2'] : ''}}" >
                                         </div>
                                         <div class="form-group">
-                                            <label for="url2">{{ __('URL 2') }} *</label>
+                                            <label for="url2">{{ __('URL 2') }} </label>
                                             <input type="text" name="url2" class="form-control" id="url2"
                                                 placeholder="{{ __('Enter Url') }}"  value="{{isset($hero_banner['url2']) ? $hero_banner['url2'] : ''}}" >
                                         </div>
@@ -147,9 +169,9 @@
                                         </div>
                                         <div class="form-group position-relative">
                                             <label class="file">
-                                                <input type="file"  accept="image/*"  class="upload-photo" name="img1" id="file"
+                                                <input type="file"  accept="image/*,.json,.lottie,application/json"  class="upload-photo" name="img1" id="file"
                                                     aria-label="File browser example">
-                                                <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+                                                <span class="file-custom text-left">{{ __('Upload Image or Lottie File (.json, .lottie)...') }}</span>
                                             </label>
                                         </div>
 
@@ -182,9 +204,9 @@
                                         </div>
                                         <div class="form-group position-relative">
                                             <label class="file">
-                                                <input type="file"  accept="image/*"  class="upload-photo" name="img2" id="file"
+                                                <input type="file"  accept="image/*,.json,.lottie,application/json"  class="upload-photo" name="img2" id="file"
                                                     aria-label="File browser example">
-                                                <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+                                                <span class="file-custom text-left">{{ __('Upload Image or Lottie File (.json, .lottie)...') }}</span>
                                             </label>
                                         </div>
 
@@ -217,9 +239,9 @@
                                         </div>
                                         <div class="form-group position-relative">
                                             <label class="file">
-                                                <input type="file"  accept="image/*"  class="upload-photo" name="img3" id="file"
+                                                <input type="file"  accept="image/*,.json,.lottie,application/json"  class="upload-photo" name="img3" id="file"
                                                     aria-label="File browser example">
-                                                <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+                                                <span class="file-custom text-left">{{ __('Upload Image or Lottie File (.json, .lottie)...') }}</span>
                                             </label>
                                         </div>
 
@@ -253,9 +275,9 @@
                                         </div>
                                         <div class="form-group position-relative">
                                             <label class="file">
-                                                <input type="file"  accept="image/*"  class="upload-photo" name="img4" id="file"
+                                                <input type="file"  accept="image/*,.json,.lottie,application/json"  class="upload-photo" name="img4" id="file"
                                                     aria-label="File browser example">
-                                                <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+                                                <span class="file-custom text-left">{{ __('Upload Image or Lottie File (.json, .lottie)...') }}</span>
                                             </label>
                                         </div>
 
@@ -452,9 +474,9 @@
                                         </div>
                                         <div class="form-group position-relative">
                                             <label class="file">
-                                                <input type="file"  accept="image/*"  class="upload-photo" name="img1" id="file"
+                                                <input type="file"  accept="image/*,.json,.lottie,application/json"  class="upload-photo" name="img1" id="file"
                                                     aria-label="File browser example">
-                                                <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+                                                <span class="file-custom text-left">{{ __('Upload Image or Lottie File (.json, .lottie)...') }}</span>
                                             </label>
                                         </div>
 
@@ -487,9 +509,9 @@
                                         </div>
                                         <div class="form-group position-relative">
                                             <label class="file">
-                                                <input type="file"  accept="image/*"  class="upload-photo" name="img2" id="file"
+                                                <input type="file"  accept="image/*,.json,.lottie,application/json"  class="upload-photo" name="img2" id="file"
                                                     aria-label="File browser example">
-                                                <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+                                                <span class="file-custom text-left">{{ __('Upload Image or Lottie File (.json, .lottie)...') }}</span>
                                             </label>
                                         </div>
 
@@ -522,9 +544,9 @@
                                         </div>
                                         <div class="form-group position-relative">
                                             <label class="file">
-                                                <input type="file"  accept="image/*"  class="upload-photo" name="img3" id="file"
+                                                <input type="file"  accept="image/*,.json,.lottie,application/json"  class="upload-photo" name="img3" id="file"
                                                     aria-label="File browser example">
-                                                <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+                                                <span class="file-custom text-left">{{ __('Upload Image or Lottie File (.json, .lottie)...') }}</span>
                                             </label>
                                         </div>
 
@@ -750,9 +772,9 @@
                                         </div>
                                         <div class="form-group position-relative">
                                             <label class="file">
-                                                <input type="file"  accept="image/*"  class="upload-photo" name="img1" id="file"
+                                                <input type="file"  accept="image/*,.json,.lottie,application/json"  class="upload-photo" name="img1" id="file"
                                                     aria-label="File browser example">
-                                                <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+                                                <span class="file-custom text-left">{{ __('Upload Image or Lottie File (.json, .lottie)...') }}</span>
                                             </label>
                                         </div>
                                         <div class="form-group">
@@ -784,9 +806,9 @@
                                         </div>
                                         <div class="form-group position-relative">
                                             <label class="file">
-                                                <input type="file"  accept="image/*"  class="upload-photo" name="img2" id="file"
+                                                <input type="file"  accept="image/*,.json,.lottie,application/json"  class="upload-photo" name="img2" id="file"
                                                     aria-label="File browser example">
-                                                <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+                                                <span class="file-custom text-left">{{ __('Upload Image or Lottie File (.json, .lottie)...') }}</span>
                                             </label>
                                         </div>
 
@@ -828,9 +850,9 @@
                                         </div>
                                         <div class="form-group position-relative">
                                             <label class="file">
-                                                <input type="file"  accept="image/*"  class="upload-photo" name="img1" id="file"
+                                                <input type="file"  accept="image/*,.json,.lottie,application/json"  class="upload-photo" name="img1" id="file"
                                                     aria-label="File browser example">
-                                                <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+                                                <span class="file-custom text-left">{{ __('Upload Image or Lottie File (.json, .lottie)...') }}</span>
                                             </label>
                                         </div>
                                         <div class="form-group">
@@ -858,9 +880,9 @@
 
                                         <div class="form-group position-relative">
                                             <label class="file">
-                                                <input type="file"  accept="image/*"  class="upload-photo" name="img2" id="file"
+                                                <input type="file"  accept="image/*,.json,.lottie,application/json"  class="upload-photo" name="img2" id="file"
                                                     aria-label="File browser example">
-                                                <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+                                                <span class="file-custom text-left">{{ __('Upload Image or Lottie File (.json, .lottie)...') }}</span>
                                             </label>
                                         </div>
 
@@ -888,9 +910,9 @@
                                         </div>
                                         <div class="form-group position-relative">
                                             <label class="file">
-                                                <input type="file"  accept="image/*"  class="upload-photo" name="img3" id="file"
+                                                <input type="file"  accept="image/*,.json,.lottie,application/json"  class="upload-photo" name="img3" id="file"
                                                     aria-label="File browser example">
-                                                <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+                                                <span class="file-custom text-left">{{ __('Upload Image or Lottie File (.json, .lottie)...') }}</span>
                                             </label>
                                         </div>
                                         <div class="form-group">
@@ -917,9 +939,9 @@
                                         </div>
                                         <div class="form-group position-relative">
                                             <label class="file">
-                                                <input type="file"  accept="image/*"  class="upload-photo" name="img4" id="file"
+                                                <input type="file"  accept="image/*,.json,.lottie,application/json"  class="upload-photo" name="img4" id="file"
                                                     aria-label="File browser example">
-                                                <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+                                                <span class="file-custom text-left">{{ __('Upload Image or Lottie File (.json, .lottie)...') }}</span>
                                             </label>
                                         </div>
                                         <div class="form-group">
@@ -946,9 +968,9 @@
                                         </div>
                                         <div class="form-group position-relative">
                                             <label class="file">
-                                                <input type="file"  accept="image/*"  class="upload-photo" name="img5" id="file"
+                                                <input type="file"  accept="image/*,.json,.lottie,application/json"  class="upload-photo" name="img5" id="file"
                                                     aria-label="File browser example">
-                                                <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+                                                <span class="file-custom text-left">{{ __('Upload Image or Lottie File (.json, .lottie)...') }}</span>
                                             </label>
                                         </div>
 

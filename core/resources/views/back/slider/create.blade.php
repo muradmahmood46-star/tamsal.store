@@ -97,9 +97,9 @@
 
                                         <div class="form-group position-relative ">
                                             <label class="file">
-                                                <input type="file"  accept="image/*"  class="upload-photo" name="photo" id="file"
+                                                <input type="file"  accept="image/*,.json,.lottie,application/json"  class="upload-photo" name="photo" id="file"
                                                     aria-label="File browser example" >
-                                                <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+                                                <span class="file-custom text-left">{{ __('Upload Image or Lottie File (.json, .lottie)...') }}</span>
                                             </label>
                                         </div>
 
@@ -164,9 +164,9 @@
 
                                         <div class="form-group position-relative ">
                                             <label class="file">
-                                                <input type="file"  accept="image/*"  class="upload-photo" name="photo" id="file"
+                                                <input type="file"  accept="image/*,.json,.lottie,application/json"  class="upload-photo" name="photo" id="file"
                                                     aria-label="File browser example" >
-                                                <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+                                                <span class="file-custom text-left">{{ __('Upload Image or Lottie File (.json, .lottie)...') }}</span>
                                             </label>
                                         </div>
 
@@ -231,9 +231,9 @@
 
                                         <div class="form-group position-relative ">
                                             <label class="file">
-                                                <input type="file"  accept="image/*"  class="upload-photo" name="photo" id="file"
+                                                <input type="file"  accept="image/*,.json,.lottie,application/json"  class="upload-photo" name="photo" id="file"
                                                     aria-label="File browser example" >
-                                                <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+                                                <span class="file-custom text-left">{{ __('Upload Image or Lottie File (.json, .lottie)...') }}</span>
                                             </label>
                                         </div>
 
@@ -276,9 +276,9 @@
 
                                     <div class="form-group position-relative ">
                                         <label class="file">
-                                            <input type="file"  accept="image/*"  class="upload-photo" name="photo" id="file"
+                                            <input type="file"  accept="image/*,.json,.lottie,application/json"  class="upload-photo" name="photo" id="file"
                                                 aria-label="File browser example" >
-                                            <span class="file-custom text-left">{{ __('Upload Image...') }}</span>
+                                            <span class="file-custom text-left">{{ __('Upload Image or Lottie File (.json, .lottie)...') }}</span>
                                         </label>
                                     </div>
 

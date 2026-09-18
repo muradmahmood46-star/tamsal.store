@@ -236,11 +236,24 @@
                         <div class="hero-slider">
                             <div class="hero-slider-main owl-carousel dots-inside">
                                 @foreach ($sliders as $slider)
+                                    @php
+                                        $sliderPhoto = $slider->photo ?? '';
+                                        $sliderExt = strtolower(pathinfo($sliderPhoto, PATHINFO_EXTENSION));
+                                        $isLottieSlider = in_array($sliderExt, ['json', 'lottie']);
+                                    @endphp
                                     <div class="item
                                     @if (DB::table('languages')->where('is_default', 1)->first()->rtl == 1) d-flex justify-content-end @endif
                                     "
-                                        style="background: url('{{ url('/core/public/storage/images/' . $slider->photo) }}')">
-                                        <div class="item-inner">
+                                        @if (!$isLottieSlider)
+                                            style="background: url('{{ url('/core/public/storage/images/' . $slider->photo) }}')"
+                                        @else
+                                            style="background: #f8fafc; position: relative; overflow: hidden;"
+                                        @endif
+                                    >
+                                        @if ($isLottieSlider)
+                                            <lottie-player src="{{ url('/core/public/storage/images/' . $slider->photo) }}" background="transparent" speed="1" loop autoplay style="position: absolute; top:0; left:0; width:100%; height:100%; object-fit:contain; z-index:1;"></lottie-player>
+                                        @endif
+                                        <div class="item-inner" style="position: relative; z-index: 2;">
                                             <div class="from-bottom">
                                                 @if ($slider->logo)
                                                     <img class="d-inline-block brand-logo"
@@ -263,26 +276,42 @@
 
                     @if (isset($hero_banner))
                         <div class="col-lg-4 d-none d-lg-block">
-                            <a href="{{ $hero_banner['url1'] }}" class="sright-image">
-                                <img src="{{ url('/core/public/storage/images/' . $hero_banner['img1']) }}" alt="">
+                            <a href="{{ $hero_banner['url1'] ?? '#' }}" class="sright-image" style="position: relative; overflow: hidden; display: block;">
+                                @php
+                                    $img1 = $hero_banner['img1'] ?? '';
+                                    $ext1 = strtolower(pathinfo($img1, PATHINFO_EXTENSION));
+                                @endphp
+                                @if (in_array($ext1, ['json', 'lottie']))
+                                    <lottie-player src="{{ url('/core/public/storage/images/' . $img1) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 215px; object-fit: contain;"></lottie-player>
+                                @else
+                                    <img src="{{ url('/core/public/storage/images/' . $img1) }}" alt="">
+                                @endif
                                 <div class="inner-content">
 
-                                    @if (isset($hero_banner['subtitle1']))
+                                    @if (isset($hero_banner['subtitle1']) && !empty($hero_banner['subtitle1']))
                                         <p>{{ $hero_banner['subtitle1'] }}</p>
                                     @endif
 
-                                    @if (isset($hero_banner['title1']))
+                                    @if (isset($hero_banner['title1']) && !empty($hero_banner['title1']))
                                         <h4>{{ $hero_banner['title1'] }}</h4>
                                     @endif
                                 </div>
                             </a>
-                            <a href="{{ $hero_banner['url2'] }}" class="sright-image mb-0">
-                                <img src="{{ url('/core/public/storage/images/' . $hero_banner['img2']) }}" alt="">
+                            <a href="{{ $hero_banner['url2'] ?? '#' }}" class="sright-image mb-0" style="position: relative; overflow: hidden; display: block;">
+                                @php
+                                    $img2 = $hero_banner['img2'] ?? '';
+                                    $ext2 = strtolower(pathinfo($img2, PATHINFO_EXTENSION));
+                                @endphp
+                                @if (in_array($ext2, ['json', 'lottie']))
+                                    <lottie-player src="{{ url('/core/public/storage/images/' . $img2) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 215px; object-fit: contain;"></lottie-player>
+                                @else
+                                    <img src="{{ url('/core/public/storage/images/' . $img2) }}" alt="">
+                                @endif
                                 <div class="inner-content">
-                                    @if (isset($hero_banner['subtitle2']))
+                                    @if (isset($hero_banner['subtitle2']) && !empty($hero_banner['subtitle2']))
                                         <p>{{ $hero_banner['subtitle2'] }}</p>
                                     @endif
-                                    @if (isset($hero_banner['title2']))
+                                    @if (isset($hero_banner['title2']) && !empty($hero_banner['title2']))
                                         <h4>{{ $hero_banner['title2'] }}</h4>
                                     @endif
                                 </div>

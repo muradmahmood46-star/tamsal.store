@@ -60,8 +60,8 @@ class SliderController extends Controller
     {
        
         $request->validate([
-            'logo' => 'image',
-            'photo' => 'required|image',
+            'logo' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
+            'photo' => 'required|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
             'title' => 'required|max:100',
             'link' => 'required|max:255',
             'details' => 'required|max:255',
@@ -88,13 +88,13 @@ class SliderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(ImageUpdateRequest $request, Slider $slider)
+    public function update(Request $request, Slider $slider)
     {
         $request->validate([
             'title' => 'required|max:100',
             'link' => 'required|max:255',
-            'logo' => 'image',
-            'photo' => 'image',
+            'logo' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
+            'photo' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
             'details' => 'required|max:255',
         ]);
         $this->repository->update($slider, $request);
