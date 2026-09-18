@@ -12,12 +12,21 @@
             <span class="badge badge-warning text-dark float-right">{{ $deal->discount_badge }}</span>
             <h1 class="h3">{{ $deal->name }}</h1>
             @if($deal->description)<p class="text-muted">{{ $deal->description }}</p>@endif
-            <div class="alert alert-danger mb-0">
-                <strong>{{ __('Ends in:') }}</strong> <span class="deal-countdown">--</span>
-                <span class="ml-3">
-                    <del>{{ PriceHelper::setCurrencyPrice($deal->original_price) }}</del>
-                    <strong class="text-success ml-1">{{ PriceHelper::setCurrencyPrice($deal->discounted_price) }}</strong>
-                </span>
+            <div class="alert alert-danger mb-0 d-flex justify-content-between align-items-center flex-wrap" style="gap:10px;">
+                <div>
+                    <strong>{{ __('Ends in:') }}</strong> <span class="deal-countdown">--</span>
+                    <span class="ml-3">
+                        <del>{{ PriceHelper::setCurrencyPrice($deal->original_price) }}</del>
+                        <strong class="text-success ml-1" style="font-size:18px;">{{ PriceHelper::setCurrencyPrice($deal->discounted_price) }}</strong>
+                    </span>
+                </div>
+                <div>
+                    @if($deal->is_free_delivery)
+                        <span class="badge badge-success px-2 py-1"><i class="fas fa-truck"></i> {{ __('Free Delivery') }}</span>
+                    @elseif($deal->delivery_charge > 0)
+                        <span class="badge badge-light border text-dark px-2 py-1"><i class="fas fa-truck text-primary"></i> {{ __('Delivery') }}: {{ PriceHelper::setCurrencyPrice($deal->delivery_charge) }}</span>
+                    @endif
+                </div>
             </div>
         </div>
     </div>

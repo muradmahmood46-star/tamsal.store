@@ -68,10 +68,11 @@
                                 $processedDealIds[] = $dealId;
                                 $isFree = !empty($cItem['deal_free_delivery']);
                                 $itemFee = $isFree ? 0 : (float)($cItem['deal_delivery_charge'] ?? 0);
+                                $bundleName = !empty($cItem['deal_name']) ? $cItem['deal_name'] : ($cItem['name'] ?? 'Bundle');
                                 $delivery_fee_details[] = [
-                                    'name' => __('Bundle') . ': ' . ($cItem['name'] ?? 'Bundle'),
+                                    'name' => __('Bundle') . ': ' . $bundleName,
                                     'fee'  => $itemFee,
-                                    'is_free' => $isFree,
+                                    'is_free' => ($isFree || $itemFee == 0),
                                 ];
                                 continue;
                             }

@@ -226,10 +226,10 @@ class CartRepository
                 "type" => $item->item_type,
                 "item_type" => $item->item_type,
                 'item_l_n' => $item->item_type == 'license' ? end($license_name) : null,
-                'item_l_k' => $item->item_type == 'license' ? end($license_key) : null,
                 'deal_id' => $dealItem ? $dealItem->deal_id : null,
-                'deal_delivery_charge' => $dealItem ? $deal->delivery_charge : null,
-                'deal_free_delivery' => $dealItem ? $deal->is_free_delivery : false,
+                'deal_name' => ($dealItem && $deal) ? $deal->name : null,
+                'deal_delivery_charge' => ($dealItem && $deal) ? ((bool)$deal->is_free_delivery ? 0 : (float)$deal->delivery_charge) : null,
+                'deal_free_delivery' => ($dealItem && $deal) ? (bool)$deal->is_free_delivery : false,
             ];
 
             Session::put('cart', $cart);

@@ -18,7 +18,14 @@
             <h3 class="h6 font-weight-bold">{{ $deal->name }}</h3>
             <div class="mt-auto">
                 <del class="text-muted">{{ PriceHelper::setCurrencyPrice($deal->original_price) }}</del>
-                <strong class="d-block text-success h5 mb-2">{{ PriceHelper::setCurrencyPrice($deal->discounted_price) }}</strong>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <strong class="text-success h5 mb-0">{{ PriceHelper::setCurrencyPrice($deal->discounted_price) }}</strong>
+                    @if($deal->is_free_delivery)
+                        <span class="badge badge-success" style="font-size:11px;"><i class="fas fa-truck"></i> {{ __('Free Delivery') }}</span>
+                    @elseif($deal->delivery_charge > 0)
+                        <span class="badge badge-light border text-dark" style="font-size:11px;"><i class="fas fa-truck"></i> {{ PriceHelper::setCurrencyPrice($deal->delivery_charge) }}</span>
+                    @endif
+                </div>
                 <a href="{{ route('front.deal.details', $deal->slug) }}" class="btn btn-outline-primary btn-sm btn-block mb-1">{{ __('View Bundle') }}</a>
                 <form action="{{ route('front.deal.add_to_cart', $deal->slug) }}" method="post">
                     @csrf
