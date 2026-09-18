@@ -157,7 +157,7 @@
         .home-promo-card {
             position: relative;
             border-radius: 16px;
-            padding: 20px 24px;
+            padding: 22px 24px;
             overflow: hidden;
             transition: all 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
@@ -208,11 +208,11 @@
             border-radius: 20px;
             font-size: 11px;
             font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
+            letter-spacing: 0.3px;
             color: #60a5fa;
             margin-bottom: 8px;
-            line-height: 1.2;
+            line-height: 1.3;
+            white-space: normal;
         }
         .promo-badge-seller {
             color: #fbbf24;
@@ -292,7 +292,7 @@
             .home-promo-card {
                 padding: 12px 10px;
                 border-radius: 12px;
-                min-height: 105px;
+                min-height: 120px;
             }
             .promo-card-inner {
                 display: flex;
@@ -301,29 +301,26 @@
                 justify-content: space-between;
                 height: 100%;
             }
-            .promo-card-header-mobile {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
+            .promo-card-text {
                 width: 100%;
-                margin-bottom: 6px;
             }
             .promo-badge {
-                display: inline-block;
-                padding: 3px 7px;
-                font-size: 9px;
-                margin-bottom: 0;
+                display: inline-flex;
+                align-items: center;
+                padding: 3px 8px;
+                font-size: 9.5px;
+                font-weight: 600;
+                margin-bottom: 6px;
                 border-radius: 12px;
-                max-width: calc(100% - 35px);
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
+                white-space: normal;
+                line-height: 1.25;
+                max-width: 100%;
             }
             .promo-title {
                 font-size: 13.5px;
                 font-weight: 700;
-                margin-top: 2px;
-                margin-bottom: 4px;
+                margin-top: 0;
+                margin-bottom: 6px;
                 line-height: 1.25;
                 display: block;
                 width: 100%;
@@ -331,19 +328,38 @@
             .promo-desc {
                 display: none;
             }
+            .promo-card-bottom-mobile {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+                margin-top: 4px;
+            }
             .promo-btn-link {
                 font-size: 11px;
                 font-weight: 700;
-                margin-top: 4px;
+                margin-top: 0;
                 display: inline-flex;
             }
-            .promo-card-icon-wrap {
-                margin-left: 0;
+            .promo-icon-circle-mobile {
+                width: 26px;
+                height: 26px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 12px;
+                flex-shrink: 0;
             }
-            .promo-icon-circle {
-                width: 28px;
-                height: 28px;
-                font-size: 13px;
+            .promo-icon-circle-mobile.shop-icon {
+                background: rgba(59, 130, 246, 0.2);
+                color: #60a5fa;
+                border: 1px solid rgba(96, 165, 250, 0.3);
+            }
+            .promo-icon-circle-mobile.seller-icon {
+                background: rgba(245, 158, 11, 0.2);
+                color: #fbbf24;
+                border: 1px solid rgba(251, 191, 36, 0.3);
             }
         }
     </style>
@@ -355,18 +371,18 @@
                     <a href="{{ route('front.catalog') }}" class="home-promo-card promo-card-shop">
                         <div class="promo-card-inner">
                             <div class="promo-card-text">
-                                <div class="promo-card-header-mobile d-flex d-md-none">
-                                    <span class="promo-badge"><i class="fas fa-shopping-bag mr-1"></i> {{ __('Trending') }}</span>
-                                    <div class="promo-card-icon-wrap">
-                                        <div class="promo-icon-circle">
-                                            <i class="fas fa-shopping-basket"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <span class="promo-badge d-none d-md-inline-flex"><i class="fas fa-shopping-bag mr-1"></i> {{ __('Trending Collection') }}</span>
+                                <span class="promo-badge"><i class="fas fa-shopping-bag mr-1"></i> {{ __('Trending Collection') }}</span>
                                 <h3 class="promo-title">{{ __('View Products') }}</h3>
                                 <p class="promo-desc">{{ __('Discover thousands of premium products at unbeatable prices') }}</p>
-                                <span class="promo-btn-link">
+                                <div class="promo-card-bottom-mobile d-flex d-md-none">
+                                    <span class="promo-btn-link">
+                                        {{ __('Shop Now') }} <i class="fas fa-arrow-right ml-1"></i>
+                                    </span>
+                                    <div class="promo-icon-circle-mobile shop-icon">
+                                        <i class="fas fa-shopping-basket"></i>
+                                    </div>
+                                </div>
+                                <span class="promo-btn-link d-none d-md-inline-flex">
                                     {{ __('Shop Now') }} <i class="fas fa-arrow-right ml-1"></i>
                                 </span>
                             </div>
@@ -384,18 +400,18 @@
                     <a href="{{ route('user.store.apply') }}" class="home-promo-card promo-card-seller">
                         <div class="promo-card-inner">
                             <div class="promo-card-text">
-                                <div class="promo-card-header-mobile d-flex d-md-none">
-                                    <span class="promo-badge promo-badge-seller"><i class="fas fa-rocket mr-1"></i> {{ __('Tamsal Store') }}</span>
-                                    <div class="promo-card-icon-wrap">
-                                        <div class="promo-icon-circle promo-icon-seller">
-                                            <i class="fas fa-store"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <span class="promo-badge promo-badge-seller d-none d-md-inline-flex"><i class="fas fa-rocket mr-1"></i> {{ __('Sell on Tamsal Store') }}</span>
+                                <span class="promo-badge promo-badge-seller"><i class="fas fa-rocket mr-1"></i> {{ __('Sell on Tamsal Store') }}</span>
                                 <h3 class="promo-title">{{ __('Open My Store') }}</h3>
                                 <p class="promo-desc">{{ __('Start your business today & sell to thousands of customers') }}</p>
-                                <span class="promo-btn-link promo-btn-seller">
+                                <div class="promo-card-bottom-mobile d-flex d-md-none">
+                                    <span class="promo-btn-link promo-btn-seller">
+                                        {{ __('Open Store Now') }} <i class="fas fa-arrow-right ml-1"></i>
+                                    </span>
+                                    <div class="promo-icon-circle-mobile seller-icon">
+                                        <i class="fas fa-store"></i>
+                                    </div>
+                                </div>
+                                <span class="promo-btn-link promo-btn-seller d-none d-md-inline-flex">
                                     {{ __('Open Store Now') }} <i class="fas fa-arrow-right ml-1"></i>
                                 </span>
                             </div>
