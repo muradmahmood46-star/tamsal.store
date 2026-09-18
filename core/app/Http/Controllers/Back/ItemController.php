@@ -227,7 +227,7 @@ class ItemController extends Controller
      * @param  \Illuminate\Http\GalleryRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function galleriesUpdate(GalleryRequest $request)
+    public function galleriesUpdate(Request $request)
     {
         $this->repository->galleriesUpdate($request);
         return redirect()->back()->withSuccess(__('Gallery Information Updated Successfully.'));

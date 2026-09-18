@@ -276,25 +276,83 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-function handleSelectedFiles(files) {
+function compressImageFile(file, maxDimension = 1400, quality = 0.85) {
+    return new Promise((resolve) => {
+        if (!file || !file.type.match(/^image\/(jpeg|png|webp|jpg)$/i) || file.size < 400 * 1024) {
+            resolve(file);
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const img = new Image();
+            img.onload = function () {
+                let width = img.width;
+                let height = img.height;
+
+                if (width > maxDimension || height > maxDimension) {
+                    if (width > height) {
+                        height = Math.round((height * maxDimension) / width);
+                        width = maxDimension;
+                    } else {
+                        width = Math.round((width * maxDimension) / height);
+                        height = maxDimension;
+                    }
+                }
+
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                canvas.toBlob(function (blob) {
+                    if (blob && blob.size < file.size) {
+                        const newName = file.name.replace(/\.[^/.]+$/, "") + ".jpg";
+                        const compressedFile = new File([blob], newName, {
+                            type: 'image/jpeg',
+                            lastModified: Date.now()
+                        });
+                        resolve(compressedFile);
+                    } else {
+                        resolve(file);
+                    }
+                }, 'image/jpeg', quality);
+            };
+            img.onerror = function () {
+                resolve(file);
+            };
+            img.src = e.target.result;
+        };
+        reader.onerror = function () {
+            resolve(file);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+async function handleSelectedFiles(files) {
     if (!files || files.length === 0) return;
 
-    if (galleryPageDt) {
-        Array.from(files).forEach(file => {
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const processedFile = await compressImageFile(file);
+
+        if (galleryPageDt) {
             try {
-                galleryPageDt.items.add(file);
+                galleryPageDt.items.add(processedFile);
             } catch (err) {
                 console.warn('Could not add file to DataTransfer', err);
             }
-        });
+        }
+    }
 
-        const input = document.getElementById('galleries_input');
-        if (input && galleryPageDt.files.length > 0) {
-            try {
-                input.files = galleryPageDt.files;
-            } catch (err) {
-                console.warn('Could not sync input.files', err);
-            }
+    const input = document.getElementById('galleries_input');
+    if (input && galleryPageDt && galleryPageDt.files.length > 0) {
+        try {
+            input.files = galleryPageDt.files;
+        } catch (err) {
+            console.warn('Could not sync input.files', err);
         }
     }
 

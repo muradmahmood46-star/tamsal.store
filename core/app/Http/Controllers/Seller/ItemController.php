@@ -183,10 +183,10 @@ class ItemController extends Controller
         return view('seller.item.galleries', compact('item'));
     }
 
-    public function galleriesUpdate(GalleryRequest $request)
+    public function galleriesUpdate(Request $request)
     {
         $item = Item::where('id', $request->item_id)->where('vendor_id', Auth::id())->firstOrFail();
-        $this->repository->galleriesUpdate($request);
+        $this->repository->galleriesUpdate($request, $item->id);
         return redirect()->back()->withSuccess(__('Gallery Information Updated Successfully.'));
     }
 
