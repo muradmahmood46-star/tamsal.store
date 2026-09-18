@@ -15,4 +15,5 @@
 
 @endif
 
-@includeIf('front.deals.preview', ['deals' => $flash_deals ?? collect()])
+@php $debugDeals = \App\Models\Deal::where('status', 1)->with(['dealItems.item'])->get(); @endphp
+@includeIf('front.deals.preview', ['deals' => $debugDeals])
