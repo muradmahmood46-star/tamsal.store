@@ -142,6 +142,9 @@
                                     @if($data->product_types)
                                         <small class="text-primary d-block font-weight-bold" title="{{ $data->product_types }}"><i class="fas fa-tags mr-1"></i>{{ Str::limit($data->product_types, 28) }}</small>
                                     @endif
+                                    @if($data->courier_company)
+                                        <small class="text-info d-block font-weight-bold" title="{{ $data->courier_company }}"><i class="fas fa-shipping-fast mr-1"></i>{{ Str::limit($data->courier_company, 28) }}</small>
+                                    @endif
                                     <small class="text-muted d-block text-truncate" style="max-width: 170px;" title="{{ $data->shop_address }}"><i class="fas fa-map-marker-alt text-danger mr-1"></i>{{ Str::limit($data->shop_address, 35) }}</small>
                                 </td>
                                 <td class="col-applicant">
@@ -255,6 +258,7 @@
                             <h6 class="font-weight-bold text-primary border-bottom pb-2 mb-2"><i class="fas fa-store mr-1"></i> {{ __('Store Details') }}</h6>
                             <p class="mb-1"><strong>{{ __('Store Name:') }}</strong> <span id="modalStoreNameText"></span></p>
                             <p class="mb-1"><strong>{{ __('Product Types:') }}</strong> <span id="modalProductTypes" class="badge badge-primary px-2 py-1" style="font-size: 12px; white-space: normal;"></span></p>
+                            <p class="mb-1"><strong>{{ __('Courier Company:') }}</strong> <span id="modalCourierCompany" class="badge badge-info px-2 py-1" style="font-size: 12px; white-space: normal;"></span></p>
                             <p class="mb-1"><strong>{{ __('Store Address:') }}</strong> <span id="modalStoreAddress"></span></p>
                             <p class="mb-1"><strong>{{ __('Application Date:') }}</strong> <span id="modalDate"></span></p>
                             <p class="mb-1"><strong>{{ __('Request Status:') }}</strong> <span id="modalStatusBadge"></span></p>
@@ -547,6 +551,7 @@
         $('#modalApplicantCnic').text(data.cnic || 'N/A');
         $('#modalStoreNameText').text(data.shop_name);
         $('#modalProductTypes').text(data.product_types || 'Not Specified');
+        $('#modalCourierCompany').text(data.courier_company || 'Not Specified');
         $('#modalStoreAddress').text(data.shop_address || 'N/A');
         $('#modalDate').text(data.created_at ? new Date(data.created_at).toLocaleDateString() : 'N/A');
 

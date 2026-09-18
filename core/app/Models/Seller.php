@@ -11,6 +11,7 @@ class Seller extends Model
         'shop_name',
         'shop_address',
         'product_types',
+        'courier_company',
         'shop_phone',
         'shop_email',
         'shop_logo',

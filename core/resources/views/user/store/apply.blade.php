@@ -656,6 +656,12 @@
                                     <small class="text-muted">{{ __('Suggested: Electronics, Men\'s Clothing, Shoes, Accessories, etc.') }}</small>
                                 </div>
                                 <div class="col-md-12 form-group">
+                                    <label for="courier_company">{{ __('Which courier company will you use for delivery?') }} <span class="text-danger">*</span></label>
+                                    <input type="text" name="courier_company" id="courier_company" class="form-control" value="{{ old('courier_company', $latestRequest->courier_company ?? '') }}" placeholder="{{ __('e.g. TCS, Leopard, TRAX') }}" required>
+                                    <div class="invalid-feedback">{{ __('Please specify the courier company you will use for delivery.') }}</div>
+                                    <small class="text-muted">{{ __('Suggested: TCS, Leopard, TRAX, PostEx, M&P, Call Courier, etc.') }}</small>
+                                </div>
+                                <div class="col-md-12 form-group">
                                     <label for="shop_address">{{ __('Store Location / Complete Address') }} <span class="text-danger">*</span></label>
                                     <textarea name="shop_address" id="shop_address" rows="3" class="form-control" placeholder="{{ __('Shop #, Street, Plaza/Market, City, Province') }}" required>{{ old('shop_address', $latestRequest->shop_address ?? '') }}</textarea>
                                     <div class="invalid-feedback">{{ __('Please enter your complete shop / store address.') }}</div>
@@ -1309,6 +1315,7 @@
 
         const shopName = document.getElementById('shop_name');
         const productTypes = document.getElementById('product_types');
+        const courierCompany = document.getElementById('courier_company');
         const shopAddress = document.getElementById('shop_address');
 
         if (!shopName || !shopName.value.trim()) {
@@ -1325,6 +1332,14 @@
             if (!firstInvalid && productTypes) firstInvalid = productTypes;
         } else {
             productTypes.classList.remove('is-invalid');
+        }
+
+        if (!courierCompany || !courierCompany.value.trim()) {
+            if (courierCompany) courierCompany.classList.add('is-invalid');
+            isValid = false;
+            if (!firstInvalid && courierCompany) firstInvalid = courierCompany;
+        } else {
+            courierCompany.classList.remove('is-invalid');
         }
 
         if (!shopAddress || !shopAddress.value.trim()) {

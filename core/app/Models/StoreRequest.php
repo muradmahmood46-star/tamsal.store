@@ -16,6 +16,7 @@ class StoreRequest extends Model
         'shop_name',
         'shop_address',
         'product_types',
+        'courier_company',
         'id_card_front',
         'selfie_with_id',
         'store_documents',

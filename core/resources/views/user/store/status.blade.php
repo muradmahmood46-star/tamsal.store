@@ -136,6 +136,11 @@
                                     <span class="text-muted">{{ __('Product Types:') }}</span> <span class="badge badge-primary">{{ $latestRequest->product_types }}</span>
                                 </div>
                             @endif
+                            @if($latestRequest->courier_company)
+                                <div class="col-md-12 mb-2">
+                                    <span class="text-muted">{{ __('Delivery Courier:') }}</span> <span class="badge badge-info">{{ $latestRequest->courier_company }}</span>
+                                </div>
+                            @endif
                             <div class="col-md-12 mb-2">
                                 <span class="text-muted">{{ __('Store Location:') }}</span> <strong>{{ $latestRequest->shop_address }}</strong>
                             </div>

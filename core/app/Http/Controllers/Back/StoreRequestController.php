@@ -73,6 +73,7 @@ class StoreRequestController extends Controller
                         'shop_name' => $storeRequest->shop_name ?: ($user->first_name . '\'s Store'),
                         'shop_address' => $storeRequest->shop_address ?: $user->ship_address1,
                         'product_types' => $storeRequest->product_types,
+                        'courier_company' => $storeRequest->courier_company,
                         'shop_phone' => $storeRequest->phone ?: $user->phone,
                         'shop_email' => $storeRequest->email ?: $user->email,
                         'status' => 1
