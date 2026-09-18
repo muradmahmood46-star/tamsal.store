@@ -12,9 +12,18 @@
                     </h4>
                     <p class="text-muted small mb-0">{{ __('Direct official communication between customers and platform administration support.') }}</p>
                 </div>
-                <div class="mt-2 mt-sm-0">
-                    <span class="badge badge-primary px-3 py-2 font-weight-bold" style="font-size: 13px; border-radius: 20px;">
-                        <i class="fas fa-headset mr-1"></i> {{ $conversations->count() }} {{ __('Customer Inquiries') }}
+                <div class="mt-2 mt-sm-0 d-flex align-items-center flex-wrap" style="gap: 6px;">
+                    @if($unreadCount > 0)
+                        <span class="badge badge-danger px-3 py-2 font-weight-bold shadow-sm" style="font-size: 13px; border-radius: 20px;">
+                            <i class="fas fa-envelope-open-text mr-1"></i> {{ $unreadCount }} {{ __('New Customer Queries') }}
+                        </span>
+                    @else
+                        <span class="badge badge-success px-3 py-2 font-weight-bold shadow-sm" style="font-size: 13px; border-radius: 20px;">
+                            <i class="fas fa-check-circle mr-1"></i> 0 {{ __('New Customer Queries') }}
+                        </span>
+                    @endif
+                    <span class="badge badge-primary px-3 py-2 font-weight-bold shadow-sm" style="font-size: 13px; border-radius: 20px;">
+                        <i class="fas fa-headset mr-1"></i> {{ $conversations->count() }} {{ __('Total Customer Queries') }}
                     </span>
                 </div>
             </div>

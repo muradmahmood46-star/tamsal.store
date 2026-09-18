@@ -57,17 +57,16 @@ class ChatController extends Controller
 
         if ($activeChat) {
             // Mark unread as 0 for this chat in DB
-            if ($activeChat->vendor_unread_count > 0) {
-                $activeChat->update([
-                    'vendor_unread_count' => 0,
-                ]);
-                $activeChat->vendor_unread_count = 0;
+            $activeChat->update([
+                'vendor_unread_count' => 0,
+            ]);
+            $activeChat->vendor_unread_count = 0;
 
-                ChatMessage::where('conversation_id', $activeChat->id)
-                    ->where('sender_type', 'user')
-                    ->where('is_read', 0)
-                    ->update(['is_read' => 1]);
-            }
+            ChatMessage::where('conversation_id', $activeChat->id)
+                ->where('sender_type', 'user')
+                ->where('is_read', 0)
+                ->update(['is_read' => 1]);
+
             $activeChat->vendor_unread_count = 0;
 
             // Also reset in conversations collection so active item has no red badge
@@ -83,9 +82,15 @@ class ChatController extends Controller
                 ->get();
         }
 
-        $unreadCount = Conversation::where(function($q) {
-            $q->whereNull('vendor_id')->orWhere('vendor_id', 0);
-        })->where('user_id', '>', 0)->where('deleted_by_vendor', 0)->where('vendor_unread_count', '>', 0)->sum('vendor_unread_count');
+        $directAdminConvIds = $conversations->pluck('id');
+        $unreadMessagesCount = ChatMessage::whereIn('conversation_id', $directAdminConvIds)
+            ->where('sender_type', 'user')
+            ->where('deleted_by_vendor', 0)
+            ->where('is_read', 0)
+            ->count();
+
+        $convUnreadSum = $conversations->sum('vendor_unread_count');
+        $unreadCount = max($unreadMessagesCount, $convUnreadSum);
 
         return view('back.message.index', compact('conversations', 'activeChat', 'messages', 'unreadCount'));
     }
