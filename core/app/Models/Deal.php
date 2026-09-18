@@ -57,13 +57,7 @@ class Deal extends Model
 
     public function scopeActive($query)
     {
-        return $query->where('status', 1)
-                     ->where(function ($q) {
-                         $q->whereNull('start_date')->orWhere('start_date', '<=', now());
-                     })
-                     ->where(function ($q) {
-                         $q->whereNull('end_date')->orWhere('end_date', '>', now());
-                     });
+        return $query->where('status', 1);
     }
 
     public function scopeExpired($query)
