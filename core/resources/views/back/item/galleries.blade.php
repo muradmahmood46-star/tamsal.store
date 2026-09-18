@@ -100,25 +100,33 @@
                         @csrf
                         <input type="hidden" name="item_id" value="{{ $item->id }}">
 
-                        <div class="file-upload-zone mb-3" onclick="$('#galleries_input').click()">
+                        <label for="galleries_input" class="file-upload-zone mb-3 d-block w-100 text-center" id="gallery_drop_zone" style="cursor: pointer; user-select: none;">
                             <i class="fas fa-images text-primary fa-3x mb-2 d-block"></i>
                             <h5 class="font-weight-bold text-dark mb-1">{{ __('Click to Browse & Select Gallery Images') }}</h5>
                             <p class="text-muted font-size-sm mb-2">{{ __('You can select multiple photos at once (JPG, PNG, WebP, GIF, SVG).') }}</p>
                             <span class="btn btn-outline-primary btn-sm font-weight-bold px-3">
                                 <i class="fas fa-folder-open mr-1"></i> {{ __('Select Images') }}
                             </span>
-                            <input type="file" name="galleries[]" id="galleries_input" class="d-none" accept="image/*" multiple required onchange="previewGallerySelection(this)">
-                        </div>
+                            <input type="file" name="galleries[]" id="galleries_input" style="position: absolute; width: 0.1px; height: 0.1px; opacity: 0; overflow: hidden; z-index: -1;" accept="image/*" multiple>
+                        </label>
 
                         <!-- Live selection preview -->
                         <div id="selection_preview_box" class="mb-3 d-none">
-                            <h6 class="font-weight-bold text-dark mb-2">{{ __('Selected Photos to Upload:') }} <span id="selected_count_badge" class="badge badge-primary">0</span></h6>
-                            <div class="d-flex flex-wrap gap-2" id="selection_thumbs_container" style="gap: 10px;"></div>
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <h6 class="font-weight-bold text-dark m-0">
+                                    <i class="fas fa-check-circle text-success mr-1"></i> {{ __('Selected Photos to Upload:') }} 
+                                    <span id="selected_count_badge" class="badge badge-primary ml-1">0</span>
+                                </h6>
+                                <button type="button" class="btn btn-outline-danger btn-sm py-0 px-2 font-weight-bold" onclick="clearAllPendingGalleryFiles()" style="font-size: 11.5px;">
+                                    <i class="fas fa-trash-alt mr-1"></i> {{ __('Clear All') }}
+                                </button>
+                            </div>
+                            <div class="d-flex flex-wrap" id="selection_thumbs_container" style="gap: 10px;"></div>
                         </div>
 
                         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-2 border-top">
                             <small class="text-muted"><i class="fas fa-info-circle mr-1"></i> {{ __('Recommended image dimension: 800 x 800 or square ratio.') }}</small>
-                            <button type="submit" class="btn btn-success px-4 font-weight-bold">
+                            <button type="submit" id="gallery_submit_btn" class="btn btn-success px-4 font-weight-bold">
                                 <i class="fas fa-upload mr-1"></i> {{ __('Upload to Gallery') }}
                             </button>
                         </div>
@@ -195,17 +203,76 @@
 <script>
 let galleryPageDt = new DataTransfer();
 
-function previewGallerySelection(input) {
-    const box = document.getElementById('selection_preview_box');
-    const container = document.getElementById('selection_thumbs_container');
-    const countBadge = document.getElementById('selected_count_badge');
+document.addEventListener('DOMContentLoaded', function () {
+    const input = document.getElementById('galleries_input');
+    const dropZone = document.getElementById('gallery_drop_zone');
+    const form = document.getElementById('galleryUploadForm');
+    const submitBtn = document.getElementById('gallery_submit_btn');
 
-    if (input.files && input.files.length > 0) {
-        Array.from(input.files).forEach(file => {
-            galleryPageDt.items.add(file);
+    if (input) {
+        input.addEventListener('change', function () {
+            handleSelectedFiles(this.files);
+        });
+    }
+
+    if (dropZone) {
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.style.background = '#dbeafe';
+                dropZone.style.borderColor = '#2563eb';
+            }, false);
         });
 
-        // Sync input files with accumulated set
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.style.background = '#f0f7ff';
+                dropZone.style.borderColor = '#0d6efd';
+            }, false);
+        });
+
+        dropZone.addEventListener('drop', function (e) {
+            const dt = e.dataTransfer;
+            if (dt && dt.files && dt.files.length > 0) {
+                handleSelectedFiles(dt.files);
+            }
+        }, false);
+    }
+
+    if (form) {
+        form.addEventListener('submit', function (e) {
+            if (!galleryPageDt.files || galleryPageDt.files.length === 0) {
+                e.preventDefault();
+                alert('{{ __("Please select at least one image to upload.") }}');
+                return false;
+            }
+
+            if (input) {
+                input.files = galleryPageDt.files;
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> {{ __("Uploading Photos...") }}';
+            }
+        });
+    }
+});
+
+function handleSelectedFiles(files) {
+    if (!files || files.length === 0) return;
+
+    Array.from(files).forEach(file => {
+        if (file.type.startsWith('image/')) {
+            galleryPageDt.items.add(file);
+        }
+    });
+
+    const input = document.getElementById('galleries_input');
+    if (input) {
         input.files = galleryPageDt.files;
     }
 
@@ -218,15 +285,16 @@ function renderGalleryPagePreviews() {
     const countBadge = document.getElementById('selected_count_badge');
     const input = document.getElementById('galleries_input');
 
+    if (!container) return;
     container.innerHTML = '';
 
     if (galleryPageDt.files.length > 0) {
-        box.classList.remove('d-none');
-        countBadge.innerText = galleryPageDt.files.length;
+        if (box) box.classList.remove('d-none');
+        if (countBadge) countBadge.innerText = galleryPageDt.files.length;
 
         Array.from(galleryPageDt.files).forEach((file, idx) => {
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 const thumb = document.createElement('div');
                 thumb.className = 'border rounded p-1 bg-white shadow-sm position-relative';
                 thumb.style.width = '75px';
@@ -237,14 +305,14 @@ function renderGalleryPagePreviews() {
                 thumb.style.overflow = 'hidden';
                 thumb.innerHTML = `
                     <img src="${e.target.result}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
-                    <span onclick="removePendingGalleryFile(${idx})" class="badge badge-danger position-absolute" style="top: 2px; right: 2px; cursor: pointer; padding: 2px 4px; font-size: 10px;" title="Remove">&times;</span>
+                    <span onclick="removePendingGalleryFile(${idx})" class="badge badge-danger position-absolute" style="top: 2px; right: 2px; cursor: pointer; padding: 2px 5px; font-size: 11px; font-weight: bold; border-radius: 50%;" title="Remove">&times;</span>
                 `;
                 container.appendChild(thumb);
             };
             reader.readAsDataURL(file);
         });
     } else {
-        box.classList.add('d-none');
+        if (box) box.classList.add('d-none');
         if (input) input.value = '';
     }
 }
@@ -261,6 +329,15 @@ function removePendingGalleryFile(idxToRemove) {
         input.files = galleryPageDt.files;
     }
 
+    renderGalleryPagePreviews();
+}
+
+function clearAllPendingGalleryFiles() {
+    galleryPageDt = new DataTransfer();
+    const input = document.getElementById('galleries_input');
+    if (input) {
+        input.value = '';
+    }
     renderGalleryPagePreviews();
 }
 </script>

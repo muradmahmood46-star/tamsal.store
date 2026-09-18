@@ -26,7 +26,7 @@ class ImageHelper
             }
 
             $ext = $file->getClientOriginalExtension() ?: 'png';
-            $name = Str::random(4) . '_' . time() . '.' . $ext;
+            $name = Str::random(6) . '_' . uniqid() . '.' . $ext;
             Storage::putFileAs($path, $file, $name);
 
             return $name;
