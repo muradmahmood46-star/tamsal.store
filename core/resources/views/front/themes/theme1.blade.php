@@ -449,85 +449,27 @@
     @endif
 
     @if ($extra_settings->is_t1_falsh == 1)
+        @php $bundleDeals = \App\Models\Deal::where('status', 1)->with(['dealItems.item'])->get(); @endphp
+        @if($bundleDeals->isNotEmpty())
         <div class="flash-sell-new-section mt-50">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-12 ">
-                        <div class="section-title">
+                    <div class="col-lg-12">
+                        <div class="section-title d-flex align-items-center justify-content-between">
                             <h2 class="h3">{{ __('Shop Bundles') }}</h2>
+                            <a class="btn btn-outline-primary btn-sm" href="{{ route('front.deal.index') }}">{{ __('View All Bundles') }}</a>
                         </div>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-12">
-                        <div class="main-content">
-                            <div class="flash-deal-slider owl-carousel">
-                                @foreach ($products->orderBy('id', 'DESC')->get() as $item)
-                                    @if ($item->is_type == 'flash_deal' && $item->date != null)
-                                        <div class="slider-item">
-                                            <div class="product-card ">
-                                                <div class="product-thumb">
-                                                    @if (!$item->is_stock())
-                                                        <div
-                                                            class="product-badge bg-secondary border-default text-body
-                                            ">
-                                                            {{ __('out of stock') }}</div>
-                                                    @endif
-                                                    @if ($item->previous_price && $item->previous_price != 0)
-                                                        <div class="product-badge product-badge2 bg-info">
-                                                            -{{ PriceHelper::DiscountPercentage($item) }}</div>
-                                                    @endif
-                                                    <img src="{{ url('/core/public/storage/images/' . ($item->photo ?: $item->thumbnail)) }}" class="lazy"
-                                                        data-src="{{ url('/core/public/storage/images/' . ($item->photo ?: $item->thumbnail)) }}"
-                                                        alt="{{ $item->name ?? 'Product' }}">
-                                                    <div class="product-button-group"><a
-                                                            class="product-button wishlist_store"
-                                                            href="{{ route('user.wishlist.store', $item->id) }}"
-                                                            title="{{ __('Wishlist') }}"><i class="icon-heart"></i></a>
-                                                        <a data-target="{{ route('fornt.compare.product', $item->id) }}"
-                                                            class="product-button product_compare" href="javascript:;"
-                                                            title="{{ __('Compare') }}"><i class="icon-repeat"></i></a>
-                                                        @include('includes.item_footer', [
-                                                            'sitem' => $item,
-                                                        ])
-                                                    </div>
-                                                </div>
-                                                <div class="product-card-inner">
-                                                    <div class="product-card-body">
-
-                                                        <div class="product-category"><a
-                                                                href="{{ route('front.catalog') . '?category=' . $item->category->slug }}">{{ $item->category->name }}</a>
-                                                        </div>
-                                                        <h3 class="product-title"><a
-                                                                href="{{ route('front.product', $item->slug) }}">
-                                                                {{ Str::limit($item->name, 50) }}
-                                                            </a></h3>
-                                                         <div class="rating-stars">
-                                                             {!! Helper::renderStarRating($item) !!}
-                                                             @if($item->rating > 0)
-                                                                 <span class="text-muted ml-1" style="font-size: 11px; font-weight: 600;">({{ number_format($item->rating, 1) }})</span>
-                                                             @endif
-                                                         </div>
-                                                        <h4 class="product-price">
-                                                            @if ($item->previous_price != 0)
-                                                                <del>{{ PriceHelper::setPreviousPrice($item->previous_price) }}</del>
-                                                            @endif
-
-                                                            {{ PriceHelper::grandCurrencyPrice($item) }}
-                                                        </h4>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endif
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
+                    @foreach($bundleDeals as $deal)
+                        @include('front.deals.card', ['deal' => $deal, 'column' => 'col-lg-3 col-md-4 col-sm-6 mb-4'])
+                    @endforeach
                 </div>
             </div>
         </div>
+        @include('front.deals.countdown-script')
+        @endif
     @endif
 
     @if ($setting->is_two_column_category == 1)
