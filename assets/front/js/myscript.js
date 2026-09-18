@@ -80,6 +80,27 @@ $(function ($) {
 
         // Flash Deal Area Start
         var $hero_slider_main = $(".hero-slider-main");
+        function loadHeroSliderBackground($slide) {
+            var backgroundUrl = $slide.attr('data-slider-background');
+
+            if (backgroundUrl) {
+                $slide.css('background-image', 'url("' + backgroundUrl + '")');
+                $slide.removeAttr('data-slider-background');
+            }
+        }
+
+        $hero_slider_main.on('initialized.owl.carousel changed.owl.carousel', function (event) {
+            if (!event.relatedTarget) {
+                return;
+            }
+
+            var carousel = event.relatedTarget;
+            var current = carousel.current();
+
+            loadHeroSliderBackground($(carousel.$stage.children().eq(current)));
+            loadHeroSliderBackground($(carousel.$stage.children().eq(carousel.normalize(current + 1))));
+        });
+
         $hero_slider_main.owlCarousel({
             navText: [],
             nav: true,

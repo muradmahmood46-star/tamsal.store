@@ -90,7 +90,7 @@
             }
             .sright-image .inner-content {
                 position: absolute;
-                top: 50%;
+                top: 34%;
                 transform: translateY(-50%);
                 left: 24px;
                 right: 20px;
@@ -246,8 +246,10 @@
                                     <div class="item
                                     @if (DB::table('languages')->where('is_default', 1)->first()->rtl == 1) d-flex justify-content-end @endif
                                     "
-                                        @if (!$isLottieSlider)
+                                        @if (!$isLottieSlider && $loop->first)
                                             style="background: url('{{ url('/core/public/storage/images/' . $slider->photo) }}')"
+                                        @elseif (!$isLottieSlider)
+                                            data-slider-background="{{ url('/core/public/storage/images/' . $slider->photo) }}"
                                         @else
                                             style="background: #f8fafc; position: relative; overflow: hidden;"
                                         @endif
