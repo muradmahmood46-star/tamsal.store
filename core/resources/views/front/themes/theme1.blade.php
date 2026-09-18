@@ -191,6 +191,13 @@
             position: relative;
             z-index: 2;
             width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .promo-card-text {
+            flex: 1;
+            min-width: 0;
         }
         .promo-badge {
             display: inline-flex;
@@ -205,6 +212,7 @@
             text-transform: uppercase;
             color: #60a5fa;
             margin-bottom: 8px;
+            line-height: 1.2;
         }
         .promo-badge-seller {
             color: #fbbf24;
@@ -213,8 +221,11 @@
             font-size: 20px;
             font-weight: 700;
             color: #ffffff !important;
+            margin-top: 0;
             margin-bottom: 6px;
-            line-height: 1.2;
+            line-height: 1.25;
+            white-space: normal;
+            word-break: break-word;
         }
         .promo-desc {
             font-size: 13px;
@@ -264,7 +275,7 @@
             transform: scale(1.08) rotate(5deg);
         }
 
-        /* Mobile: 2 Cards in 1 Line (Side-by-Side) */
+        /* Mobile: 2 Cards in 1 Row (Side-by-Side) */
         @media (max-width: 767px) {
             .home-promo-actions-section {
                 margin-top: 5px;
@@ -283,32 +294,56 @@
                 border-radius: 12px;
                 min-height: 105px;
             }
+            .promo-card-inner {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                justify-content: space-between;
+                height: 100%;
+            }
+            .promo-card-header-mobile {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+                margin-bottom: 6px;
+            }
             .promo-badge {
-                padding: 2px 6px;
-                font-size: 8.5px;
-                margin-bottom: 4px;
+                display: inline-block;
+                padding: 3px 7px;
+                font-size: 9px;
+                margin-bottom: 0;
+                border-radius: 12px;
+                max-width: calc(100% - 35px);
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
             .promo-title {
-                font-size: 13px;
+                font-size: 13.5px;
                 font-weight: 700;
+                margin-top: 2px;
                 margin-bottom: 4px;
-                line-height: 1.2;
+                line-height: 1.25;
+                display: block;
+                width: 100%;
             }
             .promo-desc {
                 display: none;
             }
             .promo-btn-link {
-                font-size: 10.5px;
+                font-size: 11px;
                 font-weight: 700;
-                margin-top: 2px;
+                margin-top: 4px;
+                display: inline-flex;
             }
             .promo-card-icon-wrap {
-                margin-left: 4px;
+                margin-left: 0;
             }
             .promo-icon-circle {
-                width: 34px;
-                height: 34px;
-                font-size: 14px;
+                width: 28px;
+                height: 28px;
+                font-size: 13px;
             }
         }
     </style>
@@ -318,16 +353,24 @@
                 <!-- Card 1: View Products / Shop -->
                 <div class="col-6 col-md-6">
                     <a href="{{ route('front.catalog') }}" class="home-promo-card promo-card-shop">
-                        <div class="promo-card-inner d-flex align-items-center justify-content-between">
+                        <div class="promo-card-inner">
                             <div class="promo-card-text">
-                                <span class="promo-badge"><i class="fas fa-shopping-bag mr-1"></i> {{ __('Trending') }}</span>
+                                <div class="promo-card-header-mobile d-flex d-md-none">
+                                    <span class="promo-badge"><i class="fas fa-shopping-bag mr-1"></i> {{ __('Trending') }}</span>
+                                    <div class="promo-card-icon-wrap">
+                                        <div class="promo-icon-circle">
+                                            <i class="fas fa-shopping-basket"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="promo-badge d-none d-md-inline-flex"><i class="fas fa-shopping-bag mr-1"></i> {{ __('Trending Collection') }}</span>
                                 <h3 class="promo-title">{{ __('View Products') }}</h3>
                                 <p class="promo-desc">{{ __('Discover thousands of premium products at unbeatable prices') }}</p>
                                 <span class="promo-btn-link">
                                     {{ __('Shop Now') }} <i class="fas fa-arrow-right ml-1"></i>
                                 </span>
                             </div>
-                            <div class="promo-card-icon-wrap">
+                            <div class="promo-card-icon-wrap d-none d-md-block">
                                 <div class="promo-icon-circle">
                                     <i class="fas fa-shopping-basket"></i>
                                 </div>
@@ -339,16 +382,24 @@
                 <!-- Card 2: Open My Store -->
                 <div class="col-6 col-md-6">
                     <a href="{{ route('user.store.apply') }}" class="home-promo-card promo-card-seller">
-                        <div class="promo-card-inner d-flex align-items-center justify-content-between">
+                        <div class="promo-card-inner">
                             <div class="promo-card-text">
-                                <span class="promo-badge promo-badge-seller"><i class="fas fa-rocket mr-1"></i> {{ __('Sell on Sabhee') }}</span>
+                                <div class="promo-card-header-mobile d-flex d-md-none">
+                                    <span class="promo-badge promo-badge-seller"><i class="fas fa-rocket mr-1"></i> {{ __('Tamsal Store') }}</span>
+                                    <div class="promo-card-icon-wrap">
+                                        <div class="promo-icon-circle promo-icon-seller">
+                                            <i class="fas fa-store"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="promo-badge promo-badge-seller d-none d-md-inline-flex"><i class="fas fa-rocket mr-1"></i> {{ __('Sell on Tamsal Store') }}</span>
                                 <h3 class="promo-title">{{ __('Open My Store') }}</h3>
                                 <p class="promo-desc">{{ __('Start your business today & sell to thousands of customers') }}</p>
                                 <span class="promo-btn-link promo-btn-seller">
                                     {{ __('Open Store Now') }} <i class="fas fa-arrow-right ml-1"></i>
                                 </span>
                             </div>
-                            <div class="promo-card-icon-wrap">
+                            <div class="promo-card-icon-wrap d-none d-md-block">
                                 <div class="promo-icon-circle promo-icon-seller">
                                     <i class="fas fa-store"></i>
                                 </div>
