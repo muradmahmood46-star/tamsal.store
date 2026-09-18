@@ -215,9 +215,12 @@
                                                     href="{{ route('front.product', $compaign_item->item->slug) }}">
                                                     {{ Str::limit($compaign_item->item->name, 35) }}
                                                 </a></h3>
-                                            <div class="rating-stars">
-                                                {!! Helper::renderStarRating($compaign_item->item->reviews->avg('rating')) !!}
-                                            </div>
+                                             <div class="rating-stars">
+                                                 {!! Helper::renderStarRating($compaign_item->item) !!}
+                                                 @if($compaign_item->item && $compaign_item->item->rating > 0)
+                                                     <span class="text-muted ml-1" style="font-size: 11px; font-weight: 600;">({{ number_format($compaign_item->item->rating, 1) }})</span>
+                                                 @endif
+                                             </div>
                                             <h4 class="product-price">
                                                 @if ($compaign_item->item->previous_price != 0)
                                                     <del>{{ PriceHelper::setPreviousPrice($compaign_item->item->previous_price) }}</del>
@@ -409,9 +412,12 @@
                                                     href="{{ route('front.product', $popular_category_item->slug) }}">
                                                     {{ Str::limit($popular_category_item->name, 35) }}
                                                 </a></h3>
-                                            <div class="rating-stars">
-                                                {!! Helper::renderStarRating($popular_category_item->reviews->avg('rating')) !!}
-                                            </div>
+                                             <div class="rating-stars">
+                                                 {!! Helper::renderStarRating($popular_category_item) !!}
+                                                 @if($popular_category_item->rating > 0)
+                                                     <span class="text-muted ml-1" style="font-size: 11px; font-weight: 600;">({{ number_format($popular_category_item->rating, 1) }})</span>
+                                                 @endif
+                                             </div>
                                             <h4 class="product-price">
                                                 @if ($popular_category_item->previous_price != 0)
                                                     <del>{{ PriceHelper::setPreviousPrice($popular_category_item->previous_price) }}</del>
@@ -546,9 +552,12 @@
                                                             href="{{ route('front.product', $item->slug) }}">
                                                             {{ Str::limit($item->name, 35) }}
                                                         </a></h3>
-                                                    <div class="rating-stars">
-                                                        {!! Helper::renderStarRating($item->reviews->avg('rating')) !!}
-                                                    </div>
+                                                     <div class="rating-stars">
+                                                         {!! Helper::renderStarRating($item) !!}
+                                                         @if($item->rating > 0)
+                                                             <span class="text-muted ml-1" style="font-size: 11px; font-weight: 600;">({{ number_format($item->rating, 1) }})</span>
+                                                         @endif
+                                                     </div>
                                                     <h4 class="product-price">
                                                         @if ($item->previous_price != 0)
                                                             <del>{{ PriceHelper::setPreviousPrice($item->previous_price) }}</del>
@@ -624,9 +633,12 @@
                                                                 href="{{ route('front.product', $item->slug) }}">
                                                                 {{ Str::limit($item->name, 50) }}
                                                             </a></h3>
-                                                        <div class="rating-stars">
-                                                            {!! Helper::renderStarRating($item->reviews->avg('rating')) !!}
-                                                        </div>
+                                                         <div class="rating-stars">
+                                                             {!! Helper::renderStarRating($item) !!}
+                                                             @if($item->rating > 0)
+                                                                 <span class="text-muted ml-1" style="font-size: 11px; font-weight: 600;">({{ number_format($item->rating, 1) }})</span>
+                                                             @endif
+                                                         </div>
                                                         <h4 class="product-price">
                                                             @if ($item->previous_price != 0)
                                                                 <del>{{ PriceHelper::setPreviousPrice($item->previous_price) }}</del>
@@ -687,9 +699,12 @@
                                                                 href="{{ route('front.product', $two_column_category_item->slug) }}">
                                                                 {{ Str::limit($two_column_category_item->name, 40) }}
                                                             </a></h3>
-                                                        <div class="rating-stars">
-                                                            {!! Helper::renderStarRating($two_column_category_item->reviews->avg('rating')) !!}
-                                                        </div>
+                                                         <div class="rating-stars">
+                                                             {!! Helper::renderStarRating($two_column_category_item) !!}
+                                                             @if($two_column_category_item->rating > 0)
+                                                                 <span class="text-muted ml-1" style="font-size: 11px; font-weight: 600;">({{ number_format($two_column_category_item->rating, 1) }})</span>
+                                                             @endif
+                                                         </div>
                                                         <h4 class="product-price">
                                                             @if ($two_column_category_item->previous_price != 0)
                                                                 <del>{{ PriceHelper::setPreviousPrice($two_column_category_item->previous_price) }}</del>
@@ -812,9 +827,12 @@
                                             href="{{ route('front.product', $feature_category_item->slug) }}">
                                             {{ Str::limit($feature_category_item->name, 35) }}
                                         </a></h3>
-                                    <div class="rating-stars">
-                                        {!! Helper::renderStarRating($feature_category_item->reviews->avg('rating')) !!}
-                                    </div>
+                                     <div class="rating-stars">
+                                         {!! Helper::renderStarRating($feature_category_item) !!}
+                                         @if($feature_category_item->rating > 0)
+                                             <span class="text-muted ml-1" style="font-size: 11px; font-weight: 600;">({{ number_format($feature_category_item->rating, 1) }})</span>
+                                         @endif
+                                     </div>
                                     <h4 class="product-price">
                                         @if ($feature_category_item->previous_price != 0)
                                             <del>{{ PriceHelper::setPreviousPrice($feature_category_item->previous_price) }}</del>

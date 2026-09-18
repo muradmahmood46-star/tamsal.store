@@ -12,15 +12,19 @@ class Helper
     {
         if ($rating instanceof \App\Models\Item) {
             $rating = $rating->rating;
+        } elseif (is_numeric($rating)) {
+            $rating = (float) $rating;
+        } else {
+            $rating = 0.0;
         }
 
         $rating = (float) $rating;
         $rating = $rating <= $maxRating ? $rating : $maxRating;
         $rating = max(0, $rating);
 
-        $fullStar = "<i class = 'fas fa-star filled'></i>";
-        $halfStar = "<i class = 'fas fa-star-half-alt filled'></i>";
-        $emptyStar = "<i class = 'fas fa-star'></i>";
+        $fullStar = "<i class='fas fa-star filled text-warning' style='color: #f59e0b !important;'></i>";
+        $halfStar = "<i class='fas fa-star-half-alt filled text-warning' style='color: #f59e0b !important;'></i>";
+        $emptyStar = "<i class='far fa-star text-muted' style='color: #cbd5e1 !important;'></i>";
 
         $fullStarCount = (int) floor($rating);
         $decimal = $rating - $fullStarCount;

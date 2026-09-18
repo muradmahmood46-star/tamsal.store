@@ -969,6 +969,12 @@
                                                 href="{{ route('front.product', $related->slug) }}">
                                                 {{ Str::limit($related->name, 35) }}
                                             </a></h3>
+                                        <div class="rating-stars mb-1">
+                                            {!! Helper::renderStarRating($related) !!}
+                                            @if($related->rating > 0)
+                                                <span class="text-muted ml-1" style="font-size: 11px; font-weight: 600;">({{ number_format($related->rating, 1) }})</span>
+                                            @endif
+                                        </div>
                                         <h4 class="product-price">
                                             @if ($related->previous_price != 0)
                                                 <del>{{ PriceHelper::setPreviousPrice($related->previous_price) }}</del>

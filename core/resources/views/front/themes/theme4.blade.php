@@ -108,7 +108,10 @@
                                                     {{ Str::limit($item->name,35) }}
                                                 </a></h3>
                                                 <div class="rating-stars">
-                                                    {!! Helper::renderStarRating($item->reviews->avg('rating')) !!}
+                                                    {!! Helper::renderStarRating($item) !!}
+                                                    @if($item->rating > 0)
+                                                        <span class="text-muted ml-1" style="font-size: 11px; font-weight: 600;">({{ number_format($item->rating, 1) }})</span>
+                                                    @endif
                                                 </div>
                                                 <h4 class="product-price">
                                                 @if ($item->previous_price != 0)
@@ -220,7 +223,10 @@
                                                         {{ Str::limit($item->name,50) }}
                                                     </a></h3>
                                                     <div class="rating-stars">
-                                                        {!! Helper::renderStarRating($item->reviews->avg('rating')) !!}
+                                                        {!! Helper::renderStarRating($item) !!}
+                                                        @if($item->rating > 0)
+                                                            <span class="text-muted ml-1" style="font-size: 11px; font-weight: 600;">({{ number_format($item->rating, 1) }})</span>
+                                                        @endif
                                                     </div>
                                                     <h4 class="product-price">
                                                     @if ($item->previous_price != 0)
@@ -356,7 +362,10 @@
                                                         {{ Str::limit($item->name,35) }}
                                                     </a></h3>
                                                     <div class="rating-stars">
-                                                        {!! Helper::renderStarRating($item->reviews->avg('rating')) !!}
+                                                        {!! Helper::renderStarRating($item) !!}
+                                                        @if($item->rating > 0)
+                                                            <span class="text-muted ml-1" style="font-size: 11px; font-weight: 600;">({{ number_format($item->rating, 1) }})</span>
+                                                        @endif
                                                     </div>
                                                     <h4 class="product-price">
                                                     @if ($item->previous_price != 0)
