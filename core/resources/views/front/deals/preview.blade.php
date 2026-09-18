@@ -1,3 +1,4 @@
+@php $deals = \App\Models\Deal::where('status', 1)->with(['dealItems.item'])->get(); @endphp
 @if($deals->isNotEmpty())
 <section class="container mt-5 mb-5 flash-deals-widget">
     <div class="d-flex align-items-center justify-content-between mb-3">
