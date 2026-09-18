@@ -54,14 +54,13 @@
         .admin-chat-item {
             display: flex;
             align-items: center;
-            padding: 8px 12px;
+            padding: 10px 14px;
             border-bottom: 1px solid #f1f5f9;
             cursor: pointer;
             transition: all 0.15s ease;
             text-decoration: none !important;
             color: inherit;
-            min-height: 58px;
-            height: 62px;
+            min-height: 64px;
         }
         .admin-chat-item:hover {
             background: #f1f5f9;
@@ -71,8 +70,8 @@
             border-left: 4px solid #1572e8;
         }
         .admin-chat-avatar {
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: #1572e8;
             color: #ffffff;
@@ -80,8 +79,8 @@
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 14.5px;
-            margin-right: 10px;
+            font-size: 15px;
+            margin-right: 12px;
             flex-shrink: 0;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
@@ -279,6 +278,11 @@
                 }
             @endif
 
+            .admin-chat-item {
+                padding: 12px 14px !important;
+                min-height: 68px !important;
+            }
+
             .admin-chat-header {
                 padding: 10px 12px !important;
             }
@@ -344,40 +348,40 @@
                         <div style="flex-grow: 1; overflow: hidden; min-width: 0;">
                             <!-- Row 1: Both Party Names with Badges & Timestamp -->
                             <div class="d-flex justify-content-between align-items-center mb-1">
-                                <div class="d-flex align-items-center" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 230px;">
+                                <div class="d-flex align-items-center" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex-grow: 1; margin-right: 8px;">
                                     @if($isDirectAdmin)
                                         <span class="badge badge-primary px-2 py-1 text-white mr-1 shadow-sm" style="font-size: 11px; font-weight: 700; border-radius: 4px;">
                                             <i class="fas fa-shield-alt mr-1"></i>{{ __('Admin') }}
                                         </span>
                                         <span class="text-muted mx-1 font-weight-bold" style="font-size: 11px;">↔</span>
-                                        <span class="badge badge-success px-2 py-1 text-white ml-1 text-truncate shadow-sm" style="font-size: 11px; font-weight: 700; border-radius: 4px; max-width: 130px;">
+                                        <span class="badge badge-success px-2 py-1 text-white text-truncate shadow-sm" style="font-size: 11px; font-weight: 700; border-radius: 4px; max-width: 140px;">
                                             <i class="fas fa-store mr-1"></i>{{ $storeLabel }}
                                         </span>
                                     @else
-                                        <span class="badge badge-success px-2 py-1 text-white mr-1 text-truncate shadow-sm" style="font-size: 11px; font-weight: 700; border-radius: 4px; max-width: 120px;">
+                                        <span class="badge badge-success px-2 py-1 text-white mr-1 text-truncate shadow-sm" style="font-size: 11px; font-weight: 700; border-radius: 4px; max-width: 130px;">
                                             <i class="fas fa-store mr-1"></i>{{ $storeLabel }}
                                         </span>
                                         <span class="text-muted mx-1 font-weight-bold" style="font-size: 11px;">↔</span>
-                                        <span class="badge badge-primary px-2 py-1 text-white ml-1 text-truncate shadow-sm" style="font-size: 11px; font-weight: 700; border-radius: 4px; max-width: 105px;">
+                                        <span class="badge badge-primary px-2 py-1 text-white text-truncate shadow-sm" style="font-size: 11px; font-weight: 700; border-radius: 4px; max-width: 120px;">
                                             <i class="fas fa-user mr-1"></i>{{ $buyerName }}
                                         </span>
                                     @endif
                                 </div>
-                                <small class="text-muted" style="font-size: 10px; flex-shrink: 0; margin-left: 4px;">
+                                <small class="text-muted flex-shrink-0" style="font-size: 10.5px;">
                                     {{ $conv->last_message_at ? $conv->last_message_at->diffForHumans(null, true) : '' }}
                                 </small>
                             </div>
 
                             <!-- Row 2: Message preview -->
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="text-muted" style="font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 235px; line-height: 1.2;">
+                                <span class="text-muted text-truncate" style="font-size: 12px; line-height: 1.25; flex-grow: 1; min-width: 0;">
                                     @if($isDirectAdmin)
-                                        <span class="text-primary font-weight-bold mr-1" style="font-size: 10px;">[{{ __('Direct') }}]</span>
+                                        <span class="text-primary font-weight-bold mr-1" style="font-size: 10.5px;">[{{ __('Direct') }}]</span>
                                     @endif
                                     {{ $conv->last_message ?: __('No messages') }}
                                 </span>
                                 @if($conv->vendor_unread_count > 0 || $conv->user_unread_count > 0)
-                                    <span class="badge badge-danger rounded-circle ml-1" style="font-size: 9px; padding: 2px 5px; flex-shrink: 0;">{{ $conv->vendor_unread_count ?: $conv->user_unread_count }}</span>
+                                    <span class="badge badge-danger rounded-circle ml-2 flex-shrink-0" style="font-size: 9.5px; padding: 2px 6px;">{{ $conv->vendor_unread_count ?: $conv->user_unread_count }}</span>
                                 @endif
                             </div>
                         </div>

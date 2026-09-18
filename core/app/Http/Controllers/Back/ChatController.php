@@ -49,14 +49,10 @@ class ChatController extends Controller
         $activeChat = null;
         $messages = collect([]);
 
-        if ($request->has('chat_id')) {
+        if ($request->has('chat_id') && !empty($request->chat_id)) {
             $activeChat = Conversation::with(['item', 'user'])->where(function($q) {
                 $q->whereNull('vendor_id')->orWhere('vendor_id', 0);
             })->find($request->chat_id);
-        }
-
-        if (!$activeChat && $conversations->count() > 0) {
-            $activeChat = $conversations->first();
         }
 
         if ($activeChat) {

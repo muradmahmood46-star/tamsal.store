@@ -33,12 +33,8 @@ class ChatController extends Controller
         $activeChat = null;
         $messages = collect([]);
 
-        if ($request->has('chat_id')) {
+        if ($request->has('chat_id') && !empty($request->chat_id)) {
             $activeChat = $conversations->where('id', $request->chat_id)->first();
-        }
-
-        if (!$activeChat && $conversations->count() > 0) {
-            $activeChat = $conversations->first();
         }
 
         if ($activeChat) {
