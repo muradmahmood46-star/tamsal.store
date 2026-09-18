@@ -357,13 +357,22 @@ if (!empty($dbname)) {
             }
         }
 
-        echo "\n=== LATEST LARAVEL ERRORS ===\n";
+        echo "\n=== LATEST ERROR SUMMARY ===\n";
         $logFile = __DIR__ . '/core/storage/logs/laravel.log';
         if (file_exists($logFile)) {
-            $logContent = file_get_contents($logFile);
-            $errors = preg_split('/(\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\])/', $logContent, -1, PREG_SPLIT_DELIM_CAPTURE);
-            $recent = array_slice($errors, -6);
-            echo htmlspecialchars(implode('', $recent));
+            $lines = file($logFile);
+            $errLines = [];
+            for ($i = count($lines) - 1; $i >= 0; $i--) {
+                if (strpos($lines[$i], '.ERROR:') !== false) {
+                    $errLines = array_slice($lines, max(0, $i), 15);
+                    break;
+                }
+            }
+            if ($errLines) {
+                echo htmlspecialchars(implode('', $errLines));
+            } else {
+                echo "No .ERROR found in log\n";
+            }
         } else {
             echo "laravel.log not found";
         }
