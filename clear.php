@@ -342,44 +342,41 @@ if (!empty($dbname)) {
         }
         
         echo "\n=== MENU DATA ===\n";
-        $ms = $pdo->query("SELECT menus FROM menus WHERE id = 1");
-        $menu = $ms->fetch(PDO::FETCH_ASSOC);
-        if ($menu) {
-            $links = json_decode($menu['menus'], true);
-            if ($links) {
-                foreach ($links as $lnk) {
-                    if (!isset($lnk['children'])) {
-                        echo "Menu: " . $lnk['text'] . " | type: " . $lnk['type'] . " | href: '" . $lnk['href'] . "'\n";
-                    } else {
-                        echo "Menu: " . $lnk['text'] . " (has children) | type: " . $lnk['type'] . "\n";
+        try {
+            $ms = $pdo->query("SELECT menus FROM menus WHERE id = 1");
+            if ($ms) {
+                $menu = $ms->fetch(PDO::FETCH_ASSOC);
+                if ($menu) {
+                    $links = json_decode($menu['menus'], true);
+                    if ($links) {
+                        foreach ($links as $lnk) {
+                            if (!isset($lnk['children'])) {
+                                echo "Menu: " . $lnk['text'] . " | type: " . $lnk['type'] . " | href: '" . $lnk['href'] . "'\n";
+                            } else {
+                                echo "Menu: " . $lnk['text'] . " (has children) | type: " . $lnk['type'] . "\n";
+                            }
+                        }
                     }
                 }
             }
+        } catch (\Throwable $e) {
+            echo "Menu query error: " . $e->getMessage() . "\n";
         }
-
-        echo "\n=== LATEST ERROR SUMMARY ===\n";
-        $logFile = __DIR__ . '/core/storage/logs/laravel.log';
-        if (file_exists($logFile)) {
-            $lines = file($logFile);
-            $errLines = [];
-            for ($i = count($lines) - 1; $i >= 0; $i--) {
-                if (strpos($lines[$i], '.ERROR:') !== false) {
-                    $errLines = array_slice($lines, max(0, $i), 15);
-                    break;
-                }
-            }
-            if ($errLines) {
-                echo htmlspecialchars(implode('', $errLines));
-            } else {
-                echo "No .ERROR found in log\n";
-            }
-        } else {
-            echo "laravel.log not found";
-        }
-    } catch (Exception $e) {
+    } catch (\Throwable $e) {
         echo "Debug DB Error: " . $e->getMessage() . "\n";
     }
 }
 
+echo "\n=== LATEST LARAVEL LOG (LAST 40 LINES) ===\n";
+$logFile = __DIR__ . '/core/storage/logs/laravel.log';
+if (file_exists($logFile)) {
+    $lines = file($logFile);
+    $lastLines = array_slice($lines, -40);
+    echo htmlspecialchars(implode('', $lastLines));
+} else {
+    echo "laravel.log not found";
+}
+
+echo "\n=== END LOG ===\n";
 echo '</pre></div>';
 
