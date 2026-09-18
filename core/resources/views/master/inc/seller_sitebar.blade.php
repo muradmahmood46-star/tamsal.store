@@ -32,7 +32,7 @@
                 </li>
                 <li class="{{ request()->is('seller/deal*') ? 'active' : '' }}">
                     <a class="sub-link" href="{{ route('seller.deal.index') }}">
-                        <span class="sub-item">{{ __('Manage Deals') }}</span>
+                        <span class="sub-item">{{ __('Manage Bundles') }}</span>
                     </a>
                 </li>
                 <li class="{{ request()->is('seller/stock/out/product') ? 'active' : '' }}">

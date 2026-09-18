@@ -9,8 +9,8 @@
     <div class="card mb-4">
         <div class="card-body">
             <div class="d-sm-flex align-items-center justify-content-between">
-                <h3 class="mb-0 bc-title"><b>{{ __('Manage Deals') }}</b></h3>
-                <a class="btn btn-primary btn-sm" href="{{ route('back.deal.create') }}"><i class="fas fa-plus"></i> {{ __('Create New Deal') }}</a>
+                <h3 class="mb-0 bc-title"><b>{{ __('Manage Bundles') }}</b></h3>
+                <a class="btn btn-primary btn-sm" href="{{ route('back.deal.create') }}"><i class="fas fa-plus"></i> {{ __('Create New Bundle') }}</a>
             </div>
         </div>
     </div>

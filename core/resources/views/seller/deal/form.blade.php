@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="card mb-4"><div class="card-body d-flex justify-content-between"><h3 class="mb-0 bc-title"><b>{{ $deal ? __('Edit Deal') : __('Create Deal') }}</b></h3><a class="btn btn-primary btn-sm" href="{{ route('seller.deal.index') }}">{{ __('Back to Deals') }}</a></div></div>
+    <div class="card mb-4"><div class="card-body d-flex justify-content-between"><h3 class="mb-0 bc-title"><b>{{ $deal ? __('Edit Bundle') : __('Create Bundle') }}</b></h3><a class="btn btn-primary btn-sm" href="{{ route('seller.deal.index') }}">{{ __('Back to Deals') }}</a></div></div>
     <div class="card shadow"><div class="card-body">
         @include('alerts.alerts')
         <form method="post" action="{{ $deal ? route('seller.deal.update', $deal->id) : route('seller.deal.store') }}">

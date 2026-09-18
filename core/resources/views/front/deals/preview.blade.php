@@ -1,7 +1,7 @@
 @if($deals->isNotEmpty())
 <section class="container mt-5 mb-5 flash-deals-widget">
     <div class="d-flex align-items-center justify-content-between mb-3">
-        <h2 class="h3 mb-0"><i class="icon-zap text-warning"></i> {{ __('Flash Deals') }}</h2>
+        <h2 class="h3 mb-0"><i class="icon-zap text-warning"></i> {{ __('Buy Bundles and Get Discount') }}</h2>
         <a class="btn btn-outline-primary btn-sm" href="{{ route('front.deal.index') }}">{{ __('View All Deals') }}</a>
     </div>
     <div class="row">

@@ -149,7 +149,7 @@
                 </li>
                 <li>
                     <a class="sub-link" href="{{ route('back.deal.index') }}">
-                        <span class="sub-item">{{ __('Manage Deals') }}</span>
+                        <span class="sub-item">{{ __('Manage Bundles') }}</span>
                     </a>
                 </li>
                 <li>

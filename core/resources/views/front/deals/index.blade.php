@@ -1,8 +1,8 @@
 @extends('master.front')
-@section('title', __('Flash Deals'))
+@section('title', __('Buy Bundles and Get Discount'))
 @section('content')
 <div class="container padding-bottom-3x mb-2 mt-4">
-    <div class="d-flex align-items-center justify-content-between mb-4"><h1 class="h3 mb-0">{{ __('All Flash Deals') }}</h1><a href="{{ route('front.index') }}" class="btn btn-outline-secondary btn-sm">{{ __('Continue Shopping') }}</a></div>
+    <div class="d-flex align-items-center justify-content-between mb-4"><h1 class="h3 mb-0">{{ __('Buy Bundles and Get Discount') }}</h1><a href="{{ route('front.index') }}" class="btn btn-outline-secondary btn-sm">{{ __('Continue Shopping') }}</a></div>
     @if($deals->isEmpty())
         <div class="alert alert-info">{{ __('There are no active deals right now.') }}</div>
     @else
