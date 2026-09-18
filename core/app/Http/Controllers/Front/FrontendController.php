@@ -12,6 +12,7 @@ use App\{
     Models\Setting,
     Models\Subscriber,
     Helpers\EmailHelper,
+    Helpers\Helper,
     Http\Controllers\Controller,
     Http\Requests\ReviewRequest,
     Http\Requests\SubscribeRequest,
@@ -262,7 +263,7 @@ class FrontendController extends Controller
             'hero_banner'   => $home_customize->hero_banner != '[]' ? json_decode($home_customize->hero_banner, true) : null,
             'banner_first'   => json_decode($home_customize->banner_first, true),
             'sliders'  => $sliders,
-            'campaign_items' => CampaignItem::with('item')->whereStatus(1)->whereIsFeature(1)->orderby('id', 'desc')->get(),
+            'campaign_items' => Helper::getMostSellingProducts(4),
             'services' => Service::orderby('id', 'desc')->get(),
             'posts'    => Post::with('category')->orderby('id', 'desc')->take(8)->get(),
             'brands'   => Brand::whereStatus(1)->get(),
@@ -474,7 +475,7 @@ class FrontendController extends Controller
         if (Setting::first()->is_campaign == 0) {
             return back();
         }
-        $compaign_items =  CampaignItem::whereStatus(1)->orderby('id', 'desc')->get();
+        $compaign_items = Helper::getMostSellingProducts();
         return view('front.campaign', ['campaign_items' => $compaign_items]);
     }
 

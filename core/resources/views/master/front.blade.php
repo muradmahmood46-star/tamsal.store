@@ -334,9 +334,9 @@
             align-items: center !important;
             justify-content: space-between !important;
             background: #ffffff !important;
-            border: 1px solid #e2e8f0 !important;
+            border: 1.5px solid #e2e8f0 !important;
             border-radius: 12px !important;
-            padding: 14px 16px !important;
+            padding: 12px 14px !important;
             min-height: 104px !important;
             height: 100% !important;
             position: relative !important;
@@ -350,15 +350,15 @@
         .bannner-section .modern-banner-card:hover,
         .modern-banner-card:hover {
             transform: translateY(-3px) !important;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07) !important;
-            border-color: #cbd5e1 !important;
+            border-color: {{ $setting->primary_color ?? '#8CCF00' }} !important;
+            box-shadow: 0 8px 24px rgba(140, 207, 0, 0.22) !important;
         }
 
         /* Left Side Text Content */
         .bannner-section .modern-banner-card .banner-text-content,
         .modern-banner-card .banner-text-content {
-            flex: 1 1 58% !important;
-            max-width: 60% !important;
+            flex: 1 1 56% !important;
+            max-width: 58% !important;
             padding-right: 10px !important;
             display: flex !important;
             flex-direction: column !important;
@@ -374,17 +374,18 @@
         .modern-banner-card .banner-subtitle {
             font-size: 11.5px !important;
             font-weight: 700 !important;
-            color: #2563eb !important;
+            color: {{ $setting->primary_color ?? '#8CCF00' }} !important;
             text-transform: uppercase !important;
             letter-spacing: 0.5px !important;
             margin-bottom: 4px !important;
             line-height: 1.2 !important;
             display: inline-block !important;
+            transition: color 0.3s ease !important;
         }
 
         .bannner-section .modern-banner-card .banner-title,
         .modern-banner-card .banner-title {
-            font-size: 14.5px !important;
+            font-size: 14px !important;
             font-weight: 700 !important;
             color: #0f172a !important;
             line-height: 1.3 !important;
@@ -394,21 +395,33 @@
             -webkit-box-orient: vertical !important;
             overflow: hidden !important;
             word-break: break-word !important;
+            transition: color 0.3s ease !important;
         }
 
-        /* Right Side Image Box */
+        .bannner-section .modern-banner-card:hover .banner-title,
+        .modern-banner-card:hover .banner-title {
+            color: #0f172a !important;
+        }
+
+        /* Right Side Image Box with Rounded Bordering */
         .bannner-section .modern-banner-card .banner-img-box,
         .modern-banner-card .banner-img-box {
-            flex: 0 0 40% !important;
-            width: 40% !important;
-            max-width: 40% !important;
-            height: 75px !important;
-            max-height: 80px !important;
+            flex: 0 0 42% !important;
+            width: 42% !important;
+            max-width: 42% !important;
+            height: 78px !important;
+            max-height: 82px !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
+            background-color: #f8fafc !important;
+            border: 1.5px solid #e2e8f0 !important;
+            border-radius: 10px !important;
+            padding: 5px !important;
             overflow: hidden !important;
             margin-left: auto !important;
+            box-sizing: border-box !important;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease !important;
         }
 
         .bannner-section .modern-banner-card .banner-img-box img,
@@ -419,10 +432,17 @@
             height: auto !important;
             object-fit: contain !important;
             object-position: center !important;
+            border-radius: 6px !important;
             display: block !important;
             margin: auto !important;
             transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
             transform: scale(1) !important;
+        }
+
+        .bannner-section .modern-banner-card:hover .banner-img-box,
+        .modern-banner-card:hover .banner-img-box {
+            border-color: {{ $setting->primary_color ?? '#8CCF00' }} !important;
+            box-shadow: 0 2px 8px rgba(140, 207, 0, 0.15) !important;
         }
 
         .bannner-section .modern-banner-card:hover .banner-img-box img,
@@ -449,8 +469,8 @@
             }
             .bannner-section .modern-banner-card .banner-text-content,
             .modern-banner-card .banner-text-content {
-                flex: 1 1 56% !important;
-                max-width: 58% !important;
+                flex: 1 1 54% !important;
+                max-width: 56% !important;
                 padding-right: 6px !important;
             }
             .bannner-section .modern-banner-card .banner-subtitle,
@@ -465,11 +485,13 @@
             }
             .bannner-section .modern-banner-card .banner-img-box,
             .modern-banner-card .banner-img-box {
-                flex: 0 0 42% !important;
-                width: 42% !important;
-                max-width: 42% !important;
-                height: 62px !important;
-                max-height: 65px !important;
+                flex: 0 0 44% !important;
+                width: 44% !important;
+                max-width: 44% !important;
+                height: 64px !important;
+                max-height: 68px !important;
+                padding: 4px !important;
+                border-radius: 8px !important;
             }
         }
     </style>
