@@ -44,6 +44,11 @@ class SubCategoryRepository
 
     public function delete($category)
     {
+        \App\Models\ChieldCategory::where('subcategory_id', $category->id)->delete();
+        \App\Models\Item::where('subcategory_id', $category->id)->update([
+            'subcategory_id' => null,
+            'childcategory_id' => null
+        ]);
         $category->delete();
     }
 

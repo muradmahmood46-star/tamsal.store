@@ -45,6 +45,9 @@ class ChieldCategoryRepository
 
     public function delete($fcategory)
     {
+        \App\Models\Item::where('childcategory_id', $fcategory->id)->update([
+            'childcategory_id' => null
+        ]);
         $fcategory->delete();
     }
 
