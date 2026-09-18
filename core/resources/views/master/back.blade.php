@@ -32,7 +32,9 @@
     <link rel="stylesheet" href="{{ asset('assets/back/css/custom.css') }}">
 
     <!-- Lottie Web Animation Player -->
+    <!-- Lottie & dotLottie Web Animation Players -->
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script type="module" src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs"></script>
 
     @if (DB::table('languages')->where('type', 'Dashboard')->where('is_default', 1)->first()->rtl == 1)
         <link rel="stylesheet" href="{{ asset('assets/back/css/rtl.css') }}">

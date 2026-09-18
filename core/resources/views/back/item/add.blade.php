@@ -42,9 +42,9 @@
                                 <i class="fab fa-product-hunt"></i>
                             </div>
                         </div>
-                        <div class="d-block mt-3">
-                            <div class="numbers">
-                                <h2 class="card-title"><b>{{__('Add Physical Product')}}</b></h2>
+                        <div class="d-block mt-3 w-100 text-center">
+                            <div class="numbers text-center">
+                                <h2 class="card-title text-center"><b>{{__('Add Physical Product')}}</b></h2>
                             </div>
                         </div>
                     </div>
@@ -60,9 +60,9 @@
                                 <i class="fab fa-digital-ocean"></i>
                             </div>
                         </div>
-                        <div class="d-block mt-3">
-                            <div class="numbers">
-                                <h2 class="card-title"><b>{{__('Add Digital Product')}}</b></h2>
+                        <div class="d-block mt-3 w-100 text-center">
+                            <div class="numbers text-center">
+                                <h2 class="card-title text-center"><b>{{__('Add Digital Product')}}</b></h2>
                             </div>
                         </div>
                     </div>
@@ -78,9 +78,9 @@
                                 <i class="far fa-copyright"></i>
                             </div>
                         </div>
-                        <div class="d-block mt-3">
-                            <div class="numbers">
-                                <h2 class="card-title"><b>{{__('Add Licence Product')}}</b></h2>
+                        <div class="d-block mt-3 w-100 text-center">
+                            <div class="numbers text-center">
+                                <h2 class="card-title text-center"><b>{{__('Add Licence Product')}}</b></h2>
                             </div>
                         </div>
                     </div>
@@ -96,9 +96,9 @@
                                 <i class="fab fa-affiliatetheme"></i>
                             </div>
                         </div>
-                        <div class="d-block mt-3">
-                            <div class="numbers">
-                                <h2 class="card-title"><b>{{__('Add Affiliate Product')}}</b></h2>
+                        <div class="d-block mt-3 w-100 text-center">
+                            <div class="numbers text-center">
+                                <h2 class="card-title text-center"><b>{{__('Add Affiliate Product')}}</b></h2>
                             </div>
                         </div>
                     </div>

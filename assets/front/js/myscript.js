@@ -1238,5 +1238,3 @@ $(window).on('load', function (event) {
 });
 
 setTimeout(dismissPreloader, 700);
-
-

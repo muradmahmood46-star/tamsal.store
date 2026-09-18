@@ -26,6 +26,9 @@
                 z-index: 1;
                 pointer-events: none;
             }
+            .hero-slider .item.hero-slider-no-content::before {
+                display: none;
+            }
             .hero-slider .item-inner {
                 position: relative;
                 z-index: 2;
@@ -196,6 +199,27 @@
             }
 
             /* Responsive Mobile Screen */
+            @media (max-width: 991px) {
+                .sright-image dotlottie-player,
+                .sright-image lottie-player,
+                .sright-image img {
+                    height: 125px !important;
+                    width: 100% !important;
+                    object-fit: cover !important;
+                }
+                .sright-image .inner-content {
+                    left: 10px !important;
+                    right: 10px !important;
+                }
+            .sright-image .inner-content h4 {
+                    font-size: 13px !important;
+                }
+                .sright-image .inner-content p {
+                    font-size: 8.5px !important;
+                    padding: 2px 7px !important;
+                    margin-bottom: 2px !important;
+                }
+            }
             @media (max-width: 575px) {
                 .slider-area-wrapper {
                     padding-top: 10px;
@@ -249,36 +273,50 @@
                                         $sliderPhoto = $slider->photo ?? '';
                                         $sliderExt = strtolower(pathinfo($sliderPhoto, PATHINFO_EXTENSION));
                                         $isLottieSlider = in_array($sliderExt, ['json', 'lottie']);
+                                        $hasSliderContent = !empty($slider->title) || !empty($slider->details);
                                     @endphp
-                                    <div class="item
+                                    <div class="item {{ $hasSliderContent ? '' : 'hero-slider-no-content' }}
                                     @if (DB::table('languages')->where('is_default', 1)->first()->rtl == 1) d-flex justify-content-end @endif
                                     "
-                                        @if (!$isLottieSlider && $loop->first)
+                                        @if (!$isLottieSlider)
                                             style="background: url('{{ url('/core/public/storage/images/' . $slider->photo) }}')"
-                                        @elseif (!$isLottieSlider)
-                                            data-slider-background="{{ url('/core/public/storage/images/' . $slider->photo) }}"
                                         @else
                                             style="background: #f8fafc; position: relative; overflow: hidden;"
                                         @endif
                                     >
                                         @if ($isLottieSlider)
-                                            <lottie-player src="{{ url('/core/public/storage/images/' . $slider->photo) }}" background="transparent" speed="1" loop autoplay style="position: absolute; top:0; left:0; width:100%; height:100%; object-fit:contain; z-index:1;"></lottie-player>
-                                        @endif
-                                        <div class="item-inner" style="position: relative; z-index: 2;">
-                                            <div class="from-bottom">
-                                                @if ($slider->logo)
-                                                    <img class="d-inline-block brand-logo"
-                                                        src="{{ url('/core/public/storage/images/' . $slider->logo) }}" alt="logo">
-                                                @endif
-                                                <div class="title text-body">{{ $slider->title }}</div>
-                                                <div class="subtitle text-body">{{ $slider->details }}</div>
-                                            </div>
-                                            @if ($slider->link != '#')
-                                                <a class="btn btn-primary scale-up delay-1" href="{{ $slider->link }}">
-                                                    <span>{{ __('Buy Now') }}</span>
-                                                </a>
+                                            @if ($sliderExt == 'lottie')
+                                                <dotlottie-player src="{{ url('/core/public/storage/images/' . $slider->photo) }}" background="transparent" speed="1" loop autoplay style="position: absolute; top:0; left:0; width:100%; height:100%; object-fit:contain; z-index:1;"></dotlottie-player>
+                                            @else
+                                                <lottie-player src="{{ url('/core/public/storage/images/' . $slider->photo) }}" background="transparent" speed="1" loop autoplay style="position: absolute; top:0; left:0; width:100%; height:100%; object-fit:contain; z-index:1;"></lottie-player>
                                             @endif
-                                        </div>
+                                        @endif
+                                        @if ($hasSliderContent)
+                                            <div class="item-inner" style="position: relative; z-index: 2;">
+                                                <div class="from-bottom">
+                                                @if ($slider->logo)
+                                                    @php
+                                                        $sliderLogoExt = strtolower(pathinfo($slider->logo, PATHINFO_EXTENSION));
+                                                    @endphp
+                                                    @if ($sliderLogoExt == 'lottie')
+                                                        <dotlottie-player class="d-inline-block brand-logo" src="{{ url('/core/public/storage/images/' . $slider->logo) }}" background="transparent" speed="1" loop autoplay style="width: 65px; height: 65px; display: inline-block;"></dotlottie-player>
+                                                    @elseif ($sliderLogoExt == 'json')
+                                                        <lottie-player class="d-inline-block brand-logo" src="{{ url('/core/public/storage/images/' . $slider->logo) }}" background="transparent" speed="1" loop autoplay style="width: 65px; height: 65px; display: inline-block;"></lottie-player>
+                                                    @else
+                                                        <img class="d-inline-block brand-logo"
+                                                            src="{{ url('/core/public/storage/images/' . $slider->logo) }}" alt="logo">
+                                                    @endif
+                                                @endif
+                                                    <div class="title text-body">{{ $slider->title }}</div>
+                                                    <div class="subtitle text-body">{{ $slider->details }}</div>
+                                                </div>
+                                                @if ($slider->link != '#')
+                                                    <a class="btn btn-primary scale-up delay-1" href="{{ $slider->link }}">
+                                                        <span>{{ __('Buy Now') }}</span>
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        @endif
                                     </div>
                                 @endforeach
                             </div>
@@ -286,51 +324,60 @@
                     </div>
 
                     @if (isset($hero_banner))
-                        <div class="col-lg-4 d-none d-lg-block">
-                            <a href="{{ $hero_banner['url1'] ?? '#' }}" class="sright-image" style="position: relative; overflow: hidden; display: block;">
-                                @php
-                                    $img1 = $hero_banner['img1'] ?? '';
-                                    $ext1 = strtolower(pathinfo($img1, PATHINFO_EXTENSION));
-                                @endphp
-                                @if ($ext1 === 'lottie')
-                                    <dotlottie-player src="{{ url('/core/public/storage/images/' . $img1) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 215px; object-fit: contain;"></dotlottie-player>
-                                @elseif ($ext1 === 'json')
-                                    <lottie-player src="{{ url('/core/public/storage/images/' . $img1) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 215px; object-fit: contain;"></lottie-player>
-                                @else
-                                    <img src="{{ url('/core/public/storage/images/' . $img1) }}" alt="">
-                                @endif
-                                <div class="inner-content">
+                        <div class="col-lg-4 col-12 mt-3 mt-lg-0">
+                            <div class="row g-2 g-lg-3">
+                                <div class="col-6 col-lg-12">
+                                    <a href="{{ $hero_banner['url1'] ?? '#' }}" class="sright-image" style="position: relative; overflow: hidden; display: block;">
+                                        @php
+                                            $img1 = $hero_banner['img1'] ?? '';
+                                            $ext1 = strtolower(pathinfo($img1, PATHINFO_EXTENSION));
+                                        @endphp
+                                        @if ($ext1 == 'lottie')
+                                            <dotlottie-player src="{{ url('/core/public/storage/images/' . $img1) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 215px; object-fit: contain;"></dotlottie-player>
+                                        @elseif ($ext1 == 'json')
+                                            <lottie-player src="{{ url('/core/public/storage/images/' . $img1) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 215px; object-fit: contain;"></lottie-player>
+                                        @else
+                                            <img src="{{ url('/core/public/storage/images/' . $img1) }}" alt="" style="width: 100%; height: 215px; object-fit: cover;">
+                                        @endif
+                                        @if (!empty($hero_banner['title1']) || !empty($hero_banner['subtitle1']))
+                                            <div class="inner-content">
+                                                @if (isset($hero_banner['subtitle1']) && !empty($hero_banner['subtitle1']))
+                                                <p>{{ $hero_banner['subtitle1'] }}</p>
+                                                @endif
 
-                                    @if (isset($hero_banner['subtitle1']) && !empty($hero_banner['subtitle1']))
-                                        <p>{{ $hero_banner['subtitle1'] }}</p>
-                                    @endif
-
-                                    @if (isset($hero_banner['title1']) && !empty($hero_banner['title1']))
-                                        <h4>{{ $hero_banner['title1'] }}</h4>
-                                    @endif
+                                                @if (isset($hero_banner['title1']) && !empty($hero_banner['title1']))
+                                                <h4>{{ $hero_banner['title1'] }}</h4>
+                                                @endif
+                                            </div>
+                                        @endif
+                                    </a>
                                 </div>
-                            </a>
-                            <a href="{{ $hero_banner['url2'] ?? '#' }}" class="sright-image mb-0" style="position: relative; overflow: hidden; display: block;">
-                                @php
-                                    $img2 = $hero_banner['img2'] ?? '';
-                                    $ext2 = strtolower(pathinfo($img2, PATHINFO_EXTENSION));
-                                @endphp
-                                @if ($ext2 === 'lottie')
-                                    <dotlottie-player src="{{ url('/core/public/storage/images/' . $img2) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 215px; object-fit: contain;"></dotlottie-player>
-                                @elseif ($ext2 === 'json')
-                                    <lottie-player src="{{ url('/core/public/storage/images/' . $img2) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 215px; object-fit: contain;"></lottie-player>
-                                @else
-                                    <img src="{{ url('/core/public/storage/images/' . $img2) }}" alt="">
-                                @endif
-                                <div class="inner-content">
-                                    @if (isset($hero_banner['subtitle2']) && !empty($hero_banner['subtitle2']))
-                                        <p>{{ $hero_banner['subtitle2'] }}</p>
-                                    @endif
-                                    @if (isset($hero_banner['title2']) && !empty($hero_banner['title2']))
-                                        <h4>{{ $hero_banner['title2'] }}</h4>
-                                    @endif
+                                <div class="col-6 col-lg-12">
+                                    <a href="{{ $hero_banner['url2'] ?? '#' }}" class="sright-image mb-0" style="position: relative; overflow: hidden; display: block;">
+                                        @php
+                                            $img2 = $hero_banner['img2'] ?? '';
+                                            $ext2 = strtolower(pathinfo($img2, PATHINFO_EXTENSION));
+                                        @endphp
+                                        @if ($ext2 == 'lottie')
+                                            <dotlottie-player src="{{ url('/core/public/storage/images/' . $img2) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 215px; object-fit: contain;"></dotlottie-player>
+                                        @elseif ($ext2 == 'json')
+                                            <lottie-player src="{{ url('/core/public/storage/images/' . $img2) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 215px; object-fit: contain;"></lottie-player>
+                                        @else
+                                            <img src="{{ url('/core/public/storage/images/' . $img2) }}" alt="" style="width: 100%; height: 215px; object-fit: cover;">
+                                        @endif
+                                        @if (!empty($hero_banner['title2']) || !empty($hero_banner['subtitle2']))
+                                            <div class="inner-content">
+                                                @if (isset($hero_banner['subtitle2']) && !empty($hero_banner['subtitle2']))
+                                                <p>{{ $hero_banner['subtitle2'] }}</p>
+                                                @endif
+                                                @if (isset($hero_banner['title2']) && !empty($hero_banner['title2']))
+                                                <h4>{{ $hero_banner['title2'] }}</h4>
+                                                @endif
+                                            </div>
+                                        @endif
+                                    </a>
                                 </div>
-                            </a>
+                            </div>
                         </div>
                     @endif
 
@@ -861,7 +908,9 @@
                                     $b1_img1 = $banner_first['img1'] ?? '';
                                     $b1_ext1 = strtolower(pathinfo($b1_img1, PATHINFO_EXTENSION));
                                 @endphp
-                                @if (in_array($b1_ext1, ['json', 'lottie']))
+                                @if ($b1_ext1 == 'lottie')
+                                    <dotlottie-player src="{{ url('/core/public/storage/images/' . $b1_img1) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 80px; object-fit: contain;"></dotlottie-player>
+                                @elseif ($b1_ext1 == 'json')
                                     <lottie-player src="{{ url('/core/public/storage/images/' . $b1_img1) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 80px; object-fit: contain;"></lottie-player>
                                 @else
                                     <img src="{{ url('/core/public/storage/images/' . $b1_img1) }}" alt="{{ $banner_first['title1'] ?? '' }}">
@@ -884,7 +933,9 @@
                                     $b1_img2 = $banner_first['img2'] ?? '';
                                     $b1_ext2 = strtolower(pathinfo($b1_img2, PATHINFO_EXTENSION));
                                 @endphp
-                                @if (in_array($b1_ext2, ['json', 'lottie']))
+                                @if ($b1_ext2 == 'lottie')
+                                    <dotlottie-player src="{{ url('/core/public/storage/images/' . $b1_img2) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 80px; object-fit: contain;"></dotlottie-player>
+                                @elseif ($b1_ext2 == 'json')
                                     <lottie-player src="{{ url('/core/public/storage/images/' . $b1_img2) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 80px; object-fit: contain;"></lottie-player>
                                 @else
                                     <img src="{{ url('/core/public/storage/images/' . $b1_img2) }}" alt="{{ $banner_first['title2'] ?? '' }}">
@@ -907,7 +958,9 @@
                                     $b1_img3 = $banner_first['img3'] ?? '';
                                     $b1_ext3 = strtolower(pathinfo($b1_img3, PATHINFO_EXTENSION));
                                 @endphp
-                                @if (in_array($b1_ext3, ['json', 'lottie']))
+                                @if ($b1_ext3 == 'lottie')
+                                    <dotlottie-player src="{{ url('/core/public/storage/images/' . $b1_img3) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 80px; object-fit: contain;"></dotlottie-player>
+                                @elseif ($b1_ext3 == 'json')
                                     <lottie-player src="{{ url('/core/public/storage/images/' . $b1_img3) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 80px; object-fit: contain;"></lottie-player>
                                 @else
                                     <img src="{{ url('/core/public/storage/images/' . $b1_img3) }}" alt="{{ $banner_first['title3'] ?? '' }}">
@@ -930,7 +983,9 @@
                                     $b1_img4 = $banner_first['img4'] ?? ($banner_first['img3'] ?? '');
                                     $b1_ext4 = strtolower(pathinfo($b1_img4, PATHINFO_EXTENSION));
                                 @endphp
-                                @if (in_array($b1_ext4, ['json', 'lottie']))
+                                @if ($b1_ext4 == 'lottie')
+                                    <dotlottie-player src="{{ url('/core/public/storage/images/' . $b1_img4) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 80px; object-fit: contain;"></dotlottie-player>
+                                @elseif ($b1_ext4 == 'json')
                                     <lottie-player src="{{ url('/core/public/storage/images/' . $b1_img4) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 80px; object-fit: contain;"></lottie-player>
                                 @else
                                     <img src="{{ url('/core/public/storage/images/' . $b1_img4) }}" alt="{{ $banner_first['title4'] ?? ($banner_first['title3'] ?? '') }}">
@@ -1093,7 +1148,9 @@
                                 $b2_img1 = $banner_secend['img1'] ?? '';
                                 $b2_ext1 = strtolower(pathinfo($b2_img1, PATHINFO_EXTENSION));
                             @endphp
-                            @if (in_array($b2_ext1, ['json', 'lottie']))
+                            @if ($b2_ext1 == 'lottie')
+                                <dotlottie-player src="{{ url('/core/public/storage/images/' . $b2_img1) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 180px; object-fit: contain;"></dotlottie-player>
+                            @elseif ($b2_ext1 == 'json')
                                 <lottie-player src="{{ url('/core/public/storage/images/' . $b2_img1) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 180px; object-fit: contain;"></lottie-player>
                             @else
                                 <img class="lazy" data-src="{{ url('/core/public/storage/images/' . $b2_img1) }}"
@@ -1116,7 +1173,9 @@
                                 $b2_img2 = $banner_secend['img2'] ?? '';
                                 $b2_ext2 = strtolower(pathinfo($b2_img2, PATHINFO_EXTENSION));
                             @endphp
-                            @if (in_array($b2_ext2, ['json', 'lottie']))
+                            @if ($b2_ext2 == 'lottie')
+                                <dotlottie-player src="{{ url('/core/public/storage/images/' . $b2_img2) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 180px; object-fit: contain;"></dotlottie-player>
+                            @elseif ($b2_ext2 == 'json')
                                 <lottie-player src="{{ url('/core/public/storage/images/' . $b2_img2) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 180px; object-fit: contain;"></lottie-player>
                             @else
                                 <img class="lazy" data-src="{{ url('/core/public/storage/images/' . $b2_img2) }}"
@@ -1139,7 +1198,9 @@
                                 $b2_img3 = $banner_secend['img3'] ?? '';
                                 $b2_ext3 = strtolower(pathinfo($b2_img3, PATHINFO_EXTENSION));
                             @endphp
-                            @if (in_array($b2_ext3, ['json', 'lottie']))
+                            @if ($b2_ext3 == 'lottie')
+                                <dotlottie-player src="{{ url('/core/public/storage/images/' . $b2_img3) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 180px; object-fit: contain;"></dotlottie-player>
+                            @elseif ($b2_ext3 == 'json')
                                 <lottie-player src="{{ url('/core/public/storage/images/' . $b2_img3) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 180px; object-fit: contain;"></lottie-player>
                             @else
                                 <img class="lazy" data-src="{{ url('/core/public/storage/images/' . $b2_img3) }}"
@@ -1206,7 +1267,9 @@
                                 $b3_img1 = $banner_third['img1'] ?? '';
                                 $b3_ext1 = strtolower(pathinfo($b3_img1, PATHINFO_EXTENSION));
                             @endphp
-                            @if (in_array($b3_ext1, ['json', 'lottie']))
+                            @if ($b3_ext1 == 'lottie')
+                                <dotlottie-player src="{{ url('/core/public/storage/images/' . $b3_img1) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 220px; object-fit: contain;"></dotlottie-player>
+                            @elseif ($b3_ext1 == 'json')
                                 <lottie-player src="{{ url('/core/public/storage/images/' . $b3_img1) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 220px; object-fit: contain;"></lottie-player>
                             @else
                                 <img class="lazy" data-src="{{ url('/core/public/storage/images/' . $b3_img1) }}"
@@ -1228,7 +1291,9 @@
                                 $b3_img2 = $banner_third['img2'] ?? '';
                                 $b3_ext2 = strtolower(pathinfo($b3_img2, PATHINFO_EXTENSION));
                             @endphp
-                            @if (in_array($b3_ext2, ['json', 'lottie']))
+                            @if ($b3_ext2 == 'lottie')
+                                <dotlottie-player src="{{ url('/core/public/storage/images/' . $b3_img2) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 220px; object-fit: contain;"></dotlottie-player>
+                            @elseif ($b3_ext2 == 'json')
                                 <lottie-player src="{{ url('/core/public/storage/images/' . $b3_img2) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 220px; object-fit: contain;"></lottie-player>
                             @else
                                 <img class="lazy" data-src="{{ url('/core/public/storage/images/' . $b3_img2) }}"
