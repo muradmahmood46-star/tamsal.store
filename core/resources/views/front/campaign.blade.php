@@ -1,7 +1,7 @@
 @extends('master.front')
 
 @section('title')
-    {{ $setting->campaign_title ?: __('Most Selling Products') }}
+    {{ __('Most Selling Products') }}
 @endsection
 
 @section('meta')
@@ -18,7 +18,7 @@
                 <li><a href="{{route('front.index')}}">{{__('Home')}}</a>
                 </li>
                 <li class="separator"></li>
-                <li><a href="{{route('front.campaign')}}">{{ $setting->campaign_title ?: __('Most Selling Products') }}</a>
+                <li><a href="{{route('front.campaign')}}">{{ __('Most Selling Products') }}</a>
                 </li>
               </ul>
           </div>
@@ -32,7 +32,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="section-title">
-                        <h2 class="h3">{{ $setting->campaign_title ?: __('Most Selling Products') }}</h2>
+                        <h2 class="h3">{{ __('Most Selling Products') }}</h2>
                     </div>
                 </div>
             </div>

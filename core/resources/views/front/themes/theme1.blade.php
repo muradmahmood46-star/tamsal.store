@@ -155,7 +155,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="section-title">
-                            <h2 class="h3">{{ $setting->campaign_title ?: __('Most Selling Products') }}</h2>
+                            <h2 class="h3">{{ __('Most Selling Products') }}</h2>
                             <div class="right-area">
                                 <a class="right_link" href="{{ route('front.campaign') }}">{{ __('View All') }} <i
                                         class="icon-chevron-right"></i></a>
@@ -612,11 +612,6 @@
 
                                                             {{ PriceHelper::grandCurrencyPrice($item) }}
                                                         </h4>
-                                                        @if (date('d-m-y') != \Carbon\Carbon::parse($item->date)->format('d-m-y'))
-                                                            <div class="countdown countdown-alt mb-3"
-                                                                data-date-time="{{ $item->date }}">
-                                                            </div>
-                                                        @endif
                                                     </div>
 
                                                 </div>
