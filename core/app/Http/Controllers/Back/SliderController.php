@@ -51,6 +51,28 @@ class SliderController extends Controller
     }
 
     /**
+     * Reusable validation rule for slider images and Lottie files (.json, .lottie)
+     */
+    private function imageOrLottieRule($maxKb = 25600, $required = false)
+    {
+        return [
+            $required ? 'required' : 'nullable',
+            function ($attribute, $value, $fail) use ($maxKb) {
+                if ($value && $value instanceof \Illuminate\Http\UploadedFile) {
+                    $ext = strtolower($value->getClientOriginalExtension());
+                    $allowed = ['jpeg', 'jpg', 'png', 'gif', 'svg', 'webp', 'json', 'lottie', 'txt', 'avif', 'bmp'];
+                    if (!in_array($ext, $allowed)) {
+                        $fail(__(':attribute must be an image or a Lottie animation file (.json, .lottie).', ['attribute' => $attribute]));
+                    }
+                    if ($value->getSize() > $maxKb * 1024) {
+                        $fail(__(':attribute may not be greater than :max KB.', ['attribute' => $attribute, 'max' => $maxKb]));
+                    }
+                }
+            }
+        ];
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -60,8 +82,8 @@ class SliderController extends Controller
     {
        
         $request->validate([
-            'logo' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
-            'photo' => 'required|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
+            'logo' => $this->imageOrLottieRule(25600, false),
+            'photo' => $this->imageOrLottieRule(25600, true),
             'title' => 'required|max:100',
             'link' => 'required|max:255',
             'details' => 'required|max:255',
@@ -93,8 +115,8 @@ class SliderController extends Controller
         $request->validate([
             'title' => 'required|max:100',
             'link' => 'required|max:255',
-            'logo' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
-            'photo' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
+            'logo' => $this->imageOrLottieRule(25600, false),
+            'photo' => $this->imageOrLottieRule(25600, false),
             'details' => 'required|max:255',
         ]);
         $this->repository->update($slider, $request);

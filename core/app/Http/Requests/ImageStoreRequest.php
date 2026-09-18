@@ -24,7 +24,18 @@ class ImageStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'photo'  => 'required|mimes:jpeg,jpg,png,svg,webp,gif,bmp,tiff,tif,avif,ico,jfif,heic,heif,json,lottie,txt'
+            'photo' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    if ($value && $value instanceof \Illuminate\Http\UploadedFile) {
+                        $ext = strtolower($value->getClientOriginalExtension());
+                        $allowed = ['jpeg', 'jpg', 'png', 'svg', 'webp', 'gif', 'bmp', 'tiff', 'tif', 'avif', 'ico', 'jfif', 'heic', 'heif', 'json', 'lottie', 'txt'];
+                        if (!in_array($ext, $allowed)) {
+                            $fail(__('Please upload a valid image or Lottie animation file.'));
+                        }
+                    }
+                }
+            ]
         ];
     }
 
@@ -36,8 +47,7 @@ class ImageStoreRequest extends FormRequest
     public function messages()
     {
         return [
-            'photo.required' => __('Image field is required.'),
-            'photo.mimes'    => __('Please upload a valid image file.')
+            'photo.required' => __('Image field is required.')
         ];
     }
 

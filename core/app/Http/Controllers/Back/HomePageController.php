@@ -38,11 +38,33 @@ class HomePageController extends Controller
         ]);
     }
 
+    /**
+     * Reusable validation rule for banner images and Lottie files (.json, .lottie)
+     */
+    private function imageOrLottieRule($maxKb = 25600)
+    {
+        return [
+            'nullable',
+            function ($attribute, $value, $fail) use ($maxKb) {
+                if ($value && $value instanceof \Illuminate\Http\UploadedFile) {
+                    $ext = strtolower($value->getClientOriginalExtension());
+                    $allowed = ['jpeg', 'jpg', 'png', 'gif', 'svg', 'webp', 'json', 'lottie', 'txt', 'avif', 'bmp'];
+                    if (!in_array($ext, $allowed)) {
+                        $fail(__(':attribute must be an image or a Lottie animation file (.json, .lottie).', ['attribute' => $attribute]));
+                    }
+                    if ($value->getSize() > $maxKb * 1024) {
+                        $fail(__(':attribute may not be greater than :max KB.', ['attribute' => $attribute, 'max' => $maxKb]));
+                    }
+                }
+            }
+        ];
+    }
+
     public function hero_banner_update(Request $request)
     {
         $request->validate([
-            'img1' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
-            'img2' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
+            'img1' => $this->imageOrLottieRule(),
+            'img2' => $this->imageOrLottieRule(),
             'title1' => 'nullable|max:200',
             'title2' => 'nullable|max:200',
             'subtitle1' => 'nullable|max:200',
@@ -79,10 +101,10 @@ class HomePageController extends Controller
     public function first_banner_update(Request $request)
     {
         $request->validate([
-            'img1' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
-            'img2' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
-            'img3' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
-            'img4' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
+            'img1' => $this->imageOrLottieRule(),
+            'img2' => $this->imageOrLottieRule(),
+            'img3' => $this->imageOrLottieRule(),
+            'img4' => $this->imageOrLottieRule(),
             'firsturl1' => 'nullable|max:200',
             'firsturl2' => 'nullable|max:200',
             'firsturl3' => 'nullable|max:200',
@@ -124,9 +146,9 @@ class HomePageController extends Controller
     public function secend_banner_update(Request $request)
     {
         $request->validate([
-            'img1' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
-            'img2' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
-            'img3' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
+            'img1' => $this->imageOrLottieRule(),
+            'img2' => $this->imageOrLottieRule(),
+            'img3' => $this->imageOrLottieRule(),
             'url1' => 'nullable|max:200',
             'url2' => 'nullable|max:200',
             'url3' => 'nullable|max:200',
@@ -167,8 +189,8 @@ class HomePageController extends Controller
     {
 
         $request->validate([
-            'img1' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
-            'img2' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp,json,lottie,txt|max:15360',
+            'img1' => $this->imageOrLottieRule(),
+            'img2' => $this->imageOrLottieRule(),
             'url1' => 'nullable|max:200',
             'url2' => 'nullable|max:200',
         ]);
@@ -200,6 +222,58 @@ class HomePageController extends Controller
         }
 
         return redirect()->back()->withSuccess(__('Banner Update Successfully'));
+
+    }
+
+    public function homepage4update(Request $request)
+    {
+        $request->validate([
+            'img1' => $this->imageOrLottieRule(),
+            'img2' => $this->imageOrLottieRule(),
+            'img3' => $this->imageOrLottieRule(),
+            'img4' => $this->imageOrLottieRule(),
+            'img5' => $this->imageOrLottieRule(),
+            'url1' => 'required|max:200',
+            'url2' => 'required|max:200',
+            'url3' => 'required|max:200',
+            'url4' => 'required|max:200',
+            'url5' => 'required|max:200',
+            'label1' => 'required|max:200',
+            'label2' => 'required|max:200',
+            'label3' => 'required|max:200',
+            'label4' => 'required|max:200',
+            'label5' => 'required|max:200',
+        ]);
+        $all_images_names = ['img1','img2','img3','img4','img5'];
+        $input = $request->all();
+        foreach($all_images_names as $single_image){
+            if($request->hasFile($single_image)){
+                $data = HomeCutomize::first();
+                $check = json_decode($data->home_page4,true);
+                $input[$single_image] = ImageHelper::handleUploadedImage($request->$single_image,'images',$check[$single_image]);
+            }
+        }
+
+        unset($input['_token']);
+
+        $data = HomeCutomize::first();
+        if(!$data->home_page4){
+        $data->home_page4 = json_encode($input,true);
+        $data->update();
+        }else{
+            foreach(json_decode($data->home_page4,true) as $key => $value){
+                if(isset($input[$key])){
+                    $input[$key] =  $input[$key];
+                }else{
+                    $input[$key] = $value;
+                }
+            }
+            $data->home_page4 = json_encode($input,true);
+            $data->update();
+        }
+
+        return redirect()->back()->withSuccess(__('Banner Update Successfully'));
+
 
     }
 
@@ -250,60 +324,6 @@ class HomePageController extends Controller
 
         return redirect()->back()->withSuccess(__('Newly Listed Products Setting Updated Successfully'));
     }
-
-
-    public function homepage4update(Request $request)
-    {
-        $request->validate([
-            'img1' => 'image',
-            'img2' => 'image',
-            'img3' => 'image',
-            'img4' => 'image',
-            'img5' => 'image',
-            'url1' => 'required|max:200',
-            'url2' => 'required|max:200',
-            'url3' => 'required|max:200',
-            'url4' => 'required|max:200',
-            'url5' => 'required|max:200',
-            'label1' => 'required|max:200',
-            'label2' => 'required|max:200',
-            'label3' => 'required|max:200',
-            'label4' => 'required|max:200',
-            'label5' => 'required|max:200',
-        ]);
-        $all_images_names = ['img1','img2','img3','img4','img5'];
-        $input = $request->all();
-        foreach($all_images_names as $single_image){
-            if($request->hasFile($single_image)){
-                $data = HomeCutomize::first();
-                $check = json_decode($data->home_page4,true);
-                $input[$single_image] = ImageHelper::handleUploadedImage($request->$single_image,'images',$check[$single_image]);
-            }
-        }
-
-        unset($input['_token']);
-
-        $data = HomeCutomize::first();
-        if(!$data->home_page4){
-        $data->home_page4 = json_encode($input,true);
-        $data->update();
-        }else{
-            foreach(json_decode($data->home_page4,true) as $key => $value){
-                if(isset($input[$key])){
-                    $input[$key] =  $input[$key];
-                }else{
-                    $input[$key] = $value;
-                }
-            }
-            $data->home_page4 = json_encode($input,true);
-            $data->update();
-        }
-
-        return redirect()->back()->withSuccess(__('Banner Update Successfully'));
-
-
-    }
-
 
     public function homepage4categoryupdate(Request $request)
     {
