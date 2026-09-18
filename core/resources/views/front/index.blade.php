@@ -14,3 +14,5 @@
     @includeIf('front.themes.theme4')
 
 @endif
+
+@includeIf('front.deals.preview', ['deals' => $flash_deals ?? collect()])

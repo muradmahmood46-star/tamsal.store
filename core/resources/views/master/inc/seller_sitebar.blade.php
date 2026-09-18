@@ -7,13 +7,13 @@
         </a>
     </li>
 
-    <li class="nav-item {{ request()->is('seller/item*') || request()->is('seller/bulk*') || request()->is('seller/brand*') ? 'active submenu' : '' }}">
+    <li class="nav-item {{ request()->is('seller/item*') || request()->is('seller/deal*') || request()->is('seller/bulk*') || request()->is('seller/brand*') ? 'active submenu' : '' }}">
         <a data-toggle="collapse" href="#items">
             <i class="fab fa-product-hunt"></i>
             <p>{{ __('Manage Products') }}</p>
             <span class="caret"></span>
         </a>
-        <div class="collapse {{ request()->is('seller/item*') || request()->is('seller/bulk*') || request()->is('seller/brand*') ? 'show' : '' }}" id="items">
+        <div class="collapse {{ request()->is('seller/item*') || request()->is('seller/deal*') || request()->is('seller/bulk*') || request()->is('seller/brand*') ? 'show' : '' }}" id="items">
             <ul class="nav nav-collapse">
                 <li class="{{ request()->is('seller/brand*') ? 'active' : '' }}">
                     <a class="sub-link" href="{{ route('seller.brand.index') }}">
@@ -28,6 +28,11 @@
                 <li class="{{ request()->is('seller/item') && !request()->input('is_type') ? 'active' : '' }}">
                     <a class="sub-link" href="{{ route('seller.item.index') }}">
                         <span class="sub-item">{{ __('All Products') }}</span>
+                    </a>
+                </li>
+                <li class="{{ request()->is('seller/deal*') ? 'active' : '' }}">
+                    <a class="sub-link" href="{{ route('seller.deal.index') }}">
+                        <span class="sub-item">{{ __('Manage Deals') }}</span>
                     </a>
                 </li>
                 <li class="{{ request()->is('seller/stock/out/product') ? 'active' : '' }}">

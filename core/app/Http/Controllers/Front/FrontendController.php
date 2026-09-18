@@ -31,6 +31,7 @@ use App\Models\Post;
 use App\Models\Service;
 use App\Models\Slider;
 use App\Models\TrackOrder;
+use App\Models\Deal;
 use Illuminate\Support\Facades\Config;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Artisan;
@@ -285,6 +286,7 @@ class FrontendController extends Controller
 
             // two column category
             'two_column_categoriess' => $two_column_categoriess,
+            'flash_deals' => Helper::getActiveDeals(8),
 
         ]);
     }

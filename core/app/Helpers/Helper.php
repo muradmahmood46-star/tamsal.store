@@ -368,6 +368,26 @@ class Helper
         return $result->values();
     }
 
+    /**
+     * Get active, unexpired deals sorted by popularity (orders_count DESC, created_at DESC).
+     *
+     * @param int|null $limit (e.g. 8 for homepage Flash Deals section)
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public static function getActiveDeals($limit = null)
+    {
+        $query = \App\Models\Deal::with(['items.category', 'dealItems.item', 'vendor'])
+            ->active()
+            ->orderBy('orders_count', 'desc')
+            ->orderBy('created_at', 'desc');
+
+        if ($limit && $limit > 0) {
+            return $query->take($limit)->get();
+        }
+
+        return $query->get();
+    }
+
 }
 
 

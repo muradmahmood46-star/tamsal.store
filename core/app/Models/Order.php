@@ -88,4 +88,20 @@ class Order extends Model
     	return $this->hasMany('App\Models\Notification','order_id');
     }
 
+    /** Keep Flash Deal popularity current regardless of the payment gateway used. */
+    protected static function booted()
+    {
+        static::created(function ($order) {
+            $cart = json_decode($order->cart, true);
+            if (!is_array($cart)) {
+                return;
+            }
+
+            $dealIds = collect($cart)->pluck('deal_id')->filter()->unique();
+            if ($dealIds->isNotEmpty()) {
+                Deal::whereIn('id', $dealIds)->increment('orders_count');
+            }
+        });
+    }
+
 }

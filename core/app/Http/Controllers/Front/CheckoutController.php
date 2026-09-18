@@ -404,6 +404,12 @@ class CheckoutController extends Controller
         $input = $request->all();
 
         $cart = Session::get('cart');
+        foreach ((array) $cart as $cartItem) {
+            if (!empty($cartItem['deal_id']) && !\App\Models\Deal::active()->whereKey($cartItem['deal_id'])->exists()) {
+                Session::flash('error', __('A Flash Deal in your cart has expired. Please remove it and try again.'));
+                return redirect()->route('front.cart');
+            }
+        }
         if (PriceHelper::isCartHasVendorProducts($cart) && ($input['payment_method'] ?? '') !== 'Cash On Delivery') {
             Session::flash('error', __('Vendor products can only be ordered with Cash on Delivery.'));
             return redirect()->back();

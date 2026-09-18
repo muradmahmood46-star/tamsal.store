@@ -10,6 +10,7 @@ use App\{
 };
 use App\Models\AttributeOption;
 use App\Models\Attribute;
+use App\Models\Deal;
 use Illuminate\Support\Facades\Session;
 
 class CartRepository
@@ -48,7 +49,7 @@ class CartRepository
         $qty = is_numeric($qty) ? $qty : 1;
 
 
-        if ($input['options_ids']) {
+        if (!empty($input['options_ids'])) {
             foreach (explode(',', $input['options_ids']) as $optionId) {
                 $option = AttributeOption::findOrFail($optionId);
                 if ($qty > $option->stock) {
@@ -61,6 +62,15 @@ class CartRepository
         $cart = Session::get('cart');
 
         $item = Item::where('id', $input['item_id'])->select('id', 'name', 'photo', 'discount_price', 'previous_price', 'slug', 'item_type', 'license_name', 'license_key', 'stock', 'item_variants', 'estimated_profit')->first();
+
+        $dealItem = null;
+        if (!empty($input['deal_id'])) {
+            $deal = Deal::active()->find($input['deal_id']);
+            $dealItem = $deal ? $deal->dealItems()->where('item_id', $input['item_id'])->first() : null;
+            if (!$dealItem) {
+                return ['message' => __('This deal is no longer available.'), 'status' => 'dealExpired'];
+            }
+        }
 
         if ($item && $item->item_type == 'normal') {
             if ($item->stock < $qty) {
@@ -122,7 +132,7 @@ class CartRepository
         } else {
 
 
-            if ($input['attribute_ids']) {
+            if (!empty($input['attribute_ids'])) {
                 foreach (explode(',', $input['attribute_ids']) as $attrId) {
                     $attr = Attribute::findOrFail($attrId);
                     $attr_name[] = $attr->name;
@@ -130,7 +140,7 @@ class CartRepository
                 $input['attr_name'] = $attr_name;
             }
 
-            if ($input['options_ids']) {
+            if (!empty($input['options_ids'])) {
                 foreach (explode(',', $input['options_ids']) as $optionId) {
                     $option = AttributeOption::findOrFail($optionId);
                     $option_name[] = $option->name;
@@ -158,6 +168,10 @@ class CartRepository
             $cart_item_key = explode('-', $request->item_key)[1];
         } else {
             $cart_item_key = str_replace(' ', '', implode(',', $attribute['option_name']));
+        }
+        if ($dealItem) {
+            // Keep a deal-priced line distinct from the same product added at its normal price.
+            $cart_item_key .= '-deal' . $dealItem->deal_id;
         }
 
         $attribute['option_price'] = $input['option_price'];
@@ -205,13 +219,14 @@ class CartRepository
                 "slug" => $item->slug,
                 "qty" => $qty,
                 "price" => PriceHelper::grandPrice($item),
-                "main_price" => $item->discount_price,
+                "main_price" => $dealItem ? $dealItem->discounted_price : $item->discount_price,
                 "estimated_profit" => (float)($item->estimated_profit ?? 0),
                 "photo" => $item->photo,
                 "type" => $item->item_type,
                 "item_type" => $item->item_type,
                 'item_l_n' => $item->item_type == 'license' ? end($license_name) : null,
-                'item_l_k' => $item->item_type == 'license' ? end($license_key) : null
+                'item_l_k' => $item->item_type == 'license' ? end($license_key) : null,
+                'deal_id' => $dealItem ? $dealItem->deal_id : null
             ];
 
             Session::put('cart', $cart);

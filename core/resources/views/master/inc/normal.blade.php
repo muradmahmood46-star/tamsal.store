@@ -160,6 +160,11 @@
                     </a>
                 </li>
                 <li>
+                    <a class="sub-link" href="{{ route('back.deal.index') }}">
+                        <span class="sub-item">{{ __('Manage Deals') }}</span>
+                    </a>
+                </li>
+                <li>
                     <a class="sub-link" href="{{ route('back.bulk.product.index') }}">
                         <span class="sub-item">{{ __('CSV Import & Export') }}</span>
                     </a>

@@ -133,6 +133,10 @@ Route::group(['middleware' => ['adminlocalize', 'demo']], function () {
             Route::post('item/galleries/update', 'Back\ItemController@galleriesUpdate')->name('back.item.galleries.update');
             Route::delete('item/gallery/{gallery}/delete', 'Back\ItemController@galleryDelete')->name('back.item.gallery.delete');
 
+            //------------ BUNDLED FLASH DEALS ------------
+            Route::resource('deal', 'Back\DealController', ['as' => 'back', 'except' => 'show']);
+            Route::get('deal/status/{id}/{status}', 'Back\DealController@status')->name('back.deal.status');
+
             // Bulk product upload
             Route::get('/product/csv/export', 'Back\CsvProductController@export')->name('back.csv.export');
             Route::get('bulk/product/index', 'Back\CsvProductController@index')->name('back.bulk.product.index');
@@ -513,6 +517,10 @@ Route::group(['middleware' => 'maintainance'], function () {
             Route::post('item/galleries/update', 'Seller\ItemController@galleriesUpdate')->name('seller.item.galleries.update');
             Route::delete('item/gallery/{gallery}/delete', 'Seller\ItemController@galleryDelete')->name('seller.item.gallery.delete');
 
+            //------------ BUNDLED FLASH DEALS ------------
+            Route::resource('deal', 'Seller\SellerDealController', ['as' => 'seller', 'except' => 'show']);
+            Route::get('deal/status/{id}/{status}', 'Seller\SellerDealController@status')->name('seller.deal.status');
+
             // Bulk CSV
             Route::get('bulk/product/index', 'Seller\CsvProductController@index')->name('seller.bulk.product.index');
             Route::get('product/csv/export', 'Seller\CsvProductController@export')->name('seller.csv.export');
@@ -599,6 +607,8 @@ Route::group(['middleware' => 'maintainance'], function () {
 
         //------------ CART ------------
         Route::get('/cart', 'Front\CartController@index')->name('front.cart');
+        Route::get('/flash-deals', 'Front\DealController@index')->name('front.deal.index');
+        Route::get('/flash-deals/{slug}', 'Front\DealController@show')->name('front.deal.details');
         Route::get('/front/cart/clear', 'Front\CartController@cartClear')->name('front.cart.clear');
         Route::get('/header/cart/load', 'Front\CartController@headerCartLoad')->name('front.header.cart');
         Route::get('/main/cart/load', 'Front\CartController@CartLoad')->name('cart.get.load');
@@ -679,5 +689,4 @@ Route::get('/run/queue', function () {
     Artisan::call('queue:work --stop-when-empty');
     return "Queue is running";
 });
-
 
