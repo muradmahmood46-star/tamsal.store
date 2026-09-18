@@ -25,10 +25,16 @@ class ChieldCategoryController extends Controller
 
     /**
      * Display listing of child categories in Seller Panel.
+     * Shows childcategories under Admin categories + vendor's own categories.
      */
     public function index()
     {
-        $datas = ChieldCategory::with(['category', 'subcategory'])->orderBy('id', 'desc')->get();
+        $vendorId = Auth::id();
+        $datas = ChieldCategory::whereHas('category', function ($query) use ($vendorId) {
+            $query->whereNull('vendor_id')
+                  ->orWhere('vendor_id', 0)
+                  ->orWhere('vendor_id', $vendorId);
+        })->with(['category', 'subcategory'])->orderBy('id', 'desc')->get();
         return view('seller.chieldcategory.index', compact('datas'));
     }
 

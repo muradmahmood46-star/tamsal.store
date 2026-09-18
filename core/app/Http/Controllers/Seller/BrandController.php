@@ -24,10 +24,16 @@ class BrandController extends Controller
 
     /**
      * Display a listing of vendor's brands.
+     * Shows Admin brands + vendor's own brands.
      */
     public function index()
     {
-        $datas = Brand::where('vendor_id', Auth::id())->orderBy('id', 'desc')->get();
+        $vendorId = Auth::id();
+        $datas = Brand::where(function ($query) use ($vendorId) {
+            $query->whereNull('vendor_id')
+                  ->orWhere('vendor_id', 0)
+                  ->orWhere('vendor_id', $vendorId);
+        })->orderBy('id', 'desc')->get();
         return view('seller.brand.index', compact('datas'));
     }
 

@@ -25,10 +25,18 @@ class CategoryController extends Controller
 
     /**
      * Display listing of categories in Seller Panel.
+     * Shows Admin categories + vendor's own categories.
+     * Excludes categories created by other vendors.
      */
     public function index()
     {
-        $datas = Category::where('vendor_id', Auth::id())->orderBy('id', 'desc')->get();
+        $vendorId = Auth::id();
+        $datas = Category::where(function ($query) use ($vendorId) {
+            $query->whereNull('vendor_id')
+                  ->orWhere('vendor_id', 0)
+                  ->orWhere('vendor_id', $vendorId);
+        })->orderBy('id', 'desc')->get();
+
         return view('seller.category.index', compact('datas'));
     }
 
@@ -52,6 +60,19 @@ class CategoryController extends Controller
         $input = $request->all();
         $input['vendor_id'] = Auth::id();
         $input['photo'] = ImageHelper::handleUploadedImage($request->file('photo'), 'images');
+
+        $slug = $request->slug ? Str::slug($request->slug) : Str::slug($request->name);
+        if (empty($slug)) {
+            $slug = 'category-' . time();
+        }
+        $originalSlug = $slug;
+        $counter = 1;
+        while (Category::where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $counter;
+            $counter++;
+        }
+        $input['slug'] = $slug;
+
         Category::create($input);
         return redirect()->route('seller.category.index')->withSuccess(__('New Category Added Successfully.'));
     }
@@ -63,12 +84,15 @@ class CategoryController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:categories,slug',
+            'slug' => 'nullable|string|max:255',
             'photo' => 'nullable|file|mimes:jpeg,jpg,png,svg,webp,gif,bmp,tiff,tif,avif,ico,jfif,heic,heif|max:10240'
         ]);
 
         $name = $request->name;
         $slug = $request->slug ? Str::slug($request->slug) : Str::slug($name);
+        if (empty($slug)) {
+            $slug = 'category-' . time();
+        }
         
         // Ensure unique slug
         $originalSlug = $slug;
@@ -108,7 +132,11 @@ class CategoryController extends Controller
      */
     public function status($id, $status)
     {
-        Category::find($id)->update(['status' => $status]);
+        $category = Category::where('id', $id)->where('vendor_id', Auth::id())->first();
+        if (!$category) {
+            return redirect()->route('seller.category.index')->withError(__('You can only modify status for your own categories.'));
+        }
+        $category->update(['status' => $status]);
         return redirect()->route('seller.category.index')->withSuccess(__('Status Updated Successfully.'));
     }
 
@@ -117,6 +145,9 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
+        if ($category->vendor_id != Auth::id()) {
+            return redirect()->route('seller.category.index')->withError(__('You can only edit your own categories.'));
+        }
         return view('seller.category.edit', compact('category'));
     }
 
@@ -125,6 +156,9 @@ class CategoryController extends Controller
      */
     public function update(CategoryRequest $request, Category $category)
     {
+        if ($category->vendor_id != Auth::id()) {
+            return redirect()->route('seller.category.index')->withError(__('You can only edit your own categories.'));
+        }
         $request->validate([
             'serial' => 'nullable|numeric|max:150'
         ]);
@@ -138,6 +172,9 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
+        if ($category->vendor_id != Auth::id()) {
+            return redirect()->route('seller.category.index')->withError(__('You can only delete your own categories.'));
+        }
         $mgs = $this->repository->delete($category);
         if ($mgs['status'] == 1) {
             return redirect()->route('seller.category.index')->withSuccess($mgs['message']);

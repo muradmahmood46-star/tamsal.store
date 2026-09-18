@@ -24,10 +24,16 @@ class SubCategoryController extends Controller
 
     /**
      * Display listing of subcategories in Seller Panel.
+     * Shows subcategories under Admin categories + vendor's own categories.
      */
     public function index()
     {
-        $datas = Subcategory::with('category')->orderBy('id', 'desc')->get();
+        $vendorId = Auth::id();
+        $datas = Subcategory::whereHas('category', function ($query) use ($vendorId) {
+            $query->whereNull('vendor_id')
+                  ->orWhere('vendor_id', 0)
+                  ->orWhere('vendor_id', $vendorId);
+        })->with('category')->orderBy('id', 'desc')->get();
         return view('seller.subcategory.index', compact('datas'));
     }
 

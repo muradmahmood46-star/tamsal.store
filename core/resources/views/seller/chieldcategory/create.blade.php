@@ -32,7 +32,7 @@
 									<label for="category_id">{{ __('Select Parent Category') }} *</label>
 									<select name="category_id" id="category_id" data-href="{{ route('seller.get.subcategory') }}" class="form-control" required>
 										<option value="" selected disabled>{{ __('Select One') }}</option>
-										@foreach(DB::table('categories')->whereStatus(1)->get() as $cat)
+										@foreach(DB::table('categories')->where('status', 1)->where(function($q) { $q->whereNull('vendor_id')->orWhere('vendor_id', 0)->orWhere('vendor_id', Auth::id()); })->orderBy('name', 'asc')->get() as $cat)
 											<option value="{{ $cat->id }}">{{ $cat->name }}</option>
 										@endforeach
 									</select>

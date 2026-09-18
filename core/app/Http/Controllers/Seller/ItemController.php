@@ -76,10 +76,15 @@ class ItemController extends Controller
 
     public function create()
     {
+        $vendorId = Auth::id();
         return view('seller.item.create', [
             'curr' => Currency::where('is_default', 1)->first(),
-            'categories' => Category::where('status', 1)->get(),
-            'brands' => Brand::where('vendor_id', Auth::id())->where('status', 1)->get(),
+            'categories' => Category::where('status', 1)->where(function($q) use ($vendorId) {
+                $q->whereNull('vendor_id')->orWhere('vendor_id', 0)->orWhere('vendor_id', $vendorId);
+            })->orderBy('name', 'asc')->get(),
+            'brands' => Brand::where('status', 1)->where(function($q) use ($vendorId) {
+                $q->whereNull('vendor_id')->orWhere('vendor_id', 0)->orWhere('vendor_id', $vendorId);
+            })->orderBy('name', 'asc')->get(),
             'taxes' => Tax::where('status', 1)->get(),
         ]);
     }
@@ -115,13 +120,18 @@ class ItemController extends Controller
 
     public function edit($id)
     {
-        $item = Item::where('id', $id)->where('vendor_id', Auth::id())->firstOrFail();
+        $vendorId = Auth::id();
+        $item = Item::where('id', $id)->where('vendor_id', $vendorId)->firstOrFail();
 
         return view('seller.item.edit', [
             'item' => $item,
             'curr' => Currency::where('is_default', 1)->first(),
-            'categories' => Category::where('status', 1)->get(),
-            'brands' => Brand::where('vendor_id', Auth::id())->where('status', 1)->get(),
+            'categories' => Category::where('status', 1)->where(function($q) use ($vendorId) {
+                $q->whereNull('vendor_id')->orWhere('vendor_id', 0)->orWhere('vendor_id', $vendorId);
+            })->orderBy('name', 'asc')->get(),
+            'brands' => Brand::where('status', 1)->where(function($q) use ($vendorId) {
+                $q->whereNull('vendor_id')->orWhere('vendor_id', 0)->orWhere('vendor_id', $vendorId);
+            })->orderBy('name', 'asc')->get(),
             'taxes' => Tax::where('status', 1)->get(),
             'social_icons' => json_decode($item->social_icons, true),
             'social_links' => json_decode($item->social_links, true),
