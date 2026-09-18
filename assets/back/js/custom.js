@@ -772,39 +772,65 @@
     })
 
 
-    $(document).on('change', '#gallery_file', function () {
+    let galleryDataTransfer = new DataTransfer();
 
+    $(document).on('change', '#gallery_file', function () {
+        if (!this.files || this.files.length === 0) return;
 
         for (let i = 0; i < this.files.length; ++i) {
+            let file = this.files[i];
+            galleryDataTransfer.items.add(file);
+
+            let fIndex = galleryDataTransfer.files.length - 1;
             let filereader = new FileReader();
 
-            filereader.onload = function () {
-
-                let xxx = `
-                    <div class="single-g-item d-inline-block m-2">
-                            <span 
-                             class="remove-gallery-img">
-                                <i class="fas fa-trash reader_file_remove"></i>
+            filereader.onload = (function(idx) {
+                return function(e) {
+                    let xxx = `
+                        <div class="single-g-item d-inline-block m-2 new-gallery-item-preview" data-gallery-index="${idx}">
+                            <span class="remove-gallery-img">
+                                <i class="fas fa-trash reader_file_remove" data-index="${idx}"></i>
                             </span>
-                            <a class="popup-link" href="${this.result}">
-                                <img class="admin-gallery-img" src="${this.result}"
-                                    alt="No Image Found">
+                            <a class="popup-link" href="${e.target.result}">
+                                <img class="admin-gallery-img" src="${e.target.result}" alt="Preview">
                             </a>
-                    </div>
-                
-            `;
-                $(".gallery_image_view").append(xxx);
-            };
-            filereader.readAsDataURL(this.files[i]);
+                        </div>
+                    `;
+                    $(".gallery_image_view").append(xxx);
+                };
+            })(fIndex);
+
+            filereader.readAsDataURL(file);
         }
 
-
-    })
-
+        // Sync file input with all accumulated files
+        this.files = galleryDataTransfer.files;
+    });
 
     $(document).on('click', '.reader_file_remove', function () {
-        $(this).parent().parent().remove();
-    })
+        let indexToRemove = parseInt($(this).data('index'), 10);
+        let currentFiles = Array.from(galleryDataTransfer.files);
+        
+        if (!isNaN(indexToRemove) && indexToRemove >= 0 && indexToRemove < currentFiles.length) {
+            currentFiles.splice(indexToRemove, 1);
+        }
+
+        galleryDataTransfer = new DataTransfer();
+        currentFiles.forEach(f => galleryDataTransfer.items.add(f));
+
+        let inputEl = document.getElementById('gallery_file');
+        if (inputEl) {
+            inputEl.files = galleryDataTransfer.files;
+        }
+
+        $(this).closest('.new-gallery-item-preview').remove();
+
+        // Re-index remaining preview cards
+        $('.new-gallery-item-preview').each(function(newIdx) {
+            $(this).attr('data-gallery-index', newIdx);
+            $(this).find('.reader_file_remove').attr('data-index', newIdx);
+        });
+    });
 
 
 

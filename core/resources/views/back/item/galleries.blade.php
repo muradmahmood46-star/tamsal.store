@@ -193,36 +193,75 @@
 
 @section('scripts')
 <script>
+let galleryPageDt = new DataTransfer();
+
 function previewGallerySelection(input) {
     const box = document.getElementById('selection_preview_box');
     const container = document.getElementById('selection_thumbs_container');
     const countBadge = document.getElementById('selected_count_badge');
 
+    if (input.files && input.files.length > 0) {
+        Array.from(input.files).forEach(file => {
+            galleryPageDt.items.add(file);
+        });
+
+        // Sync input files with accumulated set
+        input.files = galleryPageDt.files;
+    }
+
+    renderGalleryPagePreviews();
+}
+
+function renderGalleryPagePreviews() {
+    const box = document.getElementById('selection_preview_box');
+    const container = document.getElementById('selection_thumbs_container');
+    const countBadge = document.getElementById('selected_count_badge');
+    const input = document.getElementById('galleries_input');
+
     container.innerHTML = '';
 
-    if (input.files && input.files.length > 0) {
+    if (galleryPageDt.files.length > 0) {
         box.classList.remove('d-none');
-        countBadge.innerText = input.files.length;
+        countBadge.innerText = galleryPageDt.files.length;
 
-        Array.from(input.files).forEach(file => {
+        Array.from(galleryPageDt.files).forEach((file, idx) => {
             const reader = new FileReader();
             reader.onload = function(e) {
                 const thumb = document.createElement('div');
-                thumb.className = 'border rounded p-1 bg-white shadow-sm';
-                thumb.style.width = '70px';
-                thumb.style.height = '70px';
+                thumb.className = 'border rounded p-1 bg-white shadow-sm position-relative';
+                thumb.style.width = '75px';
+                thumb.style.height = '75px';
                 thumb.style.display = 'flex';
                 thumb.style.alignItems = 'center';
                 thumb.style.justifyContent = 'center';
                 thumb.style.overflow = 'hidden';
-                thumb.innerHTML = `<img src="${e.target.result}" style="max-width: 100%; max-height: 100%; object-fit: contain;">`;
+                thumb.innerHTML = `
+                    <img src="${e.target.result}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    <span onclick="removePendingGalleryFile(${idx})" class="badge badge-danger position-absolute" style="top: 2px; right: 2px; cursor: pointer; padding: 2px 4px; font-size: 10px;" title="Remove">&times;</span>
+                `;
                 container.appendChild(thumb);
             };
             reader.readAsDataURL(file);
         });
     } else {
         box.classList.add('d-none');
+        if (input) input.value = '';
     }
+}
+
+function removePendingGalleryFile(idxToRemove) {
+    const currentFiles = Array.from(galleryPageDt.files);
+    currentFiles.splice(idxToRemove, 1);
+
+    galleryPageDt = new DataTransfer();
+    currentFiles.forEach(f => galleryPageDt.items.add(f));
+
+    const input = document.getElementById('galleries_input');
+    if (input) {
+        input.files = galleryPageDt.files;
+    }
+
+    renderGalleryPagePreviews();
 }
 </script>
 @endsection
