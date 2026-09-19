@@ -180,15 +180,6 @@ class Item extends Model
         return ($setting && $setting->brand_name) ? $setting->brand_name : 'Official Store';
     }
 
-    public function getStoreLogoAttribute()
-    {
-        if ($this->vendor_id && $this->vendor_id > 0) {
-            return null;
-        }
-        $setting = \App\Models\Setting::find(1);
-        return ($setting && $setting->brand_logo) ? $setting->brand_logo : null;
-    }
-
     public function isPending()
     {
         return $this->approval_status === 'Pending';
