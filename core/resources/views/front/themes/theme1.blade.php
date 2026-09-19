@@ -756,12 +756,12 @@
                 <div class="row g-3">
 
                     <div class="col-lg-12 d-none d-md-block">
-                        <div class="popular-category-slider owl-carousel">
-                            @foreach ($campaign_items as $compaign_item)
+                        <div class="row g-3 gx-2 gx-md-3">
+                            @foreach ($campaign_items->take(8) as $compaign_item)
                                 @php
                                     $item = isset($compaign_item->item) ? $compaign_item->item : $compaign_item;
                                 @endphp
-                                <div class="slider-item">
+                                <div class="col-6 col-md-4 col-lg-3 mb-3">
                                     <div class="product-card">
                                         <div class="product-thumb">
                                             @if (!$item->is_stock())
@@ -830,7 +830,7 @@
 
                     <div class="col-12 d-md-none">
                         <div class="row gx-2 gy-2 mobile-product-grid">
-                            @foreach ($campaign_items->take(4) as $compaign_item)
+                            @foreach ($campaign_items->take(6) as $compaign_item)
                                 @php
                                     $item = isset($compaign_item->item) ? $compaign_item->item : $compaign_item;
                                 @endphp
@@ -1033,9 +1033,9 @@
 
                 <div class="row" id="popular_category_view">
                     <div class="col-lg-12 d-none d-md-block">
-                        <div class="popular-category-slider  owl-carousel">
-                            @foreach ($popular_category_items as $popular_category_item)
-                                <div class="slider-item">
+                        <div class="row g-3 gx-2 gx-md-3">
+                            @foreach ($popular_category_items->take(8) as $popular_category_item)
+                                <div class="col-6 col-md-4 col-lg-3 mb-3">
                                     <div class="product-card">
                                         <div class="product-thumb">
 
@@ -1093,7 +1093,7 @@
 
                     <div class="col-12 d-md-none">
                         <div class="row gx-2 gy-2 mobile-product-grid">
-                            @foreach ($popular_category_items->take(4) as $popular_category_item)
+                            @foreach ($popular_category_items->take(6) as $popular_category_item)
                                 <div class="col-6 mb-2">
                                     <div class="product-card">
                                         <div class="product-thumb">
@@ -1256,15 +1256,15 @@
                         </div>
                     </div>
                 </div>
-                <!-- Desktop View -->
+                <!-- Desktop View: 8 Bundles, 4 in 1 line -->
                 <div class="row d-none d-md-flex">
-                    @foreach($bundleDeals as $deal)
+                    @foreach($bundleDeals->take(8) as $deal)
                         @include('front.deals.card', ['deal' => $deal, 'column' => 'col-lg-3 col-md-4 col-sm-6 mb-4'])
                     @endforeach
                 </div>
-                <!-- Mobile View: 4 Bundles, 2 in 1 row -->
+                <!-- Mobile View: 6 Bundles, 2 in each row -->
                 <div class="row gx-2 gy-2 d-flex d-md-none mobile-bundle-grid">
-                    @foreach($bundleDeals->take(4) as $deal)
+                    @foreach($bundleDeals->take(6) as $deal)
                         @include('front.deals.card', ['deal' => $deal, 'column' => 'col-6 mb-2 px-1'])
                     @endforeach
                 </div>

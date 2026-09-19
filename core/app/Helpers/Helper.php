@@ -167,23 +167,23 @@ class Helper
             return $b->id <=> $a->id;
         })->values();
 
-        // 5. If limit is 4 (Homepage requirement):
-        // 30% Admin (~1 item) and 70% Vendor (~3 items), max 4 total
-        if ($limit === 4) {
+        // 5. If limit is specified (e.g. 8 for homepage, 4, etc.):
+        // 30% Admin and 70% Vendor, max $limit total
+        if ($limit && $limit > 0 && $limit <= 20) {
             $adminCount = $adminItems->count();
             $vendorCount = $vendorItems->count();
 
-            $targetAdmin = 1;
-            $targetVendor = 3;
+            $targetAdmin = $adminCount > 0 ? max(1, (int) round($limit * 0.30)) : 0;
+            $targetVendor = $limit - $targetAdmin;
 
             // Balance if one pool has fewer items than targets
             if ($vendorCount < $targetVendor) {
                 $targetVendor = $vendorCount;
-                $targetAdmin = min($adminCount, 4 - $targetVendor);
+                $targetAdmin = min($adminCount, $limit - $targetVendor);
             }
             if ($adminCount < $targetAdmin) {
                 $targetAdmin = $adminCount;
-                $targetVendor = min($vendorCount, 4 - $targetAdmin);
+                $targetVendor = min($vendorCount, $limit - $targetAdmin);
             }
 
             $adminSlice = $adminItems->take($targetAdmin);

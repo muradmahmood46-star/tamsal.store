@@ -225,7 +225,7 @@ class FrontendController extends Controller
             'hero_banner'   => $home_customize->hero_banner != '[]' ? json_decode($home_customize->hero_banner, true) : null,
             'banner_first'   => json_decode($home_customize->banner_first, true),
             'sliders'  => $sliders,
-            'campaign_items' => Helper::getMostSellingProducts(4),
+            'campaign_items' => Helper::getMostSellingProducts(8),
             'services' => Service::orderby('id', 'desc')->get(),
             'posts'    => Post::with('category')->orderby('id', 'desc')->take(8)->get(),
             'brands'   => Brand::whereStatus(1)->get(),
@@ -241,7 +241,7 @@ class FrontendController extends Controller
             'feature_category_title' => $feature_category_title,
 
             // top rated products
-            'popular_category_items' => Helper::getTopRatedProducts(4),
+            'popular_category_items' => Helper::getTopRatedProducts(8),
             'popular_categories' => $popular_categories,
             'popular_category_title' => __('Top Rated Products'),
 
