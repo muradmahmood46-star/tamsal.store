@@ -1036,13 +1036,13 @@
             }
             .mob-stack td {
                 display: flex !important;
-                align-items: center !important;
+                align-items: flex-start !important;
                 padding: 6px 12px !important;
                 border: none !important;
                 border-bottom: 1px solid #f1f5f9 !important;
                 font-size: 13px !important;
                 min-height: unset !important;
-                gap: 6px !important;
+                gap: 8px !important;
             }
             .mob-stack td:last-child { border-bottom: none !important; }
             .mob-stack td::before {
@@ -1054,23 +1054,23 @@
                 letter-spacing: .4px !important;
                 white-space: nowrap !important;
                 flex-shrink: 0 !important;
+                padding-top: 2px !important;
             }
-            /* Name cell value — truncate on same line */
+            /* Name cell value — truncate, fill remaining space */
             .mob-stack td strong {
                 white-space: nowrap !important;
                 overflow: hidden !important;
                 text-overflow: ellipsis !important;
-                max-width: calc(100% - 60px) !important;
+                flex: 1 1 0% !important;
+                min-width: 0 !important;
                 font-size: 13px !important;
-                display: inline-block !important;
+                display: block !important;
             }
             /* Hide category & extra info under name on mobile */
             .mob-stack td .small.text-muted,
             .mob-stack td .badge.badge-light { display: none !important; }
-            /* Rejection alert — hide inside td, keep it minimal */
-            .mob-stack td .alert {
-                display: none !important;
-            }
+            /* Rejection alert — hide on mobile */
+            .mob-stack td .alert { display: none !important; }
             .mob-stack tfoot tr { border-radius: 0 !important; box-shadow: none !important; background: #f8fafc !important; }
             .mob-stack tfoot td::before { content: none !important; }
         }

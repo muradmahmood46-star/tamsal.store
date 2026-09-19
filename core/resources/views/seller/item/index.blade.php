@@ -61,8 +61,7 @@
                         <tr>
                             <th>{{ __('Name') }}</th>
                             <th>{{ __('Price') }}</th>
-                            <th>{{ __('Stock') }}</th>
-                            <th>{{ __('Status') }}</th>
+                            <th>{{ __('Stock / Status') }}</th>
                             <th>{{ __('Type') }}</th>
                             <th>{{ __('Actions') }}</th>
                         </tr>
@@ -93,29 +92,29 @@
                                         <del class="small text-muted d-block">{{ PriceHelper::setCurrencyPrice($data->previous_price) }}</del>
                                     @endif
                                 </td>
-                                <td data-label="{{ __('Stock') }}">
-                                    @if($data->item_type == 'normal')
-                                        @if($data->stock > 0)
-                                            <span class="badge badge-success">{{ $data->stock }}</span>
-                                        @else
-                                            <span class="badge badge-danger">{{ __('Out of Stock') }}</span>
-                                        @endif
-                                    @else
-                                        <span class="badge badge-info">{{ __('Unlimited') }}</span>
-                                    @endif
-                                </td>
                                 <td data-label="{{ __('Status') }}">
-                                    @if($data->approval_status == 'Pending')
-                                        <span class="badge badge-warning text-dark"><i class="fas fa-clock mr-1"></i> {{ __('Pending') }}</span>
-                                    @elseif($data->approval_status == 'Rejected')
-                                        <span class="badge badge-danger"><i class="fas fa-times-circle mr-1"></i> {{ __('Rejected') }}</span>
-                                    @elseif($data->approval_status == 'Approved')
-                                        @if($data->status == 1)
-                                            <a href="{{ route('seller.item.status', [$data->id, 0]) }}" class="badge badge-success">{{ __('Live') }}</a>
+                                    <div>
+                                        @if($data->item_type == 'normal')
+                                            @if($data->stock > 0)
+                                                <span class="badge badge-success d-block mb-1">{{ $data->stock }}</span>
+                                            @else
+                                                <span class="badge badge-danger d-block mb-1">{{ __('Out') }}</span>
+                                            @endif
                                         @else
-                                            <a href="{{ route('seller.item.status', [$data->id, 1]) }}" class="badge badge-secondary">{{ __('Paused') }}</a>
+                                            <span class="badge badge-info d-block mb-1">∞</span>
                                         @endif
-                                    @endif
+                                        @if($data->approval_status == 'Pending')
+                                            <span class="badge badge-warning text-dark"><i class="fas fa-clock"></i> {{ __('Pending') }}</span>
+                                        @elseif($data->approval_status == 'Rejected')
+                                            <span class="badge badge-danger"><i class="fas fa-times-circle"></i> {{ __('Rejected') }}</span>
+                                        @elseif($data->approval_status == 'Approved')
+                                            @if($data->status == 1)
+                                                <a href="{{ route('seller.item.status', [$data->id, 0]) }}" class="badge badge-success">{{ __('Live') }}</a>
+                                            @else
+                                                <a href="{{ route('seller.item.status', [$data->id, 1]) }}" class="badge badge-secondary">{{ __('Paused') }}</a>
+                                            @endif
+                                        @endif
+                                    </div>
                                 </td>
                                 <td data-label="{{ __('Type') }}">
                                     <span class="badge badge-primary text-uppercase">{{ $data->item_type }}</span>
@@ -131,7 +130,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-4 text-muted">
+                                <td colspan="5" class="text-center py-4 text-muted">
                                     <i class="fab fa-product-hunt fa-3x mb-2 d-block"></i>
                                     {{ __('No products found. Click "Add Product" to create your first listing!') }}
                                 </td>
