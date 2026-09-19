@@ -5672,7 +5672,7 @@ video {
   margin-bottom: 10px;
   font-size: 15px;
   font-weight: 600;
-  text-align: center;
+  text-align: left;
   color: #377dff;
 }
 .product-card .product-price > del {

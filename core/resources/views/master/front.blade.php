@@ -254,10 +254,24 @@
             clear: both !important;
         }
 
-        .product-card .product-price {
+        .product-card .product-price,
+        .product-card-body .product-price,
+        .product-card-inner .product-price {
             margin-top: auto !important;
             margin-bottom: 0 !important;
             padding-top: 4px !important;
+            text-align: left !important;
+            display: flex !important;
+            align-items: baseline !important;
+            justify-content: flex-start !important;
+            flex-wrap: wrap !important;
+            gap: 4px !important;
+        }
+
+        .product-card .product-price del,
+        .product-card-body .product-price del {
+            order: 1 !important;
+            margin-right: 4px !important;
         }
 
         /* Owl Carousel Equal Heights for Product Cards */
@@ -478,15 +492,26 @@
             .product-card .rating-stars i {
                 font-size: 9px !important;
             }
-            .product-card .product-price {
+            .product-card .product-price,
+            .product-card-body .product-price,
+            .product-card-inner .product-price {
                 font-size: 13px !important;
                 margin-top: auto !important;
                 margin-bottom: 0 !important;
                 padding-top: 2px !important;
                 font-weight: 700 !important;
+                text-align: left !important;
+                display: flex !important;
+                align-items: baseline !important;
+                justify-content: flex-start !important;
+                flex-wrap: wrap !important;
+                gap: 4px !important;
             }
-            .product-card .product-price del {
+            .product-card .product-price del,
+            .product-card-body .product-price del {
                 font-size: 10px !important;
+                order: 1 !important;
+                margin-right: 4px !important;
             }
             .product-card .product-button-group {
                 bottom: 4px !important;
