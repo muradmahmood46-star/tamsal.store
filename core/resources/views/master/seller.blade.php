@@ -1035,7 +1035,9 @@
                 box-shadow: 0 1px 4px rgba(0,0,0,0.05) !important;
             }
             .mob-stack td {
-                display: block !important;
+                display: flex !important;
+                align-items: flex-start !important;
+                gap: 6px !important;
                 padding: 5px 12px !important;
                 border: none !important;
                 border-bottom: 1px solid #f1f5f9 !important;
@@ -1049,12 +1051,19 @@
                 font-size: 10px !important;
                 text-transform: uppercase !important;
                 letter-spacing: .4px !important;
+                white-space: nowrap !important;
+                flex-shrink: 0 !important;
+                padding-top: 2px !important;
+            }
+            .mob-stack td > * {
+                flex: 1 1 auto !important;
+                min-width: 0 !important;
             }
             .mob-stack td strong {
                 font-size: 13px !important;
                 white-space: normal !important;
-                overflow: visible !important;
                 word-break: break-word !important;
+                display: inline !important;
             }
             .mob-stack td .small.text-muted,
             .mob-stack td .badge.badge-light,
