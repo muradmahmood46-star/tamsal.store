@@ -225,9 +225,13 @@
 
                   <div class="price-range-slider" data-start-min="{{request()->input('minPrice') ? request()->input('minPrice') : '0'}}" data-start-max="{{request()->input('maxPrice') ? request()->input('maxPrice') : $setting->max_price}}" data-min="0" data-max="{{$setting->max_price}}" data-step="5">
                     <div class="ui-range-slider"></div>
-                    <div class="d-flex justify-content-between align-items-center text-muted small mt-2 px-1" style="font-size: 11.5px;">
-                      <div>{{ __('Min') }}: <strong>{{PriceHelper::setCurrencySign()}}<span class="min_price">{{ request()->input('minPrice') ? request()->input('minPrice') : '0' }}</span></strong></div>
-                      <div>{{ __('Max') }}: <strong>{{PriceHelper::setCurrencySign()}}<span class="max_price">{{ request()->input('maxPrice') ? request()->input('maxPrice') : $setting->max_price }}</span></strong></div>
+                    <div class="ui-range-values d-flex justify-content-between align-items-center text-muted small mt-2 px-1" style="font-size: 11.5px;">
+                      <div class="ui-range-value-min">{{ __('Min') }}: <strong>{{PriceHelper::setCurrencySign()}}<span class="min_price">{{ request()->input('minPrice') ? request()->input('minPrice') : '0' }}</span></strong>
+                        <input type="hidden">
+                      </div>
+                      <div class="ui-range-value-max">{{ __('Max') }}: <strong>{{PriceHelper::setCurrencySign()}}<span class="max_price">{{ request()->input('maxPrice') ? request()->input('maxPrice') : $setting->max_price }}</span></strong>
+                        <input type="hidden">
+                      </div>
                     </div>
                   </div>
 

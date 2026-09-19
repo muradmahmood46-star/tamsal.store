@@ -1478,7 +1478,7 @@ body_theme4 @endif
     <script type="text/javascript" src="{{ asset('assets/front/js/plugins.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/back/js/plugin/bootstrap-notify/bootstrap-notify.min.js') }}">
     </script>
-    <script type="text/javascript" src="{{ asset('assets/front/js/scripts.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/front/js/scripts.min.js') }}?v={{ time() }}"></script>
     <script type="text/javascript" src="{{ asset('assets/front/js/lazy.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/front/js/lazy.plugin.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/front/js/myscript.js') }}?v={{ time() }}"></script>
