@@ -8,15 +8,19 @@ class AddPhotoToDealsTable extends Migration
 {
     public function up()
     {
-        Schema::table('deals', function (Blueprint $table) {
-            $table->string('photo')->nullable()->after('slug');
-        });
+        if (!Schema::hasColumn('deals', 'photo')) {
+            Schema::table('deals', function (Blueprint $table) {
+                $table->string('photo')->nullable()->after('slug');
+            });
+        }
     }
 
     public function down()
     {
-        Schema::table('deals', function (Blueprint $table) {
-            $table->dropColumn('photo');
-        });
+        if (Schema::hasColumn('deals', 'photo')) {
+            Schema::table('deals', function (Blueprint $table) {
+                $table->dropColumn('photo');
+            });
+        }
     }
 }
