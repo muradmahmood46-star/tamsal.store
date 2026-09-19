@@ -672,29 +672,27 @@
             <div class="card-body pb-0">
                 <div class="card-body">
                     @if ($recentOrders->count() > 0)
-                      <div class="gd-responsive-table">
-                          <table class="table table-bordered table-striped" id="recent-orders" width="100%" cellspacing="0">
+                      <div class="table-responsive">
+                          <table class="table table-bordered table-striped mb-0" id="recent-orders" width="100%" cellspacing="0">
                           <thead>
-                              <th>{{ __('Customer') }}</th>
-                              <th>{{ __('Order ID') }}</th>
-                              <th>{{ __('Payment Method') }}</th>
-                              <th>{{ __('Total') }}</th>
+                              <tr>
+                                  <th style="white-space:nowrap;">{{ __('Customer') }}</th>
+                                  <th style="white-space:nowrap;">{{ __('Order ID') }}</th>
+                                  <th class="d-none d-md-table-cell" style="white-space:nowrap;">{{ __('Payment Method') }}</th>
+                                  <th style="white-space:nowrap;">{{ __('Total') }}</th>
+                              </tr>
                           </thead>
                           <tbody>
                               @foreach($recentOrders as $data)
                               <tr>
-                                  <td>
+                                  <td style="white-space:nowrap;">
                                       <a href="{{route('back.user.show',$data->user_id)}}">{{ $data->user->displayName()}}</a>
                                   </td>
-                                  <td>
+                                  <td style="white-space:nowrap;">
                                       <a href="{{route('back.order.invoice',$data->id)}}">{{ $data->transaction_number}}</a>
                                   </td>
-                                  <td>
-                                      {{ $data->payment_method}}
-                                  </td>
-                                  <td>
-                                      {{$data->currency_sign}}{{PriceHelper::OrderTotal($data)}}
-                                  </td>
+                                  <td class="d-none d-md-table-cell">{{ $data->payment_method}}</td>
+                                  <td style="white-space:nowrap;">{{$data->currency_sign}}{{PriceHelper::OrderTotal($data)}}</td>
                               </tr>
                               @endforeach
                           </tbody>
