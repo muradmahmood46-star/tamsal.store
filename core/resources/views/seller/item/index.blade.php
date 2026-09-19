@@ -71,19 +71,19 @@
                         @forelse($datas as $data)
                             <tr>
                                 <td data-label="{{ __('Name') }}">
-                                    <strong>{{ $data->name }}</strong>
+                                    <strong title="{{ $data->name }}">{{ $data->name }}</strong>
                                     <div class="small text-muted">{{ $data->category ? $data->category->name : '' }}</div>
                                     @if($data->approval_status == 'Rejected' && $data->reject_reason)
-                                        <div class="alert alert-danger py-2 px-3 mt-2 mb-0 small" style="border-left: 4px solid #dc3545;">
-                                            <strong><i class="fas fa-exclamation-triangle mr-1"></i> {{ __('Admin Rejection Note:') }}</strong>
-                                            <p class="mb-1 text-dark">{{ $data->reject_reason }}</p>
-                                            <a href="{{ route('seller.item.edit', $data->id) }}" class="btn btn-danger btn-xs py-1 px-2 font-weight-bold text-white">
+                                        <div class="alert alert-danger py-1 px-2 mt-2 mb-0 small" style="border-left: 3px solid #dc3545;">
+                                            <strong><i class="fas fa-exclamation-triangle mr-1"></i> {{ __('Rejected:') }}</strong>
+                                            <span class="text-dark">{{ Str::limit($data->reject_reason, 80) }}</span>
+                                            <a href="{{ route('seller.item.edit', $data->id) }}" class="btn btn-danger btn-xs d-block mt-1 text-white">
                                                 <i class="fas fa-edit mr-1"></i> {{ __('Edit & Resubmit') }}
                                             </a>
                                         </div>
                                     @elseif($data->approval_status == 'Pending')
                                         <div class="badge badge-light border text-warning mt-1 small">
-                                            <i class="fas fa-hourglass-half mr-1"></i> {{ __('Awaiting admin verification') }}
+                                            <i class="fas fa-hourglass-half mr-1"></i> {{ __('Awaiting verification') }}
                                         </div>
                                     @endif
                                 </td>
