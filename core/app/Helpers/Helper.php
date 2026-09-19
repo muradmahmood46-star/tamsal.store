@@ -375,15 +375,14 @@ class Helper
     }
 
     /**
-     * Get newly listed products with 25% Admin and 75% Vendor distribution.
+     * Get newly listed products ordered strictly by latest listed first (id desc).
      *
      * @param int|null $limit (e.g. 8 for homepage, 100 for view all)
-     * @return \Illuminate\Support\Collection
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection
      */
     public static function getNewlyListedProducts($limit = null)
     {
-        // 1. Fetch active, approved items that are not blocked/hidden
-        $allItems = Item::with(['category', 'tax'])
+        $query = Item::with(['category', 'tax'])
             ->where('status', 1)
             ->where(function ($query) {
                 $query->where('approval_status', 'Approved')
@@ -393,99 +392,14 @@ class Helper
                 $query->whereNull('is_hidden_by_block')
                     ->orWhere('is_hidden_by_block', 0);
             })
-            ->orderBy('id', 'desc')
-            ->get();
-
-        // 2. Separate Admin items (vendor_id == 0 or null) and Vendor items (vendor_id > 0)
-        $adminItems = $allItems->filter(function ($item) {
-            return empty($item->vendor_id) || $item->vendor_id == 0;
-        })->values();
-
-        $vendorItems = $allItems->filter(function ($item) {
-            return !empty($item->vendor_id) && $item->vendor_id > 0;
-        })->values();
-
-        // 3. If a specific small limit is requested (e.g. Homepage 4, 8, 12, 16, etc.):
-        if ($limit && $limit <= 24) {
-            $adminCount = $adminItems->count();
-            $vendorCount = $vendorItems->count();
-
-            $targetAdmin = (int) round($limit * 0.25);
-            if ($adminCount > 0 && $targetAdmin == 0 && $limit >= 4) {
-                $targetAdmin = 1;
-            }
-            $targetVendor = $limit - $targetAdmin;
-
-            // Balance if one pool has fewer items
-            if ($vendorCount < $targetVendor) {
-                $targetVendor = $vendorCount;
-                $targetAdmin = min($adminCount, $limit - $targetVendor);
-            }
-            if ($adminCount < $targetAdmin) {
-                $targetAdmin = $adminCount;
-                $targetVendor = min($vendorCount, $limit - $targetAdmin);
-            }
-
-            $adminSlice = $adminItems->take($targetAdmin);
-            $vendorSlice = $vendorItems->take($targetVendor);
-
-            // Interleave: 3 vendor items then 1 admin item
-            $merged = collect();
-            $aIdx = 0;
-            $vIdx = 0;
-            while ($merged->count() < $limit && ($aIdx < $adminSlice->count() || $vIdx < $vendorSlice->count())) {
-                for ($k = 0; $k < 3 && $vIdx < $vendorSlice->count() && $merged->count() < $limit; $k++) {
-                    $merged->push($vendorSlice[$vIdx++]);
-                }
-                if ($aIdx < $adminSlice->count() && $merged->count() < $limit) {
-                    $merged->push($adminSlice[$aIdx++]);
-                }
-            }
-
-            // Fallback fill if needed
-            if ($merged->count() < $limit) {
-                $existingIds = $merged->pluck('id')->toArray();
-                $remaining = $allItems->whereNotIn('id', $existingIds)->take($limit - $merged->count());
-                $merged = $merged->concat($remaining);
-            }
-
-            return $merged->take($limit)->values();
-        }
-
-        // 4. For View All (e.g. 100 products or full list):
-        $maxLimit = $limit ? (int)$limit : 100;
-        $result = collect();
-        $adminQueue = $adminItems;
-        $vendorQueue = $vendorItems;
-
-        while (($adminQueue->isNotEmpty() || $vendorQueue->isNotEmpty()) && $result->count() < $maxLimit) {
-            $chunk = collect();
-
-            $vTake = min(3, $vendorQueue->count());
-            if ($vTake > 0) {
-                $chunk = $chunk->concat($vendorQueue->splice(0, $vTake));
-            }
-
-            $aTake = min(1, $adminQueue->count());
-            if ($aTake > 0) {
-                $chunk = $chunk->concat($adminQueue->splice(0, $aTake));
-            }
-
-            if ($vendorQueue->isEmpty() && $adminQueue->isNotEmpty()) {
-                $chunk = $chunk->concat($adminQueue->splice(0, min(4, $adminQueue->count())));
-            }
-            if ($adminQueue->isEmpty() && $vendorQueue->isNotEmpty()) {
-                $chunk = $chunk->concat($vendorQueue->splice(0, min(4, $vendorQueue->count())));
-            }
-
-            $result = $result->concat($chunk);
-        }
+            ->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc');
 
         if ($limit && $limit > 0) {
-            return $result->take($limit)->values();
+            return $query->take($limit)->get();
         }
 
-        return $result->take(100)->values();
+        return $query->get();
     }
 
     /**
