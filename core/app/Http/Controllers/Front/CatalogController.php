@@ -236,12 +236,12 @@ class CatalogController extends Controller
                 $vendorStore = (object)[
                     'is_admin' => true,
                     'vendor_id' => 0,
-                    'name' => 'ORIVO',
-                    'logo_url' => $setting->logo ? asset('core/public/storage/images/' . $setting->logo) : null,
+                    'name' => ($setting->brand_name ?? 'Official Store'),
+                    'logo_url' => ($setting->brand_logo ? url('/core/public/storage/images/' . $setting->brand_logo) : null),
                     'banner_url' => null,
                     'type' => __('Official Store'),
                     'address' => $setting->footer_address ?? null,
-                    'details' => $setting->about ?? __('Official Store on ORIVO. Genuine products with platform guarantee.'),
+                    'details' => __('Official Store on :name. Genuine products with platform guarantee.', ['name' => ($setting->brand_name ?? 'Official Store')]),
                     'products_count' => Item::where('status', 1)->where(function($q) {
                         $q->whereNull('vendor_id')->orWhere('vendor_id', 0);
                     })->count(),

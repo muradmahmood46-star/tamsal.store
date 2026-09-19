@@ -8,48 +8,60 @@
 @endsection
 
 @section('content')
+    @if($vendorStore)
     <section class="store-hero-area">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
                     <div class="shop-banner-content">
-                        <img class="shop-banner-logo" src="https://shofy.botble.com/storage/main/stores/8.png" alt="Old El Paso">
+                        @if($vendorStore->logo_url)
+                            <img class="shop-banner-logo" src="{{ $vendorStore->logo_url }}" alt="{{ $vendorStore->name }}">
+                        @else
+                            <div class="shop-banner-logo d-flex align-items-center justify-content-center rounded-circle bg-primary text-white" style="width:80px;height:80px;font-size:32px;">
+                                <i class="fas fa-store"></i>
+                            </div>
+                        @endif
                         <div class="shop-banner-info">
-                            <h2 class="shop-banner-name">Old El Paso</h2>
+                            <h2 class="shop-banner-name">
+                                {{ $vendorStore->name }}
+                                <span class="badge badge-success ml-2" style="font-size:12px;font-weight:600;">
+                                    <i class="fas fa-check-circle mr-1"></i>{{ $vendorStore->type }}
+                                </span>
+                            </h2>
                             <div class="shop-banner-contact">
+                                @if($vendorStore->address)
                                 <div class="shop-banner-address d-flex gap-1">
                                     <svg class="icon svg-icon-ti-ti-map-pin" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                         <path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"></path>
-                                        <path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z">
-                                        </path>
-                                    </svg> 562 Jakob Manors, East Selenaton, Michigan, TR
+                                        <path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z"></path>
+                                    </svg>
+                                    {{ $vendorStore->address }}
                                 </div>
-                                <div class="shop-banner-phone d-flex gap-1"><svg class="icon svg-icon-ti-ti-phone" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                @endif
+                                @if(!$vendorStore->is_admin && isset($vendorStore->phone) && $vendorStore->phone)
+                                <div class="shop-banner-phone d-flex gap-1">
+                                    <svg class="icon svg-icon-ti-ti-phone" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                        <path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2">
-                                        </path>
-                                    </svg><a href="tel:+19594255150">+19594255150</a>
+                                        <path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2"></path>
+                                    </svg>
+                                    <a href="tel:{{ $vendorStore->phone }}">{{ $vendorStore->phone }}</a>
                                 </div>
-                                <div class="shop-banner-address d-flex gap-1"><svg class="icon svg-icon-ti-ti-mail" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                        <path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z">
-                                        </path>
-                                        <path d="M3 7l9 6l9 -6"></path>
-                                    </svg><a href="mailto:anderson.berta@example.net">anderson.berta@example.net</a>
-                                </div>
+                                @endif
                             </div>
-                            <div class="shop-banner-description ck-content"> Odio nihil quam illo fuga veritatis deserunt
-                                praesentium. Expedita omnis blanditiis tempora earum maxime saepe cumque. Quisquam sint ipsa
-                                aliquid vel. Quia commodi corrupti ab necessitatibus adipisci nam. Sint assumenda modi eos
-                                aliquam. Aut asperiores rem temporibus sunt consectetur iusto cumque. Libero commodi optio
-                                eos laudantium velit quasi id perspiciatis. </div>
+                            <div class="shop-banner-description">
+                                <i class="fas fa-box-open text-primary mr-1"></i> {{ $vendorStore->products_count }} {{ __('Products in this Store') }}
+                                @if($vendorStore->details)
+                                    <br><span class="text-muted">{{ $vendorStore->details }}</span>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+    @endif
     
   <!-- Page Content-->
   <div class="container  mt-30">
