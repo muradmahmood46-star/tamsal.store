@@ -1,10 +1,5 @@
-<style>
-    .seller-deal-table td, .seller-deal-table th { vertical-align: middle; white-space: nowrap; font-size: 13px; }
-    .seller-deal-name { max-width: 160px; white-space: normal; word-break: break-word; }
-</style>
-
 <div class="table-responsive">
-    <table class="table table-bordered table-striped table-sm seller-deal-table">
+    <table class="table table-bordered table-striped table-sm mob-stack">
         <thead class="thead-light">
             <tr>
                 <th>{{ __('Bundle Name') }}</th>
@@ -19,12 +14,12 @@
         <tbody>
             @forelse($rows as $deal)
                 <tr>
-                    <td class="seller-deal-name"><strong>{{ $deal->name }}</strong></td>
-                    <td><span class="badge badge-secondary">{{ $deal->dealItems->count() }}</span></td>
-                    <td><del class="text-muted">{{ PriceHelper::setCurrencyPrice($deal->original_price) }}</del></td>
-                    <td><strong class="text-success">{{ PriceHelper::setCurrencyPrice($deal->discounted_price) }}</strong></td>
-                    <td><span class="badge badge-warning text-dark">{{ $deal->discount_badge }}</span></td>
-                    <td>
+                    <td data-label="{{ __('Bundle') }}"><strong>{{ $deal->name }}</strong></td>
+                    <td data-label="{{ __('Items') }}"><span class="badge badge-secondary">{{ $deal->dealItems->count() }}</span></td>
+                    <td data-label="{{ __('Original') }}"><del class="text-muted">{{ PriceHelper::setCurrencyPrice($deal->original_price) }}</del></td>
+                    <td data-label="{{ __('Price') }}"><strong class="text-success">{{ PriceHelper::setCurrencyPrice($deal->discounted_price) }}</strong></td>
+                    <td data-label="{{ __('Discount') }}"><span class="badge badge-warning text-dark">{{ $deal->discount_badge }}</span></td>
+                    <td data-label="{{ __('Time Left') }}">
                         @if($deal->end_date && !$deal->isExpired())
                             <small class="text-danger font-weight-bold">{{ $deal->end_date->diffForHumans(['parts' => 2]) }}</small>
                         @elseif($deal->end_date)
@@ -33,8 +28,8 @@
                             -
                         @endif
                     </td>
-                    <td>
-                        <div class="d-flex" style="gap:4px">
+                    <td data-label="{{ __('Actions') }}">
+                        <div class="d-flex" style="gap:4px;flex-wrap:wrap;">
                             <button class="btn btn-info btn-sm" onclick="sellerViewDeal({{ $deal->id }})" title="{{ __('View') }}"><i class="fas fa-eye"></i></button>
                             <a class="btn btn-secondary btn-sm" href="{{ route('seller.deal.edit', $deal->id) }}" title="{{ __('Edit') }}"><i class="fas fa-edit"></i></a>
                             <form class="d-inline" method="post" action="{{ route('seller.deal.destroy', $deal->id) }}" onsubmit="return confirm('{{ __('Delete this bundle?') }}')">

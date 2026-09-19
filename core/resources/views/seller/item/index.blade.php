@@ -55,8 +55,8 @@
 
             <hr>
 
-            <div class="gd-responsive-table mt-3">
-                <table class="table table-bordered table-striped table-hover" width="100%" cellspacing="0">
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered table-striped table-hover mob-stack" width="100%" cellspacing="0">
                     <thead class="thead-light">
                         <tr>
                             <th>{{ __('Image') }}</th>
@@ -71,11 +71,11 @@
                     <tbody>
                         @forelse($datas as $data)
                             <tr>
-                                <td>
+                                <td data-label="{{ __('Image') }}">
                                     <img src="{{ $data->photo ? asset('core/public/storage/images/' . $data->photo) : asset('core/public/storage/images/placeholder.png') }}"
-                                        alt="" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                                        alt="" style="width: 48px; height: 48px; object-fit: cover; border-radius: 4px;">
                                 </td>
-                                <td>
+                                <td data-label="{{ __('Name') }}">
                                     <strong>{{ $data->name }}</strong>
                                     <div class="small text-muted">{{ $data->category ? $data->category->name : '' }}</div>
                                     @if($data->approval_status == 'Rejected' && $data->reject_reason)
@@ -83,7 +83,7 @@
                                             <strong><i class="fas fa-exclamation-triangle mr-1"></i> {{ __('Admin Rejection Note:') }}</strong>
                                             <p class="mb-1 text-dark">{{ $data->reject_reason }}</p>
                                             <a href="{{ route('seller.item.edit', $data->id) }}" class="btn btn-danger btn-xs py-1 px-2 font-weight-bold text-white">
-                                                <i class="fas fa-edit mr-1"></i> {{ __('Edit & Resubmit for Approval') }}
+                                                <i class="fas fa-edit mr-1"></i> {{ __('Edit & Resubmit') }}
                                             </a>
                                         </div>
                                     @elseif($data->approval_status == 'Pending')
@@ -92,13 +92,13 @@
                                         </div>
                                     @endif
                                 </td>
-                                <td>
+                                <td data-label="{{ __('Price') }}">
                                     <strong>{{ PriceHelper::setCurrencyPrice($data->discount_price) }}</strong>
                                     @if($data->previous_price > 0)
                                         <del class="small text-muted d-block">{{ PriceHelper::setCurrencyPrice($data->previous_price) }}</del>
                                     @endif
                                 </td>
-                                <td>
+                                <td data-label="{{ __('Stock') }}">
                                     @if($data->item_type == 'normal')
                                         @if($data->stock > 0)
                                             <span class="badge badge-success">{{ $data->stock }}</span>
@@ -109,42 +109,28 @@
                                         <span class="badge badge-info">{{ __('Unlimited') }}</span>
                                     @endif
                                 </td>
-                                <td>
+                                <td data-label="{{ __('Status') }}">
                                     @if($data->approval_status == 'Pending')
-                                        <span class="badge badge-warning text-dark font-weight-bold py-1 px-2">
-                                            <i class="fas fa-clock mr-1"></i> {{ __('Pending Review') }}
-                                        </span>
-                                        <small class="text-muted d-block mt-1 font-italic">{{ __('Hidden') }}</small>
+                                        <span class="badge badge-warning text-dark"><i class="fas fa-clock mr-1"></i> {{ __('Pending') }}</span>
                                     @elseif($data->approval_status == 'Rejected')
-                                        <span class="badge badge-danger font-weight-bold py-1 px-2">
-                                            <i class="fas fa-times-circle mr-1"></i> {{ __('Rejected') }}
-                                        </span>
-                                        <small class="text-danger d-block mt-1 font-weight-bold">{{ __('Action Needed') }}</small>
+                                        <span class="badge badge-danger"><i class="fas fa-times-circle mr-1"></i> {{ __('Rejected') }}</span>
                                     @elseif($data->approval_status == 'Approved')
                                         @if($data->status == 1)
-                                            <a href="{{ route('seller.item.status', [$data->id, 0]) }}" class="badge badge-success" title="{{ __('Click to disable') }}"><i class="fas fa-check mr-1"></i> {{ __('Live (Active)') }}</a>
+                                            <a href="{{ route('seller.item.status', [$data->id, 0]) }}" class="badge badge-success">{{ __('Live') }}</a>
                                         @else
-                                            <a href="{{ route('seller.item.status', [$data->id, 1]) }}" class="badge badge-secondary" title="{{ __('Click to activate') }}"><i class="fas fa-pause mr-1"></i> {{ __('Paused') }}</a>
+                                            <a href="{{ route('seller.item.status', [$data->id, 1]) }}" class="badge badge-secondary">{{ __('Paused') }}</a>
                                         @endif
                                     @endif
                                 </td>
-                                <td>
+                                <td data-label="{{ __('Type') }}">
                                     <span class="badge badge-primary text-uppercase">{{ $data->item_type }}</span>
                                 </td>
-                                <td>
+                                <td data-label="{{ __('Actions') }}">
                                     <div class="btn-group">
-                                        <a href="{{ route('seller.item.edit', $data->id) }}" class="btn btn-info btn-sm" title="{{ __('Edit Product') }}">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="{{ route('seller.item.gallery', $data->id) }}" class="btn btn-warning btn-sm" title="{{ __('Galleries') }}">
-                                            <i class="fas fa-images"></i>
-                                        </a>
-                                        <a href="{{ route('front.product', $data->slug) }}" target="_blank" class="btn btn-secondary btn-sm" title="{{ __('View on Store') }}">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <button type="button" class="btn btn-danger btn-sm" title="{{ __('Delete') }}" onclick="confirmDelete('{{ route('seller.item.destroy', $data->id) }}')">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                                        <a href="{{ route('seller.item.edit', $data->id) }}" class="btn btn-info btn-sm" title="{{ __('Edit') }}"><i class="fas fa-edit"></i></a>
+                                        <a href="{{ route('seller.item.gallery', $data->id) }}" class="btn btn-warning btn-sm" title="{{ __('Galleries') }}"><i class="fas fa-images"></i></a>
+                                        <a href="{{ route('front.product', $data->slug) }}" target="_blank" class="btn btn-secondary btn-sm" title="{{ __('View') }}"><i class="fas fa-eye"></i></a>
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ route('seller.item.destroy', $data->id) }}')"><i class="fas fa-trash"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -152,7 +138,7 @@
                             <tr>
                                 <td colspan="7" class="text-center py-4 text-muted">
                                     <i class="fab fa-product-hunt fa-3x mb-2 d-block"></i>
-                                    {{ __('No products found in your store. Click "Add Product" above to create your first listing!') }}
+                                    {{ __('No products found. Click "Add Product" to create your first listing!') }}
                                 </td>
                             </tr>
                         @endforelse

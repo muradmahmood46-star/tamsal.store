@@ -561,7 +561,7 @@
             .table-responsive table,
             .dataTables_wrapper table {
                 width: 100% !important;
-                min-width: 480px !important;
+                min-width: unset !important;
                 max-width: none !important;
                 margin-bottom: 0 !important;
                 border-collapse: separate !important;
@@ -1021,6 +1021,47 @@
             min-width: 0 !important;
         }
     </style>
+
+        /* =========================================================
+           GLOBAL MOBILE STACKED TABLE — works on ALL seller tables
+           ========================================================= */
+        @media (max-width: 767px) {
+            .mob-stack thead { display: none !important; }
+            .mob-stack tr {
+                display: block !important;
+                border: 1px solid #e2e8f0 !important;
+                border-radius: 8px !important;
+                margin: 6px 0 !important;
+                background: #fff !important;
+                box-shadow: 0 1px 4px rgba(0,0,0,0.05) !important;
+            }
+            .mob-stack td {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                padding: 6px 12px !important;
+                border: none !important;
+                border-bottom: 1px solid #f1f5f9 !important;
+                font-size: 13px !important;
+                min-height: 36px !important;
+                flex-wrap: wrap !important;
+                gap: 4px !important;
+            }
+            .mob-stack td:last-child { border-bottom: none !important; }
+            .mob-stack td::before {
+                content: attr(data-label) !important;
+                font-weight: 700 !important;
+                color: #64748b !important;
+                font-size: 11px !important;
+                text-transform: uppercase !important;
+                letter-spacing: .3px !important;
+                flex-shrink: 0 !important;
+                margin-right: 8px !important;
+            }
+            .mob-stack tfoot tr { border-radius: 0 !important; box-shadow: none !important; background: #f8fafc !important; }
+            .mob-stack tfoot td::before { content: none !important; }
+            .mob-stack tfoot td { justify-content: space-between !important; font-weight: 600 !important; }
+        }
 
     @yield('styles')
 </head>

@@ -199,8 +199,8 @@
                     <h6 class="m-0 font-weight-bold text-dark"><i class="fas fa-shopping-cart mr-1"></i> {{ __('Your Store Products in this Order') }}</h6>
                 </div>
                 <div class="card-body p-0">
-                    <div class="gd-responsive-table">
-                        <table class="table table-bordered table-hover mb-0" style="min-width: 850px;" width="100%">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover mb-0 mob-stack" width="100%">
                             <thead class="thead-light">
                                 <tr>
                                     <th>{{ __('Product') }}</th>
@@ -211,9 +211,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @php
-                                    $runningTotal = 0;
-                                @endphp
+                                @php $runningTotal = 0; @endphp
                                 @foreach($sellerCart as $key => $item)
                                     @php
                                         $price = $item['main_price'] ?? 0;
@@ -223,21 +221,19 @@
                                         $runningTotal += $lineSubtotal;
                                     @endphp
                                     <tr>
-                                        <td>
-                                            <strong>{{ $item['name'] }}</strong>
-                                        </td>
-                                        <td>
+                                        <td data-label="{{ __('Product') }}"><strong>{{ $item['name'] }}</strong></td>
+                                        <td data-label="{{ __('Options') }}">
                                             @if(!empty($item['attribute']['option_name']))
-                                                @foreach($item['attribute']['option_name'] as $k => $opName)
+                                                @foreach($item['attribute']['option_name'] as $opName)
                                                     <span class="badge badge-secondary mr-1">{{ $opName }}</span>
                                                 @endforeach
                                             @else
                                                 <span class="text-muted small">-</span>
                                             @endif
                                         </td>
-                                        <td class="text-center font-weight-bold">{{ $qty }}</td>
-                                        <td class="text-right">{{ PriceHelper::setCurrencyPrice($price + $attrPrice) }}</td>
-                                        <td class="text-right font-weight-bold text-primary">{{ PriceHelper::setCurrencyPrice($lineSubtotal) }}</td>
+                                        <td data-label="{{ __('Qty') }}" class="text-center font-weight-bold">{{ $qty }}</td>
+                                        <td data-label="{{ __('Unit Price') }}" class="text-right">{{ PriceHelper::setCurrencyPrice($price + $attrPrice) }}</td>
+                                        <td data-label="{{ __('Subtotal') }}" class="text-right font-weight-bold text-primary">{{ PriceHelper::setCurrencyPrice($lineSubtotal) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -247,9 +243,7 @@
                                     <td class="text-right font-weight-bold">{{ PriceHelper::setCurrencyPrice($runningTotal) }}</td>
                                 </tr>
                                 @if($order->shipping)
-                                    @php
-                                        $shipData = json_decode($order->shipping, true);
-                                    @endphp
+                                    @php $shipData = json_decode($order->shipping, true); @endphp
                                     @if(isset($shipData['price']) && $shipData['price'] > 0)
                                         <tr>
                                             <td colspan="4" class="text-right">{{ __('Delivery / Shipping Fee:') }}</td>
@@ -258,9 +252,7 @@
                                     @endif
                                 @endif
                                 @if($order->discount)
-                                    @php
-                                        $discData = json_decode($order->discount, true);
-                                    @endphp
+                                    @php $discData = json_decode($order->discount, true); @endphp
                                     @if(isset($discData['discount']) && $discData['discount'] > 0)
                                         <tr>
                                             <td colspan="4" class="text-right text-danger">{{ __('Discount:') }}</td>
