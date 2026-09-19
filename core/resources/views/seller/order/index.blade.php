@@ -49,7 +49,7 @@
                 <table class="table table-bordered table-striped table-hover" style="min-width: 820px;" width="100%" cellspacing="0">
                     <thead class="thead-light">
                         <tr>
-                            <th>{{ __('Order ID') }}</th>
+                            <th style="min-width: 160px;">{{ __('Order ID') }}</th>
                             <th>{{ __('Customer') }}</th>
                             <th>{{ __('Total Amount') }}</th>
                             <th>{{ __('Payment') }}</th>
