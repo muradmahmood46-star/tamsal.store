@@ -1020,7 +1020,6 @@
             max-width: 100% !important;
             min-width: 0 !important;
         }
-    </style>
 
         /* =========================================================
            GLOBAL MOBILE STACKED TABLE — works on ALL seller tables
@@ -1062,6 +1061,7 @@
             .mob-stack tfoot td::before { content: none !important; }
             .mob-stack tfoot td { justify-content: space-between !important; font-weight: 600 !important; }
         }
+    </style>
 
     @yield('styles')
 </head>
