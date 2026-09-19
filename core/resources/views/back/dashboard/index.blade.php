@@ -669,42 +669,47 @@
             <div class="card-header">
                 <div class="card-title">{{__('Recent Orders')}}</div>
             </div>
-            <div class="card-body pb-0">
-                <div class="card-body">
-                    @if ($recentOrders->count() > 0)
-                      <div class="table-responsive">
-                          <table class="table table-bordered table-striped mb-0" id="recent-orders" width="100%" cellspacing="0">
-                          <thead>
-                              <tr>
-                                  <th style="white-space:nowrap;">{{ __('Customer') }}</th>
-                                  <th style="white-space:nowrap;">{{ __('Order ID') }}</th>
-                                  <th class="d-none d-md-table-cell" style="white-space:nowrap;">{{ __('Payment Method') }}</th>
-                                  <th style="white-space:nowrap;">{{ __('Total') }}</th>
-                              </tr>
-                          </thead>
-                          <tbody>
-                              @foreach($recentOrders as $data)
-                              <tr>
-                                  <td style="white-space:nowrap;">
-                                      <a href="{{route('back.user.show',$data->user_id)}}">{{ $data->user->displayName()}}</a>
-                                  </td>
-                                  <td style="white-space:nowrap;">
-                                      <a href="{{route('back.order.invoice',$data->id)}}">{{ $data->transaction_number}}</a>
-                                  </td>
-                                  <td class="d-none d-md-table-cell">{{ $data->payment_method}}</td>
-                                  <td style="white-space:nowrap;">{{$data->currency_sign}}{{PriceHelper::OrderTotal($data)}}</td>
-                              </tr>
-                              @endforeach
-                          </tbody>
-                          </table>
-                      </div>
-
-                      @else
-                      <p class="d-block text-center">
-                          {{ __('No Order Found') }}
-                      </p>
-                    @endif
-                </div>
+            <div class="card-body p-0">
+                @if ($recentOrders->count() > 0)
+                <style>
+                    .dash-orders-table { width:100%; border-collapse:collapse; }
+                    .dash-orders-table th, .dash-orders-table td { padding:10px 12px; border-bottom:1px solid #f0f0f0; font-size:13px; vertical-align:middle; }
+                    .dash-orders-table thead th { background:#f8f9fa; font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:.4px; }
+                    .dash-orders-table tbody tr:hover { background:#f8f9fa; }
+                    @media(max-width:575px){
+                        .dash-orders-table thead { display:none; }
+                        .dash-orders-table tr { display:block; border:1px solid #e9ecef; border-radius:8px; margin:8px; padding:8px 4px; }
+                        .dash-orders-table td { display:flex; justify-content:space-between; align-items:center; border:none; padding:5px 10px; font-size:13px; }
+                        .dash-orders-table td::before { content:attr(data-label); font-weight:700; color:#6c757d; font-size:11px; text-transform:uppercase; margin-right:8px; flex-shrink:0; }
+                    }
+                </style>
+                <table class="dash-orders-table">
+                    <thead>
+                        <tr>
+                            <th>{{ __('Customer') }}</th>
+                            <th>{{ __('Order ID') }}</th>
+                            <th>{{ __('Payment') }}</th>
+                            <th>{{ __('Total') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($recentOrders as $data)
+                        <tr>
+                            <td data-label="{{ __('Customer') }}">
+                                <a href="{{route('back.user.show',$data->user_id)}}">{{ $data->user->displayName()}}</a>
+                            </td>
+                            <td data-label="{{ __('Order ID') }}">
+                                <a href="{{route('back.order.invoice',$data->id)}}">{{ $data->transaction_number}}</a>
+                            </td>
+                            <td data-label="{{ __('Payment') }}">{{ $data->payment_method}}</td>
+                            <td data-label="{{ __('Total') }}">{{$data->currency_sign}}{{PriceHelper::OrderTotal($data)}}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                @else
+                <p class="text-center py-4 text-muted">{{ __('No Order Found') }}</p>
+                @endif
             </div>
         </div>
     </div>

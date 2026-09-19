@@ -543,6 +543,18 @@
     </div>
 
     <!-- Recent Orders & Recent Products Row -->
+    <style>
+        .dash-stacked-table { width:100%; border-collapse:collapse; }
+        .dash-stacked-table th, .dash-stacked-table td { padding:10px 12px; border-bottom:1px solid #f0f0f0; font-size:13px; vertical-align:middle; }
+        .dash-stacked-table thead th { background:#f8f9fa; font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:.4px; }
+        .dash-stacked-table tbody tr:hover { background:#f8f9fa; }
+        @media(max-width:767px){
+            .dash-stacked-table thead { display:none; }
+            .dash-stacked-table tr { display:block; border:1px solid #e9ecef; border-radius:8px; margin:8px; padding:6px 4px; }
+            .dash-stacked-table td { display:flex; justify-content:space-between; align-items:center; border:none; padding:5px 10px; font-size:13px; }
+            .dash-stacked-table td::before { content:attr(data-label); font-weight:700; color:#6c757d; font-size:11px; text-transform:uppercase; margin-right:8px; flex-shrink:0; }
+        }
+    </style>
     <div class="row">
         <!-- Recent Orders -->
         <div class="col-lg-7 mb-4">
@@ -552,53 +564,47 @@
                     <a href="{{ route('seller.order.index') }}" class="btn btn-outline-primary btn-xs">{{ __('View All') }}</a>
                 </div>
                 <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="thead-light">
+                    <table class="dash-stacked-table">
+                        <thead>
+                            <tr>
+                                <th>{{ __('Order ID') }}</th>
+                                <th>{{ __('Customer') }}</th>
+                                <th>{{ __('Status') }}</th>
+                                <th>{{ __('Date') }}</th>
+                                <th>{{ __('Action') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($recentOrders as $order)
+                                @php $bill = json_decode($order->billing_info, true); @endphp
                                 <tr>
-                                    <th style="white-space:nowrap;">{{ __('Order ID') }}</th>
-                                    <th class="d-none d-sm-table-cell" style="white-space:nowrap;">{{ __('Customer') }}</th>
-                                    <th style="white-space:nowrap;">{{ __('Status') }}</th>
-                                    <th class="d-none d-md-table-cell" style="white-space:nowrap;">{{ __('Date') }}</th>
-                                    <th style="white-space:nowrap;">{{ __('Action') }}</th>
+                                    <td data-label="{{ __('Order ID') }}"><strong>{{ $order->transaction_number }}</strong></td>
+                                    <td data-label="{{ __('Customer') }}">{{ $bill['bill_first_name'] ?? ($order->user->first_name ?? 'Customer') }}</td>
+                                    <td data-label="{{ __('Status') }}">
+                                        @if($order->order_status == 'Delivered')
+                                            <span class="badge badge-success">{{ __('Delivered') }}</span>
+                                        @elseif($order->order_status == 'In Progress')
+                                            <span class="badge badge-info">{{ __('In Progress') }}</span>
+                                        @elseif($order->order_status == 'Send to Delivery House')
+                                            <span class="badge" style="background-color:#6f42c1;color:#fff;">{{ __('Sent') }}</span>
+                                        @elseif($order->order_status == 'Accepted')
+                                            <span class="badge badge-primary">{{ __('Accepted') }}</span>
+                                        @elseif($order->order_status == 'Canceled')
+                                            <span class="badge badge-danger">{{ __('Canceled') }}</span>
+                                        @else
+                                            <span class="badge badge-warning text-dark">{{ __('Pending') }}</span>
+                                        @endif
+                                    </td>
+                                    <td data-label="{{ __('Date') }}"><small>{{ $order->created_at->format('M d, Y') }}</small></td>
+                                    <td data-label="{{ __('Action') }}">
+                                        <a href="{{ route('seller.order.invoice', $order->id) }}" class="btn btn-info btn-xs"><i class="fas fa-eye"></i></a>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($recentOrders as $order)
-                                    @php
-                                        $bill = json_decode($order->billing_info, true);
-                                    @endphp
-                                    <tr>
-                                        <td style="white-space:nowrap;"><strong>{{ $order->transaction_number }}</strong></td>
-                                        <td class="d-none d-sm-table-cell">{{ $bill['bill_first_name'] ?? ($order->user->first_name ?? 'Customer') }}</td>
-                                        <td>
-                                            @if($order->order_status == 'Delivered')
-                                                <span class="badge badge-success">{{ __('Delivered') }}</span>
-                                            @elseif($order->order_status == 'In Progress')
-                                                <span class="badge badge-info">{{ __('In Progress') }}</span>
-                                            @elseif($order->order_status == 'Send to Delivery House')
-                                                <span class="badge" style="background-color: #6f42c1; color: #fff;">{{ __('Sent') }}</span>
-                                            @elseif($order->order_status == 'Accepted')
-                                                <span class="badge badge-primary">{{ __('Accepted') }}</span>
-                                            @elseif($order->order_status == 'Canceled')
-                                                <span class="badge badge-danger">{{ __('Canceled') }}</span>
-                                            @else
-                                                <span class="badge badge-warning text-dark">{{ __('Pending') }}</span>
-                                            @endif
-                                        </td>
-                                        <td class="d-none d-md-table-cell"><small>{{ $order->created_at->format('M d, Y') }}</small></td>
-                                        <td>
-                                            <a href="{{ route('seller.order.invoice', $order->id) }}" class="btn btn-info btn-xs"><i class="fas fa-eye"></i></a>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="5" class="text-center py-4 text-muted">{{ __('No orders received yet.') }}</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                            @empty
+                                <tr><td colspan="5" class="text-center py-4 text-muted">{{ __('No orders received yet.') }}</td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -611,42 +617,38 @@
                     <a href="{{ route('seller.item.index') }}" class="btn btn-outline-primary btn-xs">{{ __('View All') }}</a>
                 </div>
                 <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="thead-light">
+                    <table class="dash-stacked-table">
+                        <thead>
+                            <tr>
+                                <th>{{ __('Image') }}</th>
+                                <th>{{ __('Product') }}</th>
+                                <th>{{ __('Price') }}</th>
+                                <th>{{ __('Stock') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($recentProducts as $prod)
                                 <tr>
-                                    <th style="white-space:nowrap;">{{ __('Image') }}</th>
-                                    <th style="white-space:nowrap;">{{ __('Product') }}</th>
-                                    <th style="white-space:nowrap;">{{ __('Price') }}</th>
-                                    <th class="d-none d-sm-table-cell" style="white-space:nowrap;">{{ __('Stock') }}</th>
+                                    <td data-label="{{ __('Image') }}">
+                                        <img src="{{ $prod->photo ? asset('core/public/storage/images/' . $prod->photo) : asset('core/public/storage/images/placeholder.png') }}" alt="" style="width:40px;height:40px;object-fit:cover;border-radius:4px;">
+                                    </td>
+                                    <td data-label="{{ __('Product') }}">
+                                        <a href="{{ route('seller.item.edit', $prod->id) }}" class="font-weight-bold text-dark">{{ Str::limit($prod->name, 28) }}</a>
+                                    </td>
+                                    <td data-label="{{ __('Price') }}"><strong class="text-primary">{{ PriceHelper::setCurrencyPrice($prod->discount_price) }}</strong></td>
+                                    <td data-label="{{ __('Stock') }}">
+                                        @if($prod->stock > 0)
+                                            <span class="badge badge-success">{{ $prod->stock }}</span>
+                                        @else
+                                            <span class="badge badge-danger">{{ __('Out of Stock') }}</span>
+                                        @endif
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($recentProducts as $prod)
-                                    <tr>
-                                        <td>
-                                            <img src="{{ $prod->photo ? asset('core/public/storage/images/' . $prod->photo) : asset('core/public/storage/images/placeholder.png') }}" alt="" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
-                                        </td>
-                                        <td style="max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-                                            <a href="{{ route('seller.item.edit', $prod->id) }}" class="font-weight-bold text-dark">{{ Str::limit($prod->name, 20) }}</a>
-                                        </td>
-                                        <td style="white-space:nowrap;"><strong class="text-primary">{{ PriceHelper::setCurrencyPrice($prod->discount_price) }}</strong></td>
-                                        <td class="d-none d-sm-table-cell">
-                                            @if($prod->stock > 0)
-                                                <span class="badge badge-success">{{ $prod->stock }}</span>
-                                            @else
-                                                <span class="badge badge-danger">{{ __('Out') }}</span>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="4" class="text-center py-4 text-muted">{{ __('No products added yet.') }}</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                            @empty
+                                <tr><td colspan="4" class="text-center py-4 text-muted">{{ __('No products added yet.') }}</td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
