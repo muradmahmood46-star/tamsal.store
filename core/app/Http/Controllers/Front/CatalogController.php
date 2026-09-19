@@ -65,18 +65,56 @@ class CatalogController extends Controller
         $search = $request->has('search') ?  ( !empty($request->search) ? $request->search : null ) : null;
         $vendor = $request->has('vendor') ? ( !empty($request->vendor) ? $request->vendor : null ) : null;
 
-        $category = $request->has('category') ? ( !empty($request->category) ? Category::whereSlug($request->category)->firstOrFail() : null ) : null;
-        $subcategory = $request->has('subcategory') ? ( !empty($request->subcategory) ? Subcategory::whereSlug($request->subcategory)->firstOrFail() : null ) : null;
+        $selected_categories = [];
+        $category = null;
+        $category_ids = [];
+
+        if ($request->filled('category')) {
+            $catInput = $request->category;
+            $catSlugs = is_array($catInput) ? $catInput : explode(',', (string)$catInput);
+            $catSlugs = array_filter(array_map('trim', $catSlugs));
+            if (!empty($catSlugs)) {
+                $categoriesObj = Category::whereIn('slug', $catSlugs)->get();
+                if ($categoriesObj->count() > 0) {
+                    $category_ids = $categoriesObj->pluck('id')->toArray();
+                    $selected_categories = $categoriesObj->pluck('slug')->toArray();
+                    if (count($selected_categories) === 1) {
+                        $category = $categoriesObj->first();
+                    }
+                }
+            }
+        }
+
+        $selected_subcategories = [];
+        $subcategory = null;
+        $subcategory_ids = [];
+
+        if ($request->filled('subcategory')) {
+            $subInput = $request->subcategory;
+            $subSlugs = is_array($subInput) ? $subInput : explode(',', (string)$subInput);
+            $subSlugs = array_filter(array_map('trim', $subSlugs));
+            if (!empty($subSlugs)) {
+                $subcategoriesObj = Subcategory::whereIn('slug', $subSlugs)->get();
+                if ($subcategoriesObj->count() > 0) {
+                    $subcategory_ids = $subcategoriesObj->pluck('id')->toArray();
+                    $selected_subcategories = $subcategoriesObj->pluck('slug')->toArray();
+                    if (count($selected_subcategories) === 1) {
+                        $subcategory = $subcategoriesObj->first();
+                    }
+                }
+            }
+        }
+
         $childcategory = $request->has('childcategory') ? ( !empty($request->childcategory) ? ChieldCategory::where('slug',$request->childcategory)->first() : null ) : null;
         $minPrice = $request->has('minPrice') ?  ( !empty($request->minPrice) ? PriceHelper::convertPrice($request->minPrice) : null ) : null;
         $maxPrice = $request->has('maxPrice') ?  ( !empty($request->maxPrice) ? PriceHelper::convertPrice($request->maxPrice) : null ) : null;
         $tag = $request->has('tag') ?  ( !empty($request->tag) ? trim($request->tag) : null ) : null;
         $items = Item::with('category')
-        ->when($category, function ($query, $category) {
-            return $query->where('category_id', $category->id);
+        ->when(!empty($category_ids), function ($query) use ($category_ids) {
+            return $query->whereIn('category_id', $category_ids);
         })
-        ->when($subcategory, function ($query, $subcategory) {
-            return $query->where('subcategory_id', $subcategory->id);
+        ->when(!empty($subcategory_ids), function ($query) use ($subcategory_ids) {
+            return $query->whereIn('subcategory_id', $subcategory_ids);
         })
         ->when($childcategory, function ($query, $childcategory) {
             return $query->where('childcategory_id', $childcategory->id);
@@ -248,7 +286,9 @@ class CatalogController extends Controller
             'items' => $items,
             'name_string_count' => $name_string_count,
             'category' => $category,
+            'selected_categories' => $selected_categories,
             'subcategory' => $subcategory,
+            'selected_subcategories' => $selected_subcategories,
             'childcategory' => $childcategory,
             'checkType'  => $checkType,
             'vendorStore' => $vendorStore,

@@ -700,6 +700,96 @@ $(function ($) {
             $('body').removeClass('offcanvas-open');
         }
 
+        function collectSelectedCategories() {
+            let cats = [];
+            $('.category-checkbox:checked').each(function () {
+                if ($(this).val()) {
+                    cats.push($(this).val());
+                }
+            });
+            $('#search_form #category').val(cats.join(','));
+
+            let subcats = [];
+            $('.subcategory-checkbox:checked').each(function () {
+                if ($(this).val()) {
+                    subcats.push($(this).val());
+                }
+            });
+            $('#search_form #subcategory').val(subcats.join(','));
+        }
+
+        $(document).on('change', '.category-checkbox', function () {
+            collectSelectedCategories();
+            let $li = $(this).closest('li.has-children');
+            let $sub = $li.find('#subcategory_list');
+            if ($(this).is(':checked')) {
+                $li.addClass('expanded active');
+                $sub.slideDown(200);
+                $li.find('.subcat-toggle-btn i').removeClass('fa-chevron-down').addClass('fa-chevron-up');
+            }
+        });
+
+        $(document).on('change', '.subcategory-checkbox', function () {
+            collectSelectedCategories();
+        });
+
+        $(document).on('click', '.subcat-toggle-btn', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            let $li = $(this).closest('li.has-children');
+            let $sub = $li.find('#subcategory_list');
+            $sub.slideToggle(200);
+            $(this).find('i').toggleClass('fa-chevron-down fa-chevron-up');
+        });
+
+        $(document).on('input change', '#manual_min_price, #manual_max_price', function () {
+            let minVal = $('#manual_min_price').val();
+            let maxVal = $('#manual_max_price').val();
+
+            if (minVal !== '') {
+                $('.min_price').text(minVal);
+                $('#search_form #minPrice').val(minVal);
+            } else {
+                $('#search_form #minPrice').val('');
+            }
+
+            if (maxVal !== '') {
+                $('.max_price').text(maxVal);
+                $('#search_form #maxPrice').val(maxVal);
+            } else {
+                $('#search_form #maxPrice').val('');
+            }
+
+            let sliderEl = document.querySelector('.ui-range-slider');
+            if (sliderEl && sliderEl.noUiSlider) {
+                let curMin = minVal !== '' ? parseFloat(minVal) : sliderEl.noUiSlider.get()[0];
+                let curMax = maxVal !== '' ? parseFloat(maxVal) : sliderEl.noUiSlider.get()[1];
+                sliderEl.noUiSlider.set([curMin, curMax]);
+            }
+        });
+
+        var rangeSliderEl = document.querySelector('.ui-range-slider');
+        if (rangeSliderEl && rangeSliderEl.noUiSlider) {
+            rangeSliderEl.noUiSlider.on('update', function (values, handle) {
+                if (handle === 0) {
+                    if (!$('#manual_min_price').is(':focus') && !$('#manual_min_price').val()) {
+                        $('#manual_min_price').val(Math.round(values[0]));
+                    }
+                } else {
+                    if (!$('#manual_max_price').is(':focus') && !$('#manual_max_price').val()) {
+                        $('#manual_max_price').val(Math.round(values[1]));
+                    }
+                }
+            });
+            rangeSliderEl.noUiSlider.on('slide', function (values, handle) {
+                if (handle === 0) {
+                    $('#manual_min_price').val(Math.round(values[0]));
+                } else {
+                    $('#manual_max_price').val(Math.round(values[1]));
+                }
+            });
+        }
+
         $(document).on("click", ".brand-select", function () {
             $('.brand-select').prop('checked', false);
             let brand = $(this).val();
@@ -710,40 +800,51 @@ $(function ($) {
             $("#search_button").click();
         });
 
-        $(document).on("click", "#price_filter, #mobile_apply_filters", function () {
-            let min_price = parseInt($(".min_price").html());
-            let max_price = parseInt($(".max_price").html());
-            if (!isNaN(min_price)) {
-                $("#search_form #minPrice").val(min_price);
-            }
-            if (!isNaN(max_price)) {
-                $("#search_form #maxPrice").val(max_price);
-            }
-            closeMobileFilterSidebar();
-            removePage();
-            $("#search_button").click();
-        });
+        $(document).on("click", "#price_filter, #mobile_apply_filters, .apply-filters-btn", function (e) {
+            e.preventDefault();
 
-        $(document).on("change", "#sorting", function () {
-            let sorting = $(this).val();
-            $("#search_form #sorting").val(sorting);
-            removePage();
-            $("#search_button").click();
-        });
+            // 1. Collect category & subcategory checkboxes
+            collectSelectedCategories();
 
-        $(document).on("click", ".widget_price_filter", function () {
-            let filter_prices = $(this).val();
-            if (filter_prices) {
-                filter_prices = filter_prices.split(",");
-                $("#search_form #minPrice").val(filter_prices[0]);
-                $("#search_form #maxPrice").val(filter_prices[1]);
+            // 2. Collect price values
+            let min_manual = $('#manual_min_price').val();
+            let max_manual = $('#manual_max_price').val();
+
+            if (min_manual !== '' && !isNaN(parseFloat(min_manual))) {
+                $("#search_form #minPrice").val(parseFloat(min_manual));
             } else {
-                $("#search_form #minPrice").val('');
-                $("#search_form #maxPrice").val('');
+                let min_price = parseInt($(".min_price").text());
+                if (!isNaN(min_price)) {
+                    $("#search_form #minPrice").val(min_price);
+                } else {
+                    $("#search_form #minPrice").val('');
+                }
             }
+
+            if (max_manual !== '' && !isNaN(parseFloat(max_manual))) {
+                $("#search_form #maxPrice").val(parseFloat(max_manual));
+            } else {
+                let max_price = parseInt($(".max_price").text());
+                if (!isNaN(max_price)) {
+                    $("#search_form #maxPrice").val(max_price);
+                } else {
+                    $("#search_form #maxPrice").val('');
+                }
+            }
+
+            // 3. Close mobile sidebar immediately
             closeMobileFilterSidebar();
+
+            // 4. Remove page parameter and submit search form via AJAX
             removePage();
             $("#search_button").click();
+
+            // 5. Show user requested success notification
+            if (typeof successNotification === 'function') {
+                successNotification("Filter applied on all products");
+            } else if (typeof SuccessNotification === 'function') {
+                SuccessNotification("Filter applied on all products");
+            }
         });
 
 
@@ -891,6 +992,7 @@ $(function ($) {
                 success: function (data) {
                     window.scrollTo(0, 0);
                     $('#list_view_ajax').html(data);
+                    lazy();
                 }
             });
 

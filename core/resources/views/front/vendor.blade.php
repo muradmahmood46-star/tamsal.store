@@ -99,61 +99,104 @@
         <div class="sidebar-toggle position-left"><i class="icon-filter"></i></div>
         <aside class="sidebar sidebar-offcanvas position-left"><span class="sidebar-close"><i class="icon-x"></i></span>
           <!-- Widget Categories-->
-          <section class="widget widget-categories card rounded p-4">
-            <h3 class="widget-title">{{__('Shop Categories')}}</h3>
-            <ul id="category_list" class="category-scroll">
+          <section class="widget widget-categories card rounded p-4 mb-3">
+            <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+              <h3 class="widget-title mb-0" style="font-size: 16px; font-weight: 700;">{{__('Shop Categories')}}</h3>
+            </div>
+            <ul id="category_list" class="category-scroll" style="max-height: 280px; overflow-y: auto;">
                 @foreach ($categories as $getcategory)
-                <li class="has-children  {{isset($category) && $category->id == $getcategory->id ? 'expanded active' : ''}} ">
-                  <a class="category_search" href="javascript:;"  data-href="{{$getcategory->slug}}">{{$getcategory->name}}</a>
+                @php
+                    $isCatActive = in_array($getcategory->slug, $selected_categories ?? []) || (isset($category) && $category && $category->id == $getcategory->id);
+                @endphp
+                <li class="has-children {{ $isCatActive ? 'expanded active' : '' }} mb-1">
+                  <div class="d-flex align-items-center justify-content-between py-1">
+                    <div class="custom-control custom-checkbox d-flex align-items-center flex-grow-1 mr-2" style="cursor: pointer;">
+                      <input type="checkbox" class="custom-control-input category-checkbox" id="cat_chk_{{$getcategory->id}}" value="{{$getcategory->slug}}" {{ $isCatActive ? 'checked' : '' }}>
+                      <label class="custom-control-label font-weight-500 text-dark mb-0" for="cat_chk_{{$getcategory->id}}" style="cursor: pointer; font-size: 13.5px;">
+                        {{$getcategory->name}}
+                      </label>
+                    </div>
+                    @if ($getcategory->subcategory->count() > 0)
+                      <span class="subcat-toggle-btn text-muted px-2 py-1 cursor-pointer" style="font-size: 11px;" title="{{ __('Toggle subcategories') }}">
+                        <i class="fas {{ $isCatActive ? 'fa-chevron-up' : 'fa-chevron-down' }}"></i>
+                      </span>
+                    @endif
+                  </div>
 
-                    <ul id="subcategory_list">
+                  @if ($getcategory->subcategory->count() > 0)
+                    <ul id="subcategory_list" class="pl-4 mt-1 border-left ml-2" style="list-style: none; display: {{ $isCatActive ? 'block' : 'none' }};">
                         @foreach ($getcategory->subcategory as $getsubcategory)
-                        <li class="{{isset($subcategory) && $subcategory->id == $getsubcategory->id ? 'active' : ''}}">
-                          <a class="subcategory" href="javascript:;" data-href="{{$getsubcategory->slug}}">{{$getsubcategory->name}}</a>
-
-                          <ul id="childcategory_list">
-                            @foreach ($getsubcategory->childcategory as $getchildcategory)
-                            <li class="{{isset($childcategory) && $getchildcategory->id == $getchildcategory->id ? 'active' : ''}}">
-                              <a class="childcategory" href="javascript:;" data-href="{{$getchildcategory->slug}}">{{$getchildcategory->name}}</a>
-
-                            </li>
-                            @endforeach
-                        </ul>
+                        @php
+                            $isSubActive = in_array($getsubcategory->slug, $selected_subcategories ?? []) || (isset($subcategory) && $subcategory && $subcategory->id == $getsubcategory->id);
+                        @endphp
+                        <li class="{{ $isSubActive ? 'active' : '' }} py-1">
+                          <div class="custom-control custom-checkbox d-flex align-items-center">
+                            <input type="checkbox" class="custom-control-input subcategory-checkbox" id="subcat_chk_{{$getsubcategory->id}}" value="{{$getsubcategory->slug}}" {{ $isSubActive ? 'checked' : '' }}>
+                            <label class="custom-control-label text-muted mb-0" for="subcat_chk_{{$getsubcategory->id}}" style="cursor: pointer; font-size: 12.5px;">
+                              {{$getsubcategory->name}}
+                            </label>
+                          </div>
                         </li>
                         @endforeach
                     </ul>
-                  </li>
+                  @endif
+                </li>
                 @endforeach
             </ul>
           </section>
 
           @if ($setting->is_range_search == 1)
                <!-- Widget Price Range-->
-          <section class="widget widget-categories card rounded p-4">
-            <h3 class="widget-title">{{ __('Filter by Price') }}</h3>
+          <section class="widget widget-categories card rounded p-4 mb-3">
+            <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+              <h3 class="widget-title mb-0" style="font-size: 16px; font-weight: 700;">{{ __('Filter by Price') }}</h3>
+            </div>
+
+            {{-- Manual Price Range (From - To) --}}
+            <div class="manual-price-box mb-3 p-2 bg-light rounded border">
+              <div class="row g-2">
+                <div class="col-6">
+                  <label class="form-label text-muted small mb-1" style="font-size: 11px; font-weight: 700; text-transform: uppercase;">{{ __('From Price') }}</label>
+                  <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-white px-2 text-muted" style="font-size: 11px;">{{ PriceHelper::setCurrencySign() }}</span>
+                    <input type="number" class="form-control form-control-sm price-manual-input" id="manual_min_price" placeholder="0" min="0" value="{{ request()->input('minPrice') ? request()->input('minPrice') : '' }}" style="font-size: 12.5px;">
+                  </div>
+                </div>
+                <div class="col-6">
+                  <label class="form-label text-muted small mb-1" style="font-size: 11px; font-weight: 700; text-transform: uppercase;">{{ __('To Price') }}</label>
+                  <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-white px-2 text-muted" style="font-size: 11px;">{{ PriceHelper::setCurrencySign() }}</span>
+                    <input type="number" class="form-control form-control-sm price-manual-input" id="manual_max_price" placeholder="{{ $setting->max_price }}" min="0" value="{{ request()->input('maxPrice') ? request()->input('maxPrice') : '' }}" style="font-size: 12.5px;">
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <form class="price-range-slider" method="post" data-start-min="{{request()->input('minPrice') ? request()->input('minPrice') : '0'}}" data-start-max="{{request()->input('maxPrice') ? request()->input('maxPrice') : $setting->max_price}}" data-min="0" data-max="{{$setting->max_price}}" data-step="5">
               <div class="ui-range-slider"></div>
-              <footer class="ui-range-slider-footer">
-                <div class="column">
-                  <button class="btn btn-primary btn-sm font-weight-bold px-3 shadow-sm" id="price_filter" type="button"><i class="fas fa-check-circle mr-1"></i> <span>{{__('Apply Filters')}}</span></button>
-                </div>
-                <div class="column">
-                  <div class="ui-range-values">
-                    <div class="ui-range-value-min">{{PriceHelper::setCurrencySign()}}<span class="min_price"></span>
+              <footer class="ui-range-slider-footer mt-3">
+                <div class="column w-100 mb-2">
+                  <div class="ui-range-values d-flex justify-content-between align-items-center text-muted small px-1">
+                    <div>{{ __('Min') }}: <strong>{{PriceHelper::setCurrencySign()}}<span class="min_price">{{ request()->input('minPrice') ? request()->input('minPrice') : '0' }}</span></strong>
                       <input type="hidden">
-                    </div>-
-                    <div class="ui-range-value-max">{{PriceHelper::setCurrencySign()}}<span class="max_price"></span>
+                    </div>
+                    <div>{{ __('Max') }}: <strong>{{PriceHelper::setCurrencySign()}}<span class="max_price">{{ request()->input('maxPrice') ? request()->input('maxPrice') : $setting->max_price }}</span></strong>
                       <input type="hidden">
                     </div>
                   </div>
+                </div>
+                <div class="column w-100">
+                  <button class="btn btn-primary btn-block w-100 font-weight-bold py-2 shadow-sm apply-filters-btn" id="price_filter" type="button">
+                    <i class="fas fa-check-circle mr-1"></i> <span>{{__('Apply Filters')}}</span>
+                  </button>
                 </div>
               </footer>
             </form>
           </section>
           @endif
 
-          <div class="p-3 text-center d-block d-lg-none">
-            <button class="btn btn-primary btn-block font-weight-bold py-2 shadow-sm" id="mobile_apply_filters" type="button">
+          <div class="p-3 text-center d-block d-lg-none mt-2">
+            <button class="btn btn-primary btn-block w-100 font-weight-bold py-2 shadow-sm apply-filters-btn" id="mobile_apply_filters" type="button">
               <i class="fas fa-check-circle mr-1"></i> {{ __('Apply Filters') }}
             </button>
           </div>
@@ -170,14 +213,14 @@
     <input type="text" name="maxPrice" id="maxPrice" value="{{request()->input('maxPrice') ? request()->input('maxPrice') : ''}}">
     <input type="text" name="minPrice" id="minPrice" value="{{request()->input('minPrice') ? request()->input('minPrice') : ''}}">
     <input type="text" name="brand" id="brand" value="{{isset($brand) ? $brand->slug : ''}}">
-    <input type="text" name="brand" id="brand" value="{{isset($brand) ? $brand->slug : ''}}">
-    <input type="text" name="category" id="category" value="{{isset($category) ? $category->slug : ''}}">
+    <input type="text" name="vendor" id="vendor" value="{{request()->input('vendor') ? request()->input('vendor') : ''}}">
+    <input type="text" name="category" id="category" value="{{request()->input('category') ? (is_array(request()->input('category')) ? implode(',', request()->input('category')) : request()->input('category')) : (isset($category) && $category ? $category->slug : '')}}">
     <input type="text" name="quick_filter" id="quick_filter" value="">
     <input type="text" name="childcategory" id="childcategory" value="{{isset($childcategory) ? $childcategory->slug : ''}}">
     <input type="text" name="page" id="page" value="{{isset($page) ? $page : ''}}">
     <input type="text" name="attribute" id="attribute" value="{{isset($attribute) ? $attribute : ''}}">
     <input type="text" name="option" id="option" value="{{isset($option) ? $option : ''}}">
-    <input type="text" name="subcategory" id="subcategory" value="{{isset($subcategory) ? $subcategory->slug : ''}}">
+    <input type="text" name="subcategory" id="subcategory" value="{{request()->input('subcategory') ? (is_array(request()->input('subcategory')) ? implode(',', request()->input('subcategory')) : request()->input('subcategory')) : (isset($subcategory) && $subcategory ? $subcategory->slug : '')}}">
     <input type="text" name="sorting" id="sorting" value="{{isset($sorting) ? $sorting : ''}}">
     <input type="text" name="view_check" id="view_check" value="{{isset($view_check) ? $view_check : ''}}">
 
