@@ -1200,14 +1200,16 @@
 
         <div class="main-panel">
             @if(session('admin_impersonating_vendor'))
-                <div class="alert alert-warning border-0 rounded-0 mb-0 shadow py-2 px-4 d-flex align-items-center justify-content-between" style="background: linear-gradient(90deg, #ffc107, #ff9800); color: #000; z-index: 9999; font-size: 13.5px; position: sticky; top: 0;">
-                    <div>
-                        <i class="fas fa-user-shield mr-2"></i>
-                        <strong>{{ __('Admin Mode:') }}</strong> {{ __('You are currently logged in as store') }} <strong>{{ session('impersonated_store_name', $storeName) }}</strong>.
+                <div class="alert alert-warning border-0 rounded-0 mb-0 shadow py-2 px-3" style="background: linear-gradient(90deg, #ffc107, #ff9800); color: #000; z-index: 9999; font-size: 13px; position: sticky; top: 0;">
+                    <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between" style="gap: 8px;">
+                        <div style="font-size: 13px; line-height: 1.4;">
+                            <i class="fas fa-user-shield mr-1"></i>
+                            <strong>{{ __('Admin Mode:') }}</strong> {{ __('You are currently logged in as store') }} <strong>{{ session('impersonated_store_name', $storeName) }}</strong>
+                        </div>
+                        <a href="{{ route('seller.impersonate.leave') }}" class="btn btn-dark btn-sm font-weight-bold shadow-sm py-1 px-3 flex-shrink-0">
+                            <i class="fas fa-arrow-left mr-1"></i> {{ __('Return to Admin Panel') }}
+                        </a>
                     </div>
-                    <a href="{{ route('seller.impersonate.leave') }}" class="btn btn-dark btn-sm font-weight-bold shadow-sm py-1 px-3">
-                        <i class="fas fa-arrow-left mr-1"></i> {{ __('Return to Admin Panel') }}
-                    </a>
                 </div>
             @endif
             <div class="content">
