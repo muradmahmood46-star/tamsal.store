@@ -624,7 +624,7 @@ Route::group(['middleware' => 'maintainance'], function () {
 
         Route::post('/promo/submit', 'Front\CartController@promoStore')->name('front.promo.submit');
         Route::get('/promo/destroy', 'Front\CartController@promoDelete')->name('front.promo.destroy');
-        Route::get('/cart/destroy/{id}', 'Front\CartController@destroy')->name('front.cart.destroy');
+        Route::get('/cart/destroy/{id?}', 'Front\CartController@destroy')->name('front.cart.destroy')->where('id', '.*');
         Route::post('/shipping/submit', 'Front\CartController@shippingStore')->name('front.shipping.submit');
         Route::post('/shipping/charge/get', 'Front\CartController@shippingCharge')->name('front.shipping.charge');
 

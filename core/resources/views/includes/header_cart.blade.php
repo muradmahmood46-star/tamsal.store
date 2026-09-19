@@ -3,7 +3,7 @@
     $qty = 0;
     $option_price = 0;
 @endphp
-@if (Session::has('cart'))
+@if (Session::has('cart') && is_array(Session::get('cart')) && count(Session::get('cart')) > 0)
 @foreach (Session::get('cart') as $key => $cart)
 @php
     $grandSubtotal = ($cart['main_price'] + $grandSubtotal + $cart['attribute_price']) * $cart['qty'];
@@ -27,9 +27,11 @@
 <p class="text-gray-dark py-2 mb-0"><span class="text-muted">{{__('Subtotal')}}:</span> {{PriceHelper::setCurrencyPrice($grandSubtotal)}}</p>
 </div>
 <div class="d-flex justify-content-between">
-<div class="w-50 d-block"><a class="btn btn-primary btn-sm  mb-0" href="{{route('front.cart')}}"><span>{{__('Cart')}}</span></a></div>
-<div class="w-50 d-block text-end"><a class="btn btn-primary btn-sm  mb-0" href="{{route('front.checkout.billing')}}"><span>{{__('Checkout')}}</span></a></div>
-@else
-{{__('Cart empty')}}
-  @endif
+<div class="w-50 d-block"><a class="btn btn-primary btn-sm mb-0" href="{{route('front.cart')}}"><span>{{__('Cart')}}</span></a></div>
+<div class="w-50 d-block text-end"><a class="btn btn-primary btn-sm mb-0" href="{{route('front.checkout.billing')}}"><span>{{__('Checkout')}}</span></a></div>
 </div>
+@else
+<div class="text-center py-3">
+    <p class="text-muted mb-0">{{__('Cart empty')}}</p>
+</div>
+@endif

@@ -61,16 +61,66 @@ class CartController extends Controller
         return redirect()->route('front.checkout.billing')->withSuccess($msg);
     }
 
-    public function destroy($id)
+    public function destroy($id = null, Request $request = null)
     {
+        if ($id === null || $id === '') {
+            $id = request()->get('id', request()->get('key'));
+        }
 
         $cart = Session::get('cart');
-        unset($cart[$id]);
-        if (count($cart) > 0) {
+        if (is_array($cart) && !empty($cart) && $id !== null && $id !== '') {
+            $matchedKey = null;
+
+            // 1. Direct key match
+            if (isset($cart[$id])) {
+                $matchedKey = $id;
+            }
+            // 2. URL decoded match
+            elseif (isset($cart[urldecode($id)])) {
+                $matchedKey = urldecode($id);
+            }
+            // 3. Raw URL decoded match
+            elseif (isset($cart[rawurldecode($id)])) {
+                $matchedKey = rawurldecode($id);
+            }
+            // 4. Loose match (trimming, comparing string/decoded values)
+            else {
+                $decodedId = urldecode($id);
+                $rawDecodedId = rawurldecode($id);
+                foreach ($cart as $key => $item) {
+                    if (
+                        (string)$key === (string)$id ||
+                        (string)$key === (string)$decodedId ||
+                        (string)$key === (string)$rawDecodedId ||
+                        urldecode((string)$key) === (string)$decodedId ||
+                        trim((string)$key) === trim((string)$id)
+                    ) {
+                        $matchedKey = $key;
+                        break;
+                    }
+                }
+            }
+
+            if ($matchedKey !== null) {
+                unset($cart[$matchedKey]);
+            }
+        }
+
+        if (is_array($cart) && count($cart) > 0) {
             Session::put('cart', $cart);
         } else {
             Session::forget('cart');
+            Session::forget('coupon');
         }
+
+        if (request()->ajax()) {
+            return response()->json([
+                'status' => true,
+                'message' => __('Cart item remove successfully.'),
+                'count' => Session::has('cart') ? count(Session::get('cart')) : 0
+            ]);
+        }
+
         Session::flash('success', __('Cart item remove successfully.'));
         return back();
     }
@@ -136,6 +186,7 @@ class CartController extends Controller
     public function cartClear()
     {
         Session::forget('cart');
+        Session::forget('coupon');
         Session::flash('success', __('Cart clear successfully'));
         return back();
     }
