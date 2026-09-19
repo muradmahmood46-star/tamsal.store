@@ -673,13 +673,13 @@
                 @if ($recentOrders->count() > 0)
                 <style>
                     .dash-orders-table { width:100%; border-collapse:collapse; }
-                    .dash-orders-table th, .dash-orders-table td { padding:10px 12px; border-bottom:1px solid #f0f0f0; font-size:13px; vertical-align:middle; }
+                    .dash-orders-table th, .dash-orders-table td { padding:7px 12px; border-bottom:1px solid #f0f0f0; font-size:13px; vertical-align:middle; }
                     .dash-orders-table thead th { background:#f8f9fa; font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:.4px; }
                     .dash-orders-table tbody tr:hover { background:#f8f9fa; }
                     @media(max-width:575px){
                         .dash-orders-table thead { display:none; }
-                        .dash-orders-table tr { display:block; border:1px solid #e9ecef; border-radius:8px; margin:8px; padding:8px 4px; }
-                        .dash-orders-table td { display:flex; justify-content:space-between; align-items:center; border:none; padding:5px 10px; font-size:13px; }
+                        .dash-orders-table tr { display:block; border:1px solid #e9ecef; border-radius:8px; margin:6px 8px; padding:4px 2px; }
+                        .dash-orders-table td { display:flex; justify-content:space-between; align-items:center; border:none; padding:4px 10px; font-size:12px; }
                         .dash-orders-table td::before { content:attr(data-label); font-weight:700; color:#6c757d; font-size:11px; text-transform:uppercase; margin-right:8px; flex-shrink:0; }
                     }
                 </style>

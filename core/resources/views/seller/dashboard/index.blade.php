@@ -545,13 +545,13 @@
     <!-- Recent Orders & Recent Products Row -->
     <style>
         .dash-stacked-table { width:100%; border-collapse:collapse; }
-        .dash-stacked-table th, .dash-stacked-table td { padding:10px 12px; border-bottom:1px solid #f0f0f0; font-size:13px; vertical-align:middle; }
+        .dash-stacked-table th, .dash-stacked-table td { padding:7px 12px; border-bottom:1px solid #f0f0f0; font-size:13px; vertical-align:middle; }
         .dash-stacked-table thead th { background:#f8f9fa; font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:.4px; }
         .dash-stacked-table tbody tr:hover { background:#f8f9fa; }
         @media(max-width:767px){
             .dash-stacked-table thead { display:none; }
-            .dash-stacked-table tr { display:block; border:1px solid #e9ecef; border-radius:8px; margin:8px; padding:6px 4px; }
-            .dash-stacked-table td { display:flex; justify-content:space-between; align-items:center; border:none; padding:5px 10px; font-size:13px; }
+            .dash-stacked-table tr { display:block; border:1px solid #e9ecef; border-radius:8px; margin:6px 8px; padding:4px 2px; }
+            .dash-stacked-table td { display:flex; justify-content:space-between; align-items:center; border:none; padding:4px 10px; font-size:12px; }
             .dash-stacked-table td::before { content:attr(data-label); font-weight:700; color:#6c757d; font-size:11px; text-transform:uppercase; margin-right:8px; flex-shrink:0; }
         }
     </style>
