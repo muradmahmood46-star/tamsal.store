@@ -603,6 +603,132 @@
                 padding-right: 4px !important;
                 margin-bottom: 8px !important;
             }
+
+            /* Single-Row Mobile Shop Top Filter Bar (Quick filter + Sort by) */
+            .shop-top-filter-wrapper {
+                padding: 6px 8px !important;
+                margin-bottom: 12px !important;
+                background: #ffffff !important;
+                border-radius: 8px !important;
+                box-shadow: 0 1px 4px rgba(0,0,0,0.05) !important;
+            }
+            .shop-top-filter-wrapper .row {
+                margin: 0 !important;
+            }
+            .shop-top-filter-wrapper .col-md-10 {
+                padding: 0 !important;
+                width: 100% !important;
+            }
+            .shop-top-filter-wrapper .sptfl {
+                display: flex !important;
+                flex-direction: row !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                gap: 8px !important;
+                width: 100% !important;
+                margin: 0 !important;
+                flex-wrap: nowrap !important;
+            }
+            .shop-top-filter-wrapper .quickFilter {
+                flex: 1 1 50% !important;
+                max-width: 50% !important;
+                width: 50% !important;
+                margin: 0 !important;
+                position: relative !important;
+            }
+            .shop-top-filter-wrapper .quickFilter-title {
+                height: 38px !important;
+                line-height: 38px !important;
+                margin: 0 !important;
+                width: 100% !important;
+                font-size: 12px !important;
+                font-weight: 600 !important;
+                padding: 0 6px !important;
+                text-align: center !important;
+                border-radius: 6px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+            }
+            .shop-top-filter-wrapper .shop-sorting {
+                flex: 1 1 50% !important;
+                max-width: 50% !important;
+                width: 50% !important;
+                margin: 0 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: flex-end !important;
+            }
+            .shop-top-filter-wrapper .shop-sorting label,
+            .shop-top-filter-wrapper .shop-sorting span {
+                display: none !important;
+            }
+            .shop-top-filter-wrapper .shop-sorting select,
+            .shop-top-filter-wrapper .shop-sorting .form-control {
+                width: 100% !important;
+                max-width: 100% !important;
+                height: 38px !important;
+                font-size: 12px !important;
+                margin: 0 !important;
+                border-radius: 6px !important;
+                padding: 4px 6px !important;
+            }
+            .shop-top-filter-wrapper .shop-view {
+                display: none !important;
+            }
+        }
+
+        /* Filter Sidebar & Apply Filters Button Containment */
+        .apply-filters-btn {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            white-space: nowrap !important;
+            border-radius: 6px !important;
+        }
+
+        .price-range-slider .ui-range-slider-footer {
+            display: block !important;
+            width: 100% !important;
+            padding-top: 10px !important;
+        }
+        .price-range-slider .ui-range-slider-footer > .column {
+            display: block !important;
+            width: 100% !important;
+            padding: 0 !important;
+            margin-bottom: 8px !important;
+        }
+        .price-range-slider .ui-range-slider-footer .btn {
+            height: auto !important;
+            line-height: normal !important;
+            padding: 8px 16px !important;
+        }
+
+        @media (max-width: 991.98px) {
+            .sidebar-offcanvas {
+                position: fixed !important;
+                top: 0 !important;
+                left: -350px !important;
+                width: 310px !important;
+                max-width: 86vw !important;
+                height: 100vh !important;
+                background: #ffffff !important;
+                z-index: 99999 !important;
+                overflow-y: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                box-shadow: 0 0 30px rgba(0,0,0,0.25) !important;
+                padding: 42px 16px 40px !important;
+                transition: left 0.25s ease !important;
+            }
+            .sidebar-offcanvas.open {
+                left: 0 !important;
+            }
         }
 
         /* ==========================================================================

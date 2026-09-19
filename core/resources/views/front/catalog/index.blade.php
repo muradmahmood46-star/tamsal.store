@@ -197,58 +197,53 @@
               </section>
 
               @if ($setting->is_range_search == 1)
-                   <!-- Widget Price Range-->
-              <section class="widget widget-categories card rounded p-4 mb-3">
-                <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
-                  <h3 class="widget-title mb-0" style="font-size: 16px; font-weight: 700;">{{ __('Filter by Price') }}</h3>
-                </div>
+                <!-- Widget Price Range-->
+                <section class="widget widget-categories card rounded p-3 p-md-4 mb-3" style="box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid #e2e8f0;">
+                  <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+                    <h3 class="widget-title mb-0" style="font-size: 15px; font-weight: 700; color: #1e293b;"><i class="fas fa-sliders-h mr-1 text-primary"></i> {{ __('Filter by Price') }}</h3>
+                  </div>
 
-                {{-- Manual Price Range (From - To) --}}
-                <div class="manual-price-box mb-3 p-2 bg-light rounded border">
-                  <div class="row g-2">
-                    <div class="col-6">
-                      <label class="form-label text-muted small mb-1" style="font-size: 11px; font-weight: 700; text-transform: uppercase;">{{ __('From Price') }}</label>
-                      <div class="input-group input-group-sm">
-                        <span class="input-group-text bg-white px-2 text-muted" style="font-size: 11px;">{{ PriceHelper::setCurrencySign() }}</span>
-                        <input type="number" class="form-control form-control-sm price-manual-input" id="manual_min_price" placeholder="0" min="0" value="{{ request()->input('minPrice') ? request()->input('minPrice') : '' }}" style="font-size: 12.5px;">
+                  {{-- Manual Price Range (From - To) --}}
+                  <div class="manual-price-box mb-3 p-2 bg-light rounded border" style="border-color: #e2e8f0 !important;">
+                    <div class="row g-2">
+                      <div class="col-6">
+                        <label class="form-label text-muted mb-1" style="font-size: 10.5px; font-weight: 700; text-transform: uppercase;">{{ __('From Price') }}</label>
+                        <div class="input-group input-group-sm">
+                          <span class="input-group-text bg-white px-2 text-muted" style="font-size: 11px;">{{ PriceHelper::setCurrencySign() }}</span>
+                          <input type="number" class="form-control form-control-sm price-manual-input" id="manual_min_price" placeholder="0" min="0" value="{{ request()->input('minPrice') ? request()->input('minPrice') : '' }}" style="font-size: 12px; height: 32px;">
+                        </div>
                       </div>
-                    </div>
-                    <div class="col-6">
-                      <label class="form-label text-muted small mb-1" style="font-size: 11px; font-weight: 700; text-transform: uppercase;">{{ __('To Price') }}</label>
-                      <div class="input-group input-group-sm">
-                        <span class="input-group-text bg-white px-2 text-muted" style="font-size: 11px;">{{ PriceHelper::setCurrencySign() }}</span>
-                        <input type="number" class="form-control form-control-sm price-manual-input" id="manual_max_price" placeholder="{{ $setting->max_price }}" min="0" value="{{ request()->input('maxPrice') ? request()->input('maxPrice') : '' }}" style="font-size: 12.5px;">
+                      <div class="col-6">
+                        <label class="form-label text-muted mb-1" style="font-size: 10.5px; font-weight: 700; text-transform: uppercase;">{{ __('To Price') }}</label>
+                        <div class="input-group input-group-sm">
+                          <span class="input-group-text bg-white px-2 text-muted" style="font-size: 11px;">{{ PriceHelper::setCurrencySign() }}</span>
+                          <input type="number" class="form-control form-control-sm price-manual-input" id="manual_max_price" placeholder="{{ $setting->max_price }}" min="0" value="{{ request()->input('maxPrice') ? request()->input('maxPrice') : '' }}" style="font-size: 12px; height: 32px;">
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <form class="price-range-slider" method="post" data-start-min="{{request()->input('minPrice') ? request()->input('minPrice') : '0'}}" data-start-max="{{request()->input('maxPrice') ? request()->input('maxPrice') : $setting->max_price}}" data-min="0" data-max="{{$setting->max_price}}" data-step="5">
-                  <div class="ui-range-slider"></div>
-                  <footer class="ui-range-slider-footer mt-3">
-                    <div class="column w-100 mb-2">
-                      <div class="ui-range-values d-flex justify-content-between align-items-center text-muted small px-1">
-                        <div>{{ __('Min') }}: <strong>{{PriceHelper::setCurrencySign()}}<span class="min_price">{{ request()->input('minPrice') ? request()->input('minPrice') : '0' }}</span></strong>
-                          <input type="hidden">
-                        </div>
-                        <div>{{ __('Max') }}: <strong>{{PriceHelper::setCurrencySign()}}<span class="max_price">{{ request()->input('maxPrice') ? request()->input('maxPrice') : $setting->max_price }}</span></strong>
-                          <input type="hidden">
-                        </div>
-                      </div>
+                  <div class="price-range-slider" data-start-min="{{request()->input('minPrice') ? request()->input('minPrice') : '0'}}" data-start-max="{{request()->input('maxPrice') ? request()->input('maxPrice') : $setting->max_price}}" data-min="0" data-max="{{$setting->max_price}}" data-step="5">
+                    <div class="ui-range-slider"></div>
+                    <div class="d-flex justify-content-between align-items-center text-muted small mt-2 px-1" style="font-size: 11.5px;">
+                      <div>{{ __('Min') }}: <strong>{{PriceHelper::setCurrencySign()}}<span class="min_price">{{ request()->input('minPrice') ? request()->input('minPrice') : '0' }}</span></strong></div>
+                      <div>{{ __('Max') }}: <strong>{{PriceHelper::setCurrencySign()}}<span class="max_price">{{ request()->input('maxPrice') ? request()->input('maxPrice') : $setting->max_price }}</span></strong></div>
                     </div>
-                    <div class="column w-100">
-                      <button class="btn btn-primary btn-block w-100 font-weight-bold py-2 shadow-sm apply-filters-btn" id="price_filter" type="button">
-                        <i class="fas fa-check-circle mr-1"></i> <span>{{__('Apply Filters')}}</span>
-                      </button>
-                    </div>
-                  </footer>
-                </form>
+                  </div>
+
+                  {{-- Single Clean Apply Filters Button --}}
+                  <div class="mt-3 pt-2">
+                    <button class="btn btn-primary btn-block w-100 font-weight-bold py-2 shadow-sm apply-filters-btn" id="price_filter" type="button" style="border-radius: 6px; font-size: 13.5px; min-height: 40px; display: flex; align-items: center; justify-content: center; width: 100% !important; box-sizing: border-box !important;">
+                      <i class="fas fa-check-circle mr-1"></i> <span>{{__('Apply Filters')}}</span>
+                    </button>
+                  </div>
+                </section>
               @else
-              <div class="p-3 text-center">
-                <button class="btn btn-primary btn-block w-100 font-weight-bold py-2 shadow-sm apply-filters-btn" id="price_filter" type="button">
-                  <i class="fas fa-check-circle mr-1"></i> <span>{{ __('Apply Filters') }}</span>
-                </button>
-              </div>
+                <div class="p-2 text-center mb-3">
+                  <button class="btn btn-primary btn-block w-100 font-weight-bold py-2 shadow-sm apply-filters-btn" id="price_filter" type="button" style="border-radius: 6px; font-size: 13.5px; min-height: 40px; display: flex; align-items: center; justify-content: center; width: 100% !important; box-sizing: border-box !important;">
+                    <i class="fas fa-check-circle mr-1"></i> <span>{{ __('Apply Filters') }}</span>
+                  </button>
+                </div>
               @endif
 
             </aside>

@@ -700,7 +700,7 @@ $(function ($) {
             $('body').removeClass('offcanvas-open');
             $('.sidebar-close').trigger('click');
 
-            // Direct native DOM manipulation guarantee
+            // Direct native DOM & CSS guarantee
             var offcanvasList = document.querySelectorAll('.sidebar-offcanvas');
             for (var i = 0; i < offcanvasList.length; i++) {
                 offcanvasList[i].classList.remove('open');
@@ -709,6 +709,10 @@ $(function ($) {
             for (var j = 0; j < toggleList.length; j++) {
                 toggleList[j].classList.remove('sidebar-open');
             }
+            $('.sidebar-offcanvas').css('left', '-350px');
+            setTimeout(function() {
+                $('.sidebar-offcanvas').css('left', '');
+            }, 350);
         }
 
         function collectSelectedCategories() {
@@ -808,11 +812,12 @@ $(function ($) {
             $("#search_form #brand").val(brand);
             closeMobileFilterSidebar();
             removePage();
-            $("#search_button").click();
+            $('#search_form').trigger('submit');
         });
 
         $(document).on("click", "#price_filter, #mobile_apply_filters, .apply-filters-btn", function (e) {
             e.preventDefault();
+            e.stopPropagation();
 
             // 1. Collect category & subcategory checkboxes
             collectSelectedCategories();
@@ -824,8 +829,8 @@ $(function ($) {
             if (min_manual !== '' && !isNaN(parseFloat(min_manual))) {
                 $("#search_form #minPrice").val(parseFloat(min_manual));
             } else {
-                let min_price = parseInt($(".min_price").text());
-                if (!isNaN(min_price)) {
+                let min_price = parseFloat($(".min_price").text().replace(/[^0-9\.]/g, ''));
+                if (!isNaN(min_price) && min_price > 0) {
                     $("#search_form #minPrice").val(min_price);
                 } else {
                     $("#search_form #minPrice").val('');
@@ -835,8 +840,8 @@ $(function ($) {
             if (max_manual !== '' && !isNaN(parseFloat(max_manual))) {
                 $("#search_form #maxPrice").val(parseFloat(max_manual));
             } else {
-                let max_price = parseInt($(".max_price").text());
-                if (!isNaN(max_price)) {
+                let max_price = parseFloat($(".max_price").text().replace(/[^0-9\.]/g, ''));
+                if (!isNaN(max_price) && max_price > 0) {
                     $("#search_form #maxPrice").val(max_price);
                 } else {
                     $("#search_form #maxPrice").val('');
@@ -848,7 +853,7 @@ $(function ($) {
 
             // 4. Remove page parameter and submit search form via AJAX
             removePage();
-            $("#search_button").click();
+            $('#search_form').trigger('submit');
 
             // 5. Show user requested success notification
             if (typeof successNotification === 'function') {
