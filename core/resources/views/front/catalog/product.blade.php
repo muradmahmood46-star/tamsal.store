@@ -658,9 +658,15 @@
                             @endphp
                             <div class="p-3 p-md-4">
                                 <div class="d-flex align-items-center mb-3">
-                                    <div class="rounded-circle d-flex align-items-center justify-content-center bg-primary text-white mr-3" style="width: 52px; height: 52px; font-size: 22px; margin-right: 15px; box-shadow: 0 3px 8px rgba(13,110,253,0.3);">
-                                        <i class="fas fa-store"></i>
-                                    </div>
+                                    @if(!$isVendor && $item->store_logo)
+                                        <div class="mr-3 d-flex align-items-center justify-content-center" style="width: 52px; height: 52px; margin-right: 15px; flex-shrink: 0;">
+                                            <img src="{{ url('/core/public/storage/images/' . $item->store_logo) }}" alt="{{ $item->store_name }}" style="max-width: 52px; max-height: 52px; object-fit: contain;">
+                                        </div>
+                                    @else
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center bg-primary text-white mr-3" style="width: 52px; height: 52px; font-size: 22px; margin-right: 15px; box-shadow: 0 3px 8px rgba(13,110,253,0.3);">
+                                            <i class="fas fa-store"></i>
+                                        </div>
+                                    @endif
                                     <div>
                                         <h5 class="mb-1 font-weight-bold text-dark d-flex align-items-center">
                                             {{ $item->store_name }}
@@ -681,7 +687,11 @@
                                         @endif
                                     @else
                                         <div class="col-12 mb-2">
-                                            <p class="text-muted mb-0"><i class="fas fa-shield-alt text-success mr-1"></i> {{ __('This product is sold and fulfilled directly by the Platform.') }}</p>
+                                            <p class="text-muted mb-0"><i class="fas fa-shield-alt text-success mr-1"></i> {{ __('Official Store on') }} {{ $item->store_name }}. {{ __('Genuine products with platform guarantee.') }}</p>
+                                            @php $adminSetting = \App\Models\Setting::find(1); @endphp
+                                            @if($adminSetting && $adminSetting->footer_address)
+                                                <p class="text-muted mb-0 mt-1"><i class="fas fa-map-marker-alt text-danger mr-1"></i> {{ $adminSetting->footer_address }}</p>
+                                            @endif
                                         </div>
                                     @endif
                                 </div>
@@ -702,9 +712,15 @@
                     <div class="card-body p-3 p-md-4">
                         <div class="d-flex flex-wrap align-items-center justify-content-between">
                             <div class="d-flex align-items-center mb-2 mb-md-0">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center text-white mr-3" style="width: 52px; height: 52px; background: linear-gradient(135deg, #0d6efd, #0b5ed7); font-size: 22px; margin-right: 15px; box-shadow: 0 4px 10px rgba(13, 110, 253, 0.25);">
-                                    <i class="fas fa-store"></i>
-                                </div>
+                                @if(!($item->vendor_id && $item->vendor_id > 0) && $item->store_logo)
+                                    <div class="mr-3 d-flex align-items-center justify-content-center" style="width: 52px; height: 52px; margin-right: 15px; flex-shrink: 0;">
+                                        <img src="{{ url('/core/public/storage/images/' . $item->store_logo) }}" alt="{{ $item->store_name }}" style="max-width: 52px; max-height: 52px; object-fit: contain;">
+                                    </div>
+                                @else
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center text-white mr-3" style="width: 52px; height: 52px; background: linear-gradient(135deg, #0d6efd, #0b5ed7); font-size: 22px; margin-right: 15px; box-shadow: 0 4px 10px rgba(13, 110, 253, 0.25);">
+                                        <i class="fas fa-store"></i>
+                                    </div>
+                                @endif
                                 <div>
                                     <div class="text-uppercase text-muted" style="font-size: 11px; font-weight: 700; letter-spacing: 0.5px;">{{ __('Sold By Store') }}</div>
                                     <h5 class="mb-1 font-weight-bold text-dark d-flex align-items-center">

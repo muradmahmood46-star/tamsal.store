@@ -21,7 +21,7 @@ class SettingRepository
         $data = Setting::find(1);
         $input = $request->all();
 
-        $image_files = ['logo', 'favicon', 'loader', 'feature_image', 'announcement', 'footer_gateway_img', 'maintainance_image', 'meta_image'];
+        $image_files = ['logo', 'favicon', 'loader', 'feature_image', 'announcement', 'footer_gateway_img', 'maintainance_image', 'meta_image', 'brand_logo'];
 
         $social_fields = ['facebook_check', 'google_check'];
 

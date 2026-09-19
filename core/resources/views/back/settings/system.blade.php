@@ -79,6 +79,34 @@
                                                                     value="{{ $setting->title }}">
                                                             </div>
                                                         </div>
+
+                                                        <div class="col-lg-8">
+                                                            <div class="form-group">
+                                                                <label for="brand_name">{{ __('Brand Name') }} <small class="text-muted">({{ __('Shown as admin store name on product pages') }})</small></label>
+                                                                <input type="text" name="brand_name" class="form-control"
+                                                                    id="brand_name"
+                                                                    placeholder="{{ __('e.g. ORIVO') }}"
+                                                                    value="{{ $setting->brand_name }}">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-lg-8">
+                                                            <div class="form-group">
+                                                                <label>{{ __('Brand Logo') }} <small class="text-muted">({{ __('Shown on product pages for admin products') }})</small></label>
+                                                                @if($setting->brand_logo)
+                                                                    <div class="mb-2">
+                                                                        <img src="{{ url('/core/public/storage/images/' . $setting->brand_logo) }}" alt="Brand Logo" style="max-height: 50px; max-width: 160px; object-fit: contain; border: 1px solid #e2e8f0; border-radius: 6px; padding: 4px; background: #fff;">
+                                                                    </div>
+                                                                @endif
+                                                                <div class="form-group position-relative mb-0">
+                                                                    <label class="file">
+                                                                        <input type="file" accept="image/*" class="upload-photo" name="brand_logo" aria-label="Brand Logo">
+                                                                        <span class="file-custom text-left">{{ __('Upload Brand Logo...') }}</span>
+                                                                    </label>
+                                                                </div>
+                                                                <small class="text-muted">{{ __('Recommended: transparent PNG, 160x50px') }}</small>
+                                                            </div>
+                                                        </div>
                                                         <div class="col-lg-8">
                                                             <div class="form-group">
                                                                 <label for="home_page_title">{{ __('Home Page Title') }}

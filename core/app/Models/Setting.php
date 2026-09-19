@@ -8,6 +8,8 @@ class Setting extends Model
 {
     protected $fillable = [
         'title',
+        'brand_name',
+        'brand_logo',
         'home_page_title',
         'logo',
         'favicon',
