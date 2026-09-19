@@ -490,10 +490,32 @@
                 -webkit-overflow-scrolling: touch !important;
                 display: block !important;
                 border: 1px solid #e2e8f0 !important;
-                border-radius: 6px !important;
+                border-radius: 8px !important;
                 margin-bottom: 12px !important;
                 background: #ffffff !important;
-                padding: 6px !important;
+                padding: 0 !important;
+                scrollbar-width: thin !important;
+                scrollbar-color: #3b82f6 #f1f5f9 !important;
+            }
+
+            .gd-responsive-table::-webkit-scrollbar,
+            .table-responsive::-webkit-scrollbar,
+            .dataTables_wrapper::-webkit-scrollbar {
+                height: 5px !important;
+                width: 5px !important;
+            }
+
+            .gd-responsive-table::-webkit-scrollbar-thumb,
+            .table-responsive::-webkit-scrollbar-thumb,
+            .dataTables_wrapper::-webkit-scrollbar-thumb {
+                background: #3b82f6 !important;
+                border-radius: 10px !important;
+            }
+
+            .gd-responsive-table::-webkit-scrollbar-track,
+            .table-responsive::-webkit-scrollbar-track,
+            .dataTables_wrapper::-webkit-scrollbar-track {
+                background: #f1f5f9 !important;
             }
 
             .dataTables_wrapper .dataTables_length,
@@ -502,7 +524,8 @@
                 display: flex !important;
                 justify-content: space-between !important;
                 align-items: center !important;
-                margin-bottom: 8px !important;
+                margin-bottom: 6px !important;
+                padding: 8px 10px 0 10px !important;
                 float: none !important;
                 text-align: left !important;
                 font-size: 13px !important;
@@ -510,45 +533,124 @@
 
             .dataTables_wrapper .dataTables_filter input {
                 width: 100% !important;
-                max-width: 160px !important;
+                max-width: 150px !important;
                 margin-left: 6px !important;
-                height: 34px !important;
-                font-size: 13.5px !important;
+                height: 32px !important;
+                font-size: 13px !important;
+                padding: 4px 8px !important;
             }
 
             .dataTables_wrapper .dataTables_info,
             .dataTables_wrapper .dataTables_paginate {
                 width: 100% !important;
                 text-align: center !important;
-                margin-top: 8px !important;
+                margin-top: 6px !important;
+                padding: 0 10px 8px 10px !important;
                 float: none !important;
-                font-size: 13px !important;
+                font-size: 12.5px !important;
             }
 
             .dataTables_wrapper .dataTables_paginate ul.pagination {
                 justify-content: center !important;
                 flex-wrap: wrap !important;
                 margin-top: 4px !important;
+                margin-bottom: 0 !important;
             }
 
             .gd-responsive-table table,
             .table-responsive table,
             .dataTables_wrapper table {
                 width: 100% !important;
-                min-width: 620px !important;
+                min-width: 480px !important;
                 max-width: none !important;
                 margin-bottom: 0 !important;
-            }
-
-            .table th,
-            .table td {
-                padding: 9px 10px !important;
-                font-size: 13.5px !important;
-                vertical-align: middle !important;
+                border-collapse: separate !important;
+                border-spacing: 0 !important;
             }
 
             .table th {
+                padding: 8px 8px !important;
+                font-size: 12px !important;
+                font-weight: 700 !important;
+                text-transform: uppercase !important;
+                letter-spacing: 0.3px !important;
+                background: #f8fafc !important;
+                color: #475569 !important;
                 white-space: nowrap !important;
+                vertical-align: middle !important;
+                border-top: 0 !important;
+            }
+
+            .table td {
+                padding: 7px 8px !important;
+                font-size: 13px !important;
+                line-height: 1.3 !important;
+                vertical-align: middle !important;
+            }
+
+            .table td p,
+            .table th p {
+                margin: 0 !important;
+                line-height: 1.25 !important;
+            }
+
+            .table img,
+            .table img.admin-img,
+            .table img.admin-gallery-img,
+            .table .avatar img,
+            .table .avatar-sm img {
+                width: 36px !important;
+                height: 36px !important;
+                min-width: 36px !important;
+                max-width: 36px !important;
+                min-height: 36px !important;
+                max-height: 36px !important;
+                object-fit: cover !important;
+                border-radius: 4px !important;
+                display: inline-block !important;
+            }
+
+            .table .btn,
+            .table .btn-sm,
+            .table .dropdown-toggle {
+                padding: 3px 8px !important;
+                font-size: 12px !important;
+                line-height: 1.25 !important;
+                height: auto !important;
+                min-height: 26px !important;
+                border-radius: 4px !important;
+                font-weight: 600 !important;
+            }
+
+            .table .badge {
+                font-size: 11px !important;
+                padding: 3px 6px !important;
+                line-height: 1.2 !important;
+                font-weight: 600 !important;
+                border-radius: 4px !important;
+                display: inline-block !important;
+            }
+
+            .table .btn-group > .btn,
+            .table .btn-group-sm > .btn {
+                padding: 3px 6px !important;
+                font-size: 11.5px !important;
+                min-width: unset !important;
+                flex: none !important;
+            }
+
+            .table th:first-child,
+            .table td:first-child {
+                width: 28px !important;
+                max-width: 28px !important;
+                text-align: center !important;
+                padding-left: 4px !important;
+                padding-right: 4px !important;
+            }
+
+            .table td:nth-child(3) {
+                max-width: 170px !important;
+                word-break: break-word !important;
             }
 
             .form-group {
