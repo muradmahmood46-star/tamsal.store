@@ -193,13 +193,13 @@
               </footer>
             </form>
           </section>
-          @endif
-
-          <div class="p-3 text-center d-block d-lg-none mt-2">
-            <button class="btn btn-primary btn-block w-100 font-weight-bold py-2 shadow-sm apply-filters-btn" id="mobile_apply_filters" type="button">
-              <i class="fas fa-check-circle mr-1"></i> {{ __('Apply Filters') }}
+          @else
+          <div class="p-3 text-center">
+            <button class="btn btn-primary btn-block w-100 font-weight-bold py-2 shadow-sm apply-filters-btn" id="price_filter" type="button">
+              <i class="fas fa-check-circle mr-1"></i> <span>{{ __('Apply Filters') }}</span>
             </button>
           </div>
+          @endif
 
         </aside>
       </div>

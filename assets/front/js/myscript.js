@@ -698,6 +698,17 @@ $(function ($) {
             $('.sidebar-offcanvas').removeClass('open');
             $('.sidebar-toggle').removeClass('sidebar-open');
             $('body').removeClass('offcanvas-open');
+            $('.sidebar-close').trigger('click');
+
+            // Direct native DOM manipulation guarantee
+            var offcanvasList = document.querySelectorAll('.sidebar-offcanvas');
+            for (var i = 0; i < offcanvasList.length; i++) {
+                offcanvasList[i].classList.remove('open');
+            }
+            var toggleList = document.querySelectorAll('.sidebar-toggle');
+            for (var j = 0; j < toggleList.length; j++) {
+                toggleList[j].classList.remove('sidebar-open');
+            }
         }
 
         function collectSelectedCategories() {
@@ -993,6 +1004,7 @@ $(function ($) {
                     window.scrollTo(0, 0);
                     $('#list_view_ajax').html(data);
                     lazy();
+                    closeMobileFilterSidebar();
                 }
             });
 

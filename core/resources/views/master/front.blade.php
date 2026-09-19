@@ -55,9 +55,8 @@
     @yield('styleplugins')
     @yield('styles')
 
-    <link id="mainStyles" rel="stylesheet" media="screen" href="{{ asset('assets/front/css/styles.min.css') }}">
-
-    <link id="mainStyles" rel="stylesheet" media="screen" href="{{ asset('assets/front/css/responsive.css') }}">
+    <link id="mainStyles" rel="stylesheet" media="screen" href="{{ asset('assets/front/css/styles.min.css') }}?v={{ time() }}">
+    <link rel="stylesheet" media="screen" href="{{ asset('assets/front/css/responsive.css') }}?v={{ time() }}">
 
     <!-- Lottie & dotLottie Web Animation Players -->
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
@@ -1356,7 +1355,7 @@ body_theme4 @endif
     <script type="text/javascript" src="{{ asset('assets/front/js/scripts.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/front/js/lazy.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/front/js/lazy.plugin.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('assets/front/js/myscript.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/front/js/myscript.js') }}?v={{ time() }}"></script>
     @yield('script')
     @yield('scripts')
 

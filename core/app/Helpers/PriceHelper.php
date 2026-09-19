@@ -196,15 +196,6 @@ class PriceHelper
 
     public static function grandCurrencyPrice($item)
     {
-        $option_price = 0;
-        if (isset($item->attributes) && count($item->attributes) > 0) {
-            foreach ($item->attributes as $attr) {
-                if (isset($attr->options[0])) {
-                    $option_price += self::parsePrice($attr->options[0]->price ?? 0);
-                }
-            }
-        }
-
         if (Session::has('currency')) {
             $curr = Currency::find(Session::get('currency'));
         }
@@ -214,7 +205,7 @@ class PriceHelper
         $currVal = $curr ? self::parsePrice($curr->value) : 1;
         $currSign = $curr ? $curr->sign : '';
         $discountPrice = self::parsePrice($item->discount_price ?? 0);
-        $price = $discountPrice + $option_price;
+        $price = $discountPrice;
 
         $setting = Setting::first();
         $price = self::testPrice(round($price * $currVal, 2));
@@ -228,19 +219,7 @@ class PriceHelper
 
     public static function grandPrice($item)
     {
-        $option_price = 0;
-        if (isset($item->attributes) && count($item->attributes) > 0) {
-            foreach ($item->attributes as $attr) {
-                if (isset($attr->options[0])) {
-                    $option_price += PriceHelper::convertPrice($attr->options[0]->price ?? 0);
-                }
-            }
-        }
-
-        $discountPrice = self::parsePrice($item->discount_price ?? 0);
-        $price = ($discountPrice + $option_price);
-
-        return $price;
+        return self::parsePrice($item->discount_price ?? 0);
     }
 
     public static function Discount($discount)
