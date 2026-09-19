@@ -18,11 +18,10 @@
 
     <div class="card shadow mb-4">
         <div class="card-body">
-            <div class="gd-responsive-table">
-                <table class="table table-bordered table-striped table-hover" width="100%" cellspacing="0">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover mob-stack" width="100%" cellspacing="0">
                     <thead class="thead-light">
                         <tr>
-                            <th>{{ __('Image') }}</th>
                             <th>{{ __('Name') }}</th>
                             <th>{{ __('Price') }}</th>
                             <th>{{ __('Stock') }}</th>
@@ -33,36 +32,32 @@
                     <tbody>
                         @forelse($datas as $data)
                             <tr>
-                                <td>
-                                    <img src="{{ $data->photo ? asset('core/public/storage/images/' . $data->photo) : asset('core/public/storage/images/placeholder.png') }}"
-                                        alt="" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
-                                </td>
-                                <td>
+                                <td data-label="{{ __('Name') }}">
                                     <strong>{{ $data->name }}</strong>
                                     <div class="small text-muted">{{ $data->category ? $data->category->name : '' }}</div>
                                 </td>
-                                <td>
+                                <td data-label="{{ __('Price') }}">
                                     <strong>{{ PriceHelper::setCurrencyPrice($data->discount_price) }}</strong>
                                 </td>
-                                <td>
-                                    <span class="badge badge-danger font-weight-bold">{{ __('0 (Out of Stock)') }}</span>
+                                <td data-label="{{ __('Stock') }}">
+                                    <span class="badge badge-danger font-weight-bold">{{ __('Out of Stock') }}</span>
                                 </td>
-                                <td>
+                                <td data-label="{{ __('Status') }}">
                                     @if($data->status == 1)
                                         <span class="badge badge-success">{{ __('Active') }}</span>
                                     @else
                                         <span class="badge badge-danger">{{ __('Inactive') }}</span>
                                     @endif
                                 </td>
-                                <td>
-                                    <a href="{{ route('seller.item.edit', $data->id) }}" class="btn btn-info btn-sm" title="{{ __('Update Stock') }}">
+                                <td data-label="{{ __('Actions') }}">
+                                    <a href="{{ route('seller.item.edit', $data->id) }}" class="btn btn-info btn-sm">
                                         <i class="fas fa-edit"></i> {{ __('Update Stock') }}
                                     </a>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-4 text-muted">
+                                <td colspan="5" class="text-center py-4 text-muted">
                                     <i class="fas fa-check-circle fa-3x text-success mb-2 d-block"></i>
                                     {{ __('Great! None of your products are currently out of stock.') }}
                                 </td>

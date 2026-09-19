@@ -59,7 +59,6 @@
                 <table class="table table-bordered table-striped table-hover mob-stack" width="100%" cellspacing="0">
                     <thead class="thead-light">
                         <tr>
-                            <th>{{ __('Image') }}</th>
                             <th>{{ __('Name') }}</th>
                             <th>{{ __('Price') }}</th>
                             <th>{{ __('Stock') }}</th>
@@ -71,11 +70,76 @@
                     <tbody>
                         @forelse($datas as $data)
                             <tr>
-                                <td data-label="{{ __('Image') }}">
-                                    <img src="{{ $data->photo ? asset('core/public/storage/images/' . $data->photo) : asset('core/public/storage/images/placeholder.png') }}"
-                                        alt="" style="width: 48px; height: 48px; object-fit: cover; border-radius: 4px;">
-                                </td>
                                 <td data-label="{{ __('Name') }}">
+                                    <strong>{{ $data->name }}</strong>
+                                    <div class="small text-muted">{{ $data->category ? $data->category->name : '' }}</div>
+                                    @if($data->approval_status == 'Rejected' && $data->reject_reason)
+                                        <div class="alert alert-danger py-2 px-3 mt-2 mb-0 small" style="border-left: 4px solid #dc3545;">
+                                            <strong><i class="fas fa-exclamation-triangle mr-1"></i> {{ __('Admin Rejection Note:') }}</strong>
+                                            <p class="mb-1 text-dark">{{ $data->reject_reason }}</p>
+                                            <a href="{{ route('seller.item.edit', $data->id) }}" class="btn btn-danger btn-xs py-1 px-2 font-weight-bold text-white">
+                                                <i class="fas fa-edit mr-1"></i> {{ __('Edit & Resubmit') }}
+                                            </a>
+                                        </div>
+                                    @elseif($data->approval_status == 'Pending')
+                                        <div class="badge badge-light border text-warning mt-1 small">
+                                            <i class="fas fa-hourglass-half mr-1"></i> {{ __('Awaiting admin verification') }}
+                                        </div>
+                                    @endif
+                                </td>
+                                <td data-label="{{ __('Price') }}">
+                                    <strong>{{ PriceHelper::setCurrencyPrice($data->discount_price) }}</strong>
+                                    @if($data->previous_price > 0)
+                                        <del class="small text-muted d-block">{{ PriceHelper::setCurrencyPrice($data->previous_price) }}</del>
+                                    @endif
+                                </td>
+                                <td data-label="{{ __('Stock') }}">
+                                    @if($data->item_type == 'normal')
+                                        @if($data->stock > 0)
+                                            <span class="badge badge-success">{{ $data->stock }}</span>
+                                        @else
+                                            <span class="badge badge-danger">{{ __('Out of Stock') }}</span>
+                                        @endif
+                                    @else
+                                        <span class="badge badge-info">{{ __('Unlimited') }}</span>
+                                    @endif
+                                </td>
+                                <td data-label="{{ __('Status') }}">
+                                    @if($data->approval_status == 'Pending')
+                                        <span class="badge badge-warning text-dark"><i class="fas fa-clock mr-1"></i> {{ __('Pending') }}</span>
+                                    @elseif($data->approval_status == 'Rejected')
+                                        <span class="badge badge-danger"><i class="fas fa-times-circle mr-1"></i> {{ __('Rejected') }}</span>
+                                    @elseif($data->approval_status == 'Approved')
+                                        @if($data->status == 1)
+                                            <a href="{{ route('seller.item.status', [$data->id, 0]) }}" class="badge badge-success">{{ __('Live') }}</a>
+                                        @else
+                                            <a href="{{ route('seller.item.status', [$data->id, 1]) }}" class="badge badge-secondary">{{ __('Paused') }}</a>
+                                        @endif
+                                    @endif
+                                </td>
+                                <td data-label="{{ __('Type') }}">
+                                    <span class="badge badge-primary text-uppercase">{{ $data->item_type }}</span>
+                                </td>
+                                <td data-label="{{ __('Actions') }}">
+                                    <div class="btn-group">
+                                        <a href="{{ route('seller.item.edit', $data->id) }}" class="btn btn-info btn-sm" title="{{ __('Edit') }}"><i class="fas fa-edit"></i></a>
+                                        <a href="{{ route('seller.item.gallery', $data->id) }}" class="btn btn-warning btn-sm" title="{{ __('Galleries') }}"><i class="fas fa-images"></i></a>
+                                        <a href="{{ route('front.product', $data->slug) }}" target="_blank" class="btn btn-secondary btn-sm" title="{{ __('View') }}"><i class="fas fa-eye"></i></a>
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ route('seller.item.destroy', $data->id) }}')"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-muted">
+                                    <i class="fab fa-product-hunt fa-3x mb-2 d-block"></i>
+                                    {{ __('No products found. Click "Add Product" to create your first listing!') }}
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
                                     <strong>{{ $data->name }}</strong>
                                     <div class="small text-muted">{{ $data->category ? $data->category->name : '' }}</div>
                                     @if($data->approval_status == 'Rejected' && $data->reject_reason)
