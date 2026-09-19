@@ -1061,8 +1061,9 @@
             }
             .mob-stack td strong {
                 font-size: 13px !important;
-                white-space: normal !important;
-                word-break: break-word !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
                 display: inline !important;
             }
             .mob-stack td .small.text-muted,
