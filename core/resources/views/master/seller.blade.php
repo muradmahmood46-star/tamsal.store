@@ -1035,43 +1035,41 @@
                 box-shadow: 0 1px 4px rgba(0,0,0,0.05) !important;
             }
             .mob-stack td {
-                display: block !important;
-                padding: 7px 12px !important;
+                display: flex !important;
+                align-items: center !important;
+                padding: 6px 12px !important;
                 border: none !important;
                 border-bottom: 1px solid #f1f5f9 !important;
                 font-size: 13px !important;
+                min-height: unset !important;
+                gap: 6px !important;
             }
             .mob-stack td:last-child { border-bottom: none !important; }
             .mob-stack td::before {
-                content: attr(data-label) !important;
-                display: block !important;
+                content: attr(data-label) ":" !important;
                 font-weight: 700 !important;
                 color: #64748b !important;
                 font-size: 10px !important;
                 text-transform: uppercase !important;
                 letter-spacing: .4px !important;
-                margin-bottom: 3px !important;
+                white-space: nowrap !important;
+                flex-shrink: 0 !important;
             }
-            /* Name cell: truncate long names */
-            .mob-stack td[data-label] strong {
-                display: block !important;
+            /* Name cell value — truncate on same line */
+            .mob-stack td strong {
                 white-space: nowrap !important;
                 overflow: hidden !important;
                 text-overflow: ellipsis !important;
-                max-width: 100% !important;
+                max-width: calc(100% - 60px) !important;
                 font-size: 13px !important;
+                display: inline-block !important;
             }
-            /* Rejection alert inside name cell — compact on mobile */
+            /* Hide category & extra info under name on mobile */
+            .mob-stack td .small.text-muted,
+            .mob-stack td .badge.badge-light { display: none !important; }
+            /* Rejection alert — hide inside td, keep it minimal */
             .mob-stack td .alert {
-                padding: 6px 8px !important;
-                font-size: 11.5px !important;
-                margin-top: 4px !important;
-            }
-            .mob-stack td .alert p {
-                font-size: 11.5px !important;
-                margin-bottom: 4px !important;
-                white-space: normal !important;
-                word-break: break-word !important;
+                display: none !important;
             }
             .mob-stack tfoot tr { border-radius: 0 !important; box-shadow: none !important; background: #f8fafc !important; }
             .mob-stack tfoot td::before { content: none !important; }
