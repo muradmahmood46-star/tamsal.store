@@ -62,7 +62,7 @@
                             <th>{{ __('Name') }}</th>
                             <th>{{ __('Price') }}</th>
                             <th>{{ __('Stock / Status') }}</th>
-                            <th>{{ __('Type') }}</th>
+                            <th>{{ __('Category') }}</th>
                             <th>{{ __('Actions') }}</th>
                         </tr>
                     </thead>
@@ -100,8 +100,8 @@
                                         @endif
                                     </div>
                                 </td>
-                                <td data-label="{{ __('Type') }}">
-                                    <span class="badge badge-primary text-uppercase">{{ $data->item_type }}</span>
+                                <td data-label="{{ __('Category') }}">
+                                    <span class="badge badge-primary">{{ $data->category ? $data->category->name : '-' }}</span>
                                 </td>
                                 <td data-label="{{ __('Actions') }}">
                                     <div class="btn-group">
