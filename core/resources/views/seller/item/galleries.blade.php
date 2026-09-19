@@ -152,9 +152,13 @@
                                 <img src="{{ asset('core/public/storage/images/' . $gallery->photo) }}" class="img-fluid" alt="{{ __('Gallery Image') }}">
                             </div>
                             <div class="p-2 text-center bg-white">
-                                <a href="{{ route('seller.item.gallery.delete', $gallery->id) }}" class="btn btn-outline-danger btn-sm btn-block font-weight-bold py-1" onclick="return confirm('{{ __('Are you sure you want to delete this gallery photo?') }}')">
-                                    <i class="fas fa-trash-alt mr-1"></i> {{ __('Delete') }}
-                                </a>
+                                <form action="{{ route('seller.item.gallery.delete', $gallery->id) }}" method="POST" onsubmit="return confirm('{{ __('Are you sure you want to delete this gallery photo?') }}')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-outline-danger btn-sm btn-block font-weight-bold py-1">
+                                        <i class="fas fa-trash-alt mr-1"></i> {{ __('Delete') }}
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
