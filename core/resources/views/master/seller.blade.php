@@ -1055,15 +1055,9 @@
                 flex-shrink: 0 !important;
                 padding-top: 2px !important;
             }
-            .mob-stack td > * {
-                flex: 1 1 auto !important;
-                min-width: 0 !important;
-            }
             .mob-stack td strong {
                 font-size: 13px !important;
-                white-space: nowrap !important;
-                overflow: hidden !important;
-                text-overflow: ellipsis !important;
+                white-space: normal !important;
                 display: inline !important;
             }
             .mob-stack td .small.text-muted,
