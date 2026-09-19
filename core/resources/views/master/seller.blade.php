@@ -418,16 +418,16 @@
 
         @media (max-width: 767.98px) {
             .page-title, h3, .h3 {
-                font-size: 16px !important;
+                font-size: 18px !important;
                 line-height: 1.35 !important;
             }
 
             .card-title, h4, .h4 {
-                font-size: 15px !important;
+                font-size: 16px !important;
             }
 
             h6, .h6 {
-                font-size: 13.5px !important;
+                font-size: 14px !important;
             }
 
             .d-sm-flex.justify-content-between,
@@ -471,8 +471,8 @@
                 min-width: 110px !important;
                 border-radius: 4px !important;
                 margin: 0 !important;
-                padding: 7px 6px !important;
-                font-size: 11.5px !important;
+                padding: 7px 8px !important;
+                font-size: 13px !important;
                 white-space: normal !important;
                 line-height: 1.25 !important;
                 text-align: center !important;
@@ -505,15 +505,15 @@
                 margin-bottom: 8px !important;
                 float: none !important;
                 text-align: left !important;
-                font-size: 12px !important;
+                font-size: 13px !important;
             }
 
             .dataTables_wrapper .dataTables_filter input {
                 width: 100% !important;
                 max-width: 160px !important;
                 margin-left: 6px !important;
-                height: 32px !important;
-                font-size: 12px !important;
+                height: 34px !important;
+                font-size: 13.5px !important;
             }
 
             .dataTables_wrapper .dataTables_info,
@@ -522,7 +522,7 @@
                 text-align: center !important;
                 margin-top: 8px !important;
                 float: none !important;
-                font-size: 12px !important;
+                font-size: 13px !important;
             }
 
             .dataTables_wrapper .dataTables_paginate ul.pagination {
@@ -543,7 +543,7 @@
             .table th,
             .table td {
                 padding: 9px 10px !important;
-                font-size: 12.5px !important;
+                font-size: 13.5px !important;
                 vertical-align: middle !important;
             }
 
@@ -559,7 +559,7 @@
 
             .form-control,
             .custom-select {
-                font-size: 13px !important;
+                font-size: 14px !important;
                 height: auto !important;
                 padding: 8px 10px !important;
                 max-width: 100% !important;
@@ -573,12 +573,12 @@
             .input-group .form-control {
                 min-width: 0 !important;
                 width: 100% !important;
-                font-size: 13px !important;
+                font-size: 14px !important;
             }
 
             .input-group-prepend .input-group-text,
             .input-group-append .input-group-text {
-                font-size: 11.5px !important;
+                font-size: 13px !important;
                 padding: 6px 8px !important;
                 white-space: nowrap !important;
             }
@@ -591,7 +591,7 @@
                 overflow: hidden !important;
                 text-overflow: ellipsis !important;
                 white-space: nowrap !important;
-                font-size: 12px !important;
+                font-size: 13.5px !important;
             }
 
             .tags,
@@ -623,15 +623,15 @@
             .special-box .d-flex .flex-btn button {
                 width: 100% !important;
                 padding: 7px !important;
-                font-size: 13px !important;
+                font-size: 13.5px !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
             }
 
             .btn-xs {
-                font-size: 10.5px !important;
-                padding: 3px 6px !important;
+                font-size: 12px !important;
+                padding: 4px 8px !important;
                 margin-bottom: 4px !important;
             }
 
@@ -794,42 +794,42 @@
 
         @media (max-width: 767.98px) {
             .card-stats .card-body {
-                padding: 10px 8px !important;
+                padding: 10px 10px !important;
             }
 
             .card-stats .col-icon,
             .card-stats .col-auto.col-icon {
-                flex: 0 0 36px !important;
-                width: 36px !important;
-                height: 36px !important;
-                min-width: 36px !important;
-                max-width: 36px !important;
-                min-height: 36px !important;
-                max-height: 36px !important;
+                flex: 0 0 42px !important;
+                width: 42px !important;
+                height: 42px !important;
+                min-width: 42px !important;
+                max-width: 42px !important;
+                min-height: 42px !important;
+                max-height: 42px !important;
                 margin: 0 !important;
                 padding: 0 !important;
             }
 
             .card-stats .icon-big {
-                width: 36px !important;
-                height: 36px !important;
-                min-width: 36px !important;
-                max-width: 36px !important;
-                min-height: 36px !important;
-                max-height: 36px !important;
+                width: 42px !important;
+                height: 42px !important;
+                min-width: 42px !important;
+                max-width: 42px !important;
+                min-height: 42px !important;
+                max-height: 42px !important;
                 border-radius: 8px !important;
-                font-size: 16px !important;
+                font-size: 18px !important;
                 margin: 0 !important;
             }
 
             .card-stats .icon-big i {
-                font-size: 16px !important;
+                font-size: 18px !important;
                 line-height: 1 !important;
             }
 
             .card-stats .col-stats,
             .card-stats .col.col-stats {
-                padding-left: 8px !important;
+                padding-left: 10px !important;
                 padding-right: 0 !important;
                 min-width: 0 !important;
                 flex: 1 1 0% !important;
@@ -837,8 +837,8 @@
 
             .card-stats .numbers .card-category,
             .card-stats .numbers p {
-                font-size: 11px !important;
-                line-height: 1.2 !important;
+                font-size: 12px !important;
+                line-height: 1.25 !important;
                 margin-bottom: 2px !important;
                 white-space: nowrap !important;
                 overflow: hidden !important;
@@ -847,8 +847,8 @@
 
             .card-stats .numbers .card-title,
             .card-stats .numbers h4 {
-                font-size: 13.5px !important;
-                line-height: 1.2 !important;
+                font-size: 15.5px !important;
+                line-height: 1.25 !important;
                 white-space: nowrap !important;
                 overflow: hidden !important;
                 text-overflow: ellipsis !important;

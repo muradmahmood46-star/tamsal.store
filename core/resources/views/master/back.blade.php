@@ -4,6 +4,7 @@
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
     <title>{{ $setting->title }}</title>
     @php
         $favPath = $setting->favicon ?? '';
@@ -523,43 +524,234 @@
         }
 
         @media (max-width: 767.98px) {
+            .page-title, h3, .h3 {
+                font-size: 18px !important;
+                line-height: 1.35 !important;
+            }
+
+            .card-title, h4, .h4 {
+                font-size: 16px !important;
+            }
+
+            h6, .h6 {
+                font-size: 14px !important;
+            }
+
+            .d-sm-flex.justify-content-between,
+            .d-flex.justify-content-between:not(.custom-control):not(.form-check):not(.nav) {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 8px !important;
+            }
+
+            .d-sm-flex.justify-content-between > div,
+            .d-flex.justify-content-between > div {
+                width: 100% !important;
+            }
+
+            .d-sm-flex.justify-content-between .btn,
+            .d-sm-flex.justify-content-between .btn-group,
+            .d-sm-flex.justify-content-between > a.btn {
+                width: 100% !important;
+                margin-top: 4px !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                text-align: center !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+
+            .btn-group,
+            .btn-group-sm {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                width: 100% !important;
+                gap: 4px !important;
+            }
+
+            .btn-group > .btn,
+            .btn-group-sm > .btn,
+            .btn-group > a,
+            .btn-group-sm > a {
+                flex: 1 1 calc(50% - 4px) !important;
+                min-width: 110px !important;
+                border-radius: 4px !important;
+                margin: 0 !important;
+                padding: 7px 8px !important;
+                font-size: 13px !important;
+                white-space: normal !important;
+                line-height: 1.25 !important;
+                text-align: center !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+
+            .gd-responsive-table,
+            .table-responsive,
+            .dataTables_wrapper {
+                width: 100% !important;
+                max-width: 100% !important;
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                display: block !important;
+                border: 1px solid #e2e8f0 !important;
+                border-radius: 6px !important;
+                margin-bottom: 12px !important;
+                background: #ffffff !important;
+                padding: 6px !important;
+            }
+
+            .dataTables_wrapper .dataTables_length,
+            .dataTables_wrapper .dataTables_filter {
+                width: 100% !important;
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                margin-bottom: 8px !important;
+                float: none !important;
+                text-align: left !important;
+                font-size: 13px !important;
+            }
+
+            .dataTables_wrapper .dataTables_filter input {
+                width: 100% !important;
+                max-width: 160px !important;
+                margin-left: 6px !important;
+                height: 34px !important;
+                font-size: 13.5px !important;
+            }
+
+            .dataTables_wrapper .dataTables_info,
+            .dataTables_wrapper .dataTables_paginate {
+                width: 100% !important;
+                text-align: center !important;
+                margin-top: 8px !important;
+                float: none !important;
+                font-size: 13px !important;
+            }
+
+            .dataTables_wrapper .dataTables_paginate ul.pagination {
+                justify-content: center !important;
+                flex-wrap: wrap !important;
+                margin-top: 4px !important;
+            }
+
+            .gd-responsive-table table,
+            .table-responsive table,
+            .dataTables_wrapper table {
+                width: 100% !important;
+                min-width: 620px !important;
+                max-width: none !important;
+                margin-bottom: 0 !important;
+            }
+
+            .table th,
+            .table td {
+                padding: 9px 10px !important;
+                font-size: 13.5px !important;
+                vertical-align: middle !important;
+            }
+
+            .table th {
+                white-space: nowrap !important;
+            }
+
+            .form-group {
+                margin-bottom: 12px !important;
+                padding: 0 !important;
+                width: 100% !important;
+            }
+
+            .form-control,
+            .custom-select {
+                font-size: 14px !important;
+                height: auto !important;
+                padding: 8px 10px !important;
+                max-width: 100% !important;
+            }
+
+            .input-group {
+                flex-wrap: nowrap !important;
+                width: 100% !important;
+            }
+
+            .input-group .form-control {
+                min-width: 0 !important;
+                width: 100% !important;
+                font-size: 14px !important;
+            }
+
+            .input-group-prepend .input-group-text,
+            .input-group-append .input-group-text {
+                font-size: 13px !important;
+                padding: 6px 8px !important;
+                white-space: nowrap !important;
+            }
+
+            .custom-file,
+            .custom-file-input,
+            .custom-file-label {
+                width: 100% !important;
+                max-width: 100% !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                white-space: nowrap !important;
+                font-size: 13.5px !important;
+            }
+
+            .tags,
+            .tagify,
+            tagify {
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+
+            .btn-xs {
+                font-size: 12px !important;
+                padding: 4px 8px !important;
+                margin-bottom: 4px !important;
+            }
+
             .card-stats .card-body {
-                padding: 10px 8px !important;
+                padding: 10px 10px !important;
             }
 
             .card-stats .col-icon,
             .card-stats .col-auto.col-icon {
-                flex: 0 0 36px !important;
-                width: 36px !important;
-                height: 36px !important;
-                min-width: 36px !important;
-                max-width: 36px !important;
-                min-height: 36px !important;
-                max-height: 36px !important;
+                flex: 0 0 42px !important;
+                width: 42px !important;
+                height: 42px !important;
+                min-width: 42px !important;
+                max-width: 42px !important;
+                min-height: 42px !important;
+                max-height: 42px !important;
                 margin: 0 !important;
                 padding: 0 !important;
             }
 
             .card-stats .icon-big {
-                width: 36px !important;
-                height: 36px !important;
-                min-width: 36px !important;
-                max-width: 36px !important;
-                min-height: 36px !important;
-                max-height: 36px !important;
+                width: 42px !important;
+                height: 42px !important;
+                min-width: 42px !important;
+                max-width: 42px !important;
+                min-height: 42px !important;
+                max-height: 42px !important;
                 border-radius: 8px !important;
-                font-size: 16px !important;
+                font-size: 18px !important;
                 margin: 0 !important;
             }
 
             .card-stats .icon-big i {
-                font-size: 16px !important;
+                font-size: 18px !important;
                 line-height: 1 !important;
             }
 
             .card-stats .col-stats,
             .card-stats .col.col-stats {
-                padding-left: 8px !important;
+                padding-left: 10px !important;
                 padding-right: 0 !important;
                 min-width: 0 !important;
                 flex: 1 1 0% !important;
@@ -567,8 +759,8 @@
 
             .card-stats .numbers .card-category,
             .card-stats .numbers p {
-                font-size: 11px !important;
-                line-height: 1.2 !important;
+                font-size: 12px !important;
+                line-height: 1.25 !important;
                 margin-bottom: 2px !important;
                 white-space: nowrap !important;
                 overflow: hidden !important;
@@ -577,8 +769,8 @@
 
             .card-stats .numbers .card-title,
             .card-stats .numbers h4 {
-                font-size: 13.5px !important;
-                line-height: 1.2 !important;
+                font-size: 15.5px !important;
+                line-height: 1.25 !important;
                 white-space: nowrap !important;
                 overflow: hidden !important;
                 text-overflow: ellipsis !important;
