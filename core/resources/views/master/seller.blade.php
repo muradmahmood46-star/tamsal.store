@@ -1200,7 +1200,7 @@
 
         <div class="main-panel">
             @if(session('admin_impersonating_vendor'))
-                <div class="alert alert-warning border-0 rounded-0 mb-0 shadow py-2 px-3" style="background: linear-gradient(90deg, #ffc107, #ff9800); color: #000; z-index: 9999; font-size: 13px; position: sticky; top: 0;">
+                <div class="alert alert-warning border-0 rounded-0 mb-0 shadow py-2 px-3" style="background: linear-gradient(90deg, #ffc107, #ff9800); color: #000; z-index: 9999; font-size: 13px; position: sticky; top: 58px;">
                     <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between" style="gap: 8px;">
                         <div style="font-size: 13px; line-height: 1.4;">
                             <i class="fas fa-user-shield mr-1"></i>
