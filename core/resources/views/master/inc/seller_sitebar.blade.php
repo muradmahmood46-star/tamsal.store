@@ -1,3 +1,9 @@
+@php
+    $sellerPendingOrdersCount = \App\Models\Order::where('vendor_id', Auth::id())
+        ->where('order_status', 'Pending')
+        ->count();
+@endphp
+
 <ul class="nav">
 
     <li class="nav-item {{ request()->is('seller/dashboard') || request()->is('seller') ? 'active' : '' }}">
@@ -65,6 +71,9 @@
                 <li class="{{ request()->input('type') == 'Pending' ? 'active' : '' }}">
                     <a class="sub-link" href="{{ route('seller.order.index') . '?type=' . 'Pending' }}">
                         <span class="sub-item">{{ __('New Orders') }}</span>
+                        @if($sellerPendingOrdersCount > 0)
+                            <span class="badge badge-warning text-dark ml-2" style="font-size: 11px; padding: 2px 7px; border-radius: 10px;">{{ $sellerPendingOrdersCount }}</span>
+                        @endif
                     </a>
                 </li>
                 <li class="{{ request()->input('type') == 'Accepted' ? 'active' : '' }}">
