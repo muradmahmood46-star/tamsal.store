@@ -161,7 +161,7 @@
             </div>
             <!-- Sidebar  -->
             <div class="col-xl-3 col-lg-4">
-                @include('includes.checkout_sitebar', $cart)
+                @include('includes.checkout_sitebar', ['cart' => $cart, 'hideOrderSummary' => true])
             </div>
         </div>
     </div>

@@ -3,6 +3,7 @@
     <!-- Items in Cart Widget-->
 
 
+    @unless($hideOrderSummary ?? false)
     <section class="card widget widget-featured-posts widget-order-summary p-4">
         <h3 class="widget-title">{{ __('Order Summary') }}</h3>
         @php
@@ -173,6 +174,7 @@
             </tr>
         </table>
     </section>
+    @endunless
 
 
     <section class="card widget widget-featured-posts widget-featured-products p-4">
