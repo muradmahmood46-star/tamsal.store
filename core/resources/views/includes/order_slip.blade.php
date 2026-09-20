@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    @php $slipSetting = $setting ?? \App\Models\Setting::find(1); @endphp
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ __('Order Slip') }} - {{ $order->transaction_number }}</title>
+    @if(!empty($slipSetting->favicon))
+        <link rel="icon" type="image/x-icon" href="{{ url('/core/public/storage/images/' . $slipSetting->favicon) }}?v={{ md5($slipSetting->favicon) }}">
+    @endif
     <link rel="stylesheet" href="{{ asset('assets/back/css/bootstrap.min.css') }}">
     <style>
         body { font-family: sans-serif; background: #fff; padding: 20px; color: #333; }
