@@ -53,6 +53,12 @@
                     <button type="submit" class="btn btn-success btn-md"><i class="fas fa-bolt mr-1"></i> {{ __('Buy Bundle Now') }}</button>
                 </form>
             </div>
+
+            @include('includes.copy_share_link', [
+                'shareInputId' => 'bundle-share-link-' . $deal->id,
+                'shareLabel' => __('Bundle Link'),
+                'shareUrl' => route('front.deal.details', $deal->slug),
+            ])
         </div>
     </div>
 

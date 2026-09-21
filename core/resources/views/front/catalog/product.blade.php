@@ -464,6 +464,12 @@
                                 </div>
                             </div>
 
+                            @include('includes.copy_share_link', [
+                                'shareInputId' => 'product-share-link-' . $item->id,
+                                'shareLabel' => __('Product Link'),
+                                'shareUrl' => route('front.product', $item->slug),
+                            ])
+
                             @if ($item->is_returnable == 1)
                                 <div class="return-policy-box d-flex align-items-center mt-2 mb-2 p-2 px-3 rounded" style="background: #f0fdf4; border: 1px solid #86efac;">
                                     <div class="mr-3 text-success" style="font-size: 22px;">
