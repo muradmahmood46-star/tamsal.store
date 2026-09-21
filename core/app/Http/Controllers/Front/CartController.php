@@ -69,40 +69,64 @@ class CartController extends Controller
 
         $cart = Session::get('cart');
         if (is_array($cart) && !empty($cart) && $id !== null && $id !== '') {
-            $matchedKey = null;
+            $bundleId = null;
+            if (strpos((string) $id, 'bundle-') === 0) {
+                $bundleId = substr((string) $id, 7);
+            }
 
-            // 1. Direct key match
-            if (isset($cart[$id])) {
-                $matchedKey = $id;
-            }
-            // 2. URL decoded match
-            elseif (isset($cart[urldecode($id)])) {
-                $matchedKey = urldecode($id);
-            }
-            // 3. Raw URL decoded match
-            elseif (isset($cart[rawurldecode($id)])) {
-                $matchedKey = rawurldecode($id);
-            }
-            // 4. Loose match (trimming, comparing string/decoded values)
-            else {
-                $decodedId = urldecode($id);
-                $rawDecodedId = rawurldecode($id);
+            // A bundle is sold as one unit, so removing it must remove every product in that bundle.
+            if ($bundleId !== null && $bundleId !== '') {
                 foreach ($cart as $key => $item) {
-                    if (
-                        (string)$key === (string)$id ||
-                        (string)$key === (string)$decodedId ||
-                        (string)$key === (string)$rawDecodedId ||
-                        urldecode((string)$key) === (string)$decodedId ||
-                        trim((string)$key) === trim((string)$id)
-                    ) {
-                        $matchedKey = $key;
-                        break;
+                    if ((string) ($item['deal_id'] ?? '') === (string) $bundleId) {
+                        unset($cart[$key]);
                     }
                 }
-            }
+            } else {
+                $matchedKey = null;
 
-            if ($matchedKey !== null) {
-                unset($cart[$matchedKey]);
+                // 1. Direct key match
+                if (isset($cart[$id])) {
+                    $matchedKey = $id;
+                }
+                // 2. URL decoded match
+                elseif (isset($cart[urldecode($id)])) {
+                    $matchedKey = urldecode($id);
+                }
+                // 3. Raw URL decoded match
+                elseif (isset($cart[rawurldecode($id)])) {
+                    $matchedKey = rawurldecode($id);
+                }
+                // 4. Loose match (trimming, comparing string/decoded values)
+                else {
+                    $decodedId = urldecode($id);
+                    $rawDecodedId = rawurldecode($id);
+                    foreach ($cart as $key => $item) {
+                        if (
+                            (string)$key === (string)$id ||
+                            (string)$key === (string)$decodedId ||
+                            (string)$key === (string)$rawDecodedId ||
+                            urldecode((string)$key) === (string)$decodedId ||
+                            trim((string)$key) === trim((string)$id)
+                        ) {
+                            $matchedKey = $key;
+                            break;
+                        }
+                    }
+                }
+
+                if ($matchedKey !== null) {
+                    // Prevent manually crafted URLs from removing just one product from a bundle.
+                    if (!empty($cart[$matchedKey]['deal_id'])) {
+                        $matchedBundleId = $cart[$matchedKey]['deal_id'];
+                        foreach ($cart as $key => $item) {
+                            if ((string) ($item['deal_id'] ?? '') === (string) $matchedBundleId) {
+                                unset($cart[$key]);
+                            }
+                        }
+                    } else {
+                        unset($cart[$matchedKey]);
+                    }
+                }
             }
         }
 

@@ -3,6 +3,7 @@
     $total = 0;
     $option_price = 0;
     $cartTotal = 0;
+    $bundleRemoveActionsShown = [];
     
 @endphp
 
@@ -26,7 +27,11 @@
 
                     @foreach ($cart as $key => $item)
                         @php
-                            
+                            $isBundleItem = !empty($item['deal_id']);
+                            $showBundleRemoveAction = $isBundleItem && !in_array($item['deal_id'], $bundleRemoveActionsShown);
+                            if ($showBundleRemoveAction) {
+                                $bundleRemoveActionsShown[] = $item['deal_id'];
+                            }
                             $cartTotal += ($item['main_price'] + $total + $item['attribute_price']) * $item['qty'];
                         @endphp
                         <tr>
@@ -40,6 +45,10 @@
 
                                             </a></h4>
 
+                                        @if($isBundleItem)
+                                            <span class="badge badge-info mb-1">{{ __('Bundle') }}: {{ $item['deal_name'] ?? __('Bundle Deal') }}</span>
+                                        @endif
+
                                         @foreach ($item['attribute']['option_name'] as $optionkey => $option_name)
                                             <span><em>{{ $item['attribute']['names'][$optionkey] }}:</em>
                                                 {{ $option_name }}
@@ -52,7 +61,7 @@
                             </td>
 
                             <td class="text-center">
-                                @if ($item['item_type'] == 'normal')
+                                @if ($item['item_type'] == 'normal' && !$isBundleItem)
                                     <div class="qtySelector product-quantity">
                                         <span class="decreaseQtycart cartsubclick" data-id="{{ $key }}"
                                             data-target="{{ PriceHelper::GetItemId($key) }}"><i
@@ -71,9 +80,13 @@
                             <td class="text-center text-lg">
                                 {{ PriceHelper::setCurrencyPrice($item['main_price'] * $item['qty']) }}</td>
 
-                            <td class="text-center"><a class="remove-from-cart"
-                                    href="{{ route('front.cart.destroy', $key) }}" data-toggle="tooltip"
-                                    title="Remove item"><i class="icon-x"></i></a></td>
+                            <td class="text-center">
+                                @if(!$isBundleItem)
+                                    <a class="remove-from-cart" href="{{ route('front.cart.destroy', $key) }}" data-toggle="tooltip" title="Remove item"><i class="icon-x"></i></a>
+                                @elseif($showBundleRemoveAction)
+                                    <a class="remove-from-cart" href="{{ route('front.cart.destroy', 'bundle-' . $item['deal_id']) }}" data-toggle="tooltip" title="{{ __('Remove entire bundle') }}"><i class="icon-x"></i></a>
+                                @endif
+                            </td>
                         </tr>
                     @endforeach
 

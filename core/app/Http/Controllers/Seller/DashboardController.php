@@ -467,8 +467,8 @@ class DashboardController extends Controller
         $rejectedProductsCount = Item::where('vendor_id', $vendorId)->where('approval_status', 'Rejected')->count();
         $rejectedProducts = Item::where('vendor_id', $vendorId)->where('approval_status', 'Rejected')->get();
 
-        $recentOrders = (clone $sellerOrdersQuery)->latest()->take(5)->get();
-        $recentProducts = Item::where('vendor_id', $vendorId)->latest()->take(5)->get();
+        $recentOrders = (clone $sellerOrdersQuery)->latest()->take(10)->get();
+        $recentProducts = Item::where('vendor_id', $vendorId)->latest()->take(10)->get();
 
         // 30-Day Monthly Sales and Monthly Earnings Series for Charts
         $dailySalesMap = [];
