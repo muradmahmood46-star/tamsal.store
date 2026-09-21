@@ -74,8 +74,9 @@
                                                 class="fas fa-plus"></i></span>
                                         <input type="hidden" value="3333" id="current_stock">
                                     </div>
+                                @elseif($isBundleItem)
+                                    <span class="font-weight-bold">{{ $item['qty'] }}</span>
                                 @endif
-
                             </td>
                             <td class="text-center text-lg">
                                 {{ PriceHelper::setCurrencyPrice($item['main_price'] * $item['qty']) }}</td>
