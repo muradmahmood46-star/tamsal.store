@@ -499,8 +499,8 @@
                             </div>
                             <select name="childcategory_id" id="childcategory_id" class="form-control">
                                 <option value="">{{ __('-- Select Childcategory --') }}</option>
-                                @if($item->subcategory && $item->subcategory->childcategory)
-                                    @foreach($item->subcategory->childcategory as $childcat)
+                                @if($childcategories)
+                                    @foreach($childcategories as $childcat)
                                         <option value="{{ $childcat->id }}" {{ $item->childcategory_id == $childcat->id ? 'selected' : '' }}>{{ $childcat->name }}</option>
                                     @endforeach
                                 @endif

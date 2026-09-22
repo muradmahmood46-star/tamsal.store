@@ -8,6 +8,7 @@ use App\Http\Requests\GalleryRequest;
 use App\Http\Requests\ItemRequest;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\ChieldCategory;
 use App\Models\Currency;
 use App\Models\Gallery;
 use App\Models\Item;
@@ -92,6 +93,7 @@ class ItemController extends Controller
     public function store(ItemRequest $request)
     {
         $this->authorizedSubcategory($request->subcategory_id, $request->category_id);
+        $this->authorizedChildcategory($request->childcategory_id, $request->subcategory_id);
         // Inject seller ID into request
         $request->merge([
             'vendor_id' => Auth::id(),
@@ -130,6 +132,9 @@ class ItemController extends Controller
             'subcategories' => Subcategory::where('category_id', $item->category_id)->where(function ($query) use ($vendorId) {
                 $query->whereNull('vendor_id')->orWhere('vendor_id', $vendorId);
             })->get(),
+            'childcategories' => ChieldCategory::where('subcategory_id', $item->subcategory_id)->where(function ($query) use ($vendorId) {
+                $query->whereNull('vendor_id')->orWhere('vendor_id', $vendorId);
+            })->where('status', 1)->get(),
             'categories' => Category::where('status', 1)->where(function($q) use ($vendorId) {
                 $q->whereNull('vendor_id')->orWhere('vendor_id', 0)->orWhere('vendor_id', $vendorId);
             })->orderBy('name', 'asc')->get(),
@@ -148,6 +153,7 @@ class ItemController extends Controller
     {
         $item = Item::where('id', $id)->where('vendor_id', Auth::id())->firstOrFail();
         $this->authorizedSubcategory($request->subcategory_id, $request->category_id);
+        $this->authorizedChildcategory($request->childcategory_id, $request->subcategory_id);
 
         $request->merge([
             'vendor_id' => Auth::id(),
@@ -236,7 +242,9 @@ class ItemController extends Controller
             $data = Subcategory::where('id', $request->subcategory_id)->where(function ($query) {
                 $query->whereNull('vendor_id')->orWhere('vendor_id', Auth::id());
             })->firstOrFail();
-            $data = $data->childcategory;
+            $data = ChieldCategory::where('subcategory_id', $data->id)->where(function ($query) {
+                $query->whereNull('vendor_id')->orWhere('vendor_id', Auth::id());
+            })->where('status', 1)->get();
         } else {
             $data = [];
         }
@@ -248,6 +256,15 @@ class ItemController extends Controller
     {
         if ($subcategoryId) {
             Subcategory::where('id', $subcategoryId)->where('category_id', $categoryId)->where(function ($query) {
+                $query->whereNull('vendor_id')->orWhere('vendor_id', Auth::id());
+            })->firstOrFail();
+        }
+    }
+
+    private function authorizedChildcategory($childcategoryId, $subcategoryId)
+    {
+        if ($childcategoryId) {
+            ChieldCategory::where('id', $childcategoryId)->where('subcategory_id', $subcategoryId)->where(function ($query) {
                 $query->whereNull('vendor_id')->orWhere('vendor_id', Auth::id());
             })->firstOrFail();
         }

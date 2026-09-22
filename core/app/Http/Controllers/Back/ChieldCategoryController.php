@@ -36,7 +36,7 @@ class ChieldCategoryController extends Controller
     public function index()
     {
         return view('back.childcategory.index',[
-            'datas' => ChieldCategory::with('category')->orderBy('id','desc')->get()
+            'datas' => ChieldCategory::whereNull('vendor_id')->with('category')->orderBy('id','desc')->get()
         ]);
     }
 
@@ -58,6 +58,7 @@ class ChieldCategoryController extends Controller
      */
     public function store(ChieldcategoryRequest $request)
     {
+        $request->merge(['vendor_id' => null]);
         $this->repository->store($request);
         return redirect()->route('back.childcategory.index')->withSuccess(__('New Childcategory Added Successfully.'));
     }
@@ -71,7 +72,7 @@ class ChieldCategoryController extends Controller
      */
     public function status($id,$status)
     {
-        ChieldCategory::find($id)->update(['status' => $status]);
+        ChieldCategory::whereNull('vendor_id')->findOrFail($id)->update(['status' => $status]);
         return redirect()->route('back.childcategory.index')->withSuccess(__('Status Updated Successfully.'));
     }
 
@@ -84,7 +85,7 @@ class ChieldCategoryController extends Controller
      */
     public function edit(ChieldCategory $childcategory)
     {
-        
+        abort_unless(is_null($childcategory->vendor_id), 404);
         return view('back.childcategory.edit',compact('childcategory'));
     }
 
@@ -97,6 +98,8 @@ class ChieldCategoryController extends Controller
      */
     public function update(ChieldCategoryRequest $request, ChieldCategory $childcategory)
     {
+        abort_unless(is_null($childcategory->vendor_id), 404);
+        $request->merge(['vendor_id' => null]);
         $this->repository->update($childcategory, $request);
         return redirect()->route('back.childcategory.index')->withSuccess(__('Childcategory Updated Successfully.'));
     }
@@ -109,6 +112,7 @@ class ChieldCategoryController extends Controller
      */
     public function destroy(ChieldCategory $childcategory)
     {
+        abort_unless(is_null($childcategory->vendor_id), 404);
         $this->repository->delete($childcategory);
         return redirect()->route('back.childcategory.index')->withSuccess(__('Childcategory Deleted Successfully.'));
     }

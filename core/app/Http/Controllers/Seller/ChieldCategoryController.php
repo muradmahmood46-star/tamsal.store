@@ -11,6 +11,7 @@ use App\{
 use App\Models\ChieldCategory;
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class ChieldCategoryController extends Controller
@@ -25,15 +26,19 @@ class ChieldCategoryController extends Controller
 
     /**
      * Display listing of child categories in Seller Panel.
-     * Shows childcategories under Admin categories + vendor's own categories.
+     * Shows admin child categories and the current vendor's child categories.
      */
     public function index()
     {
         $vendorId = Auth::id();
-        $datas = ChieldCategory::whereHas('category', function ($query) use ($vendorId) {
+        $datas = ChieldCategory::where(function ($query) use ($vendorId) {
+            $query->whereNull('vendor_id')->orWhere('vendor_id', $vendorId);
+        })->whereHas('category', function ($query) use ($vendorId) {
             $query->whereNull('vendor_id')
                   ->orWhere('vendor_id', 0)
                   ->orWhere('vendor_id', $vendorId);
+        })->whereHas('subcategory', function ($query) use ($vendorId) {
+            $query->whereNull('vendor_id')->orWhere('vendor_id', $vendorId);
         })->with(['category', 'subcategory'])->orderBy('id', 'desc')->get();
         return view('seller.chieldcategory.index', compact('datas'));
     }
@@ -51,6 +56,8 @@ class ChieldCategoryController extends Controller
      */
     public function store(ChieldcategoryRequest $request)
     {
+        $this->authorizedSubcategory($request->subcategory_id, $request->category_id);
+        $request->merge(['vendor_id' => Auth::id()]);
         $this->repository->store($request);
         return redirect()->route('seller.childcategory.index')->withSuccess(__('New Childcategory Added Successfully.'));
     }
@@ -67,6 +74,8 @@ class ChieldCategoryController extends Controller
             'slug' => 'nullable|string|max:255'
         ]);
 
+        $this->authorizedSubcategory($request->subcategory_id, $request->category_id);
+
         $name = $request->name;
         $slug = $request->slug ? Str::slug($request->slug) : Str::slug($name);
         
@@ -82,7 +91,8 @@ class ChieldCategoryController extends Controller
             'subcategory_id' => $request->subcategory_id,
             'name' => $name,
             'slug' => $slug,
-            'status' => 1
+            'status' => 1,
+            'vendor_id' => Auth::id()
         ]);
 
         return response()->json([
@@ -103,7 +113,7 @@ class ChieldCategoryController extends Controller
      */
     public function status($id, $status)
     {
-        ChieldCategory::find($id)->update(['status' => $status]);
+        $this->visibleChildcategory($id)->update(['status' => $status]);
         return redirect()->route('seller.childcategory.index')->withSuccess(__('Status Updated Successfully.'));
     }
 
@@ -112,6 +122,7 @@ class ChieldCategoryController extends Controller
      */
     public function edit(ChieldCategory $childcategory)
     {
+        $this->ensureVisibleToVendor($childcategory);
         return view('seller.chieldcategory.edit', compact('childcategory'));
     }
 
@@ -120,6 +131,9 @@ class ChieldCategoryController extends Controller
      */
     public function update(ChieldcategoryRequest $request, ChieldCategory $childcategory)
     {
+        $this->ensureVisibleToVendor($childcategory);
+        $this->authorizedSubcategory($request->subcategory_id, $request->category_id);
+        $request->merge(['vendor_id' => $childcategory->vendor_id]);
         $this->repository->update($childcategory, $request);
         return redirect()->route('seller.childcategory.index')->withSuccess(__('Childcategory Updated Successfully.'));
     }
@@ -129,7 +143,27 @@ class ChieldCategoryController extends Controller
      */
     public function destroy(ChieldCategory $childcategory)
     {
+        $this->ensureVisibleToVendor($childcategory);
         $this->repository->delete($childcategory);
         return redirect()->route('seller.childcategory.index')->withSuccess(__('Childcategory Deleted Successfully.'));
+    }
+
+    private function authorizedSubcategory($subcategoryId, $categoryId)
+    {
+        return Subcategory::where('id', $subcategoryId)->where('category_id', $categoryId)->where(function ($query) {
+            $query->whereNull('vendor_id')->orWhere('vendor_id', Auth::id());
+        })->firstOrFail();
+    }
+
+    private function visibleChildcategory($id)
+    {
+        return ChieldCategory::where('id', $id)->where(function ($query) {
+            $query->whereNull('vendor_id')->orWhere('vendor_id', Auth::id());
+        })->firstOrFail();
+    }
+
+    private function ensureVisibleToVendor(ChieldCategory $childcategory)
+    {
+        abort_unless(is_null($childcategory->vendor_id) || $childcategory->vendor_id == Auth::id(), 404);
     }
 }

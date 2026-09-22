@@ -339,7 +339,7 @@
                                         <label for="childcategory_id1">{{ __('Select Child Category') }} </label>
                                         <select name="childcategory_id1" id="childcategory_id1" class="form-control">
                                             <option value="">{{__('Select one')}}</option>
-                                            @foreach(DB::table('chield_categories')->where('category_id',$popular_category['category_id1'])->whereStatus(1)->get() as $chieldcategory)
+                                            @foreach(DB::table('chield_categories')->where('category_id',$popular_category['category_id1'])->whereNull('vendor_id')->whereStatus(1)->get() as $chieldcategory)
                                             <option value="{{ $chieldcategory->id }}" {{ $chieldcategory->id == $popular_category['childcategory_id1'] ? 'selected' : '' }}>{{ $chieldcategory->name }}</option>
                                             @endforeach
                                         </select>
@@ -370,7 +370,7 @@
                                         <label for="childcategory_id2">{{ __('Select Child Category') }} </label>
                                         <select name="childcategory_id2" id="childcategory_id2" class="form-control">
                                             <option value="">{{__('Select one')}}</option>
-                                            @foreach(DB::table('chield_categories')->where('category_id',$popular_category['category_id2'])->whereStatus(1)->get() as $chieldcategory)
+                                            @foreach(DB::table('chield_categories')->where('category_id',$popular_category['category_id2'])->whereNull('vendor_id')->whereStatus(1)->get() as $chieldcategory)
                                             <option value="{{ $chieldcategory->id }}" {{ $chieldcategory->id == $popular_category['childcategory_id2'] ? 'selected' : '' }}>{{ $chieldcategory->name }}</option>
                                             @endforeach
                                         </select>
@@ -400,7 +400,7 @@
                                         <label for="childcategory_id3">{{ __('Select Child Category') }} </label>
                                         <select name="childcategory_id3" id="childcategory_id3" class="form-control">
                                             <option value="">{{__('Select one')}}</option>
-                                            @foreach(DB::table('chield_categories')->where('category_id',$popular_category['category_id3'])->whereStatus(1)->get() as $chieldcategory)
+                                            @foreach(DB::table('chield_categories')->where('category_id',$popular_category['category_id3'])->whereNull('vendor_id')->whereStatus(1)->get() as $chieldcategory)
                                             <option value="{{ $chieldcategory->id }}" {{ $chieldcategory->id == $popular_category['childcategory_id3'] ? 'selected' : '' }}>{{ $chieldcategory->name }}</option>
                                             @endforeach
                                         </select>
@@ -430,7 +430,7 @@
                                         <label for="childcategory_id4">{{ __('Select Child Category') }} </label>
                                         <select name="childcategory_id4" id="childcategory_id4" class="form-control">
                                             <option value="">{{__('Select one')}}</option>
-                                            @foreach(DB::table('chield_categories')->where('category_id',$popular_category['category_id4'])->whereStatus(1)->get() as $chieldcategory)
+                                            @foreach(DB::table('chield_categories')->where('category_id',$popular_category['category_id4'])->whereNull('vendor_id')->whereStatus(1)->get() as $chieldcategory)
                                             <option value="{{ $chieldcategory->id }}" {{ $chieldcategory->id == $popular_category['childcategory_id4'] ? 'selected' : '' }}>{{ $chieldcategory->name }}</option>
                                             @endforeach
                                         </select>
@@ -603,7 +603,7 @@
                                     <label for="cloumn_childcategory_id1">{{ __('Select Child Category') }} </label>
                                     <select name="childcategory_id1"  id="cloumn_childcategory_id1" class="form-control">
                                         <option value="">{{__('Select one')}}</option>
-                                        @foreach(DB::table('chield_categories')->where('category_id',$three_column_category['category_id1'])->whereStatus(1)->get() as $chieldcategory)
+                                        @foreach(DB::table('chield_categories')->where('category_id',$three_column_category['category_id1'])->whereNull('vendor_id')->whereStatus(1)->get() as $chieldcategory)
                                         <option value="{{ $chieldcategory->id }}" {{ $chieldcategory->id == $three_column_category['childcategory_id1'] ? 'selected' : '' }}>{{ $chieldcategory->name }}</option>
                                         @endforeach
                                     </select>
@@ -634,7 +634,7 @@
                                     <label for="cloumn_childcategory_id2">{{ __('Select Child Category') }} </label>
                                     <select name="childcategory_id2" id="cloumn_childcategory_id2" class="form-control">
                                         <option value="">{{__('Select one')}}</option>
-                                        @foreach(DB::table('chield_categories')->where('category_id',$three_column_category['category_id2'])->whereStatus(1)->get() as $chieldcategory)
+                                        @foreach(DB::table('chield_categories')->where('category_id',$three_column_category['category_id2'])->whereNull('vendor_id')->whereStatus(1)->get() as $chieldcategory)
                                         <option value="{{ $chieldcategory->id }}" {{ $chieldcategory->id == $three_column_category['childcategory_id2'] ? 'selected' : '' }}>{{ $chieldcategory->name }}</option>
                                         @endforeach
                                     </select>
@@ -674,9 +674,9 @@
                                         <option value="">{{__('Select one')}}</option>
                                         @php
                                             if(isset($three_column_category['category_id3'])){
-                                                $childcategory = DB::table('chield_categories')->where('category_id',$three_column_category['category_id3'])->whereStatus(1)->get();
+                                                $childcategory = DB::table('chield_categories')->where('category_id',$three_column_category['category_id3'])->whereNull('vendor_id')->whereStatus(1)->get();
                                             }else{
-                                                $childcategory = DB::table('chield_categories')->whereStatus(1)->get();
+                                                $childcategory = DB::table('chield_categories')->whereNull('vendor_id')->whereStatus(1)->get();
                                             }
                                         @endphp
                                         @foreach($childcategory as $chieldcategory)

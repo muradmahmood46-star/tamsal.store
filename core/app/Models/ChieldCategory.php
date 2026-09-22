@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ChieldCategory extends Model
 {
-    protected $fillable = ['name','slug','status','category_id','subcategory_id'];
+    protected $fillable = ['name', 'slug', 'status', 'category_id', 'subcategory_id', 'vendor_id'];
     public $timestamps = false;
 
     public function category()

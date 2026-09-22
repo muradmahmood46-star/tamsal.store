@@ -112,8 +112,7 @@ class ItemController extends Controller
     {
 
         if ($request->subcategory_id) {
-            $data = Subcategory::findOrFail($request->subcategory_id);
-            $data = $data->childcategory;
+            $data = ChieldCategory::where('subcategory_id', $request->subcategory_id)->whereNull('vendor_id')->where('status', 1)->get();
         } else {
             $data = [];
         }

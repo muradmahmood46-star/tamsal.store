@@ -300,7 +300,7 @@
                         <label for="childcategory_id">{{ __('Select Child Category') }} </label>
                         <select name="childcategory_id" id="childcategory_id" class="form-control">
                             <option value="">{{__('Select one')}}</option>
-                            @foreach(DB::table('chield_categories')->where('category_id',$item->category_id)->whereStatus(1)->get() as $chieldcategory)
+                            @foreach(DB::table('chield_categories')->where('category_id',$item->category_id)->whereNull('vendor_id')->whereStatus(1)->get() as $chieldcategory)
                             <option value="{{ $chieldcategory->id }}" {{ $chieldcategory->id == $item->childcategory_id ? 'selected' : '' }}>{{ $chieldcategory->name }}</option>
                             @endforeach
                         </select>
