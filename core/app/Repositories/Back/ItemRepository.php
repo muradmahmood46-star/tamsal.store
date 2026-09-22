@@ -35,8 +35,8 @@ class ItemRepository
         }
 
         $curr = Currency::where('is_default',1)->first();
-        $input['discount_price'] = $request->discount_price / $curr->value;
-        $input['previous_price'] = $request->previous_price / $curr->value;
+        $input['discount_price'] = $request->discount_price;
+        $input['previous_price'] = $request->previous_price;
 
         if($request->has('meta_keywords')){
             $input['meta_keywords'] = str_replace(["value", "{", "}", "[","]",":","\""], '', $request->meta_keywords);
@@ -155,8 +155,8 @@ class ItemRepository
         }
 
         $curr = Currency::where('is_default',1)->first();
-        $input['discount_price'] = $request->discount_price / $curr->value;
-        $input['previous_price'] = $request->previous_price / $curr->value;
+        $input['discount_price'] = $request->discount_price;
+        $input['previous_price'] = $request->previous_price;
 
         if($request->has('is_social')){
             $input['social_icons'] = json_encode($input['social_icons']);

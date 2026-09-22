@@ -485,7 +485,7 @@
                                 name="discount_price" class="form-control"
                                 placeholder="{{ __('Enter Current Price') }}"
                                 min="1" step="0.1"
-                                value="{{ round($item->discount_price * $curr->value,2) }}" >
+                                value="{{ $item->discount_price }}" >
                         </div>
                     </div>
 
@@ -501,7 +501,7 @@
                                 name="previous_price" class="form-control"
                                 placeholder="{{ __('Enter Previous Price') }}"
                                 min="1" step="0.1"
-                                value="{{ round($item->previous_price*$curr->value ,2)}}" >
+                                value="{{ $item->previous_price}}" >
                         </div>
                     </div>
 
