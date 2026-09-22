@@ -187,12 +187,19 @@
     @endif
 </div>
 
-<!-- Pagination-->
-<div class="row mt-15" id="item_pagination">
-    <div class="col-lg-12 text-center">
-        {{$items->links()}}
-    </div>
+<!-- Infinite Scroll Sentinel & Loader -->
+<div id="infinite-scroll-sentinel" style="height:1px;"></div>
+<div id="infinite-scroll-loader" class="text-center py-4" style="display:none;">
+    <span class="spinner-border spinner-border-sm text-primary mr-2" role="status"></span>
+    <span class="text-muted" style="font-size:14px;">{{ __('Loading more products...') }}</span>
 </div>
+<div id="infinite-scroll-end" class="text-center py-3" style="display:none;">
+    <span class="text-muted" style="font-size:13px;"><i class="fas fa-check-circle text-success mr-1"></i>{{ __("You've seen all products") }}</span>
+</div>
+<script>
+window._infiniteNextUrl = '{{ $items->nextPageUrl() }}';
+window._infiniteInit && window._infiniteInit();
+</script>
 
 <script type="text/javascript" src="{{asset('assets/front/js/catalog.js')}}"></script>
 

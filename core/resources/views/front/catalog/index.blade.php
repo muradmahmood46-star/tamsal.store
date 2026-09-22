@@ -277,5 +277,87 @@
 
         <button type="submit" id="search_button" class="d-none"></button>
     </form>
+
+<script>
+(function(){
+    var _loading = false;
+    var _observer = null;
+
+    function _loadMore(){
+        var nextUrl = window._infiniteNextUrl;
+        if(_loading || !nextUrl) return;
+        _loading = true;
+        var loader = document.getElementById('infinite-scroll-loader');
+        var endMsg = document.getElementById('infinite-scroll-end');
+        if(loader) loader.style.display = 'block';
+
+        fetch(nextUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(function(r){ return r.text(); })
+        .then(function(html){
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(html, 'text/html');
+
+            var newMain = doc.getElementById('main_div');
+            var existingMain = document.getElementById('main_div');
+            if(newMain && existingMain){
+                Array.from(newMain.children).forEach(function(child){
+                    existingMain.appendChild(child.cloneNode(true));
+                });
+            }
+
+            // Get next URL from injected script tag
+            var m = html.match(/window\._infiniteNextUrl = '([^']*)'/);
+            window._infiniteNextUrl = (m && m[1]) ? m[1] : '';
+
+            _loading = false;
+            if(loader) loader.style.display = 'none';
+            if(!window._infiniteNextUrl){
+                if(endMsg) endMsg.style.display = 'block';
+                if(_observer){
+                    var s = document.getElementById('infinite-scroll-sentinel');
+                    if(s) _observer.unobserve(s);
+                }
+            }
+            // Re-init lazy images if available
+            if(typeof $ !== 'undefined') $('img.lazy').each(function(){ if($(this).data('src')) $(this).attr('src', $(this).data('src')); });
+        })
+        .catch(function(){
+            _loading = false;
+            if(loader) loader.style.display = 'none';
+        });
+    }
+
+    window._infiniteInit = function(){
+        // Reset state on filter reload
+        _loading = false;
+        if(_observer) _observer.disconnect();
+        var endMsg = document.getElementById('infinite-scroll-end');
+        if(endMsg) endMsg.style.display = 'none';
+
+        var sentinel = document.getElementById('infinite-scroll-sentinel');
+        if(!sentinel) return;
+
+        if(!window._infiniteNextUrl){
+            if(endMsg) endMsg.style.display = 'block';
+            return;
+        }
+
+        if('IntersectionObserver' in window){
+            _observer = new IntersectionObserver(function(entries){
+                if(entries[0].isIntersecting) _loadMore();
+            }, { rootMargin: '400px' });
+            _observer.observe(sentinel);
+        } else {
+            window.addEventListener('scroll', function(){
+                var rect = sentinel.getBoundingClientRect();
+                if(rect.top <= window.innerHeight + 400) _loadMore();
+            });
+        }
+    };
+
+    // Init on first page load
+    window._infiniteInit();
+})();
+</script>
 @endsection
 
