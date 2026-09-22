@@ -44,18 +44,15 @@
                         @if ($item->is_stock())
                             @if($item->is_type != 'undefine')
                             <div class="product-badge
-                            @if($item->is_type == 'feature')
-                            bg-warning
-                            @elseif($item->is_type == 'new')
-                            bg-danger
-                            @elseif($item->is_type == 'top')
-                            bg-info
-                            @elseif($item->is_type == 'best')
-                            bg-dark
-                            @elseif($item->is_type == 'flash_deal')
-                            bg-success
+                            @if($item->is_type == 'feature') bg-warning
+                            @elseif($item->is_type == 'new') bg-danger
+                            @elseif($item->is_type == 'top') bg-info
+                            @elseif($item->is_type == 'best') bg-dark
+                            @elseif($item->is_type == 'flash_deal') bg-success
                             @endif
                             ">{{ ucfirst(str_replace('_',' ',$item->is_type)) }}</div>
+                            @elseif($item->is_free_delivery == 1)
+                            <div class="product-badge bg-success">{{ __('Free Delivery') }}</div>
                             @endif
                         @else
                             <div class="product-badge bg-secondary border-default text-body">{{__('out of stock')}}</div>
@@ -63,9 +60,6 @@
 
                         @if($item->previous_price && $item->previous_price !=0)
                             <div class="product-badge product-badge2 bg-info"> -{{PriceHelper::DiscountPercentage($item)}}</div>
-                        @endif
-                        @if($item->is_free_delivery == 1)
-                            <div class="product-badge product-badge-free-delivery">{{ __('Free Delivery') }}</div>
                         @endif
 
                         <img src="{{url('/core/public/storage/images/'.($item->photo ?: $item->thumbnail))}}" alt="{{ $item->name ?? 'Product' }}">
