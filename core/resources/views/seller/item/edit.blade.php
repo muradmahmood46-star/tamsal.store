@@ -426,12 +426,12 @@
                     <div class="card-body">
                         <div class="form-group mb-3">
                             <label for="discount_price" class="font-weight-bold">{{ __('Current Price') }} ({{ PriceHelper::adminCurrency() }}) <span class="text-danger">*</span></label>
-                            <input type="number" step="0.01" min="1" name="discount_price" id="discount_price" class="form-control font-weight-bold" value="{{ old('discount_price', $item->discount_price) }}" required>
+                            <input type="number" step="0.01" min="1" name="discount_price" id="discount_price" class="form-control font-weight-bold" value="{{ old('discount_price', round($item->discount_price * $curr->value, 2)) }}" required>
                         </div>
 
                         <div class="form-group mb-3">
                             <label for="previous_price" class="font-weight-bold">{{ __('Previous / Original Price') }} ({{ PriceHelper::adminCurrency() }})</label>
-                            <input type="number" step="0.01" min="0" name="previous_price" id="previous_price" class="form-control" value="{{ old('previous_price', $item->previous_price) }}">
+                            <input type="number" step="0.01" min="0" name="previous_price" id="previous_price" class="form-control" value="{{ old('previous_price', round($item->previous_price * $curr->value, 2)) }}">
                             <small class="text-muted">{{ __('Optional strikethrough price (e.g. was 1500, now 1200).') }}</small>
                         </div>
 
