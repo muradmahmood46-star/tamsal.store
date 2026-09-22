@@ -970,6 +970,9 @@
                                         <div class="product-badge product-badge2 bg-info">
                                             -{{ PriceHelper::DiscountPercentage($related) }}</div>
                                     @endif
+                                    @if($related->is_free_delivery == 1)
+                                        <div class="product-badge product-badge-free-delivery">{{ __('Free Delivery') }}</div>
+                                    @endif
 
                                     @if ($related->previous_price && $related->previous_price != 0)
                                         <div class="product-badge product-badge2 bg-info">

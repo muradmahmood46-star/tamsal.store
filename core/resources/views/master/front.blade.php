@@ -682,6 +682,22 @@
         }
 
         /* Filter Sidebar & Apply Filters Button Containment */
+        .product-badge-free-delivery {
+            background: #16a34a !important;
+            color: #ffffff !important;
+            font-size: 10px !important;
+            font-weight: 700 !important;
+            padding: 3px 7px !important;
+            border-radius: 4px !important;
+            position: absolute !important;
+            top: auto !important;
+            bottom: 8px !important;
+            left: 8px !important;
+            right: auto !important;
+            z-index: 5 !important;
+        }
+
+        /* Filter Sidebar & Apply Filters Button Containment */
         .apply-filters-btn {
             width: 100% !important;
             max-width: 100% !important;

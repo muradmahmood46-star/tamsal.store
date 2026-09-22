@@ -64,6 +64,9 @@
                         @if($item->previous_price && $item->previous_price !=0)
                             <div class="product-badge product-badge2 bg-info"> -{{PriceHelper::DiscountPercentage($item)}}</div>
                         @endif
+                        @if($item->is_free_delivery == 1)
+                            <div class="product-badge product-badge-free-delivery">{{ __('Free Delivery') }}</div>
+                        @endif
 
                         <img src="{{url('/core/public/storage/images/'.($item->photo ?: $item->thumbnail))}}" alt="{{ $item->name ?? 'Product' }}">
                         <div class="product-button-group">
