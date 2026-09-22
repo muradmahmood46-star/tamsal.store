@@ -485,8 +485,8 @@
                             </div>
                             <select name="subcategory_id" id="subcategory_id" class="form-control" onchange="loadChildCategories(this.value)">
                                 <option value="">{{ __('-- Select Subcategory --') }}</option>
-                                @if($item->category && $item->category->subcategory)
-                                    @foreach($item->category->subcategory as $subcat)
+                                @if($subcategories)
+                                    @foreach($subcategories as $subcat)
                                         <option value="{{ $subcat->id }}" {{ $item->subcategory_id == $subcat->id ? 'selected' : '' }}>{{ $subcat->name }}</option>
                                     @endforeach
                                 @endif
@@ -848,4 +848,3 @@
     });
 </script>
 @endsection
-

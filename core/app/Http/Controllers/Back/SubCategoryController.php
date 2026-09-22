@@ -35,7 +35,7 @@ class SubCategoryController extends Controller
     public function index()
     {
         return view('back.subcategory.index',[
-            'datas' => Subcategory::with('category')->orderBy('id','desc')->get()
+            'datas' => Subcategory::whereNull('vendor_id')->with('category')->orderBy('id','desc')->get()
         ]);
     }
 
@@ -57,6 +57,7 @@ class SubCategoryController extends Controller
      */
     public function store(SubCategoryRequest $request)
     {
+        $request->merge(['vendor_id' => null]);
         $this->repository->store($request);
         return redirect()->route('back.subcategory.index')->withSuccess(__('New Subcategory Added Successfully.'));
     }
@@ -70,7 +71,7 @@ class SubCategoryController extends Controller
      */
     public function status($id,$status)
     {
-        Subcategory::find($id)->update(['status' => $status]);
+        Subcategory::whereNull('vendor_id')->findOrFail($id)->update(['status' => $status]);
         return redirect()->route('back.subcategory.index')->withSuccess(__('Status Updated Successfully.'));
     }
 
@@ -83,7 +84,7 @@ class SubCategoryController extends Controller
      */
     public function edit(Subcategory $subcategory)
     {
-        
+        abort_unless(is_null($subcategory->vendor_id), 404);
         return view('back.subcategory.edit',compact('subcategory'));
     }
 
@@ -96,6 +97,8 @@ class SubCategoryController extends Controller
      */
     public function update(SubCategoryRequest $request, Subcategory $subcategory)
     {
+        abort_unless(is_null($subcategory->vendor_id), 404);
+        $request->merge(['vendor_id' => null]);
         $this->repository->update($subcategory, $request);
         return redirect()->route('back.subcategory.index')->withSuccess(__('Subcategory Updated Successfully.'));
     }
@@ -108,6 +111,7 @@ class SubCategoryController extends Controller
      */
     public function destroy(Subcategory $subcategory)
     {
+        abort_unless(is_null($subcategory->vendor_id), 404);
         $this->repository->delete($subcategory);
         return redirect()->route('back.subcategory.index')->withSuccess(__('Subcategory Deleted Successfully.'));
     }

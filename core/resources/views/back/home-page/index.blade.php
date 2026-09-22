@@ -329,7 +329,7 @@
                                         <label for="subcategory_id1">{{ __('Select Sub Category') }} </label>
                                         <select name="subcategory_id1" id="subcategory_id1" class="form-control" data-href="{{route('back.get.childcategory')}}">
                                             <option value="">{{__('Select one')}}</option>
-                                            @foreach(DB::table('subcategories')->where('category_id',$popular_category['category_id1'])->whereStatus(1)->get() as $subcat)
+                                            @foreach(DB::table('subcategories')->where('category_id',$popular_category['category_id1'])->whereNull('vendor_id')->whereStatus(1)->get() as $subcat)
                                             <option value="{{ $subcat->id }}" {{ $subcat->id == $popular_category['subcategory_id1']? 'selected' : '' }}>{{ $subcat->name }}</option>
                                             @endforeach
                                         </select>
@@ -360,7 +360,7 @@
                                         <label for="subcategory_id2">{{ __('Select Sub Category') }} </label>
                                         <select name="subcategory_id2" id="subcategory_id2" class="form-control" data-href="{{route('back.get.childcategory')}}">
                                             <option value="">{{__('Select one')}}</option>
-                                            @foreach(DB::table('subcategories')->where('category_id',$popular_category['category_id2'])->whereStatus(1)->get() as $subcat)
+                                            @foreach(DB::table('subcategories')->where('category_id',$popular_category['category_id2'])->whereNull('vendor_id')->whereStatus(1)->get() as $subcat)
                                             <option value="{{ $subcat->id }}" {{ $subcat->id == $popular_category['subcategory_id2']? 'selected' : '' }}>{{ $subcat->name }}</option>
                                             @endforeach
                                         </select>
@@ -390,7 +390,7 @@
                                         <label for="subcategory_id3">{{ __('Select Sub Category') }} </label>
                                         <select name="subcategory_id3" id="subcategory_id3" class="form-control" data-href="{{route('back.get.childcategory')}}">
                                             <option value="">{{__('Select one')}}</option>
-                                            @foreach(DB::table('subcategories')->where('category_id',$popular_category['category_id3'])->whereStatus(1)->get() as $subcat)
+                                            @foreach(DB::table('subcategories')->where('category_id',$popular_category['category_id3'])->whereNull('vendor_id')->whereStatus(1)->get() as $subcat)
                                             <option value="{{ $subcat->id }}" {{ $subcat->id == $popular_category['subcategory_id3']? 'selected' : '' }}>{{ $subcat->name }}</option>
                                             @endforeach
                                         </select>
@@ -420,7 +420,7 @@
                                         <label for="subcategory_id4">{{ __('Select Sub Category') }} </label>
                                         <select name="subcategory_id4" id="subcategory_id4" class="form-control" data-href="{{route('back.get.childcategory')}}">
                                             <option value="">{{__('Select one')}}</option>
-                                            @foreach(DB::table('subcategories')->where('category_id',$popular_category['category_id4'])->whereStatus(1)->get() as $subcat)
+                                            @foreach(DB::table('subcategories')->where('category_id',$popular_category['category_id4'])->whereNull('vendor_id')->whereStatus(1)->get() as $subcat)
                                             <option value="{{ $subcat->id }}" {{ $subcat->id == $popular_category['subcategory_id4']? 'selected' : '' }}>{{ $subcat->name }}</option>
                                             @endforeach
                                         </select>
@@ -593,7 +593,7 @@
                                     <label for="cloumn_subcategory_id2">{{ __('Select Sub Category') }} </label>
                                     <select name="subcategory_id1" id="cloumn_subcategory_id1" class="form-control" data-href="{{route('back.get.childcategory')}}">
                                         <option value="">{{__('Select one')}}</option>
-                                        @foreach(DB::table('subcategories')->where('category_id',$three_column_category['category_id1'])->whereStatus(1)->get() as $subcat)
+                                        @foreach(DB::table('subcategories')->where('category_id',$three_column_category['category_id1'])->whereNull('vendor_id')->whereStatus(1)->get() as $subcat)
                                         <option value="{{ $subcat->id }}" {{ $subcat->id == $three_column_category['subcategory_id1']? 'selected' : '' }}>{{ $subcat->name }}</option>
                                         @endforeach
                                     </select>
@@ -624,7 +624,7 @@
                                     <label for="cloumn_subcategory_id2">{{ __('Select Sub Category') }} </label>
                                     <select name="subcategory_id2" id="cloumn_subcategory_id2" class="form-control" data-href="{{route('back.get.childcategory')}}">
                                         <option value="">{{__('Select one')}}</option>
-                                        @foreach(DB::table('subcategories')->where('category_id',$three_column_category['category_id2'])->whereStatus(1)->get() as $subcat)
+                                        @foreach(DB::table('subcategories')->where('category_id',$three_column_category['category_id2'])->whereNull('vendor_id')->whereStatus(1)->get() as $subcat)
                                         <option value="{{ $subcat->id }}" {{ $subcat->id == $three_column_category['subcategory_id2']? 'selected' : '' }}>{{ $subcat->name }}</option>
                                         @endforeach
                                     </select>
@@ -657,9 +657,9 @@
                                         <option value="">{{__('Select one')}}</option>
                                         @php
                                             if(isset($three_column_category['category_id3'])){
-                                                $subcategory = DB::table('subcategories')->where('category_id', $three_column_category['category_id3'])->whereStatus(1)->get();
+                                                $subcategory = DB::table('subcategories')->where('category_id', $three_column_category['category_id3'])->whereNull('vendor_id')->whereStatus(1)->get();
                                             }else{
-                                                $subcategory = DB::table('subcategories')->whereStatus(1)->get();
+                                                $subcategory = DB::table('subcategories')->whereNull('vendor_id')->whereStatus(1)->get();
                                             }
                                         @endphp
                                         @foreach($subcategory as $subcat)

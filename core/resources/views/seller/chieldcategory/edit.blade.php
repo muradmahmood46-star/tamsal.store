@@ -43,7 +43,7 @@
 									<label for="subcategory_id">{{ __('Select Subcategory') }} *</label>
 									<select name="subcategory_id" id="subcategory_id" class="form-control" required>
 										<option value="" disabled>{{ __('Select One') }}</option>
-										@foreach(DB::table('subcategories')->where('category_id', $childcategory->category_id)->get() as $subcat)
+										@foreach(DB::table('subcategories')->where('category_id', $childcategory->category_id)->where(function($q) { $q->whereNull('vendor_id')->orWhere('vendor_id', Auth::id()); })->get() as $subcat)
 											<option value="{{ $subcat->id }}" {{ $childcategory->subcategory_id == $subcat->id ? 'selected' : '' }}>{{ $subcat->name }}</option>
 										@endforeach
 									</select>

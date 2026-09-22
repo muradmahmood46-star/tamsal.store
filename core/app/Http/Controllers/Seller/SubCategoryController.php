@@ -10,6 +10,7 @@ use App\{
 };
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class SubCategoryController extends Controller
@@ -24,12 +25,14 @@ class SubCategoryController extends Controller
 
     /**
      * Display listing of subcategories in Seller Panel.
-     * Shows subcategories under Admin categories + vendor's own categories.
+     * Shows admin subcategories and the current vendor's subcategories.
      */
     public function index()
     {
         $vendorId = Auth::id();
-        $datas = Subcategory::whereHas('category', function ($query) use ($vendorId) {
+        $datas = Subcategory::where(function ($query) use ($vendorId) {
+            $query->whereNull('vendor_id')->orWhere('vendor_id', $vendorId);
+        })->whereHas('category', function ($query) use ($vendorId) {
             $query->whereNull('vendor_id')
                   ->orWhere('vendor_id', 0)
                   ->orWhere('vendor_id', $vendorId);
@@ -50,6 +53,8 @@ class SubCategoryController extends Controller
      */
     public function store(SubCategoryRequest $request)
     {
+        $this->authorizedCategory($request->category_id);
+        $request->merge(['vendor_id' => Auth::id()]);
         $this->repository->store($request);
         return redirect()->route('seller.subcategory.index')->withSuccess(__('New Subcategory Added Successfully.'));
     }
@@ -65,6 +70,8 @@ class SubCategoryController extends Controller
             'slug' => 'nullable|string|max:255'
         ]);
 
+        $this->authorizedCategory($request->category_id);
+
         $name = $request->name;
         $slug = $request->slug ? Str::slug($request->slug) : Str::slug($name);
         
@@ -79,7 +86,8 @@ class SubCategoryController extends Controller
             'category_id' => $request->category_id,
             'name' => $name,
             'slug' => $slug,
-            'status' => 1
+            'status' => 1,
+            'vendor_id' => Auth::id()
         ]);
 
         return response()->json([
@@ -99,7 +107,7 @@ class SubCategoryController extends Controller
      */
     public function status($id, $status)
     {
-        Subcategory::find($id)->update(['status' => $status]);
+        $this->visibleSubcategory($id)->update(['status' => $status]);
         return redirect()->route('seller.subcategory.index')->withSuccess(__('Status Updated Successfully.'));
     }
 
@@ -108,6 +116,7 @@ class SubCategoryController extends Controller
      */
     public function edit(Subcategory $subcategory)
     {
+        $this->ensureVisibleToVendor($subcategory);
         return view('seller.subcategory.edit', compact('subcategory'));
     }
 
@@ -116,6 +125,9 @@ class SubCategoryController extends Controller
      */
     public function update(SubCategoryRequest $request, Subcategory $subcategory)
     {
+        $this->ensureVisibleToVendor($subcategory);
+        $this->authorizedCategory($request->category_id);
+        $request->merge(['vendor_id' => $subcategory->vendor_id]);
         $this->repository->update($subcategory, $request);
         return redirect()->route('seller.subcategory.index')->withSuccess(__('Subcategory Updated Successfully.'));
     }
@@ -125,7 +137,29 @@ class SubCategoryController extends Controller
      */
     public function destroy(Subcategory $subcategory)
     {
+        $this->ensureVisibleToVendor($subcategory);
         $this->repository->delete($subcategory);
         return redirect()->route('seller.subcategory.index')->withSuccess(__('Subcategory Deleted Successfully.'));
+    }
+
+    private function authorizedCategory($categoryId)
+    {
+        return Category::where('id', $categoryId)->where(function ($query) {
+            $query->whereNull('vendor_id')
+                ->orWhere('vendor_id', 0)
+                ->orWhere('vendor_id', Auth::id());
+        })->firstOrFail();
+    }
+
+    private function visibleSubcategory($id)
+    {
+        return Subcategory::where('id', $id)->where(function ($query) {
+            $query->whereNull('vendor_id')->orWhere('vendor_id', Auth::id());
+        })->firstOrFail();
+    }
+
+    private function ensureVisibleToVendor(Subcategory $subcategory)
+    {
+        abort_unless(is_null($subcategory->vendor_id) || $subcategory->vendor_id == Auth::id(), 404);
     }
 }

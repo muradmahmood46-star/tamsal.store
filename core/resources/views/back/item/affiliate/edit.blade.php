@@ -291,7 +291,7 @@
                         <label for="subcategory_id">{{ __('Select Sub Category') }} </label>
                         <select name="subcategory_id" id="subcategory_id" class="form-control" data-href="{{route('back.get.childcategory')}}">
                             <option value="">{{__('Select one')}}</option>
-                            @foreach(DB::table('subcategories')->where('category_id',$item->category_id)->whereStatus(1)->get() as $subcat)
+                            @foreach(DB::table('subcategories')->where('category_id',$item->category_id)->whereNull('vendor_id')->whereStatus(1)->get() as $subcat)
                             <option value="{{ $subcat->id }}" {{ $subcat->id == $item->subcategory_id ? 'selected' : '' }}>{{ $subcat->name }}</option>
                             @endforeach
                         </select>

@@ -95,8 +95,7 @@ class ItemController extends Controller
     {
 
         if ($request->category_id) {
-            $data = Category::findOrFail($request->category_id);
-            $data = $data->subcategory;
+            $data = Subcategory::where('category_id', $request->category_id)->whereNull('vendor_id')->get();
         } else {
             $data = [];
         }

@@ -91,6 +91,7 @@ class ItemController extends Controller
 
     public function store(ItemRequest $request)
     {
+        $this->authorizedSubcategory($request->subcategory_id, $request->category_id);
         // Inject seller ID into request
         $request->merge([
             'vendor_id' => Auth::id(),
@@ -126,6 +127,9 @@ class ItemController extends Controller
         return view('seller.item.edit', [
             'item' => $item,
             'curr' => Currency::where('is_default', 1)->first(),
+            'subcategories' => Subcategory::where('category_id', $item->category_id)->where(function ($query) use ($vendorId) {
+                $query->whereNull('vendor_id')->orWhere('vendor_id', $vendorId);
+            })->get(),
             'categories' => Category::where('status', 1)->where(function($q) use ($vendorId) {
                 $q->whereNull('vendor_id')->orWhere('vendor_id', 0)->orWhere('vendor_id', $vendorId);
             })->orderBy('name', 'asc')->get(),
@@ -143,6 +147,7 @@ class ItemController extends Controller
     public function update(ItemRequest $request, $id)
     {
         $item = Item::where('id', $id)->where('vendor_id', Auth::id())->firstOrFail();
+        $this->authorizedSubcategory($request->subcategory_id, $request->category_id);
 
         $request->merge([
             'vendor_id' => Auth::id(),
@@ -210,11 +215,16 @@ class ItemController extends Controller
 
     public function getsubCategory(Request $request)
     {
+        $data = [];
         if ($request->category_id) {
-            $data = Category::findOrFail($request->category_id);
-            $data = $data->subcategory;
-        } else {
-            $data = [];
+            $vendorId = Auth::id();
+            $category = Category::where('id', $request->category_id)->where(function ($query) use ($vendorId) {
+                $query->whereNull('vendor_id')->orWhere('vendor_id', 0)->orWhere('vendor_id', $vendorId);
+            })->firstOrFail();
+
+            $data = Subcategory::where('category_id', $category->id)->where(function ($query) use ($vendorId) {
+                $query->whereNull('vendor_id')->orWhere('vendor_id', $vendorId);
+            })->get();
         }
 
         return response()->json(['data' => $data]);
@@ -223,12 +233,23 @@ class ItemController extends Controller
     public function getChildCategory(Request $request)
     {
         if ($request->subcategory_id) {
-            $data = Subcategory::findOrFail($request->subcategory_id);
+            $data = Subcategory::where('id', $request->subcategory_id)->where(function ($query) {
+                $query->whereNull('vendor_id')->orWhere('vendor_id', Auth::id());
+            })->firstOrFail();
             $data = $data->childcategory;
         } else {
             $data = [];
         }
 
         return response()->json(['data' => $data]);
+    }
+
+    private function authorizedSubcategory($subcategoryId, $categoryId)
+    {
+        if ($subcategoryId) {
+            Subcategory::where('id', $subcategoryId)->where('category_id', $categoryId)->where(function ($query) {
+                $query->whereNull('vendor_id')->orWhere('vendor_id', Auth::id());
+            })->firstOrFail();
+        }
     }
 }
