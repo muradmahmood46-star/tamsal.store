@@ -50,6 +50,7 @@
                             <div class="col-xxl-3 col-md-4 col-6">
                                 <div class="product-card">
                                     @if ($item->is_stock())
+                                        @if($item->is_type != 'undefine')
                                         <div class="product-badge
                                             @if($item->is_type == 'feature')
                                             bg-warning
@@ -62,8 +63,9 @@
                                             @elseif($item->is_type == 'flash_deal')
                                             bg-success
                                             @endif
-                                            "> {{ __($item->is_type != 'undefine' ? (str_replace('_',' ',__("$item->is_type"))) : '') }}
+                                            "> {{ __(str_replace('_',' ',$item->is_type)) }}
                                         </div>
+                                        @endif
                                     @else
                                         <div class="product-badge bg-secondary border-default text-body">
                                             {{__('out of stock')}}
@@ -112,6 +114,7 @@
                                 <div class="product-card product-list">
                                     <div class="product-thumb">
                                         @if ($item->is_stock())
+                                            @if($item->is_type != 'undefine')
                                             <div class="product-badge
                                                 @if($item->is_type == 'feature')
                                                 bg-warning
@@ -124,8 +127,9 @@
                                                 @elseif($item->is_type == 'flash_deal')
                                                 bg-success
                                                 @endif
-                                                ">{{ __($item->is_type != 'undefine' ? ucfirst(str_replace('_',' ',$item->is_type)) : '') }}
+                                                ">{{ __(ucfirst(str_replace('_',' ',$item->is_type))) }}
                                             </div>
+                                            @endif
                                         @else
                                             <div class="product-badge bg-secondary border-default text-body">
                                                 {{__('out of stock')}}
