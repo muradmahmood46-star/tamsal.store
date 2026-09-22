@@ -13,7 +13,7 @@
                 $catSlug = $catModel ? $catModel->slug : null;
             @endphp
 
-            <div class="col-12 catalog-category-block mb-4">
+            <div class="col-12 catalog-category-block mb-4" data-category-id="{{ $catId }}">
                 {{-- Premium Modern Category Header Bar --}}
                 <div class="catalog-cat-header-bar mb-3">
                     <div class="d-flex align-items-center justify-content-between flex-wrap">
