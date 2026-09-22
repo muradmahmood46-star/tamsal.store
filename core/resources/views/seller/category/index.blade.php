@@ -11,11 +11,8 @@
             <div class="d-sm-flex align-items-center justify-content-between">
                 <div>
                     <h3 class="mb-0 text-dark"><b><i class="fas fa-list-alt text-primary mr-2"></i> {{ __('Categories') }}</b></h3>
-                    <p class="text-muted small mb-0">{{ __('Manage all marketplace categories. Any category added here is shared across all vendors, admins, and buyer catalog.') }}</p>
+                    <p class="text-muted small mb-0">{{ __('Add subcategories and child categories under existing categories for your store. They are visible and usable only within your own store, not by other vendors, admins, or the shared marketplace category list.') }}</p>
                 </div>
-                <a class="btn btn-primary btn-sm font-weight-bold" href="{{ route('seller.category.create') }}">
-                    <i class="fas fa-plus mr-1"></i> {{ __('Add Category') }}
-                </a>
             </div>
         </div>
     </div>

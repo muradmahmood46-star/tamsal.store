@@ -45,7 +45,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return view('seller.category.create');
+        abort(404);
     }
 
     /**
@@ -53,6 +53,7 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequest $request)
     {
+        abort(404);
         $request->validate([
             'serial' => 'nullable|numeric|max:150'
         ]);
@@ -82,6 +83,7 @@ class CategoryController extends Controller
      */
     public function quickStore(Request $request)
     {
+        abort(404);
         $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255',
@@ -183,4 +185,3 @@ class CategoryController extends Controller
         }
     }
 }
-

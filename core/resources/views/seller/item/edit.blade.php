@@ -468,7 +468,6 @@
                         <div class="form-group mb-3">
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <label for="category_id" class="font-weight-bold mb-0">{{ __('Category') }} <span class="text-danger">*</span></label>
-                                <a href="{{ route('seller.category.create') }}" target="_blank" class="text-primary small font-weight-bold"><i class="fas fa-plus-circle"></i> {{ __('+ Add Category') }}</a>
                             </div>
                             <select name="category_id" id="category_id" class="form-control" required onchange="loadSubcategories(this.value)">
                                 <option value="">{{ __('-- Select Category --') }}</option>
@@ -587,6 +586,7 @@
     </form>
 </div>
 @endsection
+
 
 @section('scripts')
 <script>
