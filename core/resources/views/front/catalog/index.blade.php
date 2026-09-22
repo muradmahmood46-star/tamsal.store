@@ -316,7 +316,7 @@
                                 var badge = existing.querySelector('.catalog-cat-count-badge');
                                 if(badge){
                                     var total = existingRow.children.length;
-                                    badge.textContent = total + ' ' + badge.textContent.replace(/^\d+\s*/, '');
+                                    badge.textContent = badge.textContent.replace(/\d+/, total);
                                 }
                                 return;
                             }
