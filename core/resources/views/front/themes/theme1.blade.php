@@ -769,6 +769,10 @@
                                                     {{ __('out of stock') }}</div>
                                             @endif
 
+                                            @if ($item->is_free_delivery == 1)
+                                                <div class="product-badge bg-success">{{ __('Free Delivery') }}</div>
+                                            @endif
+
                                             @if ($item->previous_price && $item->previous_price != 0)
                                                 <div class="product-badge product-badge2 bg-info">
                                                     -{{ PriceHelper::DiscountPercentage($item) }}</div>
@@ -840,6 +844,10 @@
                                             @if (!$item->is_stock())
                                                 <div class="product-badge bg-secondary border-default text-body">
                                                     {{ __('out of stock') }}</div>
+                                            @endif
+
+                                            @if ($item->is_free_delivery == 1)
+                                                <div class="product-badge bg-success">{{ __('Free Delivery') }}</div>
                                             @endif
 
                                             @if ($item->previous_price && $item->previous_price != 0)
@@ -1045,6 +1053,9 @@
                                             ">
                                                     {{ __('out of stock') }}</div>
                                             @endif
+                                            @if ($popular_category_item->is_free_delivery == 1)
+                                                <div class="product-badge bg-success">{{ __('Free Delivery') }}</div>
+                                            @endif
                                             @if ($popular_category_item->previous_price && $popular_category_item->previous_price != 0)
                                                 <div class="product-badge product-badge2 bg-info">
                                                     -{{ PriceHelper::DiscountPercentage($popular_category_item) }}</div>
@@ -1106,6 +1117,9 @@
                                                     class="product-badge bg-secondary border-default text-body
                                             ">
                                                     {{ __('out of stock') }}</div>
+                                            @endif
+                                            @if ($popular_category_item->is_free_delivery == 1)
+                                                <div class="product-badge bg-success">{{ __('Free Delivery') }}</div>
                                             @endif
                                             @if ($popular_category_item->previous_price && $popular_category_item->previous_price != 0)
                                                 <div class="product-badge product-badge2 bg-info">
@@ -1362,6 +1376,9 @@
                                             class="product-badge bg-secondary border-default text-body
                                     ">
                                             {{ __('out of stock') }}</div>
+                                    @endif
+                                    @if ($feature_category_item->is_free_delivery == 1)
+                                        <div class="product-badge bg-success">{{ __('Free Delivery') }}</div>
                                     @endif
                                     @if ($feature_category_item->previous_price && $feature_category_item->previous_price != 0)
                                         <div class="product-badge product-badge2 bg-info">
