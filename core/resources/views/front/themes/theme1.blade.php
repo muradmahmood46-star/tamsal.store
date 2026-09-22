@@ -797,8 +797,8 @@
                                         </div>
                                         <div class="product-card-body">
                                             <div class="product-category">
-                                                @if($item->category)
-                                                    <a href="{{ route('front.catalog') . '?category=' . $item->category->slug }}">{{ $item->category->name }}</a>
+                                                @if($item->subcategory && $item->subcategory->name)
+                                                    <a href="{{ route('front.catalog') . '?subcategory=' . $item->subcategory->slug }}">{{ $item->subcategory->name }}</a>
                                                 @endif
                                             </div>
                                             <h3 class="product-title"><a
@@ -870,8 +870,8 @@
                                         </div>
                                         <div class="product-card-body">
                                             <div class="product-category">
-                                                @if($item->category)
-                                                    <a href="{{ route('front.catalog') . '?category=' . $item->category->slug }}">{{ $item->category->name }}</a>
+                                                @if($item->subcategory && $item->subcategory->name)
+                                                    <a href="{{ route('front.catalog') . '?subcategory=' . $item->subcategory->slug }}">{{ $item->subcategory->name }}</a>
                                                 @endif
                                             </div>
                                             <h3 class="product-title"><a
@@ -1065,8 +1065,11 @@
                                             </div>
                                         </div>
                                         <div class="product-card-body">
-                                            <div class="product-category"><a
-                                                    href="{{ route('front.catalog') . '?category=' . $popular_category_item->category->slug }}">{{ $popular_category_item->category->name }}</a>
+                                            <div class="product-category">
+                                                @if($popular_category_item->subcategory && $popular_category_item->subcategory->name)
+                                                    <a
+                                                        href="{{ route('front.catalog') . '?subcategory=' . $popular_category_item->subcategory->slug }}">{{ $popular_category_item->subcategory->name }}</a>
+                                                @endif
                                             </div>
                                             <h3 class="product-title"><a
                                                     href="{{ route('front.product', $popular_category_item->slug) }}">
@@ -1124,8 +1127,11 @@
                                             </div>
                                         </div>
                                         <div class="product-card-body">
-                                            <div class="product-category"><a
-                                                    href="{{ route('front.catalog') . '?category=' . $popular_category_item->category->slug }}">{{ $popular_category_item->category->name }}</a>
+                                            <div class="product-category">
+                                                @if($popular_category_item->subcategory && $popular_category_item->subcategory->name)
+                                                    <a
+                                                        href="{{ route('front.catalog') . '?subcategory=' . $popular_category_item->subcategory->slug }}">{{ $popular_category_item->subcategory->name }}</a>
+                                                @endif
                                             </div>
                                             <h3 class="product-title"><a
                                                     href="{{ route('front.product', $popular_category_item->slug) }}">
@@ -1378,8 +1384,11 @@
                                     </div>
                                 </div>
                                 <div class="product-card-body">
-                                    <div class="product-category"><a
-                                            href="{{ route('front.catalog') . '?category=' . $feature_category_item->category->slug }}">{{ $feature_category_item->category->name }}</a>
+                                    <div class="product-category">
+                                        @if($feature_category_item->subcategory && $feature_category_item->subcategory->name)
+                                            <a
+                                                href="{{ route('front.catalog') . '?subcategory=' . $feature_category_item->subcategory->slug }}">{{ $feature_category_item->subcategory->name }}</a>
+                                        @endif
                                     </div>
                                     <h3 class="product-title"><a
                                             href="{{ route('front.product', $feature_category_item->slug) }}">
@@ -1943,4 +1952,16 @@
             </div>
         </div>
     @endif
+    <style>
+        .product-card .product-category a {
+            color: {{ $setting->primary_color ?? '#8CCF00' }} !important;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+        }
+        .product-card .product-category a:hover {
+            background: {{ $setting->primary_color ?? '#8CCF00' }};
+            border-color: {{ $setting->primary_color ?? '#8CCF00' }};
+            color: #ffffff !important;
+        }
+    </style>
 @endsection

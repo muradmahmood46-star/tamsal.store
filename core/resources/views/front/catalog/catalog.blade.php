@@ -82,8 +82,8 @@
                                     </div>
                                     <div class="product-card-body">
                                         <div class="product-category">
-                                            @if($item->category)
-                                                <a href="{{route('front.catalog').'?category='.$item->category->slug}}">{{$item->category->name}}</a>
+                                            @if($item->subcategory && $item->subcategory->name)
+                                                <a href="{{route('front.catalog').'?subcategory='.$item->subcategory->slug}}">{{$item->subcategory->name}}</a>
                                             @endif
                                         </div>
                                         <h3 class="product-title"><a href="{{route('front.product',$item->slug)}}">
@@ -143,8 +143,8 @@
                                     <div class="product-card-inner">
                                         <div class="product-card-body">
                                             <div class="product-category">
-                                                @if($item->category)
-                                                    <a href="{{route('front.catalog').'?category='.$item->category->slug}}">{{$item->category->name}}</a>
+                                                @if($item->subcategory && $item->subcategory->name)
+                                                    <a href="{{route('front.catalog').'?subcategory='.$item->subcategory->slug}}">{{$item->subcategory->name}}</a>
                                                 @endif
                                             </div>
                                             <h3 class="product-title"><a href="{{route('front.product',$item->slug)}}">
@@ -296,13 +296,13 @@ window._infiniteInit && window._infiniteInit();
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.35px;
-    color: #2563eb !important;
-    background: #eff6ff;
+    color: #8CCF00 !important;
+    background: #f0fdf4;
     padding: 3px 8px;
     border-radius: 6px;
     text-decoration: none !important;
     transition: all 0.2s ease;
-    border: 1px solid #dbeafe;
+    border: 1px solid #bbf7d0;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -310,8 +310,8 @@ window._infiniteInit && window._infiniteInit();
     line-height: 1.3;
 }
 .product-card .product-category a:hover {
-    background: #2563eb;
-    border-color: #2563eb;
+    background: #8CCF00;
+    border-color: #8CCF00;
     color: #ffffff !important;
 }
 
