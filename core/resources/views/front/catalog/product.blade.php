@@ -65,6 +65,7 @@
                         </div>
                     @endif
                     @if ($item->is_stock())
+                        @if($item->is_type != 'undefine')
                         <span
                             class="product-badge
                         @if ($item->is_type == 'feature') bg-warning
@@ -76,7 +77,8 @@
                         bg-dark
                         @elseif($item->is_type == 'flash_deal')
                             bg-success @endif
-                        ">{{ __($item->is_type != 'undefine' ? ucfirst(str_replace('_', ' ', $item->is_type)) : '') }}</span>
+                        ">{{ __(ucfirst(str_replace('_', ' ', $item->is_type))) }}</span>
+                        @endif
                     @else
                         <span class="product-badge bg-secondary border-default text-body">{{ __('out of stock') }}</span>
                     @endif
@@ -952,27 +954,17 @@
                                 <div class="product-card">
 
                                     @if ($related->is_stock())
-                                        @if ($related->is_type == 'new')
-                                        @else
-                                            <div
-                                                class="product-badge
-                                    @if ($related->is_type == 'feature') bg-warning
-
-                                    @elseif($related->is_type == 'top')
-                                    bg-info
-                                    @elseif($related->is_type == 'best')
-                                    bg-dark
-                                    @elseif($related->is_type == 'flash_deal')
-                                    bg-success @endif
-                                    ">
-                                                {{ $related->is_type != 'undefine' ? ucfirst(str_replace('_', ' ', $related->is_type)) : '' }}
-                                            </div>
+                                        @if($related->is_type != 'undefine')
+                                        <div class="product-badge
+                                @if ($related->is_type == 'feature') bg-warning
+                                @elseif($related->is_type == 'new') bg-danger
+                                @elseif($related->is_type == 'top') bg-info
+                                @elseif($related->is_type == 'best') bg-dark
+                                @elseif($related->is_type == 'flash_deal') bg-success @endif
+                                ">{{ ucfirst(str_replace('_', ' ', $related->is_type)) }}</div>
                                         @endif
                                     @else
-                                        <div
-                                            class="product-badge bg-secondary border-default text-body
-                                    ">
-                                            {{ __('out of stock') }}</div>
+                                        <div class="product-badge bg-secondary border-default text-body">{{ __('out of stock') }}</div>
                                     @endif
                                     @if ($related->previous_price && $related->previous_price != 0)
                                         <div class="product-badge product-badge2 bg-info">

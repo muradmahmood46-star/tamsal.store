@@ -45,11 +45,12 @@
                 <div class="product-card">
                     <div class="product-thumb">
                         @if ($item->is_stock())
+                            @if($item->is_type != 'undefine')
                             <div class="product-badge
                             @if($item->is_type == 'feature')
                             bg-warning
                             @elseif($item->is_type == 'new')
-
+                            bg-danger
                             @elseif($item->is_type == 'top')
                             bg-info
                             @elseif($item->is_type == 'best')
@@ -57,13 +58,10 @@
                             @elseif($item->is_type == 'flash_deal')
                             bg-success
                             @endif
-                            ">
-                            {{   ucfirst(str_replace('_',' ',$item->is_type))   }}
-                            </div>
-
+                            ">{{ ucfirst(str_replace('_',' ',$item->is_type)) }}</div>
+                            @endif
                         @else
-                            <div class="product-badge bg-secondary border-default text-body
-                            ">{{__('out of stock')}}</div>
+                            <div class="product-badge bg-secondary border-default text-body">{{__('out of stock')}}</div>
                         @endif
 
                         @if($item->previous_price && $item->previous_price !=0)
