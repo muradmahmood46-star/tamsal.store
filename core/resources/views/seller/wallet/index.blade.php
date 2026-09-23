@@ -143,6 +143,66 @@
                                     <option value="" disabled>{{ __('No receiving accounts added by Admin yet.') }}</option>
                                 @endforelse
                             </select>
+
+                            <!-- Inline Admin Account Details (Shows immediately below dropdown when selected) -->
+                            <div id="inline-admin-acc-box" class="mt-3 d-none">
+                                @foreach($receivingAccounts as $acc)
+                                    <div id="inline-acc-card-{{ $acc->id }}" class="inline-acc-card d-none">
+                                        <div class="card border-0 shadow-sm p-3 mb-2" style="border-radius: 12px; background: linear-gradient(to bottom, #f0fdf4, #ffffff); border-left: 5px solid #16a34a !important; border: 1px solid #bbf7d0;">
+                                            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="rounded-circle d-flex align-items-center justify-content-center bg-success text-white mr-2" style="width: 32px; height: 32px; font-size: 14px;">
+                                                        <i class="fas fa-university"></i>
+                                                    </div>
+                                                    <div>
+                                                        <span class="badge badge-success px-2 py-1 font-weight-bold">{{ __('Admin Receiving Account') }}</span>
+                                                        <h6 class="text-success font-weight-bold mb-0 mt-1" style="font-size: 15px;">
+                                                            {{ $acc->payment_method }}
+                                                        </h6>
+                                                    </div>
+                                                </div>
+                                                <span class="badge badge-light border text-success font-weight-bold px-2 py-1">
+                                                    <i class="fas fa-check-circle mr-1"></i> {{ __('Active for Deposit') }}
+                                                </span>
+                                            </div>
+
+                                            <div class="row">
+                                                <!-- Account Title / Holder -->
+                                                <div class="col-md-6 mb-2">
+                                                    <small class="text-muted font-weight-bold d-block text-uppercase" style="font-size: 11px;">{{ __('Account Title / Name:') }}</small>
+                                                    <div class="d-flex justify-content-between align-items-center bg-white border p-2 rounded shadow-sm">
+                                                        <strong class="text-dark mb-0" style="font-size: 14px;">{{ $acc->account_name }}</strong>
+                                                        <button type="button" class="btn btn-sm btn-outline-success py-1 px-2 font-weight-bold" onclick="copyToClipboard('{{ $acc->account_name }}', this)" title="{{ __('Copy Account Name') }}">
+                                                            <i class="fas fa-copy mr-1"></i> {{ __('Copy') }}
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Account Number / Phone -->
+                                                <div class="col-md-6 mb-2">
+                                                    <small class="text-muted font-weight-bold d-block text-uppercase" style="font-size: 11px;">{{ __('Account Number / IBAN:') }}</small>
+                                                    <div class="d-flex justify-content-between align-items-center bg-white border p-2 rounded shadow-sm">
+                                                        <code class="font-weight-bold text-dark mb-0" style="font-size: 14px; letter-spacing: 0.5px;">{{ $acc->account_number }}</code>
+                                                        <button type="button" class="btn btn-sm btn-outline-success py-1 px-2 font-weight-bold" onclick="copyToClipboard('{{ $acc->account_number }}', this)" title="{{ __('Copy Account Number') }}">
+                                                            <i class="fas fa-copy mr-1"></i> {{ __('Copy') }}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            @if($acc->note)
+                                                <div class="alert alert-warning py-2 px-3 my-1 small" style="border-radius: 6px; font-size: 12.5px;">
+                                                    <i class="fas fa-info-circle mr-1 text-warning"></i> <strong>{{ __('Note:') }}</strong> {{ $acc->note }}
+                                                </div>
+                                            @endif
+
+                                            <div class="mt-2 text-muted small" style="font-size: 12px;">
+                                                <i class="fas fa-arrow-down text-success mr-1"></i> {{ __('Transfer amount to this account, then enter your sender details & Txn ID below:') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
 
                         <div class="row">
@@ -537,21 +597,33 @@
         const selectedOption = select.options[select.selectedIndex];
         const accId = selectedOption ? selectedOption.getAttribute('data-acc-id') : null;
 
-        // Hide all account cards
+        // Hide all account cards (both right side and inline)
         document.querySelectorAll('.admin-acc-card').forEach(function(card) {
+            card.classList.add('d-none');
+        });
+        document.querySelectorAll('.inline-acc-card').forEach(function(card) {
             card.classList.add('d-none');
         });
 
         const noAccBox = document.getElementById('no-account-selected-box');
+        const inlineBox = document.getElementById('inline-admin-acc-box');
 
         if (accId) {
             if (noAccBox) noAccBox.classList.add('d-none');
+            if (inlineBox) inlineBox.classList.remove('d-none');
+
             const targetCard = document.getElementById('admin-acc-card-' + accId);
             if (targetCard) {
                 targetCard.classList.remove('d-none');
             }
+
+            const targetInlineCard = document.getElementById('inline-acc-card-' + accId);
+            if (targetInlineCard) {
+                targetInlineCard.classList.remove('d-none');
+            }
         } else {
             if (noAccBox) noAccBox.classList.remove('d-none');
+            if (inlineBox) inlineBox.classList.add('d-none');
         }
     }
 
