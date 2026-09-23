@@ -1445,8 +1445,8 @@
                         <div class="section-title">
                             <div>
                                 <h2 class="h3">{{ __('Browse Categories') }}</h2>
-                                <p class="text-muted mb-0 d-none d-md-block" style="font-size: 13.5px; margin-top: 2px;">
-                                    {{ __('Explore our wide range of categories and collections') }}
+                                <p class="browse-cat-subtitle mb-0">
+                                    <i class="fas fa-layer-group text-primary mr-1" style="font-size: 11px; opacity: 0.85;"></i> {{ __('Explore our wide range of categories and collections') }}
                                 </p>
                             </div>
                             <div class="right-area">
@@ -1571,6 +1571,16 @@
             .browse-categories-section {
                 position: relative;
             }
+            .browse-cat-subtitle {
+                font-size: 13.5px;
+                color: #64748b;
+                font-weight: 500;
+                margin-top: 3px;
+                letter-spacing: 0.2px;
+                line-height: 1.4;
+                display: flex;
+                align-items: center;
+            }
             .browse-cat-grid {
                 display: grid;
                 grid-template-columns: repeat(5, 1fr);
@@ -1666,6 +1676,10 @@
 
             /* Responsive Mobile View: 3 items per row, max 9 items total */
             @media (max-width: 767.98px) {
+                .browse-cat-subtitle {
+                    font-size: 11.5px;
+                    margin-top: 2px;
+                }
                 .browse-cat-grid {
                     grid-template-columns: repeat(3, 1fr);
                     gap: 8px;
