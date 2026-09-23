@@ -92,7 +92,7 @@
                         <div class="form-group">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <label class="mb-0"><strong>{{ __('Select Products for this Deal (Admin Products Only)') }} *</strong></label>
-                                <small class="text-muted"><span id="selected-count">0</span> {{ __('products selected') }} <span id="min-products-warning" class="text-danger font-weight-bold" style="display:none">— {{ __('min. 2 required') }}</span></small>
+                                <small class="text-muted"><span id="selected-count">0</span> {{ __('products') }} (<span id="total-qty-count">0</span> {{ __('items') }}) {{ __('selected') }} <span id="min-products-warning" class="text-danger font-weight-bold" style="display:none">— {{ __('min. 2 items required') }}</span></small>
                             </div>
 
                             <input type="text" id="product-search-input" class="form-control form-control-sm mb-2" placeholder="{{ __('Search products by name or SKU...') }}">
@@ -105,15 +105,24 @@
                                         $itemImg = \Illuminate\Support\Str::startsWith($thumb, 'images/')
                                             ? url('/core/public/storage/' . $thumb)
                                             : url('/core/public/storage/images/' . $thumb);
+                                        $isChecked = is_array(old('item_ids')) && in_array($item->id, old('item_ids'));
+                                        $itemQty = old('item_quantities.' . $item->id, 1);
                                     @endphp
-                                    <label class="product-checkbox-item" data-name="{{ strtolower($item->name) }}" data-sku="{{ strtolower($item->sku ?? '') }}">
-                                        <input type="checkbox" name="item_ids[]" value="{{ $item->id }}" data-price="{{ $price }}" data-name="{{ $item->name }}" class="deal-product-checkbox" {{ (is_array(old('item_ids')) && in_array($item->id, old('item_ids'))) ? 'checked' : '' }}>
-                                        <img src="{{ $itemImg }}" class="product-thumb-sm" alt="{{ $item->name }}" onerror="this.src='{{ asset('assets/images/placeholder.png') }}'">
-                                        <div class="flex-grow-1">
-                                            <div class="font-weight-bold text-dark" style="font-size: 13.5px;">{{ Str::limit($item->name, 50) }}</div>
-                                            <small class="text-muted">SKU: {{ $item->sku ?? 'N/A' }} | Price: <strong class="text-primary">{{ PriceHelper::setCurrencyPrice($price) }}</strong></small>
+                                    <div class="product-checkbox-item d-flex align-items-center justify-content-between flex-wrap" data-name="{{ strtolower($item->name) }}" data-sku="{{ strtolower($item->sku ?? '') }}">
+                                        <div class="d-flex align-items-center flex-grow-1 mr-2" style="cursor: pointer;" onclick="$(this).find('.deal-product-checkbox').trigger('click');">
+                                            <input type="checkbox" name="item_ids[]" value="{{ $item->id }}" data-price="{{ $price }}" data-name="{{ $item->name }}" class="deal-product-checkbox" {{ $isChecked ? 'checked' : '' }} onclick="event.stopPropagation();">
+                                            <img src="{{ $itemImg }}" class="product-thumb-sm" alt="{{ $item->name }}" onerror="this.src='{{ asset('assets/images/placeholder.png') }}'">
+                                            <div>
+                                                <div class="font-weight-bold text-dark" style="font-size: 13.5px;">{{ Str::limit($item->name, 45) }}</div>
+                                                <small class="text-muted">SKU: {{ $item->sku ?? 'N/A' }} | Price: <strong class="text-primary">{{ PriceHelper::setCurrencyPrice($price) }}</strong></small>
+                                            </div>
                                         </div>
-                                    </label>
+                                        <div class="deal-qty-container align-items-center {{ $isChecked ? 'd-flex' : 'd-none' }}" style="gap:4px;">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary deal-qty-btn deal-qty-minus" style="padding:1px 7px;font-weight:bold;height:28px;line-height:1;">-</button>
+                                            <input type="number" name="item_quantities[{{ $item->id }}]" class="form-control form-control-sm text-center deal-qty-input" value="{{ $itemQty }}" min="1" max="99" style="width:48px;height:28px;padding:2px;font-weight:bold;" {{ $isChecked ? '' : 'disabled' }}>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary deal-qty-btn deal-qty-plus" style="padding:1px 7px;font-weight:bold;height:28px;line-height:1;">+</button>
+                                        </div>
+                                    </div>
                                 @empty
                                     <div class="p-3 text-center text-muted">
                                         {{ __('No admin products available. Please add admin products first.') }}
@@ -236,14 +245,22 @@ $(document).ready(function() {
     function calculateDeal() {
         let totalOriginal = 0;
         let count = 0;
+        let totalQty = 0;
 
         $('.deal-product-checkbox:checked').each(function() {
-            totalOriginal += parseFloat($(this).data('price')) || 0;
+            let row = $(this).closest('.product-checkbox-item');
+            let qtyInput = row.find('.deal-qty-input');
+            let qty = parseInt(qtyInput.val()) || 1;
+            if (qty < 1) qty = 1;
+            let price = parseFloat($(this).data('price')) || 0;
+            totalOriginal += price * qty;
             count++;
+            totalQty += qty;
         });
 
         $('#selected-count').text(count);
-        if (count < 2) {
+        $('#total-qty-count').text(totalQty);
+        if (totalQty < 2) {
             $('#min-products-warning').show();
         } else {
             $('#min-products-warning').hide();
@@ -298,8 +315,44 @@ $(document).ready(function() {
         calculateDeal();
     });
 
-    // Checkbox changes & value input
-    $(document).on('change', '.deal-product-checkbox', calculateDeal);
+    // Checkbox toggle handles qty input enable/show
+    $(document).on('change', '.deal-product-checkbox', function() {
+        let row = $(this).closest('.product-checkbox-item');
+        let qtyContainer = row.find('.deal-qty-container');
+        let qtyInput = row.find('.deal-qty-input');
+        if (this.checked) {
+            qtyContainer.removeClass('d-none').addClass('d-flex');
+            qtyInput.prop('disabled', false);
+        } else {
+            qtyContainer.removeClass('d-flex').addClass('d-none');
+            qtyInput.prop('disabled', true);
+        }
+        calculateDeal();
+    });
+
+    // Stepper plus/minus
+    $(document).on('click', '.deal-qty-plus', function(e) {
+        e.stopPropagation();
+        let input = $(this).siblings('.deal-qty-input');
+        let val = parseInt(input.val()) || 1;
+        input.val(val + 1).trigger('input');
+    });
+
+    $(document).on('click', '.deal-qty-minus', function(e) {
+        e.stopPropagation();
+        let input = $(this).siblings('.deal-qty-input');
+        let val = parseInt(input.val()) || 1;
+        if (val > 1) {
+            input.val(val - 1).trigger('input');
+        }
+    });
+
+    $(document).on('input change', '.deal-qty-input', function() {
+        let val = parseInt($(this).val()) || 1;
+        if (val < 1) $(this).val(1);
+        calculateDeal();
+    });
+
     $('#discount_value').on('input', calculateDeal);
     $('#delivery_charge').on('input', calculateDeal);
 

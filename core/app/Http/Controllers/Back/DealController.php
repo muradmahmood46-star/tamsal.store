@@ -60,8 +60,9 @@ class DealController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'photo' => 'nullable|mimes:jpeg,jpg,png,svg,webp,gif,bmp,tiff,tif,avif,ico,jfif,heic,heif|max:20480',
-            'item_ids' => 'required|array|min:2',
+            'item_ids' => 'required|array|min:1',
             'item_ids.*' => 'required|exists:items,id',
+            'item_quantities' => 'nullable|array',
             'discount_type' => 'required|in:fixed,percent',
             'discount_value' => 'required|numeric|min:0.01',
             'delivery_charge' => 'nullable|numeric|min:0',
@@ -75,8 +76,15 @@ class DealController extends Controller
         ]);
 
         $itemIds = array_values(array_unique($request->item_ids));
-        if (count($itemIds) < 2) {
-            return back()->withInput()->withError(__('Please select at least 2 distinct products for this deal.'));
+        $itemQuantities = $request->item_quantities ?? [];
+
+        $totalItemsCount = 0;
+        foreach ($itemIds as $id) {
+            $totalItemsCount += max(1, (int)($itemQuantities[$id] ?? 1));
+        }
+
+        if ($totalItemsCount < 2) {
+            return back()->withInput()->withError(__('Please select at least 2 items (total quantity) for this deal.'));
         }
 
         // Ensure all items belong to Admin
@@ -91,9 +99,10 @@ class DealController extends Controller
             return back()->withInput()->withError(__('You can only select admin-listed products for this deal.'));
         }
 
-        $totalOriginalPrice = $selectedItems->sum(function ($item) {
+        $totalOriginalPrice = $selectedItems->sum(function ($item) use ($itemQuantities) {
             $p = $item->discount_price > 0 ? $item->discount_price : $item->previous_price;
-            return PriceHelper::parsePrice($p);
+            $qty = max(1, (int)($itemQuantities[$item->id] ?? 1));
+            return PriceHelper::parsePrice($p) * $qty;
         });
 
         if ($totalOriginalPrice <= 0) {
@@ -164,8 +173,9 @@ class DealController extends Controller
                 'orders_count' => 0,
             ]);
 
-            // Insert deal items with proportional discounted price
+            // Insert deal items with proportional discounted price & quantity
             foreach ($selectedItems as $item) {
+                $qty = max(1, (int)($itemQuantities[$item->id] ?? 1));
                 $itemOriginalPrice = PriceHelper::parsePrice($item->discount_price > 0 ? $item->discount_price : $item->previous_price);
                 $itemDiscount = $itemOriginalPrice * $discountRatio;
                 $itemDiscountedPrice = max(0, round($itemOriginalPrice - $itemDiscount, 2));
@@ -173,6 +183,7 @@ class DealController extends Controller
                 DealItem::create([
                     'deal_id' => $deal->id,
                     'item_id' => $item->id,
+                    'quantity' => $qty,
                     'original_price' => $itemOriginalPrice,
                     'discounted_price' => $itemDiscountedPrice,
                 ]);
@@ -205,11 +216,13 @@ class DealController extends Controller
             ->get();
 
         $selectedItemIds = $deal->dealItems->pluck('item_id')->toArray();
+        $selectedQuantities = $deal->dealItems->pluck('quantity', 'item_id')->toArray();
 
         return view('back.deal.edit', [
             'deal' => $deal,
             'items' => $items,
             'selectedItemIds' => $selectedItemIds,
+            'selectedQuantities' => $selectedQuantities,
         ]);
     }
 
@@ -221,8 +234,9 @@ class DealController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'photo' => 'nullable|mimes:jpeg,jpg,png,svg,webp,gif,bmp,tiff,tif,avif,ico,jfif,heic,heif|max:20480',
-            'item_ids' => 'required|array|min:2',
+            'item_ids' => 'required|array|min:1',
             'item_ids.*' => 'required|exists:items,id',
+            'item_quantities' => 'nullable|array',
             'discount_type' => 'required|in:fixed,percent',
             'discount_value' => 'required|numeric|min:0.01',
             'delivery_charge' => 'nullable|numeric|min:0',
@@ -236,8 +250,15 @@ class DealController extends Controller
         ]);
 
         $itemIds = array_values(array_unique($request->item_ids));
-        if (count($itemIds) < 2) {
-            return back()->withInput()->withError(__('Please select at least 2 distinct products for this deal.'));
+        $itemQuantities = $request->item_quantities ?? [];
+
+        $totalItemsCount = 0;
+        foreach ($itemIds as $itemIdVal) {
+            $totalItemsCount += max(1, (int)($itemQuantities[$itemIdVal] ?? 1));
+        }
+
+        if ($totalItemsCount < 2) {
+            return back()->withInput()->withError(__('Please select at least 2 items (total quantity) for this deal.'));
         }
 
         $selectedItems = Item::whereIn('id', $itemIds)
@@ -254,9 +275,10 @@ class DealController extends Controller
             return back()->withInput()->withError(__('Invalid product selection. All products must be eligible.'));
         }
 
-        $totalOriginalPrice = $selectedItems->sum(function ($item) {
+        $totalOriginalPrice = $selectedItems->sum(function ($item) use ($itemQuantities) {
             $p = $item->discount_price > 0 ? $item->discount_price : $item->previous_price;
-            return PriceHelper::parsePrice($p);
+            $qty = max(1, (int)($itemQuantities[$item->id] ?? 1));
+            return PriceHelper::parsePrice($p) * $qty;
         });
 
         if ($totalOriginalPrice <= 0) {
@@ -315,6 +337,7 @@ class DealController extends Controller
             // Sync deal items
             DealItem::where('deal_id', $deal->id)->delete();
             foreach ($selectedItems as $item) {
+                $qty = max(1, (int)($itemQuantities[$item->id] ?? 1));
                 $itemOriginalPrice = PriceHelper::parsePrice($item->discount_price > 0 ? $item->discount_price : $item->previous_price);
                 $itemDiscount = $itemOriginalPrice * $discountRatio;
                 $itemDiscountedPrice = max(0, round($itemOriginalPrice - $itemDiscount, 2));
@@ -322,6 +345,7 @@ class DealController extends Controller
                 DealItem::create([
                     'deal_id' => $deal->id,
                     'item_id' => $item->id,
+                    'quantity' => $qty,
                     'original_price' => $itemOriginalPrice,
                     'discounted_price' => $itemDiscountedPrice,
                 ]);

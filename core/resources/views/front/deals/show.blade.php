@@ -79,9 +79,14 @@
                         </div>
                         <div class="col-8">
                             <div class="card-body py-3">
-                                <h3 class="h6">{{ $item->name }}</h3>
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <h3 class="h6 mb-0">{{ $item->name }}</h3>
+                                    @if(($dealItem->quantity ?? 1) > 1)
+                                        <span class="badge badge-primary ml-2 px-2 py-1 font-weight-bold text-nowrap" style="font-size:12px;"><i class="fas fa-cubes"></i> {{ __('Qty: ') }} {{ $dealItem->quantity }}</span>
+                                    @endif
+                                </div>
                                 <del class="small text-muted">{{ PriceHelper::setCurrencyPrice($dealItem->original_price) }}</del>
-                                <strong class="d-block text-success">{{ PriceHelper::setCurrencyPrice($dealItem->discounted_price) }}</strong>
+                                <strong class="d-block text-success">{{ PriceHelper::setCurrencyPrice($dealItem->discounted_price) }} @if(($dealItem->quantity ?? 1) > 1)<small class="text-muted font-weight-normal">({{ __('each') }})</small>@endif</strong>
                                 <a href="{{ route('front.product', $item->slug) }}" class="btn btn-outline-secondary btn-sm mt-2" target="_blank">
                                     <i class="icon-eye"></i> {{ __('View Product Details') }}
                                 </a>

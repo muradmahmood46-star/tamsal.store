@@ -45,7 +45,7 @@ class DealController extends Controller
                 'attribute_price'     => 0,
                 'name'                => $item->name,
                 'slug'                => $item->slug,
-                'qty'                 => 1,
+                'qty'                 => (int)($dealItem->quantity ?: 1),
                 'price'               => $dealItem->discounted_price,
                 'main_price'          => $dealItem->discounted_price,
                 'estimated_profit'    => (float)($item->estimated_profit ?? 0),

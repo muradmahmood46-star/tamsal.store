@@ -486,10 +486,17 @@ class Helper
                     $table->id();
                     $table->unsignedBigInteger('deal_id')->index();
                     $table->unsignedBigInteger('item_id')->index();
+                    $table->unsignedInteger('quantity')->default(1);
                     $table->decimal('original_price', 12, 2)->default(0.00);
                     $table->decimal('discounted_price', 12, 2)->default(0.00);
                     $table->timestamps();
                 });
+            } else {
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('deal_items', 'quantity')) {
+                    \Illuminate\Support\Facades\Schema::table('deal_items', function ($table) {
+                        $table->unsignedInteger('quantity')->default(1)->after('item_id');
+                    });
+                }
             }
         } catch (\Throwable $e) {}
     }

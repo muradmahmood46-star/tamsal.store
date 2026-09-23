@@ -9,11 +9,13 @@ class DealItem extends Model
     protected $fillable = [
         'deal_id',
         'item_id',
+        'quantity',
         'original_price',
         'discounted_price',
     ];
 
     protected $casts = [
+        'quantity' => 'integer',
         'original_price' => 'float',
         'discounted_price' => 'float',
     ];

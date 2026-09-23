@@ -44,7 +44,7 @@
                         <div class="form-group">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <label class="mb-0"><strong>{{ __('Select Products From Your Store') }} *</strong></label>
-                                <small class="text-muted"><span id="selected-count">0</span> {{ __('products selected') }} <span id="min-products-warning" class="text-danger font-weight-bold" style="display:none">— {{ __('(min. 2 required)') }}</span></small>
+                                <small class="text-muted"><span id="selected-count">0</span> {{ __('products') }} (<span id="total-qty-count">0</span> {{ __('items') }}) {{ __('selected') }} <span id="min-products-warning" class="text-danger font-weight-bold" style="display:none">— {{ __('(min. 2 items required)') }}</span></small>
                             </div>
                             <input type="text" id="seller-product-search" class="form-control form-control-sm mb-2" placeholder="{{ __('Search products by name or SKU...') }}">
                             <div class="border rounded p-2" id="seller-products-list" style="max-height:380px;overflow-y:auto;background:#fafbfe;">
@@ -52,16 +52,27 @@
                                     @php
                                         $price = $item->discount_price > 0 ? $item->discount_price : $item->previous_price;
                                         $isChecked = in_array($item->id, old('item_ids', $selectedItemIds ?? []));
+                                        $itemQty = old('item_quantities.' . $item->id, $selectedQuantities[$item->id] ?? 1);
                                         $thumb = $item->photo ?: $item->thumbnail;
                                         $itemImg = \Illuminate\Support\Str::startsWith($thumb, 'images/')
                                             ? url('/core/public/storage/' . $thumb)
                                             : url('/core/public/storage/images/' . $thumb);
                                     @endphp
-                                    <label class="d-flex align-items-center border-bottom py-2 mb-1 seller-product-item" data-name="{{ strtolower($item->name) }}" data-sku="{{ strtolower($item->sku ?? '') }}" style="background:#fff;padding:8px 12px;border-radius:4px;cursor:pointer;">
-                                        <input class="deal-product-checkbox mr-2" type="checkbox" name="item_ids[]" value="{{ $item->id }}" data-price="{{ $price }}" {{ $isChecked ? 'checked' : '' }} style="width:18px;height:18px;">
-                                        <img src="{{ $itemImg }}" style="width:40px;height:40px;object-fit:cover;border-radius:4px;margin-right:10px;" onerror="this.src='{{ asset('assets/images/placeholder.png') }}'">
-                                        <span class="flex-grow-1 font-weight-bold text-dark" style="font-size:13px;">{{ $item->name }} <small class="text-muted">({{ PriceHelper::setCurrencyPrice($price) }})</small></span>
-                                    </label>
+                                    <div class="d-flex align-items-center justify-content-between border-bottom py-2 mb-1 seller-product-item flex-wrap" data-name="{{ strtolower($item->name) }}" data-sku="{{ strtolower($item->sku ?? '') }}" style="background:#fff;padding:8px 12px;border-radius:4px;">
+                                        <div class="d-flex align-items-center flex-grow-1 mr-2" style="cursor:pointer;" onclick="$(this).find('.deal-product-checkbox').trigger('click');">
+                                            <input class="deal-product-checkbox mr-2" type="checkbox" name="item_ids[]" value="{{ $item->id }}" data-price="{{ $price }}" {{ $isChecked ? 'checked' : '' }} style="width:18px;height:18px;" onclick="event.stopPropagation();">
+                                            <img src="{{ $itemImg }}" style="width:40px;height:40px;object-fit:cover;border-radius:4px;margin-right:10px;" onerror="this.src='{{ asset('assets/images/placeholder.png') }}'">
+                                            <div>
+                                                <div class="font-weight-bold text-dark" style="font-size:13px;">{{ Str::limit($item->name, 45) }}</div>
+                                                <small class="text-muted">SKU: {{ $item->sku ?? 'N/A' }} | Price: <strong class="text-primary">{{ PriceHelper::setCurrencyPrice($price) }}</strong></small>
+                                            </div>
+                                        </div>
+                                        <div class="deal-qty-container align-items-center {{ $isChecked ? 'd-flex' : 'd-none' }}" style="gap:4px;">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary deal-qty-btn deal-qty-minus" style="padding:1px 7px;font-weight:bold;height:28px;line-height:1;">-</button>
+                                            <input type="number" name="item_quantities[{{ $item->id }}]" class="form-control form-control-sm text-center deal-qty-input" value="{{ $itemQty }}" min="1" max="99" style="width:48px;height:28px;padding:2px;font-weight:bold;" {{ $isChecked ? '' : 'disabled' }}>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary deal-qty-btn deal-qty-plus" style="padding:1px 7px;font-weight:bold;height:28px;line-height:1;">+</button>
+                                        </div>
+                                    </div>
                                 @empty
                                     <p class="text-muted mb-0 p-3 text-center">{{ __('No eligible products available in your store.') }}</p>
                                 @endforelse
@@ -128,14 +139,23 @@ function dealMoney(value) { return dealCurrencySign + ' ' + (value * dealCurrenc
 function updateDealTotal() {
     var total = 0;
     var count = 0;
+    var totalQty = 0;
     document.querySelectorAll('.deal-product-checkbox:checked').forEach(function(input) {
-        total += parseFloat(input.dataset.price) || 0;
+        var row = input.closest('.seller-product-item');
+        var qtyInput = row ? row.querySelector('.deal-qty-input') : null;
+        var qty = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
+        if (qty < 1) qty = 1;
+        var price = parseFloat(input.dataset.price) || 0;
+        total += price * qty;
         count++;
+        totalQty += qty;
     });
     var countElem = document.getElementById('selected-count');
     if (countElem) countElem.textContent = count;
+    var totalQtyElem = document.getElementById('total-qty-count');
+    if (totalQtyElem) totalQtyElem.textContent = totalQty;
     var warnElem = document.getElementById('min-products-warning');
-    if (warnElem) warnElem.style.display = count < 2 ? '' : 'none';
+    if (warnElem) warnElem.style.display = totalQty < 2 ? '' : 'none';
 
     var discountType = document.getElementById('discount_type').value;
     var discount = parseFloat(document.getElementById('discount_value').value) || 0;
@@ -160,7 +180,45 @@ function updateDealTotal() {
     }
 }
 
-document.querySelectorAll('.deal-product-checkbox,#discount_type,#discount_value,#delivery_charge').forEach(function(input) {
+// Checkbox toggle handles qty input
+$(document).on('change', '.deal-product-checkbox', function() {
+    var row = $(this).closest('.seller-product-item');
+    var qtyContainer = row.find('.deal-qty-container');
+    var qtyInput = row.find('.deal-qty-input');
+    if (this.checked) {
+        qtyContainer.removeClass('d-none').addClass('d-flex');
+        qtyInput.prop('disabled', false);
+    } else {
+        qtyContainer.removeClass('d-flex').addClass('d-none');
+        qtyInput.prop('disabled', true);
+    }
+    updateDealTotal();
+});
+
+// Stepper plus/minus
+$(document).on('click', '.deal-qty-plus', function(e) {
+    e.stopPropagation();
+    var input = $(this).siblings('.deal-qty-input');
+    var val = parseInt(input.val()) || 1;
+    input.val(val + 1).trigger('input');
+});
+
+$(document).on('click', '.deal-qty-minus', function(e) {
+    e.stopPropagation();
+    var input = $(this).siblings('.deal-qty-input');
+    var val = parseInt(input.val()) || 1;
+    if (val > 1) {
+        input.val(val - 1).trigger('input');
+    }
+});
+
+$(document).on('input change', '.deal-qty-input', function() {
+    var val = parseInt($(this).val()) || 1;
+    if (val < 1) $(this).val(1);
+    updateDealTotal();
+});
+
+document.querySelectorAll('#discount_type,#discount_value,#delivery_charge').forEach(function(input) {
     input.addEventListener('change', updateDealTotal);
     input.addEventListener('input', updateDealTotal);
 });
