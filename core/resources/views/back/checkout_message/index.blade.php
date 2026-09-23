@@ -2,7 +2,25 @@
 @section('content')
 <div class="container-fluid">
     <div class="card mb-4">
-        <h3 class="mb-0 px-3 py-4"><b>{{ __('Checkout Popup Message') }}</b></h3>
+        <div class="card-body">
+            <div class="d-sm-flex align-items-center justify-content-between">
+                <h3 class="mb-0 bc-title">
+                    <i class="fas fa-comment-alt text-primary mr-2"></i><b>{{ __('Popup Messages') }}</b>
+                </h3>
+                <ul class="nav nav-pills mt-2 mt-sm-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ route('back.checkout.message') }}">
+                            <i class="fas fa-comment-alt mr-1"></i> {{ __('Popup Messages') }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('back.announcement.index') }}">
+                            <i class="fas fa-bullhorn mr-1"></i> {{ __('Announcement for All Vendors') }}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
     @include('alerts.alerts')
     <div class="card">

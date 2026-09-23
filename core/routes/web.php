@@ -394,6 +394,12 @@ Route::group(['middleware' => ['adminlocalize', 'demo']], function () {
         Route::post('/checkout-message/update', 'Back\CheckoutMessageController@update')->name('back.checkout.message.update');
         Route::post('/global-popup/update', 'Back\CheckoutMessageController@globalPopupUpdate')->name('back.global.popup.update');
 
+        //------------ VENDOR ANNOUNCEMENTS ------------
+        Route::get('/vendor-announcements', 'Back\VendorAnnouncementController@index')->name('back.announcement.index');
+        Route::post('/vendor-announcements/store', 'Back\VendorAnnouncementController@store')->name('back.announcement.store');
+        Route::post('/vendor-announcements/update/{id}', 'Back\VendorAnnouncementController@update')->name('back.announcement.update');
+        Route::delete('/vendor-announcements/delete/{id}', 'Back\VendorAnnouncementController@delete')->name('back.announcement.delete');
+
         Route::group(['middleware' => 'permissions:Subscribers List'], function () {
             //------------ SUBSCRIBER ------------
             Route::get('/subscribers', 'Back\SubscriberController@index')->name('back.subscribers.index');
@@ -509,6 +515,9 @@ Route::group(['middleware' => 'maintainance'], function () {
             Route::get('admin-messages', 'Seller\AdminMessageController@index')->name('seller.admin_message.index');
             Route::post('admin-messages/send', 'Seller\AdminMessageController@send')->name('seller.admin_message.send');
             Route::get('admin-messages/fetch', 'Seller\AdminMessageController@fetch')->name('seller.admin_message.fetch');
+
+            //------------ ANNOUNCEMENTS ------------
+            Route::get('announcements', 'Seller\VendorAnnouncementController@index')->name('seller.announcement.index');
 
             //------------ PRODUCTS ------------
             Route::get('item/add', 'Seller\ItemController@add')->name('seller.item.add');

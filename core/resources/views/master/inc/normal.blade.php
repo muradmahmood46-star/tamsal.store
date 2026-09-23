@@ -325,6 +325,30 @@
     </li>
     @endif
 
+    @if (in_array('Messages',$section) || in_array('Manage Site',$section))
+    <li class="nav-item {{ request()->is('admin/checkout-message*') || request()->is('admin/vendor-announcements*') ? 'active submenu' : '' }}">
+        <a data-toggle="collapse" href="#normal_messages_menu">
+            <i class="fas fa-comment-alt"></i>
+            <p>{{ __('Messages') }}</p>
+            <span class="caret"></span>
+        </a>
+        <div class="collapse {{ request()->is('admin/checkout-message*') || request()->is('admin/vendor-announcements*') ? 'show' : '' }}" id="normal_messages_menu">
+            <ul class="nav nav-collapse">
+                <li class="{{ request()->is('admin/checkout-message*') ? 'active' : '' }}">
+                    <a class="sub-link" href="{{ route('back.checkout.message') }}">
+                        <span class="sub-item">{{ __('Popup Messages') }}</span>
+                    </a>
+                </li>
+                <li class="{{ request()->is('admin/vendor-announcements*') ? 'active' : '' }}">
+                    <a class="sub-link" href="{{ route('back.announcement.index') }}">
+                        <span class="sub-item">{{ __('Announcement for All Vendors') }}</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </li>
+    @endif
+
     @if (in_array('Manages Tickets',$section))
     <li class="nav-item">
         <a href="{{ route('back.ticket.index') }}">

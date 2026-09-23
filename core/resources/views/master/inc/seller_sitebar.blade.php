@@ -129,6 +129,26 @@
         </a>
     </li>
 
+    @php
+        $vendorId = Auth::id();
+        $unreadAnnouncementsCount = 0;
+        if ($vendorId && \Illuminate\Support\Facades\Schema::hasTable('vendor_announcements') && \Illuminate\Support\Facades\Schema::hasTable('vendor_announcement_views')) {
+            $viewedIds = \App\Models\VendorAnnouncementView::where('vendor_id', $vendorId)->pluck('announcement_id');
+            $unreadAnnouncementsCount = \App\Models\VendorAnnouncement::where('status', 1)
+                ->whereNotIn('id', $viewedIds)
+                ->count();
+        }
+    @endphp
+    <li class="nav-item {{ request()->is('seller/announcements*') ? 'active' : '' }}">
+        <a href="{{ route('seller.announcement.index') }}">
+            <i class="fas fa-bullhorn text-warning"></i>
+            <p>{{ __('Announcements') }}</p>
+            @if($unreadAnnouncementsCount > 0)
+                <span class="badge badge-danger badge-counter" style="position: absolute; right: 15px; top: 12px; font-size: 11px; padding: 2px 7px; border-radius: 10px; font-weight: bold;">{{ $unreadAnnouncementsCount }}</span>
+            @endif
+        </a>
+    </li>
+
     <li class="nav-item {{ request()->is('seller/wallet*') ? 'active' : '' }}">
         <a href="{{ route('seller.wallet.index') }}">
             <i class="fas fa-wallet"></i>
