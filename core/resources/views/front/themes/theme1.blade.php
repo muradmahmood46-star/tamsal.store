@@ -481,11 +481,11 @@
             text-decoration: none !important;
         }
         .promo-card-shop {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #334155 100%);
+            background: linear-gradient(135deg, #0f2b5c 0%, #1e40af 60%, #2563eb 100%);
             color: #ffffff !important;
         }
         .promo-card-seller {
-            background: linear-gradient(135deg, #18181b 0%, #27272a 60%, #3f3f46 100%);
+            background: linear-gradient(135deg, #2e1065 0%, #4c1d95 60%, #6d28d9 100%);
             color: #ffffff !important;
         }
         .home-promo-card:hover {
