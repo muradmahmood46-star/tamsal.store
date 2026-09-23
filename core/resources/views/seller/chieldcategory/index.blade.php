@@ -24,16 +24,16 @@
 	<div class="card shadow mb-4">
 		<div class="card-body">
 			@include('alerts.alerts')
-			<div class="gd-responsive-table">
-				<table class="table table-bordered table-striped" id="admin-table" style="min-width: 850px;" width="100%" cellspacing="0">
+			<div class="table-responsive">
+				<table class="table table-bordered table-striped table-hover align-middle" id="admin-table" style="width: 100%; min-width: 750px;" width="100%" cellspacing="0">
 
-					<thead>
+					<thead class="thead-light">
 						<tr>
-							<th>{{ __('Category') }}</th>
-							<th>{{ __('Subcategory') }}</th>
-                            <th>{{ __('Childcategory Name') }}</th>
-							<th>{{ __('Status') }}</th>
-							<th>{{ __('Actions') }}</th>
+							<th style="min-width: 150px; width: 22%;">{{ __('Parent Category') }}</th>
+							<th style="min-width: 150px; width: 22%;">{{ __('Subcategory') }}</th>
+                            <th style="min-width: 180px; width: 26%;">{{ __('Child Category Name') }}</th>
+							<th style="min-width: 110px; width: 15%; text-align: center;">{{ __('Status') }}</th>
+							<th style="min-width: 110px; width: 15%; text-align: center;">{{ __('Actions') }}</th>
 						</tr>
 					</thead>
 

@@ -21,15 +21,15 @@
 	<div class="card shadow mb-4">
 		<div class="card-body">
 			@include('alerts.alerts')
-			<div class="gd-responsive-table">
-				<table class="table table-bordered table-striped" id="admin-table" style="min-width: 750px;" width="100%" cellspacing="0">
+			<div class="table-responsive">
+				<table class="table table-bordered table-striped table-hover align-middle" id="admin-table" style="width: 100%; min-width: 600px;" width="100%" cellspacing="0">
 
-					<thead>
+					<thead class="thead-light">
 						<tr>
-							<th>{{ __('Image') }}</th>
-                            <th>{{ __('Name') }}</th>
-							<th>{{ __('Status') }}</th>
-							<th>{{ __('Actions') }}</th>
+							<th style="min-width: 80px; width: 15%; text-align: center;">{{ __('Image') }}</th>
+                            <th style="min-width: 220px; width: 55%;">{{ __('Category Name & Slug') }}</th>
+							<th style="min-width: 110px; width: 15%; text-align: center;">{{ __('Status') }}</th>
+							<th style="min-width: 110px; width: 15%; text-align: center;">{{ __('Actions') }}</th>
 						</tr>
 					</thead>
 
