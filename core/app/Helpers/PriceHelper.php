@@ -774,4 +774,41 @@ class PriceHelper
         return $total_delivery_fee;
     }
 
+    /**
+     * Check if a Transaction ID is already used anywhere across the entire website
+     * (Orders, Deposit Requests, Fine Payments, or Transactions)
+     *
+     * @param string|null $txnId
+     * @return bool
+     */
+    public static function isTransactionIdAlreadyUsed($txnId)
+    {
+        $txnId = trim((string)$txnId);
+        if (empty($txnId)) {
+            return false;
+        }
+
+        // 1. Check Orders (both txnid and transaction_number)
+        if (\App\Models\Order::where('txnid', $txnId)->orWhere('transaction_number', $txnId)->exists()) {
+            return true;
+        }
+
+        // 2. Check Deposit Requests
+        if (\App\Models\DepositRequest::where('txn_id', $txnId)->exists()) {
+            return true;
+        }
+
+        // 3. Check Fine Payments
+        if (\App\Models\FinePayment::where('txn_id', $txnId)->exists()) {
+            return true;
+        }
+
+        // 4. Check Transactions
+        if (\App\Models\Transaction::where('txn_id', $txnId)->exists()) {
+            return true;
+        }
+
+        return false;
+    }
+
 }

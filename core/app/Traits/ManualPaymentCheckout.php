@@ -35,7 +35,7 @@ trait ManualPaymentCheckout
 
         if (!empty($data['txn_id'])) {
             $txn_id = trim($data['txn_id']);
-            if (\App\Models\Order::where('txnid', $txn_id)->orWhere('transaction_number', $txn_id)->exists()) {
+            if (PriceHelper::isTransactionIdAlreadyUsed($txn_id)) {
                 return ['status' => false, 'message' => __('This Transaction ID has already been used. Please enter a valid unique Transaction ID.')];
             }
         }

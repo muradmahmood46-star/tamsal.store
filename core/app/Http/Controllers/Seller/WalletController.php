@@ -62,6 +62,13 @@ class WalletController extends Controller
             'screenshot.required' => __('Please upload a payment screenshot/proof of your deposit.'),
         ]);
 
+        $txnId = trim($request->txn_id);
+        if (\App\Helpers\PriceHelper::isTransactionIdAlreadyUsed($txnId)) {
+            return redirect()->back()->withInput()->withErrors([
+                'txn_id' => __('This Transaction ID has already been used. Please enter a valid unique Transaction ID.')
+            ]);
+        }
+
         $screenshotFilename = null;
         if ($request->hasFile('screenshot')) {
             $uploadDir = public_path('storage/images/deposits');

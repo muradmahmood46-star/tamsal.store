@@ -78,6 +78,11 @@ class DashboardController extends Controller
             'screenshot.required' => __('Please upload a clear screenshot of your fine payment proof.'),
         ]);
 
+        $txnId = trim($request->txn_id);
+        if (\App\Helpers\PriceHelper::isTransactionIdAlreadyUsed($txnId)) {
+            return redirect()->back()->withInput()->withErrors(__('This Transaction ID has already been used. Please enter a valid unique Transaction ID.'));
+        }
+
         $screenshotFilename = null;
         if ($request->hasFile('screenshot')) {
             $uploadDir = public_path('storage/images/fines');
