@@ -157,100 +157,14 @@
                                         </span>
                                     </td>
                                     <td class="text-right">
-                                        <div class="d-flex justify-content-end align-items-center" style="gap: 5px;">
-                                            <button type="button" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#editModal{{ $item->id }}" title="{{ __('Edit') }}">
+                                        <div class="d-flex justify-content-end align-items-center" style="gap: 6px;">
+                                            <button type="button" class="btn btn-sm btn-outline-primary px-2 py-1" data-toggle="modal" data-target="#editModal{{ $item->id }}" title="{{ __('Edit') }}" style="min-width: 34px; min-height: 32px;">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" data-toggle="modal" data-target="#deleteModal{{ $item->id }}" title="{{ __('Delete') }}">
+                                            <button type="button" class="btn btn-sm btn-outline-danger px-2 py-1" data-toggle="modal" data-target="#deleteModal{{ $item->id }}" title="{{ __('Delete') }}" style="min-width: 34px; min-height: 32px;">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </div>
-
-                                        <!-- Edit Modal -->
-                                        <div class="modal fade text-left" id="editModal{{ $item->id }}" tabindex="-1" role="dialog" aria-hidden="true">
-                                            <div class="modal-dialog modal-lg" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header bg-light">
-                                                        <h5 class="modal-title font-weight-bold">
-                                                            <i class="fas fa-edit text-primary mr-1"></i> {{ __('Edit Announcement') }}
-                                                        </h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <form action="{{ route('back.announcement.update', $item->id) }}" method="POST">
-                                                        @csrf
-                                                        <div class="modal-body">
-                                                            <div class="row">
-                                                                <div class="col-md-8">
-                                                                    <div class="form-group">
-                                                                        <label><b>{{ __('Title') }}</b> <span class="text-danger">*</span></label>
-                                                                        <input type="text" name="title" class="form-control" value="{{ $item->title }}" required>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-4">
-                                                                    <div class="form-group">
-                                                                        <label><b>{{ __('Category / Priority') }}</b></label>
-                                                                        <select name="badge_type" class="form-control">
-                                                                            <option value="info" {{ $item->badge_type == 'info' ? 'selected' : '' }}>ℹ️ Info / General Announcement</option>
-                                                                            <option value="warning" {{ $item->badge_type == 'warning' ? 'selected' : '' }}>⚠️ Warning / Important Notice</option>
-                                                                            <option value="danger" {{ $item->badge_type == 'danger' ? 'selected' : '' }}>🚨 Urgent / Policy Alert</option>
-                                                                            <option value="success" {{ $item->badge_type == 'success' ? 'selected' : '' }}>✅ Success / Good News</option>
-                                                                            <option value="primary" {{ $item->badge_type == 'primary' ? 'selected' : '' }}>📢 Official Broadcast</option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group mt-2">
-                                                                <label><b>{{ __('Message Content') }}</b> <span class="text-danger">*</span></label>
-                                                                <textarea name="message" class="form-control" rows="7" required style="font-size: 14px; line-height: 1.6;">{{ $item->message }}</textarea>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer bg-light">
-                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Cancel') }}</button>
-                                                            <button type="submit" class="btn btn-primary font-weight-bold">
-                                                                <i class="fas fa-save mr-1"></i> {{ __('Save Changes') }}
-                                                            </button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Delete Confirmation Modal -->
-                                        <div class="modal fade text-left" id="deleteModal{{ $item->id }}" tabindex="-1" role="dialog" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header bg-danger text-white">
-                                                        <h5 class="modal-title font-weight-bold text-white">
-                                                            <i class="fas fa-exclamation-triangle mr-1"></i> {{ __('Confirm Deletion') }}
-                                                        </h5>
-                                                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body py-4">
-                                                        <p class="mb-0 text-dark" style="font-size: 15px;">
-                                                            {{ __('Are you sure you want to delete this announcement?') }}
-                                                        </p>
-                                                        <div class="alert alert-light border mt-3 mb-0">
-                                                            <strong>{{ $item->title }}</strong>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer bg-light">
-                                                        <form action="{{ route('back.announcement.delete', $item->id) }}" method="POST">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Cancel') }}</button>
-                                                            <button type="submit" class="btn btn-danger font-weight-bold">
-                                                                <i class="fas fa-trash-alt mr-1"></i> {{ __('Yes, Delete') }}
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
                                     </td>
                                 </tr>
                                 @empty
@@ -274,6 +188,102 @@
             </div>
         </div>
     </div>
+
+    <!-- Modals defined outside table-responsive to ensure 100% reliable mobile functionality -->
+    @foreach($announcements as $item)
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal{{ $item->id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{ $item->id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
+                <div class="modal-header bg-primary text-white py-3">
+                    <h5 class="modal-title font-weight-bold text-white" id="editModalLabel{{ $item->id }}">
+                        <i class="fas fa-edit mr-2"></i>{{ __('Edit Announcement') }}
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ route('back.announcement.update', $item->id) }}" method="POST">
+                    @csrf
+                    <div class="modal-body p-3 p-md-4">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group mb-3">
+                                    <label class="font-weight-bold text-dark">{{ __('Announcement Title / Subject') }} <span class="text-danger">*</span></label>
+                                    <input type="text" name="title" class="form-control" value="{{ $item->title }}" required style="font-size: 14px; height: 42px;">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label class="font-weight-bold text-dark">{{ __('Category / Priority') }}</label>
+                                    <select name="badge_type" class="form-control" style="font-size: 14px; height: 42px;">
+                                        <option value="info" {{ $item->badge_type == 'info' ? 'selected' : '' }}>ℹ️ Info / General</option>
+                                        <option value="warning" {{ $item->badge_type == 'warning' ? 'selected' : '' }}>⚠️ Warning / Important</option>
+                                        <option value="danger" {{ $item->badge_type == 'danger' ? 'selected' : '' }}>🚨 Urgent / Alert</option>
+                                        <option value="success" {{ $item->badge_type == 'success' ? 'selected' : '' }}>✅ Success / Update</option>
+                                        <option value="primary" {{ $item->badge_type == 'primary' ? 'selected' : '' }}>📢 Official Broadcast</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mb-0">
+                            <label class="font-weight-bold text-dark">{{ __('Message Content') }} <span class="text-danger">*</span></label>
+                            <textarea name="message" class="form-control" rows="8" required style="font-size: 14px; line-height: 1.6;">{{ $item->message }}</textarea>
+                            <small class="text-muted mt-1 d-block">{{ __('Changes will be immediately updated for all vendors.') }}</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light py-3">
+                        <button type="button" class="btn btn-secondary px-3" data-dismiss="modal">{{ __('Cancel') }}</button>
+                        <button type="submit" class="btn btn-primary font-weight-bold px-4">
+                            <i class="fas fa-save mr-1"></i> {{ __('Save Changes') }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal{{ $item->id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{ $item->id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
+                <div class="modal-header bg-danger text-white py-3">
+                    <h5 class="modal-title font-weight-bold text-white" id="deleteModalLabel{{ $item->id }}">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>{{ __('Confirm Deletion') }}
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body p-4 text-center">
+                    <div class="mb-3">
+                        <span class="d-inline-flex align-items-center justify-content-center bg-danger-light rounded-circle text-danger" style="width: 60px; height: 60px; background-color: #fee2e2;">
+                            <i class="fas fa-trash-alt fa-2x text-danger"></i>
+                        </span>
+                    </div>
+                    <h5 class="font-weight-bold text-dark mb-2">{{ __('Delete this announcement?') }}</h5>
+                    <p class="text-muted mb-3" style="font-size: 14px;">
+                        {{ __('This announcement will be permanently removed and no longer visible to vendors.') }}
+                    </p>
+                    <div class="alert alert-light border text-left p-3 mb-0" style="border-radius: 8px;">
+                        <span class="badge badge-secondary mb-1">{{ strtoupper($item->badge_type) }}</span>
+                        <div class="font-weight-bold text-dark" style="font-size: 14px;">{{ $item->title }}</div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light py-3 justify-content-center">
+                    <button type="button" class="btn btn-secondary px-4 mr-2" data-dismiss="modal">{{ __('Cancel') }}</button>
+                    <form action="{{ route('back.announcement.delete', $item->id) }}" method="POST" style="display: inline-block;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger font-weight-bold px-4">
+                            <i class="fas fa-trash-alt mr-1"></i> {{ __('Yes, Delete') }}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endforeach
 
 </div>
 @endsection
