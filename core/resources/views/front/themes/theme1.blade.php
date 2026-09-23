@@ -130,14 +130,12 @@
                 animation: heroLoopFloat 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
             }
 
-            /* 4-Column & Other Homepage Banners */
+            /* 4-Column & Other Modern Homepage Banners */
             .modern-banner-card .banner-title,
-            .genius-banner h4 {
-                animation: heroLoopFloat 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-            }
-            .modern-banner-card .banner-subtitle,
-            .genius-banner p {
-                animation: heroBadgeLoop 4s cubic-bezier(0.4, 0, 0.2, 1) 0.2s infinite;
+            .modern-banner-card .banner-subtitle {
+                animation: none !important;
+                box-shadow: none !important;
+                filter: none !important;
             }
 
             /* Continuous Looping Keyframes with ~2-second Rest/Pause */

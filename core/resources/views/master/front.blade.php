@@ -788,11 +788,18 @@
             line-height: 1.2 !important;
             display: inline-block !important;
             transition: color 0.3s ease !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            filter: none !important;
+            animation: none !important;
+            padding: 0 !important;
+            border: none !important;
+            border-radius: 0 !important;
         }
 
         .bannner-section .modern-banner-card .banner-title,
         .modern-banner-card .banner-title {
-            font-size: 14px !important;
+            font-size: 14.5px !important;
             font-weight: 700 !important;
             color: #0f172a !important;
             line-height: 1.3 !important;
@@ -803,6 +810,10 @@
             overflow: hidden !important;
             word-break: break-word !important;
             transition: color 0.3s ease !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            filter: none !important;
+            animation: none !important;
         }
 
         .bannner-section .modern-banner-card:hover .banner-title,
