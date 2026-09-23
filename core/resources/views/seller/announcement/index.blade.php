@@ -112,7 +112,7 @@
 
                     <!-- Message Container Box -->
                     <div class="p-3 p-md-4" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; position: relative;">
-                        <div style="color: #334155; font-size: 15px; line-height: 1.8; white-space: pre-line; word-break: break-word; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">{!! nl2br(e($item->message)) !!}</div>
+                        <div style="color: #334155; font-size: 14.5px; line-height: 1.55; word-break: break-word; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">{!! nl2br(e($item->message)) !!}</div>
                     </div>
                 </div>
 
