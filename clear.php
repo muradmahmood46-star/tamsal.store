@@ -248,6 +248,174 @@ if (!empty($dbname)) {
             $dbStatus[] = "✔ Database table `deal_items` created successfully!";
         }
 
+        // sellers table check and creation
+        $stmt = $pdo->query("SHOW TABLES LIKE 'sellers'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("CREATE TABLE `sellers` (
+                `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                `user_id` bigint(20) unsigned NOT NULL DEFAULT 0,
+                `shop_name` varchar(255) DEFAULT NULL,
+                `shop_address` text DEFAULT NULL,
+                `product_types` varchar(255) DEFAULT NULL,
+                `courier_company` varchar(255) DEFAULT NULL,
+                `shop_phone` varchar(255) DEFAULT NULL,
+                `shop_email` varchar(255) DEFAULT NULL,
+                `shop_logo` varchar(255) DEFAULT NULL,
+                `shop_banner` varchar(255) DEFAULT NULL,
+                `shop_details` text DEFAULT NULL,
+                `balance` decimal(12,2) NOT NULL DEFAULT 0.00,
+                `status` tinyint(4) NOT NULL DEFAULT 1,
+                `created_at` timestamp NULL DEFAULT NULL,
+                `updated_at` timestamp NULL DEFAULT NULL,
+                PRIMARY KEY (`id`),
+                KEY `sellers_user_id_index` (`user_id`),
+                KEY `sellers_status_index` (`status`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+            $dbStatus[] = "✔ Database table `sellers` created successfully!";
+        } else {
+            $stmt = $pdo->query("SHOW COLUMNS FROM `sellers` LIKE 'balance'");
+            if ($stmt && $stmt->rowCount() == 0) {
+                $pdo->exec("ALTER TABLE `sellers` ADD COLUMN `balance` DECIMAL(12,2) NOT NULL DEFAULT 0.00 AFTER `shop_details`");
+                $dbStatus[] = "✔ Database column `sellers.balance` created successfully!";
+            }
+            $stmt = $pdo->query("SHOW COLUMNS FROM `sellers` LIKE 'status'");
+            if ($stmt && $stmt->rowCount() == 0) {
+                $pdo->exec("ALTER TABLE `sellers` ADD COLUMN `status` TINYINT NOT NULL DEFAULT 1 AFTER `balance`");
+                $dbStatus[] = "✔ Database column `sellers.status` created successfully!";
+            }
+        }
+
+        // store_requests table check and creation
+        $stmt = $pdo->query("SHOW TABLES LIKE 'store_requests'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("CREATE TABLE `store_requests` (
+                `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                `user_id` bigint(20) unsigned DEFAULT NULL,
+                `first_name` varchar(255) DEFAULT NULL,
+                `last_name` varchar(255) DEFAULT NULL,
+                `email` varchar(255) DEFAULT NULL,
+                `phone` varchar(255) DEFAULT NULL,
+                `cnic` varchar(255) DEFAULT NULL,
+                `shop_name` varchar(255) DEFAULT NULL,
+                `shop_address` text DEFAULT NULL,
+                `product_types` varchar(255) DEFAULT NULL,
+                `courier_company` varchar(255) DEFAULT NULL,
+                `payment_method` varchar(255) DEFAULT NULL,
+                `transaction_id` varchar(255) DEFAULT NULL,
+                `payment_screenshot` varchar(255) DEFAULT NULL,
+                `status` varchar(50) NOT NULL DEFAULT 'Pending',
+                `seller_status` varchar(50) NOT NULL DEFAULT 'Pending',
+                `reject_reason` text DEFAULT NULL,
+                `created_at` timestamp NULL DEFAULT NULL,
+                `updated_at` timestamp NULL DEFAULT NULL,
+                PRIMARY KEY (`id`),
+                KEY `store_requests_user_id_index` (`user_id`),
+                KEY `store_requests_status_index` (`status`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+            $dbStatus[] = "✔ Database table `store_requests` created successfully!";
+        }
+
+        // receiving_accounts table check and creation
+        $stmt = $pdo->query("SHOW TABLES LIKE 'receiving_accounts'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("CREATE TABLE `receiving_accounts` (
+                `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                `payment_method` varchar(255) NOT NULL,
+                `account_name` varchar(255) NOT NULL,
+                `account_number` varchar(255) NOT NULL,
+                `note` text DEFAULT NULL,
+                `status` tinyint(4) NOT NULL DEFAULT 1,
+                `created_at` timestamp NULL DEFAULT NULL,
+                `updated_at` timestamp NULL DEFAULT NULL,
+                PRIMARY KEY (`id`),
+                KEY `receiving_accounts_status_index` (`status`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+            $dbStatus[] = "✔ Database table `receiving_accounts` created successfully!";
+        }
+
+        // vendor_transactions table check and creation
+        $stmt = $pdo->query("SHOW TABLES LIKE 'vendor_transactions'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("CREATE TABLE `vendor_transactions` (
+                `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                `seller_id` bigint(20) unsigned NOT NULL,
+                `order_id` bigint(20) unsigned DEFAULT NULL,
+                `amount` decimal(12,2) NOT NULL DEFAULT 0.00,
+                `type` varchar(50) NOT NULL DEFAULT 'credit',
+                `details` text DEFAULT NULL,
+                `created_at` timestamp NULL DEFAULT NULL,
+                `updated_at` timestamp NULL DEFAULT NULL,
+                PRIMARY KEY (`id`),
+                KEY `vendor_transactions_seller_id_index` (`seller_id`),
+                KEY `vendor_transactions_order_id_index` (`order_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+            $dbStatus[] = "✔ Database table `vendor_transactions` created successfully!";
+        }
+
+        // deposit_requests table check and creation
+        $stmt = $pdo->query("SHOW TABLES LIKE 'deposit_requests'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("CREATE TABLE `deposit_requests` (
+                `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                `seller_id` bigint(20) unsigned NOT NULL,
+                `amount` decimal(12,2) NOT NULL DEFAULT 0.00,
+                `payment_method` varchar(255) DEFAULT NULL,
+                `transaction_id` varchar(255) DEFAULT NULL,
+                `screenshot` varchar(255) DEFAULT NULL,
+                `status` varchar(50) NOT NULL DEFAULT 'Pending',
+                `note` text DEFAULT NULL,
+                `created_at` timestamp NULL DEFAULT NULL,
+                `updated_at` timestamp NULL DEFAULT NULL,
+                PRIMARY KEY (`id`),
+                KEY `deposit_requests_seller_id_index` (`seller_id`),
+                KEY `deposit_requests_status_index` (`status`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+            $dbStatus[] = "✔ Database table `deposit_requests` created successfully!";
+        }
+
+        // users columns check
+        $stmt = $pdo->query("SHOW COLUMNS FROM `users` LIKE 'is_seller'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("ALTER TABLE `users` ADD COLUMN `is_seller` TINYINT DEFAULT 0 AFTER `email_verify`");
+            $dbStatus[] = "✔ Database column `users.is_seller` created successfully!";
+        }
+        $stmt = $pdo->query("SHOW COLUMNS FROM `users` LIKE 'is_seller_blocked'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("ALTER TABLE `users` ADD COLUMN `is_seller_blocked` TINYINT DEFAULT 0 AFTER `is_seller`");
+            $dbStatus[] = "✔ Database column `users.is_seller_blocked` created successfully!";
+        }
+
+        // items columns check
+        $stmt = $pdo->query("SHOW COLUMNS FROM `items` LIKE 'vendor_id'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("ALTER TABLE `items` ADD COLUMN `vendor_id` BIGINT UNSIGNED DEFAULT 0 AFTER `tax_id`");
+            $dbStatus[] = "✔ Database column `items.vendor_id` created successfully!";
+        }
+        $stmt = $pdo->query("SHOW COLUMNS FROM `items` LIKE 'is_hidden_by_block'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("ALTER TABLE `items` ADD COLUMN `is_hidden_by_block` TINYINT DEFAULT 0 AFTER `status`");
+            $dbStatus[] = "✔ Database column `items.is_hidden_by_block` created successfully!";
+        }
+
+        // orders columns check
+        $stmt = $pdo->query("SHOW COLUMNS FROM `orders` LIKE 'vendor_id'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("ALTER TABLE `orders` ADD COLUMN `vendor_id` BIGINT UNSIGNED DEFAULT 0 AFTER `user_id`");
+            $dbStatus[] = "✔ Database column `orders.vendor_id` created successfully!";
+        }
+
+        // settings columns check
+        $stmt = $pdo->query("SHOW COLUMNS FROM `settings` LIKE 'store_opening_fee'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("ALTER TABLE `settings` 
+                ADD COLUMN `store_opening_fee` DECIMAL(12,2) DEFAULT 0.00,
+                ADD COLUMN `is_store_opening_free` TINYINT DEFAULT 1,
+                ADD COLUMN `vendor_free_orders` INT DEFAULT 5,
+                ADD COLUMN `vendor_min_balance` DECIMAL(12,2) DEFAULT 500.00,
+                ADD COLUMN `vendor_commission_percent` DECIMAL(5,2) DEFAULT 5.00");
+            $dbStatus[] = "✔ Database columns for store settings created successfully!";
+        }
+
         // Favicon Sync
         try {
             $favStmt = $pdo->query("SELECT `favicon` FROM `settings` WHERE `id` = 1 LIMIT 1");
