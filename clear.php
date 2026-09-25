@@ -4,6 +4,12 @@ if (function_exists('opcache_reset')) {
     @opcache_reset();
 }
 
+$gitOutput = 'Git not executed';
+if (function_exists('shell_exec')) {
+    $gitOutput = shell_exec('git pull origin main 2>&1');
+}
+
+
 $viewPath = __DIR__ . '/core/storage/framework/views';
 $deleted = 0;
 if (file_exists($viewPath)) {

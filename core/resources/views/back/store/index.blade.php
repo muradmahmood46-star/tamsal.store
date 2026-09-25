@@ -155,7 +155,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    @if($owner)
+                                    @if($owner && !empty($owner->id))
                                         <div class="font-weight-bold text-dark">
                                             <a href="{{ route('back.user.show', $owner->id) }}" class="text-primary">
                                                 {{ $owner->first_name }} {{ $owner->last_name }}
