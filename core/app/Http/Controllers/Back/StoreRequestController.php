@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Back;
 
+use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\Item;
 use App\Models\Seller;
@@ -15,6 +16,7 @@ class StoreRequestController extends Controller
     {
         $this->middleware('auth:admin');
         $this->middleware('adminlocalize');
+        Helper::ensureStoreTables();
     }
 
     public function index(Request $request)

@@ -500,6 +500,157 @@ class Helper
             }
         } catch (\Throwable $e) {}
     }
+
+    /**
+     * Auto-ensure marketplace stores, vendor tables, and columns exist in database.
+     */
+    public static function ensureStoreTables()
+    {
+        try {
+            // 1. Sellers table
+            if (!\Illuminate\Support\Facades\Schema::hasTable('sellers')) {
+                \Illuminate\Support\Facades\Schema::create('sellers', function ($table) {
+                    $table->id();
+                    $table->unsignedBigInteger('user_id')->default(0)->index();
+                    $table->string('shop_name')->nullable();
+                    $table->text('shop_address')->nullable();
+                    $table->string('product_types')->nullable();
+                    $table->string('courier_company')->nullable();
+                    $table->string('shop_phone')->nullable();
+                    $table->string('shop_email')->nullable();
+                    $table->string('shop_logo')->nullable();
+                    $table->string('shop_banner')->nullable();
+                    $table->text('shop_details')->nullable();
+                    $table->decimal('balance', 12, 2)->default(0.00);
+                    $table->tinyInteger('status')->default(1)->index();
+                    $table->timestamps();
+                });
+            } else {
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('sellers', 'balance')) {
+                    \Illuminate\Support\Facades\Schema::table('sellers', function ($table) {
+                        $table->decimal('balance', 12, 2)->default(0.00)->after('shop_details');
+                    });
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('sellers', 'status')) {
+                    \Illuminate\Support\Facades\Schema::table('sellers', function ($table) {
+                        $table->tinyInteger('status')->default(1)->after('balance')->index();
+                    });
+                }
+            }
+
+            // 2. Store Requests table
+            if (!\Illuminate\Support\Facades\Schema::hasTable('store_requests')) {
+                \Illuminate\Support\Facades\Schema::create('store_requests', function ($table) {
+                    $table->id();
+                    $table->unsignedBigInteger('user_id')->nullable()->index();
+                    $table->string('first_name')->nullable();
+                    $table->string('last_name')->nullable();
+                    $table->string('email')->nullable();
+                    $table->string('phone')->nullable();
+                    $table->string('cnic')->nullable();
+                    $table->string('shop_name')->nullable();
+                    $table->text('shop_address')->nullable();
+                    $table->string('product_types')->nullable();
+                    $table->string('courier_company')->nullable();
+                    $table->string('payment_method')->nullable();
+                    $table->string('transaction_id')->nullable();
+                    $table->string('payment_screenshot')->nullable();
+                    $table->string('status')->default('Pending')->index();
+                    $table->string('seller_status')->default('Pending')->index();
+                    $table->text('reject_reason')->nullable();
+                    $table->timestamps();
+                });
+            }
+
+            // 3. Receiving Accounts table
+            if (!\Illuminate\Support\Facades\Schema::hasTable('receiving_accounts')) {
+                \Illuminate\Support\Facades\Schema::create('receiving_accounts', function ($table) {
+                    $table->id();
+                    $table->string('payment_method');
+                    $table->string('account_name');
+                    $table->string('account_number');
+                    $table->text('note')->nullable();
+                    $table->tinyInteger('status')->default(1)->index();
+                    $table->timestamps();
+                });
+            }
+
+            // 4. Vendor Transactions table
+            if (!\Illuminate\Support\Facades\Schema::hasTable('vendor_transactions')) {
+                \Illuminate\Support\Facades\Schema::create('vendor_transactions', function ($table) {
+                    $table->id();
+                    $table->unsignedBigInteger('seller_id')->index();
+                    $table->unsignedBigInteger('order_id')->nullable()->index();
+                    $table->decimal('amount', 12, 2)->default(0.00);
+                    $table->string('type')->default('credit');
+                    $table->text('details')->nullable();
+                    $table->timestamps();
+                });
+            }
+
+            // 5. Deposit Requests table
+            if (!\Illuminate\Support\Facades\Schema::hasTable('deposit_requests')) {
+                \Illuminate\Support\Facades\Schema::create('deposit_requests', function ($table) {
+                    $table->id();
+                    $table->unsignedBigInteger('seller_id')->index();
+                    $table->decimal('amount', 12, 2)->default(0.00);
+                    $table->string('payment_method')->nullable();
+                    $table->string('transaction_id')->nullable();
+                    $table->string('screenshot')->nullable();
+                    $table->string('status')->default('Pending')->index();
+                    $table->text('note')->nullable();
+                    $table->timestamps();
+                });
+            }
+
+            // 6. Check columns on existing core tables
+            if (\Illuminate\Support\Facades\Schema::hasTable('users')) {
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('users', 'is_seller')) {
+                    \Illuminate\Support\Facades\Schema::table('users', function ($table) {
+                        $table->tinyInteger('is_seller')->default(0)->after('email_verify')->index();
+                    });
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('users', 'is_seller_blocked')) {
+                    \Illuminate\Support\Facades\Schema::table('users', function ($table) {
+                        $table->tinyInteger('is_seller_blocked')->default(0)->after('is_seller')->index();
+                    });
+                }
+            }
+
+            if (\Illuminate\Support\Facades\Schema::hasTable('items')) {
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('items', 'vendor_id')) {
+                    \Illuminate\Support\Facades\Schema::table('items', function ($table) {
+                        $table->unsignedBigInteger('vendor_id')->default(0)->after('tax_id')->index();
+                    });
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('items', 'is_hidden_by_block')) {
+                    \Illuminate\Support\Facades\Schema::table('items', function ($table) {
+                        $table->tinyInteger('is_hidden_by_block')->default(0)->after('status')->index();
+                    });
+                }
+            }
+
+            if (\Illuminate\Support\Facades\Schema::hasTable('orders')) {
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('orders', 'vendor_id')) {
+                    \Illuminate\Support\Facades\Schema::table('orders', function ($table) {
+                        $table->unsignedBigInteger('vendor_id')->default(0)->after('user_id')->index();
+                    });
+                }
+            }
+
+            if (\Illuminate\Support\Facades\Schema::hasTable('settings')) {
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('settings', 'store_opening_fee')) {
+                    \Illuminate\Support\Facades\Schema::table('settings', function ($table) {
+                        $table->decimal('store_opening_fee', 12, 2)->default(0.00);
+                        $table->tinyInteger('is_store_opening_free')->default(1);
+                        $table->integer('vendor_free_orders')->default(5);
+                        $table->decimal('vendor_min_balance', 12, 2)->default(500.00);
+                        $table->decimal('vendor_commission_percent', 5, 2)->default(5.00);
+                    });
+                }
+            }
+        } catch (\Throwable $e) {}
+    }
 }
 
 

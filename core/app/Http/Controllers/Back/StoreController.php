@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Back;
 
+use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\Item;
 use App\Models\Order;
@@ -17,6 +18,7 @@ class StoreController extends Controller
     {
         $this->middleware('auth:admin');
         $this->middleware('adminlocalize');
+        Helper::ensureStoreTables();
     }
 
     /**
@@ -24,6 +26,8 @@ class StoreController extends Controller
      */
     public function index(Request $request)
     {
+        Helper::ensureStoreTables();
+
         $status = $request->status;
         $search = $request->search;
 
@@ -49,19 +53,38 @@ class StoreController extends Controller
 
         $sellers = $query->paginate(20);
 
-        // Append product & order counts
+        // Append product & order counts safely
         foreach ($sellers as $seller) {
-            $vendorId = $seller->user_id;
-            $seller->total_products_count = Item::where('vendor_id', $vendorId)->count();
-            $seller->total_orders_count = Order::where('vendor_id', $vendorId)->count();
-            $seller->pending_orders_count = Order::where('vendor_id', $vendorId)->where('order_status', 'Pending')->count();
+            try {
+                $vendorId = $seller->user_id;
+                $seller->total_products_count = Item::where('vendor_id', $vendorId)->count();
+            } catch (\Throwable $e) {
+                $seller->total_products_count = 0;
+            }
+
+            try {
+                $vendorId = $seller->user_id;
+                $seller->total_orders_count = Order::where('vendor_id', $vendorId)->count();
+                $seller->pending_orders_count = Order::where('vendor_id', $vendorId)->where('order_status', 'Pending')->count();
+            } catch (\Throwable $e) {
+                $seller->total_orders_count = 0;
+                $seller->pending_orders_count = 0;
+            }
         }
 
-        $counts = [
-            'all' => Seller::count(),
-            'active' => Seller::where('status', 1)->count(),
-            'blocked' => Seller::where('status', 0)->count(),
-        ];
+        try {
+            $counts = [
+                'all' => Seller::count(),
+                'active' => Seller::where('status', 1)->count(),
+                'blocked' => Seller::where('status', 0)->count(),
+            ];
+        } catch (\Throwable $e) {
+            $counts = [
+                'all' => 0,
+                'active' => 0,
+                'blocked' => 0,
+            ];
+        }
 
         return view('back.store.index', compact('sellers', 'counts', 'status', 'search'));
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Back;
 
+use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\ReceivingAccount;
 use App\Models\Setting;
@@ -13,6 +14,7 @@ class StoreSettingController extends Controller
     {
         $this->middleware('auth:admin');
         $this->middleware('adminlocalize');
+        Helper::ensureStoreTables();
     }
 
     public function index()
