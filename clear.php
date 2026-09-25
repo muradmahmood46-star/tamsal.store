@@ -13,6 +13,24 @@ if (file_exists($viewPath)) {
     }
 }
 
+// Find last exception in laravel.log
+$lastException = 'No errors logged';
+$logFile = __DIR__ . '/core/storage/logs/laravel.log';
+if (file_exists($logFile)) {
+    $content = file_get_contents($logFile);
+    if ($content) {
+        $errPos = strrpos($content, 'local.ERROR:');
+        if ($errPos === false) {
+            $errPos = strrpos($content, '.ERROR:');
+        }
+        if ($errPos !== false) {
+            $lastException = substr($content, $errPos, 1000);
+        }
+    }
+}
+echo "<div style='background:#b91c1c; color:#fff; padding:15px; font-family:monospace; font-size:14px; white-space:pre-wrap; word-break:break-all;'>=== LAST ERROR ===\n" . htmlspecialchars($lastException) . "</div>";
+
+
 $cachePath = __DIR__ . '/core/storage/framework/cache/data';
 if (file_exists($cachePath)) {
     $files = new RecursiveIteratorIterator(
