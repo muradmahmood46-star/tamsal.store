@@ -1132,7 +1132,7 @@ body_theme4 @endif
                                             <input class="form-control" type="text"
                                                 data-target="{{ route('front.search.suggest') }}"
                                                 id="__product__search" name="search"
-                                                placeholder="{{ __('Search by product name') }}">
+                                                placeholder="{{ __('Search by product name/type/id') }}">
                                             <div class="serch-result d-none">
                                                 {{-- search result --}}
                                             </div>
