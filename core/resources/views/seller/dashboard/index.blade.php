@@ -102,8 +102,7 @@
             height: 42px !important;
             font-size: 18px !important;
             margin-right: 12px !important;
-            align-self: center !important;
-            margin-top: 3px !important;
+            margin-top: 12px !important;
         }
         .vendor-wallet-btn-wrap {
             margin-top: 0px !important;
