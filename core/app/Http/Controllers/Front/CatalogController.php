@@ -156,7 +156,11 @@ class CatalogController extends Controller
             return $query->where('brand_id', $brand->id);
         })
         ->when($search, function ($query, $search) {
-            return $query->whereStatus(1)->where('name', 'like', '%' . $search . '%')->orwhere('name', 'like', '%' . $search . '%');
+            return $query->where(function($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('sku', 'like', '%' . $search . '%')
+                  ->orWhere('slug', 'like', '%' . $search . '%');
+            });
         })
         ->when($minPrice, function($query, $minPrice) {
           return $query->where('discount_price', '>=', $minPrice);
@@ -318,7 +322,11 @@ class CatalogController extends Controller
         $search = $request->search;
         $items = Item::whereStatus(1)
         ->when($search, function ($query, $search) {
-            return $query->where('name', 'like', '%' . $search . '%')->orderby('id','desc')->take(10);
+            return $query->where(function($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('sku', 'like', '%' . $search . '%')
+                  ->orWhere('slug', 'like', '%' . $search . '%');
+            })->orderby('id','desc')->take(10);
         })
         ->when($category, function ($query, $category) {
             return $query->where('category_id', $category->id);
