@@ -125,16 +125,7 @@
                 justify-content: space-between !important;
             }
             .main-header .logo-header .logo {
-                flex-shrink: 0 !important;
-                display: flex !important;
-                align-items: center !important;
-                max-width: calc(100% - 130px) !important;
-                overflow: hidden !important;
-            }
-            .main-header .logo-header .logo img {
-                max-height: 36px !important;
-                max-width: 100% !important;
-                object-fit: contain !important;
+                display: none !important;
             }
 
             .wrapper {
