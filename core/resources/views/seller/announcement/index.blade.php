@@ -320,36 +320,39 @@
         padding: 12px 14px !important;
     }
     .announcement-hero-icon {
-        width: 44px !important;
-        height: 44px !important;
-        min-width: 44px !important;
-        border-radius: 12px !important;
-        font-size: 19px !important;
-        margin-right: 12px !important;
+        width: 40px !important;
+        height: 40px !important;
+        min-width: 40px !important;
+        border-radius: 10px !important;
+        font-size: 17px !important;
+        margin-right: 8px !important;
     }
     .announcement-title-block {
         display: flex !important;
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 2px !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        gap: 3px 6px !important;
     }
     .announcement-main-title {
-        font-size: 16px !important;
-        line-height: 1.25 !important;
+        font-size: 14.5px !important;
+        line-height: 1.2 !important;
         letter-spacing: -0.2px !important;
+        display: inline !important;
     }
     .announcement-live-badge {
-        font-size: 9.5px !important;
-        padding: 2px 7px !important;
-        border-radius: 10px !important;
+        font-size: 9px !important;
+        padding: 2px 6px !important;
+        border-radius: 8px !important;
         line-height: 1.2 !important;
         margin-top: 0 !important;
         display: inline-flex !important;
         align-items: center !important;
+        white-space: nowrap !important;
     }
     .announcement-hero-desc {
-        font-size: 11.5px !important;
-        line-height: 1.35 !important;
+        font-size: 11px !important;
+        line-height: 1.3 !important;
         margin-top: 3px !important;
     }
 }
