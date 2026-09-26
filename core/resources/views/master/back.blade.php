@@ -105,10 +105,7 @@
                 padding-left: 15px !important;
             }
             .main-header .logo-header .logo {
-                display: flex !important;
-                align-items: center !important;
-                order: 2 !important;
-                margin-left: 15px !important;
+                display: none !important;
             }
             .main-header .logo-header .header-right-actions {
                 margin-left: auto !important;
