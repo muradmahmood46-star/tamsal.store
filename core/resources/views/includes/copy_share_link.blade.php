@@ -3,7 +3,7 @@
         <i class="fas fa-link text-primary mr-1"></i> {{ $shareLabel }}
     </label>
     <div class="input-group" style="max-width: 100%;">
-        <input id="{{ $shareInputId }}" type="text" class="form-control bg-white" value="{{ $shareUrl }}" readonly aria-label="{{ $shareLabel }}" style="min-width: 0; font-size: 12px;">
+        <input id="{{ $shareInputId }}" type="text" class="form-control bg-white" value="{{ trim($shareUrl) }}" readonly aria-label="{{ $shareLabel }}" style="min-width: 0; font-size: 12.5px; text-align: left; direction: ltr; padding-left: 10px;">
         <div class="input-group-append">
             <button type="button" class="btn btn-outline-primary copy-share-link-button" data-copy-target="{{ $shareInputId }}" aria-label="{{ __('Copy link') }}">
                 <i class="far fa-copy mr-1"></i><span>{{ __('Copy') }}</span>

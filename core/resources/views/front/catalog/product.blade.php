@@ -469,7 +469,7 @@
                             @include('includes.copy_share_link', [
                                 'shareInputId' => 'product-share-link-' . $item->id,
                                 'shareLabel' => __('Product Link'),
-                                'shareUrl' => route('front.product', $item->slug),
+                                'shareUrl' => trim(route('front.product', trim($item->sku ?: $item->slug))),
                             ])
 
                             @if ($item->is_returnable == 1)

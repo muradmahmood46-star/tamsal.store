@@ -114,10 +114,12 @@ if (!empty($dbname)) {
             $dbStatus[] = "✔ Database column `items.custom_rating_count` created successfully!";
         }
 
-        // Auto-sync items slug to sku where sku is available for short URLs
+        // Auto-sync items slug to sku where sku is available for short URLs and trim any whitespaces
         try {
-            $pdo->exec("UPDATE `items` SET `slug` = `sku` WHERE `sku` IS NOT NULL AND TRIM(`sku`) != '' AND (`slug` IS NULL OR `slug` != `sku`)");
-            $dbStatus[] = "✔ Product slugs synced with SKU for short /p/{sku} links!";
+            $pdo->exec("UPDATE `items` SET `sku` = TRIM(`sku`) WHERE `sku` IS NOT NULL");
+            $pdo->exec("UPDATE `items` SET `slug` = TRIM(`slug`) WHERE `slug` IS NOT NULL");
+            $pdo->exec("UPDATE `items` SET `slug` = `sku` WHERE `sku` IS NOT NULL AND `sku` != '' AND (`slug` IS NULL OR `slug` != `sku`)");
+            $dbStatus[] = "✔ Product slugs and SKUs trimmed and synced for clean /p/{sku} links!";
         } catch (\Throwable $e) {}
 
         // reviews.customer_name
