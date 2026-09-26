@@ -91,39 +91,49 @@
         }
 
         @media (max-width: 991.98px) {
+            /* Force main-header to be exactly 58px tall */
             .main-header {
                 height: 58px !important;
                 min-height: 58px !important;
+                max-height: 58px !important;
+                overflow: visible !important;
                 background: linear-gradient(135deg, #1572e8 0%, #0d56b3 100%) !important;
             }
+            /* Logo-header is the single flex row: hamburger(left) ... right-actions(right) */
             .main-header .logo-header {
                 display: flex !important;
                 flex-direction: row !important;
+                flex-wrap: nowrap !important;
                 align-items: center !important;
                 justify-content: space-between !important;
                 width: 100% !important;
                 height: 58px !important;
                 min-height: 58px !important;
+                max-height: 58px !important;
                 line-height: normal !important;
                 padding: 0 14px !important;
                 float: none !important;
                 position: relative !important;
                 box-sizing: border-box !important;
             }
+            /* Hide desktop-only elements on mobile */
             .main-header .logo-header .navbar-minimize {
                 display: none !important;
             }
             .main-header .logo-header .logo {
                 display: none !important;
             }
+            /* ☰ Hamburger — left side, vertically centered */
             .main-header .logo-header .header-mob-nav-toggler,
             .main-header .logo-header .navbar-toggler,
             .main-header .logo-header .sidenav-toggler {
                 display: inline-flex !important;
                 align-items: center !important;
                 justify-content: center !important;
+                align-self: center !important;
                 width: 38px !important;
                 height: 38px !important;
+                max-height: 38px !important;
                 min-width: 38px !important;
                 min-height: 38px !important;
                 padding: 0 !important;
@@ -137,34 +147,44 @@
                 order: 1 !important;
                 box-shadow: none !important;
                 outline: none !important;
+                flex-shrink: 0 !important;
+                flex-grow: 0 !important;
             }
             .main-header .logo-header .header-mob-nav-toggler .navbar-toggler-icon,
             .main-header .logo-header .navbar-toggler .navbar-toggler-icon {
                 display: inline-flex !important;
                 align-items: center !important;
                 justify-content: center !important;
-                width: 100% !important;
-                height: 100% !important;
+                width: auto !important;
+                height: auto !important;
                 line-height: 1 !important;
                 font-size: 20px !important;
             }
+            /* 🔔 + ⋮  — right side, vertically centered */
             .main-header .logo-header .header-right-actions {
                 display: flex !important;
                 flex-direction: row !important;
+                flex-wrap: nowrap !important;
                 align-items: center !important;
+                align-self: center !important;
                 justify-content: flex-end !important;
                 gap: 8px !important;
                 margin: 0 0 0 auto !important;
                 padding: 0 !important;
                 width: auto !important;
-                height: 100% !important;
+                height: auto !important;
+                max-height: 58px !important;
                 order: 2 !important;
                 position: static !important;
+                float: none !important;
+                flex-shrink: 0 !important;
+                line-height: 1 !important;
             }
             .main-header .logo-header .header-right-actions .header-bell-wrap {
                 display: inline-flex !important;
                 align-items: center !important;
                 justify-content: center !important;
+                align-self: center !important;
                 position: relative !important;
                 margin: 0 !important;
                 padding: 0 !important;
@@ -172,6 +192,9 @@
                 height: 36px !important;
                 min-width: 36px !important;
                 min-height: 36px !important;
+                max-height: 36px !important;
+                line-height: 1 !important;
+                float: none !important;
             }
             .main-header .logo-header .header-right-actions .header-bell-wrap > a {
                 display: inline-flex !important;
@@ -188,9 +211,11 @@
                 display: inline-flex !important;
                 align-items: center !important;
                 justify-content: center !important;
+                align-self: center !important;
                 position: static !important;
                 width: 36px !important;
                 height: 36px !important;
+                max-height: 36px !important;
                 min-width: 36px !important;
                 min-height: 36px !important;
                 margin: 0 !important;
@@ -200,6 +225,7 @@
                 background: transparent !important;
                 opacity: 1 !important;
                 cursor: pointer !important;
+                float: none !important;
             }
             .main-header .logo-header .header-mob-nav-toggler i,
             .main-header .logo-header .header-right-actions .more i,
@@ -208,6 +234,7 @@
                 line-height: 1 !important;
                 margin: 0 !important;
                 padding: 0 !important;
+                vertical-align: middle !important;
             }
 
             .wrapper {
