@@ -27,6 +27,8 @@ class NotificationController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function notifications(){
+        // Mark unread notifications as seen by admin
+        Notification::where('is_read', 0)->update(['is_read' => 1]);
         return view('back.notification.index');
     }
 

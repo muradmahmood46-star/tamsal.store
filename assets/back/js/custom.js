@@ -677,7 +677,9 @@
 
     // Notification
     $('#alertsDropdown').on('click', function () {
-        $('#display-notf').load($('#display-notf').data('href'));
+        $('#display-notf').load($('#display-notf').data('href'), function () {
+            $('.badge-counter').text('0').hide();
+        });
     });
 
     $(document).on('click', '#clear-notf', function (e) {

@@ -965,13 +965,16 @@
                             </a>
                         </li>
                         <!-- Nav Item - Alerts -->
+                        @php
+                            $adminUnreadNotifCount = App\Models\Notification::countRegistration() + App\Models\Notification::countOrder();
+                        @endphp
                         <li class="nav-item dropdown no-arrow mx-1">
                             <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-bell fa-fw"></i>
                                 <!-- Counter - Alerts -->
                                 <span
-                                    class="badge badge-danger badge-counter">{{ App\Models\Notification::countRegistration() + App\Models\Notification::countOrder() }}</span>
+                                    class="badge badge-danger badge-counter" style="{{ $adminUnreadNotifCount > 0 ? '' : 'display: none;' }}">{{ $adminUnreadNotifCount }}</span>
                             </a>
                             <!-- Dropdown - Alerts -->
                             <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
