@@ -57,6 +57,19 @@
         .main-header .logo-header .btn-minimize i,
         .main-header .logo-header i.fa-bars,
         .main-header .logo-header i.fa-ellipsis-v,
+        /* Topbar Header Icons (Hamburger 3 lines, Minimize, 3 Dots) always White */
+        .main-header .logo-header .navbar-toggler,
+        .main-header .logo-header .sidenav-toggler,
+        .main-header .logo-header .navbar-toggler-icon,
+        .main-header .logo-header .navbar-toggler-icon i,
+        .main-header .logo-header .topbar-toggler,
+        .main-header .logo-header .topbar-toggler i,
+        .main-header .logo-header .btn-minimize,
+        .main-header .logo-header .btn-minimize i,
+        .main-header .logo-header .more,
+        .main-header .logo-header .more i,
+        .main-header .logo-header i.fa-bars,
+        .main-header .logo-header i.fa-ellipsis-v,
         .main-header .navbar-toggler i,
         .main-header .sidenav-toggler i {
             color: #ffffff !important;
@@ -68,6 +81,24 @@
         .main-header .logo-header .topbar-toggler:hover i {
             color: #ffffff !important;
             opacity: 0.9;
+        }
+
+        /* Desktop specific logo header layout */
+        @media (min-width: 992px) {
+            .main-header .logo-header .navbar-toggler,
+            .main-header .logo-header .more {
+                display: none !important;
+            }
+            .main-header .logo-header .navbar-minimize {
+                display: block !important;
+                position: static !important;
+                margin-left: 10px !important;
+            }
+            .main-header .logo-header {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+            }
         }
 
         /* General Dropdown list & Notification Scrollable */
@@ -188,42 +219,54 @@
                 background: linear-gradient(135deg, #1572e8 0%, #0d56b3 100%) !important;
             }
 
+            .main-header .logo-header .navbar-minimize {
+                display: none !important;
+            }
+            .main-header .logo-header .header-right-actions {
+                display: flex !important;
+                align-items: center !important;
+                gap: 4px !important;
+                margin-left: auto !important;
+            }
+            .main-header .logo-header .header-right-actions .navbar-toggler,
+            .main-header .logo-header .header-right-actions .more,
+            .main-header .logo-header .header-right-actions .header-bell-wrap {
+                position: static !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 36px !important;
+                height: 36px !important;
+                min-width: 36px !important;
+                border: none !important;
+                background: transparent !important;
+                opacity: 1 !important;
+            }
+            .main-header .logo-header .header-right-actions .navbar-toggler i,
+            .main-header .logo-header .header-right-actions .more i {
+                font-size: 18px !important;
+            }
             .main-header .logo-header {
                 width: 100% !important;
                 height: 58px !important;
-                padding: 0 12px !important;
+                padding: 0 10px !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: space-between !important;
-                background: linear-gradient(135deg, #1572e8 0%, #0d56b3 100%) !important;
             }
-
-            .main-header .logo-header .navbar-toggler {
-                display: block !important;
-                opacity: 1 !important;
-                color: #ffffff !important;
-                padding: 6px 10px !important;
-                border: 0 !important;
-                background: transparent !important;
+            .main-header .logo-header .logo {
+                flex-shrink: 0 !important;
+                display: flex !important;
+                align-items: center !important;
+                max-width: calc(100% - 130px) !important;
+                overflow: hidden !important;
             }
-
-            .main-header .logo-header .navbar-toggler:focus {
-                outline: none !important;
-            }
-
-            .main-header .logo-header .more {
-                display: block !important;
-                opacity: 1 !important;
-                width: auto !important;
-                color: #ffffff !important;
-                margin-left: 8px !important;
-                padding: 6px 10px !important;
-                border: 0 !important;
-                background: transparent !important;
-            }
-
-            .main-header .logo-header .more:focus {
-                outline: none !important;
+            .main-header .logo-header .logo img {
+                max-height: 36px !important;
+                max-width: 100% !important;
+                object-fit: contain !important;
             }
 
             /* Topbar dropdown drawer (3 dots menu) */
@@ -944,11 +987,11 @@
                     $adminUnreadNotifCount = App\Models\Notification::countRegistration() + App\Models\Notification::countOrder();
                 @endphp
 
-                <div class="d-flex align-items-center ml-auto">
+                <div class="header-right-actions d-flex align-items-center ml-auto">
                     <!-- Notification Bell Button on Header (Visible on Mobile & Desktop) -->
-                    <div class="dropdown no-arrow mr-1 header-bell-wrap">
-                        <a class="nav-link dropdown-toggle position-relative text-white p-2 d-flex align-items-center justify-content-center admin-notf-trigger" href="#" id="adminHeaderAlertsDropdown" role="button"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 38px; height: 38px; border-radius: 50%; background: rgba(255, 255, 255, 0.15); box-shadow: 0 2px 8px rgba(0,0,0,0.12); transition: all 0.2s;" title="{{ __('Notifications') }}">
+                    <div class="dropdown no-arrow header-bell-wrap">
+                        <a class="nav-link dropdown-toggle position-relative text-white d-flex align-items-center justify-content-center admin-notf-trigger" href="#" id="adminHeaderAlertsDropdown" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255, 255, 255, 0.15); box-shadow: 0 2px 8px rgba(0,0,0,0.12); transition: all 0.2s;" title="{{ __('Notifications') }}">
                             <i class="fas fa-bell fa-fw" style="color: #fef08a !important; font-size: 17px; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));"></i>
                             <span class="badge badge-danger badge-counter"
                                 style="position: absolute; top: -2px; right: -2px; font-size: 9.5px; padding: 2px 5px; border-radius: 10px; font-weight: 700; border: 2px solid #0d56b3; {{ $adminUnreadNotifCount > 0 ? '' : 'display: none;' }}">
@@ -962,13 +1005,13 @@
                         </div>
                     </div>
 
+                    <button class="topbar-toggler more" type="button" title="{{ __('More') }}"><i class="fa fa-ellipsis-v text-white" style="color: #ffffff !important; font-size: 19px;"></i></button>
                     <button class="navbar-toggler sidenav-toggler" type="button" data-toggle="collapse"
                         data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon">
-                            <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 20px;"></i>
+                        <span class="navbar-toggler-icon d-flex align-items-center justify-content-center">
+                            <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 19px;"></i>
                         </span>
                     </button>
-                    <button class="topbar-toggler more"><i class="fa fa-ellipsis-v text-white" style="color: #ffffff !important; font-size: 20px;"></i></button>
                     <div class="navbar-minimize">
                         <button class="btn btn-minimize">
                             <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 18px;"></i>
