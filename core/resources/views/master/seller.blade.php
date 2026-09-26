@@ -78,7 +78,7 @@
                 display: inline-flex !important;
                 align-items: center !important;
                 position: static !important;
-                margin: 0 !important;
+                margin: 0 0 0 12px !important;
                 padding: 0 !important;
                 order: -1 !important;
                 flex-shrink: 0 !important;
@@ -87,13 +87,13 @@
                 display: flex !important;
                 align-items: center !important;
                 justify-content: flex-start !important;
-                padding-left: 15px !important;
+                padding-left: 20px !important;
             }
             .main-header .logo-header .logo {
                 display: none !important;
             }
             .main-header .logo-header .header-right-actions {
-                margin-left: auto !important;
+                display: none !important;
             }
         }
 
@@ -112,16 +112,18 @@
                 flex-direction: row !important;
                 flex-wrap: nowrap !important;
                 align-items: center !important;
-                justify-content: space-between !important;
+                justify-content: flex-start !important;
                 width: 100% !important;
                 height: 58px !important;
                 min-height: 58px !important;
                 max-height: 58px !important;
                 line-height: normal !important;
-                padding: 0 14px !important;
+                padding: 0 12px !important;
+                margin: 0 !important;
                 float: none !important;
                 position: relative !important;
                 box-sizing: border-box !important;
+                overflow: visible !important;
             }
             /* Hide desktop-only elements on mobile */
             .main-header .logo-header .navbar-minimize {
@@ -137,10 +139,8 @@
                 display: inline-flex !important;
                 align-items: center !important;
                 justify-content: center !important;
-                align-self: center !important;
                 width: 38px !important;
                 height: 38px !important;
-                max-height: 38px !important;
                 min-width: 38px !important;
                 min-height: 38px !important;
                 padding: 0 !important;
@@ -148,24 +148,31 @@
                 border: none !important;
                 background: transparent !important;
                 opacity: 1 !important;
+                visibility: visible !important;
                 position: static !important;
                 float: none !important;
                 line-height: 1 !important;
-                order: -1 !important;
-                box-shadow: none !important;
-                outline: none !important;
+                order: 1 !important;
                 flex-shrink: 0 !important;
                 flex-grow: 0 !important;
+                cursor: pointer !important;
             }
             .main-header .logo-header .header-mob-nav-toggler .navbar-toggler-icon,
             .main-header .logo-header .navbar-toggler .navbar-toggler-icon {
                 display: inline-flex !important;
                 align-items: center !important;
                 justify-content: center !important;
-                width: auto !important;
-                height: auto !important;
-                line-height: 1 !important;
+                width: 100% !important;
+                height: 100% !important;
+                background-image: none !important;
+            }
+            .main-header .logo-header .header-mob-nav-toggler i,
+            .main-header .logo-header .navbar-toggler i {
+                color: #ffffff !important;
                 font-size: 20px !important;
+                display: inline-block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
             }
             /* 🔔 + ⋮  — right side, vertically centered */
             .main-header .logo-header .header-right-actions {
@@ -173,17 +180,16 @@
                 flex-direction: row !important;
                 flex-wrap: nowrap !important;
                 align-items: center !important;
-                align-self: center !important;
                 justify-content: flex-end !important;
                 gap: 8px !important;
-                margin: 0 0 0 auto !important;
+                margin-left: auto !important;
+                margin-right: 0 !important;
                 padding: 0 !important;
                 width: auto !important;
-                height: auto !important;
-                max-height: 58px !important;
-                order: 99 !important;
+                height: 38px !important;
+                order: 3 !important;
                 position: static !important;
-                float: right !important;
+                float: none !important;
                 flex-shrink: 0 !important;
                 line-height: 1 !important;
             }
@@ -242,6 +248,27 @@
                 margin: 0 !important;
                 padding: 0 !important;
                 vertical-align: middle !important;
+            }
+
+            /* Mobile — Notification dropdown centered on screen */
+            .main-header .logo-header .header-bell-wrap .notf-display-box,
+            .main-header .logo-header .header-bell-wrap .dropdown-menu {
+                position: fixed !important;
+                top: 64px !important;
+                left: 50% !important;
+                right: auto !important;
+                transform: translateX(-50%) !important;
+                width: calc(100vw - 24px) !important;
+                max-width: 380px !important;
+                min-width: 280px !important;
+                max-height: calc(100vh - 80px) !important;
+                overflow-y: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                z-index: 10060 !important;
+                border-radius: 10px !important;
+                box-shadow: 0 8px 30px rgba(0,0,0,0.18) !important;
+                margin: 0 !important;
+                padding: 0 !important;
             }
 
             .wrapper {
@@ -1222,7 +1249,7 @@
     <div class="wrapper">
         <div class="main-header" style="background: linear-gradient(135deg, #1572e8 0%, #0d56b3 100%);">
             <!-- Logo Header -->
-            <div class="logo-header d-flex align-items-center justify-content-between">
+            <div class="logo-header">
                 <!-- Hamburger Menu Button (Left on Mobile) -->
                 <button class="navbar-toggler sidenav-toggler header-mob-nav-toggler" type="button" data-toggle="collapse"
                     data-target="collapse" aria-expanded="false" aria-label="Toggle navigation" title="{{ __('Menu') }}">
@@ -1252,8 +1279,8 @@
                     <!-- Notification Bell Button on Header (Left of 3-dots) -->
                     <div class="dropdown no-arrow header-bell-wrap">
                         <a class="nav-link dropdown-toggle position-relative text-white d-flex align-items-center justify-content-center vendor-notf-trigger" href="#" id="vendorMobileAlertsDropdown" role="button"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255, 255, 255, 0.15); box-shadow: 0 2px 8px rgba(0,0,0,0.12); transition: all 0.2s;" title="{{ __('Notifications') }}">
-                            <i class="fas fa-bell fa-fw" style="color: #fef08a !important; font-size: 17px; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));"></i>
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 36px; height: 36px; background: transparent; border: none; box-shadow: none; padding: 0;" title="{{ __('Notifications') }}">
+                            <i class="fas fa-bell fa-fw" style="color: #fef08a !important; font-size: 19px;"></i>
                             <span class="badge badge-danger vendor-badge-counter"
                                 style="position: absolute; top: -2px; right: -2px; font-size: 9.5px; padding: 2px 5px; border-radius: 10px; font-weight: 700; border: 2px solid #0d56b3; {{ $vendorUnreadNotifCount > 0 ? '' : 'display: none;' }}">
                                 {{ $vendorUnreadNotifCount }}
@@ -1287,6 +1314,23 @@
                                 href="{{ route('user.dashboard') }}">
                                 <i class="fas fa-user mr-1"></i> {{ __('Customer Area') }}
                             </a>
+                        </li>
+
+                        <!-- Desktop Notification Bell (Positioned between 'Customer Area' and Store DP) -->
+                        <li class="nav-item dropdown hidden-caret mr-3 d-none d-lg-flex align-items-center header-bell-wrap-desktop">
+                            <a class="nav-link dropdown-toggle position-relative text-white d-flex align-items-center justify-content-center vendor-notf-trigger" href="#" id="vendorDesktopAlertsDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 36px; height: 36px; background: transparent; border: none; box-shadow: none; padding: 0;" title="{{ __('Notifications') }}">
+                                <i class="fas fa-bell fa-fw" style="color: #fef08a !important; font-size: 19px;"></i>
+                                <span class="badge badge-danger vendor-badge-counter"
+                                    style="position: absolute; top: -2px; right: -2px; font-size: 9.5px; padding: 2px 5px; border-radius: 10px; font-weight: 700; border: 2px solid #0d56b3; {{ $vendorUnreadNotifCount > 0 ? '' : 'display: none;' }}">
+                                    {{ $vendorUnreadNotifCount }}
+                                </span>
+                            </a>
+                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in notf-display-box"
+                                aria-labelledby="vendorDesktopAlertsDropdown"
+                                data-href="{{ route('seller.notifications') }}" style="min-width: 310px; max-width: 360px; padding: 0; border-radius: 8px; z-index: 10050;">
+                                @include('seller.notification.index', ['notifications' => \App\Models\VendorNotification::where('vendor_id', Auth::id())->latest('id')->take(20)->get()])
+                            </div>
                         </li>
 
                         <li class="nav-item dropdown hidden-caret">
