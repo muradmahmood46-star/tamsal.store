@@ -91,71 +91,123 @@
         }
 
         @media (max-width: 991.98px) {
+            .main-header {
+                height: 58px !important;
+                min-height: 58px !important;
+                background: linear-gradient(135deg, #1572e8 0%, #0d56b3 100%) !important;
+            }
+            .main-header .logo-header {
+                display: flex !important;
+                flex-direction: row !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                width: 100% !important;
+                height: 58px !important;
+                min-height: 58px !important;
+                line-height: normal !important;
+                padding: 0 14px !important;
+                float: none !important;
+                position: relative !important;
+                box-sizing: border-box !important;
+            }
             .main-header .logo-header .navbar-minimize {
                 display: none !important;
             }
-            .main-header .logo-header .header-mob-nav-toggler {
+            .main-header .logo-header .logo {
+                display: none !important;
+            }
+            .main-header .logo-header .header-mob-nav-toggler,
+            .main-header .logo-header .navbar-toggler,
+            .main-header .logo-header .sidenav-toggler {
                 display: inline-flex !important;
                 align-items: center !important;
                 justify-content: center !important;
                 width: 38px !important;
                 height: 38px !important;
+                min-width: 38px !important;
+                min-height: 38px !important;
                 padding: 0 !important;
                 margin: 0 !important;
                 border: none !important;
                 background: transparent !important;
                 opacity: 1 !important;
+                position: static !important;
+                float: none !important;
+                line-height: 1 !important;
+                order: 1 !important;
+                box-shadow: none !important;
+                outline: none !important;
+            }
+            .main-header .logo-header .header-mob-nav-toggler .navbar-toggler-icon,
+            .main-header .logo-header .navbar-toggler .navbar-toggler-icon {
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 100% !important;
+                height: 100% !important;
+                line-height: 1 !important;
+                font-size: 20px !important;
             }
             .main-header .logo-header .header-right-actions {
                 display: flex !important;
                 flex-direction: row !important;
                 align-items: center !important;
                 justify-content: flex-end !important;
-                gap: 6px !important;
-                margin-left: auto !important;
+                gap: 8px !important;
+                margin: 0 0 0 auto !important;
+                padding: 0 !important;
                 width: auto !important;
-            }
-            .main-header .logo-header .header-right-actions .header-bell-wrap {
-                order: 1 !important;
-            }
-            .main-header .logo-header .header-right-actions .more,
-            .main-header .logo-header .header-right-actions .topbar-toggler {
+                height: 100% !important;
                 order: 2 !important;
-            }
-            .main-header .logo-header .header-right-actions .more,
-            .main-header .logo-header .header-right-actions .header-bell-wrap {
                 position: static !important;
-                top: auto !important;
-                left: auto !important;
-                right: auto !important;
-                bottom: auto !important;
-                float: none !important;
+            }
+            .main-header .logo-header .header-right-actions .header-bell-wrap {
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                position: relative !important;
                 margin: 0 !important;
                 padding: 0 !important;
+                width: 36px !important;
+                height: 36px !important;
+                min-width: 36px !important;
+                min-height: 36px !important;
+            }
+            .main-header .logo-header .header-right-actions .header-bell-wrap > a {
                 display: inline-flex !important;
                 align-items: center !important;
                 justify-content: center !important;
                 width: 36px !important;
                 height: 36px !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                line-height: 1 !important;
+            }
+            .main-header .logo-header .header-right-actions .more,
+            .main-header .logo-header .header-right-actions .topbar-toggler {
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                position: static !important;
+                width: 36px !important;
+                height: 36px !important;
                 min-width: 36px !important;
+                min-height: 36px !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                line-height: 1 !important;
                 border: none !important;
                 background: transparent !important;
                 opacity: 1 !important;
+                cursor: pointer !important;
             }
             .main-header .logo-header .header-mob-nav-toggler i,
-            .main-header .logo-header .header-right-actions .more i {
-                font-size: 19px !important;
-            }
-            .main-header .logo-header {
-                width: 100% !important;
-                height: 58px !important;
-                padding: 0 12px !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: space-between !important;
-            }
-            .main-header .logo-header .logo {
-                display: none !important;
+            .main-header .logo-header .header-right-actions .more i,
+            .main-header .logo-header .header-right-actions .topbar-toggler i {
+                font-size: 20px !important;
+                line-height: 1 !important;
+                margin: 0 !important;
+                padding: 0 !important;
             }
 
             .wrapper {
