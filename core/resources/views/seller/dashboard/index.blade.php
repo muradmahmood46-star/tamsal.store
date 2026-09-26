@@ -5,16 +5,16 @@
     <!-- Page Heading -->
     <div class="card mb-4">
         <div class="card-body">
-            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between" style="gap: 12px;">
-                <div>
+            <div class="d-flex flex-column flex-md-row align-items-center align-items-md-center justify-content-between text-center text-md-left" style="gap: 12px;">
+                <div class="w-100 w-md-auto" style="width: auto;">
                     <h3 class="mb-0 text-dark"><b><i class="fas fa-store text-primary mr-2"></i> {{ $seller->shop_name }} - {{ __('Dashboard') }}</b></h3>
                     <p class="text-muted small mb-0 d-none d-md-block">{{ __('Manage your products, orders, sales, and store profile.') }}</p>
                 </div>
-                <div class="d-flex align-items-center" style="gap: 8px; width: auto;">
-                    <a href="{{ route('seller.item.add') }}" class="btn btn-primary btn-sm flex-fill text-nowrap d-flex align-items-center justify-content-center px-3 py-2" style="border-radius: 6px; font-weight: 600;">
+                <div class="d-flex align-items-center justify-content-center w-100" style="gap: 10px; width: auto; max-width: 400px;">
+                    <a href="{{ route('seller.item.add') }}" class="btn btn-primary btn-sm flex-fill text-nowrap d-flex align-items-center justify-content-center px-3 py-2" style="border-radius: 6px; font-weight: 600; font-size: 13px;">
                         <i class="fas fa-plus mr-1"></i> {{ __('Add Product') }}
                     </a>
-                    <a href="{{ route('seller.profile') }}" class="btn btn-outline-primary btn-sm flex-fill text-nowrap d-flex align-items-center justify-content-center px-3 py-2" style="border-radius: 6px; font-weight: 600;">
+                    <a href="{{ route('seller.profile') }}" class="btn btn-primary btn-sm flex-fill text-nowrap d-flex align-items-center justify-content-center px-3 py-2" style="border-radius: 6px; font-weight: 600; font-size: 13px;">
                         <i class="fas fa-cogs mr-1"></i> {{ __('Store Settings') }}
                     </a>
                 </div>
