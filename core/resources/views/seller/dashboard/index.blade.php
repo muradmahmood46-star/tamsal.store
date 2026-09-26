@@ -57,10 +57,11 @@
             flex-direction: row !important;
             flex-wrap: wrap !important;
             align-items: center !important;
-            gap: 4px 6px !important;
+            gap: 0 3px !important;
         }
         .wallet-title-colon {
             display: inline !important;
+            margin-right: 2px !important;
         }
         .vendor-wallet-card .wallet-title-text,
         .vendor-wallet-card .text-white-50 {
@@ -170,12 +171,7 @@
                         <i class="fas fa-wallet"></i>
                     </div>
                     <div>
-                        <div class="wallet-heading-balance-wrap">
-                            <span class="text-uppercase small font-weight-bold wallet-title-text">{{ __('Store Wallet Balance') }}<span class="wallet-title-colon">:</span></span>
-                            <span class="font-weight-bold wallet-balance-amount">
-                                {{ PriceHelper::adminCurrency() }} {{ number_format($seller->balance ?? 0, 2) }}
-                            </span>
-                        </div>
+                        <div class="wallet-heading-balance-wrap"><span class="text-uppercase small font-weight-bold wallet-title-text">{{ __('Store Wallet Balance') }}<span class="wallet-title-colon">:</span></span><span class="font-weight-bold wallet-balance-amount">{{ PriceHelper::adminCurrency() }} {{ number_format($seller->balance ?? 0, 2) }}</span></div>
                         <div class="d-flex flex-wrap align-items-center mt-0.5" style="gap: 4px 10px; font-size: 12.5px; line-height: 1.2;">
                             @if($freeOrdersLeft > 0)
                                 <span class="text-success font-weight-bold"><i class="fas fa-gift mr-1"></i> {{ $freeOrdersLeft }} {{ __('Free order(s) left') }}</span>
