@@ -246,14 +246,15 @@
                 max-height: 58px !important;
                 line-height: normal !important;
                 padding: 0 14px !important;
-                float: none !important;
+                margin: 0 !important;
                 position: relative !important;
                 box-sizing: border-box !important;
+                overflow: hidden !important;
             }
             .main-header .logo-header .navbar-minimize {
                 display: none !important;
             }
-            /* ☰ Hamburger — left side, vertically centered */
+            /* ☰ Hamburger — extreme left */
             .main-header .logo-header .header-mob-nav-toggler,
             .main-header .logo-header .navbar-toggler,
             .main-header .logo-header .sidenav-toggler {
@@ -263,48 +264,55 @@
                 align-self: center !important;
                 width: 38px !important;
                 height: 38px !important;
-                max-height: 38px !important;
-                min-width: 38px !important;
-                min-height: 38px !important;
-                padding: 0 !important;
                 margin: 0 !important;
+                padding: 0 !important;
                 border: none !important;
                 background: transparent !important;
                 opacity: 1 !important;
-                position: static !important;
-                float: none !important;
-                line-height: 1 !important;
-                order: -1 !important;
-                box-shadow: none !important;
-                outline: none !important;
-                flex-shrink: 0 !important;
-                flex-grow: 0 !important;
-                z-index: 999 !important;
                 visibility: visible !important;
+                position: relative !important;
+                z-index: 999 !important;
+                order: -1 !important;
+                transform: none !important;
+                flex-shrink: 0 !important;
             }
             .main-header .logo-header .header-mob-nav-toggler .navbar-toggler-icon,
             .main-header .logo-header .navbar-toggler .navbar-toggler-icon {
                 display: inline-flex !important;
                 align-items: center !important;
                 justify-content: center !important;
-                width: auto !important;
-                height: auto !important;
-                line-height: 1 !important;
-                font-size: 20px !important;
+                width: 100% !important;
+                height: 100% !important;
             }
+            .main-header .logo-header .header-mob-nav-toggler i,
+            .main-header .logo-header .navbar-toggler i {
+                color: #ffffff !important;
+                font-size: 20px !important;
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+            /* Logo — absolutely centered, doesn't interfere with flex layout */
             .main-header .logo-header .logo {
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
-                order: 2 !important;
-                max-width: calc(100% - 130px) !important;
-                overflow: hidden !important;
+                position: absolute !important;
+                left: 50% !important;
+                top: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                max-width: 140px !important;
+                height: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                z-index: 10 !important;
             }
             .main-header .logo-header .logo img {
                 max-height: 36px !important;
                 max-width: 100% !important;
                 object-fit: contain !important;
             }
+            /* Right actions — extreme right */
             .main-header .logo-header .header-right-actions {
                 display: flex !important;
                 flex-direction: row !important;
@@ -312,17 +320,16 @@
                 align-items: center !important;
                 align-self: center !important;
                 justify-content: flex-end !important;
-                gap: 8px !important;
+                gap: 12px !important;
                 margin: 0 0 0 auto !important;
                 padding: 0 !important;
                 width: auto !important;
-                height: auto !important;
-                max-height: 58px !important;
+                height: 58px !important;
+                position: relative !important;
+                z-index: 999 !important;
                 order: 99 !important;
-                position: static !important;
-                float: right !important;
+                transform: none !important;
                 flex-shrink: 0 !important;
-                line-height: 1 !important;
             }
             .main-header .logo-header .header-right-actions .header-bell-wrap {
                 display: inline-flex !important;
