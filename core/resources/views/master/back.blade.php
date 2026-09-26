@@ -90,14 +90,29 @@
                 display: none !important;
             }
             .main-header .logo-header .navbar-minimize {
-                display: block !important;
+                display: inline-flex !important;
+                align-items: center !important;
                 position: static !important;
-                margin-left: 10px !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                order: 1 !important;
+                flex-shrink: 0 !important;
             }
             .main-header .logo-header {
                 display: flex !important;
                 align-items: center !important;
-                justify-content: space-between !important;
+                justify-content: flex-start !important;
+                padding-left: 15px !important;
+            }
+            .main-header .logo-header .logo {
+                display: flex !important;
+                align-items: center !important;
+                order: 2 !important;
+                margin-left: 15px !important;
+            }
+            .main-header .logo-header .header-right-actions {
+                margin-left: auto !important;
+                order: 3 !important;
             }
         }
 
@@ -210,6 +225,10 @@
 
             /* Header & Logo Bar */
             .main-header {
+                height: 58px !important;
+                min-height: 58px !important;
+                max-height: 58px !important;
+                overflow: visible !important;
                 position: fixed !important;
                 top: 0 !important;
                 left: 0 !important;
@@ -218,48 +237,65 @@
                 z-index: 10020 !important;
                 background: linear-gradient(135deg, #1572e8 0%, #0d56b3 100%) !important;
             }
-
+            .main-header .logo-header {
+                display: flex !important;
+                flex-direction: row !important;
+                flex-wrap: nowrap !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                width: 100% !important;
+                height: 58px !important;
+                min-height: 58px !important;
+                max-height: 58px !important;
+                line-height: normal !important;
+                padding: 0 14px !important;
+                float: none !important;
+                position: relative !important;
+                box-sizing: border-box !important;
+            }
             .main-header .logo-header .navbar-minimize {
                 display: none !important;
             }
-            .main-header .logo-header .header-right-actions {
-                display: flex !important;
-                align-items: center !important;
-                gap: 4px !important;
-                margin-left: auto !important;
-            }
-            .main-header .logo-header .header-right-actions .navbar-toggler,
-            .main-header .logo-header .header-right-actions .more,
-            .main-header .logo-header .header-right-actions .header-bell-wrap {
-                position: static !important;
-                margin: 0 !important;
-                padding: 0 !important;
+            .main-header .logo-header .header-mob-nav-toggler,
+            .main-header .logo-header .navbar-toggler,
+            .main-header .logo-header .sidenav-toggler {
                 display: inline-flex !important;
                 align-items: center !important;
                 justify-content: center !important;
-                width: 36px !important;
-                height: 36px !important;
-                min-width: 36px !important;
+                align-self: center !important;
+                width: 38px !important;
+                height: 38px !important;
+                max-height: 38px !important;
+                min-width: 38px !important;
+                min-height: 38px !important;
+                padding: 0 !important;
+                margin: 0 !important;
                 border: none !important;
                 background: transparent !important;
                 opacity: 1 !important;
+                position: static !important;
+                float: none !important;
+                line-height: 1 !important;
+                order: 1 !important;
+                box-shadow: none !important;
+                outline: none !important;
+                flex-shrink: 0 !important;
+                flex-grow: 0 !important;
             }
-            .main-header .logo-header .header-right-actions .navbar-toggler i,
-            .main-header .logo-header .header-right-actions .more i {
-                font-size: 18px !important;
-            }
-            .main-header .logo-header {
-                width: 100% !important;
-                height: 58px !important;
-                padding: 0 10px !important;
-                display: flex !important;
+            .main-header .logo-header .header-mob-nav-toggler .navbar-toggler-icon,
+            .main-header .logo-header .navbar-toggler .navbar-toggler-icon {
+                display: inline-flex !important;
                 align-items: center !important;
-                justify-content: space-between !important;
+                justify-content: center !important;
+                width: auto !important;
+                height: auto !important;
+                line-height: 1 !important;
+                font-size: 20px !important;
             }
             .main-header .logo-header .logo {
-                flex-shrink: 0 !important;
                 display: flex !important;
                 align-items: center !important;
+                order: 2 !important;
                 max-width: calc(100% - 130px) !important;
                 overflow: hidden !important;
             }
@@ -267,6 +303,81 @@
                 max-height: 36px !important;
                 max-width: 100% !important;
                 object-fit: contain !important;
+            }
+            .main-header .logo-header .header-right-actions {
+                display: flex !important;
+                flex-direction: row !important;
+                flex-wrap: nowrap !important;
+                align-items: center !important;
+                align-self: center !important;
+                justify-content: flex-end !important;
+                gap: 8px !important;
+                margin: 0 0 0 auto !important;
+                padding: 0 !important;
+                width: auto !important;
+                height: auto !important;
+                max-height: 58px !important;
+                order: 3 !important;
+                position: static !important;
+                float: none !important;
+                flex-shrink: 0 !important;
+                line-height: 1 !important;
+            }
+            .main-header .logo-header .header-right-actions .header-bell-wrap {
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                align-self: center !important;
+                position: relative !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 36px !important;
+                height: 36px !important;
+                min-width: 36px !important;
+                min-height: 36px !important;
+                max-height: 36px !important;
+                line-height: 1 !important;
+                float: none !important;
+            }
+            .main-header .logo-header .header-right-actions .header-bell-wrap > a {
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 36px !important;
+                height: 36px !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                line-height: 1 !important;
+            }
+            .main-header .logo-header .header-right-actions .more,
+            .main-header .logo-header .header-right-actions .topbar-toggler {
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                align-self: center !important;
+                position: static !important;
+                width: 36px !important;
+                height: 36px !important;
+                max-height: 36px !important;
+                min-width: 36px !important;
+                min-height: 36px !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                line-height: 1 !important;
+                border: none !important;
+                background: transparent !important;
+                opacity: 1 !important;
+                cursor: pointer !important;
+                float: none !important;
+            }
+            .main-header .logo-header .header-mob-nav-toggler i,
+            .main-header .logo-header .header-right-actions .more i,
+            .main-header .logo-header .header-right-actions .topbar-toggler i {
+                font-size: 20px !important;
+                line-height: 1 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                vertical-align: middle !important;
             }
 
             /* Topbar dropdown drawer (3 dots menu) */
@@ -977,6 +1088,20 @@
         <div class="main-header" style="background: linear-gradient(135deg, #1572e8 0%, #0d56b3 100%);">
             <!-- Logo Header -->
             <div class="logo-header d-flex align-items-center justify-content-between">
+                <!-- Hamburger Menu Button (Left on Mobile) -->
+                <button class="navbar-toggler sidenav-toggler header-mob-nav-toggler" type="button" data-toggle="collapse"
+                    data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon d-flex align-items-center justify-content-center">
+                        <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 20px;"></i>
+                    </span>
+                </button>
+
+                <!-- Desktop Sidebar Minimize Button (Left, next to hamburger) -->
+                <div class="navbar-minimize">
+                    <button class="btn btn-minimize">
+                        <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 18px;"></i>
+                    </button>
+                </div>
 
                 <a href="{{ route('back.dashboard') }}" class="logo">
                     <img src="{{ $setting->logo ? url('/core/public/storage/images/' . $setting->logo) : url('/core/public/storage/images/placeholder.png') }}"
@@ -1006,17 +1131,6 @@
                     </div>
 
                     <button class="topbar-toggler more" type="button" title="{{ __('More') }}"><i class="fa fa-ellipsis-v text-white" style="color: #ffffff !important; font-size: 19px;"></i></button>
-                    <button class="navbar-toggler sidenav-toggler" type="button" data-toggle="collapse"
-                        data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon d-flex align-items-center justify-content-center">
-                            <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 19px;"></i>
-                        </span>
-                    </button>
-                    <div class="navbar-minimize">
-                        <button class="btn btn-minimize">
-                            <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 18px;"></i>
-                        </button>
-                    </div>
                 </div>
             </div>
             <!-- End Logo Header -->
