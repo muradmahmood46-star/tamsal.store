@@ -156,10 +156,49 @@ class CatalogController extends Controller
             return $query->where('brand_id', $brand->id);
         })
         ->when($search, function ($query, $search) {
-            return $query->where(function($q) use ($search) {
+            $searchWords = array_values(array_filter(explode(' ', preg_replace('/[^\p{L}\p{N}\-_]+/u', ' ', $search)), function($w) {
+                return mb_strlen($w) >= 2;
+            }));
+
+            return $query->where(function($q) use ($search, $searchWords) {
                 $q->where('name', 'like', '%' . $search . '%')
                   ->orWhere('sku', 'like', '%' . $search . '%')
-                  ->orWhere('slug', 'like', '%' . $search . '%');
+                  ->orWhere('slug', 'like', '%' . $search . '%')
+                  ->orWhere('tags', 'like', '%' . $search . '%')
+                  ->orWhere('sort_details', 'like', '%' . $search . '%')
+                  ->orWhere('details', 'like', '%' . $search . '%')
+                  ->orWhere('specification_name', 'like', '%' . $search . '%')
+                  ->orWhere('specification_description', 'like', '%' . $search . '%')
+                  ->orWhereHas('category', function($cq) use ($search) {
+                      $cq->where('name', 'like', '%' . $search . '%');
+                  })
+                  ->orWhereHas('subcategory', function($sq) use ($search) {
+                      $sq->where('name', 'like', '%' . $search . '%');
+                  })
+                  ->orWhereHas('childcategory', function($ccq) use ($search) {
+                      $ccq->where('name', 'like', '%' . $search . '%');
+                  })
+                  ->orWhereHas('brand', function($bq) use ($search) {
+                      $bq->where('name', 'like', '%' . $search . '%');
+                  });
+
+                if (count($searchWords) > 1) {
+                    foreach ($searchWords as $word) {
+                        $q->orWhere('name', 'like', '%' . $word . '%')
+                          ->orWhere('sku', 'like', '%' . $word . '%')
+                          ->orWhere('tags', 'like', '%' . $word . '%')
+                          ->orWhere('sort_details', 'like', '%' . $word . '%')
+                          ->orWhereHas('category', function($cq) use ($word) {
+                              $cq->where('name', 'like', '%' . $word . '%');
+                          })
+                          ->orWhereHas('subcategory', function($sq) use ($word) {
+                              $sq->where('name', 'like', '%' . $word . '%');
+                          })
+                          ->orWhereHas('childcategory', function($ccq) use ($word) {
+                              $ccq->where('name', 'like', '%' . $word . '%');
+                          });
+                    }
+                }
             });
         })
         ->when($minPrice, function($query, $minPrice) {
@@ -176,7 +215,23 @@ class CatalogController extends Controller
             }else{
                 return $query->orderby('discount_price','desc');
             }
-        }, function($query) {
+        }, function($query) use ($search) {
+            if (!empty($search)) {
+                $escaped = addslashes($search);
+                return $query->orderByRaw("
+                    (CASE 
+                        WHEN LOWER(sku) = LOWER('{$escaped}') THEN 1000
+                        WHEN LOWER(name) = LOWER('{$escaped}') THEN 900
+                        WHEN LOWER(sku) LIKE LOWER('{$escaped}%') THEN 800
+                        WHEN LOWER(name) LIKE LOWER('{$escaped}%') THEN 700
+                        WHEN LOWER(name) LIKE LOWER('%{$escaped}%') THEN 500
+                        WHEN LOWER(tags) LIKE LOWER('%{$escaped}%') THEN 300
+                        WHEN LOWER(sort_details) LIKE LOWER('%{$escaped}%') THEN 150
+                        WHEN LOWER(details) LIKE LOWER('%{$escaped}%') THEN 80
+                        ELSE 10 
+                    END) DESC, id DESC
+                ");
+            }
             return $query->orderby('category_id', 'asc')->orderby('id', 'desc');
         })
 
@@ -316,24 +371,94 @@ class CatalogController extends Controller
     public function suggestSearch(Request $request)
     {
         $category = null;
-        if($request->category){
+        if ($request->category) {
             $category = Category::whereSlug($request->category)->first();
         }
-        $search = $request->search;
-        $items = Item::whereStatus(1)
-        ->when($search, function ($query, $search) {
-            return $query->where(function($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('sku', 'like', '%' . $search . '%')
-                  ->orWhere('slug', 'like', '%' . $search . '%');
-            })->orderby('id','desc')->take(10);
-        })
-        ->when($category, function ($query, $category) {
-            return $query->where('category_id', $category->id);
-        })
-        ->get();
+        $search = trim($request->search ?? '');
 
-        return view('includes.search_suggest',compact('items'));
+        if (empty($search)) {
+            return view('includes.search_suggest', ['items' => collect()]);
+        }
+
+        $searchWords = array_values(array_filter(explode(' ', preg_replace('/[^\p{L}\p{N}\-_]+/u', ' ', $search)), function($w) {
+            return mb_strlen($w) >= 2;
+        }));
+
+        $escaped = addslashes($search);
+
+        $query = Item::with(['category', 'tax', 'reviews'])
+            ->whereStatus(1)
+            ->where(function ($query) {
+                $query->whereNull('is_hidden_by_block')
+                    ->orWhere('is_hidden_by_block', 0);
+            })
+            ->where(function ($query) {
+                $query->where('approval_status', 'Approved')
+                    ->orWhereNull('approval_status');
+            });
+
+        if ($category) {
+            $query->where('category_id', $category->id);
+        }
+
+        $query->where(function($q) use ($search, $searchWords) {
+            $q->where('name', 'like', '%' . $search . '%')
+              ->orWhere('sku', 'like', '%' . $search . '%')
+              ->orWhere('slug', 'like', '%' . $search . '%')
+              ->orWhere('tags', 'like', '%' . $search . '%')
+              ->orWhere('sort_details', 'like', '%' . $search . '%')
+              ->orWhere('details', 'like', '%' . $search . '%')
+              ->orWhere('specification_name', 'like', '%' . $search . '%')
+              ->orWhere('specification_description', 'like', '%' . $search . '%')
+              ->orWhereHas('category', function($cq) use ($search) {
+                  $cq->where('name', 'like', '%' . $search . '%');
+              })
+              ->orWhereHas('subcategory', function($sq) use ($search) {
+                  $sq->where('name', 'like', '%' . $search . '%');
+              })
+              ->orWhereHas('childcategory', function($ccq) use ($search) {
+                  $ccq->where('name', 'like', '%' . $search . '%');
+              })
+              ->orWhereHas('brand', function($bq) use ($search) {
+                  $bq->where('name', 'like', '%' . $search . '%');
+              });
+
+            if (count($searchWords) > 1) {
+                foreach ($searchWords as $word) {
+                    $q->orWhere('name', 'like', '%' . $word . '%')
+                      ->orWhere('sku', 'like', '%' . $word . '%')
+                      ->orWhere('tags', 'like', '%' . $word . '%')
+                      ->orWhere('sort_details', 'like', '%' . $word . '%')
+                      ->orWhereHas('category', function($cq) use ($word) {
+                          $cq->where('name', 'like', '%' . $word . '%');
+                      })
+                      ->orWhereHas('subcategory', function($sq) use ($word) {
+                          $sq->where('name', 'like', '%' . $word . '%');
+                      })
+                      ->orWhereHas('childcategory', function($ccq) use ($word) {
+                          $ccq->where('name', 'like', '%' . $word . '%');
+                      });
+                }
+            }
+        });
+
+        $query->orderByRaw("
+            (CASE 
+                WHEN LOWER(sku) = LOWER('{$escaped}') THEN 1000
+                WHEN LOWER(name) = LOWER('{$escaped}') THEN 900
+                WHEN LOWER(sku) LIKE LOWER('{$escaped}%') THEN 800
+                WHEN LOWER(name) LIKE LOWER('{$escaped}%') THEN 700
+                WHEN LOWER(name) LIKE LOWER('%{$escaped}%') THEN 500
+                WHEN LOWER(tags) LIKE LOWER('%{$escaped}%') THEN 300
+                WHEN LOWER(sort_details) LIKE LOWER('%{$escaped}%') THEN 150
+                WHEN LOWER(details) LIKE LOWER('%{$escaped}%') THEN 80
+                ELSE 10 
+            END) DESC, id DESC
+        ");
+
+        $items = $query->take(12)->get();
+
+        return view('includes.search_suggest', compact('items', 'search'));
     }
 
 }
