@@ -77,12 +77,16 @@
             .main-header .logo-header .navbar-minimize {
                 display: block !important;
                 position: static !important;
-                margin-left: 10px !important;
+                margin-left: 0 !important;
             }
             .main-header .logo-header {
                 display: flex !important;
                 align-items: center !important;
-                justify-content: space-between !important;
+                justify-content: flex-start !important;
+                padding-left: 20px !important;
+            }
+            .main-header .logo-header .logo {
+                display: none !important;
             }
         }
 
@@ -1183,7 +1187,15 @@
 
             <!-- Navbar Header -->
             <nav class="navbar navbar-header navbar-expand-lg">
-                <div class="container-fluid">
+                <div class="container-fluid position-relative d-flex align-items-center justify-content-between">
+                    <!-- Desktop Center Logo (Centered in Blue Topbar) -->
+                    <div class="d-none d-lg-flex align-items-center justify-content-center desktop-header-center-logo" style="position: absolute; left: 50%; transform: translateX(-50%); pointer-events: auto;">
+                        <a href="{{ route('seller.dashboard') }}" class="d-flex align-items-center">
+                            <img src="{{ $setting->logo ? url('/core/public/storage/images/' . $setting->logo) : url('/core/public/storage/images/placeholder.png') }}"
+                                alt="brand" style="max-height: 38px; max-width: 170px; object-fit: contain;">
+                        </a>
+                    </div>
+
                     <ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
                         <li class="nav-item mr-3">
                             <a class="btn btn-sm btn-outline-light py-1 text-white font-weight-bold" title="website"
