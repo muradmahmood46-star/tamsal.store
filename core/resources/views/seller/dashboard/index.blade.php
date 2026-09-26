@@ -67,8 +67,8 @@
         .vendor-wallet-card .text-white-50 {
             color: #1d4ed8 !important;
             font-weight: 700 !important;
-            font-size: 12.5px !important;
-            letter-spacing: 0.3px !important;
+            font-size: 13.5px !important;
+            letter-spacing: 0.2px !important;
         }
         .vendor-wallet-card .wallet-balance-amount,
         .vendor-wallet-card .text-white {
@@ -98,10 +98,12 @@
         .vendor-wallet-card .rounded-circle {
             background: rgba(37, 99, 235, 0.18) !important;
             color: #1d4ed8 !important;
-            width: 40px !important;
-            height: 40px !important;
-            font-size: 17px !important;
-            margin-right: 10px !important;
+            width: 42px !important;
+            height: 42px !important;
+            font-size: 18px !important;
+            margin-right: 12px !important;
+            align-self: center !important;
+            margin-top: 3px !important;
         }
         .vendor-wallet-btn-wrap {
             margin-top: 0px !important;
