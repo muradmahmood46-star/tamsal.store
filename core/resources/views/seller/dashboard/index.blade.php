@@ -4,12 +4,29 @@
 <style>
     .vendor-wallet-card .wallet-title-text {
         color: rgba(255, 255, 255, 0.7);
+        font-size: 11px;
+        letter-spacing: 0.5px;
+        line-height: 1.2;
     }
     .vendor-wallet-card .wallet-balance-amount {
         color: #ffffff;
+        font-size: 1.25rem;
+        line-height: 1.3;
     }
     .vendor-wallet-card .wallet-min-deposit {
         color: rgba(255, 255, 255, 0.7);
+    }
+
+    @media (min-width: 992px) {
+        .wallet-heading-balance-wrap {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 0px !important;
+        }
+        .wallet-title-colon {
+            display: none !important;
+        }
     }
 
     @media (max-width: 991.98px) {
@@ -34,6 +51,16 @@
         }
         .vendor-wallet-card .card-body {
             padding: 9px 12px !important;
+        }
+        .wallet-heading-balance-wrap {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            align-items: center !important;
+            gap: 4px 6px !important;
+        }
+        .wallet-title-colon {
+            display: inline !important;
         }
         .vendor-wallet-card .wallet-title-text,
         .vendor-wallet-card .text-white-50 {
@@ -143,9 +170,9 @@
                         <i class="fas fa-wallet"></i>
                     </div>
                     <div>
-                        <div class="d-flex flex-wrap align-items-center" style="gap: 4px 8px;">
-                            <span class="text-uppercase small font-weight-bold wallet-title-text" style="letter-spacing: 0.5px; font-size: 11px; line-height: 1.2;">{{ __('Store Wallet Balance:') }}</span>
-                            <span class="font-weight-bold wallet-balance-amount" style="font-size: 1.25rem; line-height: 1.2;">
+                        <div class="wallet-heading-balance-wrap">
+                            <span class="text-uppercase small font-weight-bold wallet-title-text">{{ __('Store Wallet Balance') }}<span class="wallet-title-colon">:</span></span>
+                            <span class="font-weight-bold wallet-balance-amount">
                                 {{ PriceHelper::adminCurrency() }} {{ number_format($seller->balance ?? 0, 2) }}
                             </span>
                         </div>
