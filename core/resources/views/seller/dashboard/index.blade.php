@@ -2,6 +2,16 @@
 
 @section('content')
 <style>
+    .vendor-wallet-card .wallet-title-text {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    .vendor-wallet-card .wallet-balance-amount {
+        color: #ffffff;
+    }
+    .vendor-wallet-card .wallet-min-deposit {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
     @media (max-width: 991.98px) {
         .vendor-dash-heading-card {
             background: linear-gradient(135deg, #f8f9fa 0%, #edf1f5 100%) !important;
@@ -9,17 +19,37 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
         }
         .vendor-wallet-card {
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important;
-            border: 1px solid #cbd5e1 !important;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06) !important;
             color: #1e293b !important;
         }
+        .vendor-wallet-card .wallet-title-text,
+        .vendor-wallet-card .text-white-50 {
+            color: #475569 !important;
+            font-weight: 700 !important;
+        }
+        .vendor-wallet-card .wallet-balance-amount,
         .vendor-wallet-card .text-white {
             color: #0f172a !important;
+            font-weight: 800 !important;
         }
-        .vendor-wallet-card .text-white-50 {
-            color: #64748b !important;
+        .vendor-wallet-card .wallet-min-deposit,
+        .vendor-wallet-card .wallet-min-deposit * {
+            color: #475569 !important;
+            font-weight: 600 !important;
         }
+        .vendor-wallet-card .text-success,
+        .vendor-wallet-card .text-success * {
+            color: #16a34a !important;
+            font-weight: 700 !important;
+        }
+        .vendor-wallet-card .text-warning,
+        .vendor-wallet-card .text-warning * {
+            color: #d97706 !important;
+            font-weight: 700 !important;
+        }
+        .vendor-wallet-card .wallet-icon-badge,
         .vendor-wallet-card .rounded-circle {
             background: rgba(16, 185, 129, 0.15) !important;
             color: #059669 !important;
@@ -29,6 +59,8 @@
             font-size: 12.5px !important;
             line-height: 1.3 !important;
             min-width: 180px !important;
+            background-color: #35cd3a !important;
+            color: #ffffff !important;
         }
     }
 </style>
@@ -83,21 +115,21 @@
         <div class="card-body py-2.5 px-3 p-md-4" style="padding: 12px 14px;">
             <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between">
                 <div class="d-flex align-items-center mb-2 mb-md-0 w-100" style="width: auto;">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow flex-shrink-0" style="width: 44px; height: 44px; background: rgba(16, 185, 129, 0.2); color: #10b981; font-size: 19px; margin-right: 12px;">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow flex-shrink-0 wallet-icon-badge" style="width: 44px; height: 44px; background: rgba(16, 185, 129, 0.2); color: #10b981; font-size: 19px; margin-right: 12px;">
                         <i class="fas fa-wallet"></i>
                     </div>
                     <div>
-                        <div class="text-uppercase text-white-50 small font-weight-bold" style="letter-spacing: 0.5px; font-size: 11px; line-height: 1.2;">{{ __('Store Wallet Balance') }}</div>
-                        <h4 class="mb-0 text-white font-weight-bold" style="font-size: 1.25rem; line-height: 1.3;">
+                        <div class="text-uppercase small font-weight-bold wallet-title-text" style="letter-spacing: 0.5px; font-size: 11px; line-height: 1.2;">{{ __('Store Wallet Balance') }}</div>
+                        <h4 class="mb-0 font-weight-bold wallet-balance-amount" style="font-size: 1.25rem; line-height: 1.3;">
                             {{ PriceHelper::adminCurrency() }} {{ number_format($seller->balance ?? 0, 2) }}
                         </h4>
-                        <div class="d-flex flex-wrap align-items-center small text-white-50 mt-1" style="gap: 6px 12px; font-size: 11.5px; line-height: 1.2;">
+                        <div class="d-flex flex-wrap align-items-center small mt-1" style="gap: 6px 12px; font-size: 11.5px; line-height: 1.2;">
                             @if($freeOrdersLeft > 0)
                                 <span class="text-success font-weight-bold"><i class="fas fa-gift mr-1"></i> {{ $freeOrdersLeft }} {{ __('Free order(s) left') }}</span>
                             @else
                                 <span class="text-warning font-weight-bold"><i class="fas fa-percentage mr-1"></i> {{ $dashSetting->vendor_commission_percent ?? 2 }}% {{ __('Commission Active') }}</span>
                             @endif
-                            <span><i class="fas fa-clock mr-1"></i> {{ __('Min Deposit:') }} {{ PriceHelper::adminCurrency() }} {{ number_format($dashSetting->vendor_min_balance ?? 500, 2) }}</span>
+                            <span class="wallet-min-deposit"><i class="fas fa-clock mr-1"></i> {{ __('Min Deposit:') }} {{ PriceHelper::adminCurrency() }} {{ number_format($dashSetting->vendor_min_balance ?? 500, 2) }}</span>
                         </div>
                     </div>
                 </div>
