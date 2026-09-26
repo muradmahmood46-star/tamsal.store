@@ -359,7 +359,8 @@
     }
     .announcement-admin-badge-wrap {
         display: flex !important;
-        justify-content: flex-end !important;
+        justify-content: center !important;
+        text-align: center !important;
         margin-top: 4px !important;
     }
     .announcement-admin-badge {
