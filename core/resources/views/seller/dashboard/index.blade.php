@@ -51,16 +51,19 @@
         .vendor-wallet-card .wallet-min-deposit * {
             color: #475569 !important;
             font-weight: 600 !important;
+            font-size: 12.5px !important;
         }
         .vendor-wallet-card .text-success,
         .vendor-wallet-card .text-success * {
             color: #16a34a !important;
             font-weight: 700 !important;
+            font-size: 12.5px !important;
         }
         .vendor-wallet-card .text-warning,
         .vendor-wallet-card .text-warning * {
             color: #d97706 !important;
             font-weight: 700 !important;
+            font-size: 12.5px !important;
         }
         .vendor-wallet-card .wallet-icon-badge,
         .vendor-wallet-card .rounded-circle {
@@ -72,7 +75,7 @@
             margin-right: 10px !important;
         }
         .vendor-wallet-btn-wrap {
-            margin-top: 2px !important;
+            margin-top: 0px !important;
         }
         .vendor-add-balance-btn {
             padding: 4px 36px !important;
@@ -135,7 +138,7 @@
     <div class="card shadow-sm mb-4 border-0 vendor-wallet-card" style="border-radius: 12px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #fff;">
         <div class="card-body py-2.5 px-3 p-md-4" style="padding: 12px 14px;">
             <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between">
-                <div class="d-flex align-items-center mb-1 mb-md-0 w-100" style="width: auto;">
+                <div class="d-flex align-items-center mb-0.5 mb-md-0 w-100" style="width: auto;">
                     <div class="rounded-circle d-flex align-items-center justify-content-center shadow flex-shrink-0 wallet-icon-badge" style="width: 44px; height: 44px; background: rgba(16, 185, 129, 0.2); color: #10b981; font-size: 19px; margin-right: 12px;">
                         <i class="fas fa-wallet"></i>
                     </div>
@@ -146,7 +149,7 @@
                                 {{ PriceHelper::adminCurrency() }} {{ number_format($seller->balance ?? 0, 2) }}
                             </span>
                         </div>
-                        <div class="d-flex flex-wrap align-items-center small mt-0.5" style="gap: 4px 10px; font-size: 11.5px; line-height: 1.2;">
+                        <div class="d-flex flex-wrap align-items-center mt-0.5" style="gap: 4px 10px; font-size: 12.5px; line-height: 1.2;">
                             @if($freeOrdersLeft > 0)
                                 <span class="text-success font-weight-bold"><i class="fas fa-gift mr-1"></i> {{ $freeOrdersLeft }} {{ __('Free order(s) left') }}</span>
                             @else
@@ -156,7 +159,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="d-flex justify-content-center justify-content-md-end w-100 mt-1 mt-md-0 vendor-wallet-btn-wrap" style="width: auto;">
+                <div class="d-flex justify-content-center justify-content-md-end w-100 mt-0 mt-md-0 vendor-wallet-btn-wrap" style="width: auto;">
                     <a href="{{ route('seller.wallet.index') }}" class="btn btn-success font-weight-bold shadow-sm vendor-add-balance-btn px-4 py-1.5" style="border-radius: 8px; font-size: 13px; white-space: nowrap;">
                         <i class="fas fa-plus-circle mr-1"></i> {{ __('Add Balance') }}
                     </a>
