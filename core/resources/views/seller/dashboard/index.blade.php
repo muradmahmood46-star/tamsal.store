@@ -67,7 +67,8 @@
         .vendor-wallet-card .text-white-50 {
             color: #1d4ed8 !important;
             font-weight: 700 !important;
-            font-size: 11px !important;
+            font-size: 12.5px !important;
+            letter-spacing: 0.3px !important;
         }
         .vendor-wallet-card .wallet-balance-amount,
         .vendor-wallet-card .text-white {
