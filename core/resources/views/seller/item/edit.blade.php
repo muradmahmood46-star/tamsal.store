@@ -540,8 +540,9 @@
                         <input type="hidden" name="tax_id" value="{{ $item->tax_id ?? ($taxes->where('status', 1)->first()->id ?? ($taxes->first()->id ?? '')) }}">
 
                         <div class="form-group mb-3">
-                            <label for="sku" class="font-weight-bold">{{ __('SKU') }} <span class="text-danger">*</span></label>
-                            <input type="text" name="sku" id="sku" class="form-control" value="{{ old('sku', $item->sku) }}" required>
+                            <label for="sku" class="font-weight-bold">{{ __('SKU / Product ID') }} <span class="text-danger">*</span></label>
+                            <input type="text" name="sku" id="sku" class="form-control text-uppercase font-weight-bold" value="{{ old('sku', $item->sku ?: \App\Repositories\Back\ItemRepository::generateAutoSku()) }}">
+                            <small class="text-muted d-block mt-1"><i class="fas fa-info-circle mr-1"></i> {{ __('Min 6 characters (must contain at least 1 alphabet and 1 number). If left blank, system automatically assigns.') }}</small>
                         </div>
 
                         <div class="form-group mb-3">

@@ -73,7 +73,8 @@ class ItemRequest extends FormRequest
 
         return [
             'name'            => 'required|max:255',
-            'slug'            => ['required', 'unique:items,slug' . $id, 'regex:/^[a-zA-Z0-9-]+$/'],
+            'sku'             => ['nullable', 'min:6', 'regex:/^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9_-]+$/'],
+            'slug'            => ['nullable', 'unique:items,slug' . $id, 'regex:/^[a-zA-Z0-9-]+$/'],
             'category_id'     => 'required',
             'details'         => 'required',
             'link'            => $check_link,
@@ -98,11 +99,13 @@ class ItemRequest extends FormRequest
 
         return [
             'name.required'            =>  __('Name field is required.'),
+            'sku.min'                  =>  __('SKU / Product ID must be at least 6 characters.'),
+            'sku.regex'                =>  __('SKU / Product ID must contain at least 1 alphabet and 1 number (min 6 characters).'),
             'tax_id.required'          =>  __('Tax field is required.'),
             'category_id.required'     =>  __('Category field is required.'),
             'brand_id.required'        =>  __('Brand field is required.'),
             'slug.required'            =>  __('Slug field is required.'),
-            'slug.unique'              =>  __('This slug has already been taken.'),
+            'slug.unique'              =>  __('This slug or SKU has already been taken.'),
             'details.required'         =>  __('Description field is required.'),
             'sort_details.required'    =>  __('Sort Description field is required.'),
             'discount_price.required'  =>  __('Current Price field is required.'),

@@ -22,6 +22,26 @@ class ItemRepository
      * @return void
      */
 
+    /**
+     * Auto-generate a unique valid SKU (minimum 6 characters, contains alphabet and number).
+     */
+    public static function generateAutoSku()
+    {
+        $letters = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+        $digits = '23456789';
+        $chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+
+        do {
+            // Generates e.g. TS + 1 letter + 1 digit + 2 chars = 6 chars minimum
+            $sku = 'TS' . $letters[random_int(0, strlen($letters) - 1)] . $digits[random_int(0, strlen($digits) - 1)];
+            for ($i = 0; $i < 2; $i++) {
+                $sku .= $chars[random_int(0, strlen($chars) - 1)];
+            }
+        } while (Item::where('sku', $sku)->exists());
+
+        return $sku;
+    }
+
     public function store($request)
     {
         self::ensureColumnsExist();
@@ -91,14 +111,14 @@ class ItemRepository
             }
         }
 
-
-        if (!empty($input['sku'])) {
-            $input['slug'] = \Illuminate\Support\Str::slug($input['sku']);
-        } elseif (empty($input['slug'])) {
-            $input['slug'] = \Illuminate\Support\Str::slug($input['name'] ?? 'product');
+        // SKU validation and auto-fallback
+        $rawSku = isset($input['sku']) ? trim($input['sku']) : '';
+        if (empty($rawSku) || strlen($rawSku) < 6 || !preg_match('/[a-zA-Z]/', $rawSku) || !preg_match('/[0-9]/', $rawSku)) {
+            $input['sku'] = self::generateAutoSku();
         } else {
-            $input['slug'] = \Illuminate\Support\Str::slug($input['slug']);
+            $input['sku'] = strtoupper($rawSku);
         }
+        $input['slug'] = \Illuminate\Support\Str::slug($input['sku']);
 
         $input['is_type'] = 'undefine';
         $input['advance_payment_type'] = !empty($input['advance_payment_type']) ? $input['advance_payment_type'] : 'percentage';
@@ -232,13 +252,15 @@ class ItemRepository
         if (isset($input['estimated_profit'])) {
             $input['estimated_profit'] = ($input['estimated_profit'] !== '' && $input['estimated_profit'] !== null) ? (float)$input['estimated_profit'] : 0.00;
         }
-        if (isset($input['slug'])) {
-            if (!empty($input['sku'])) {
-                $input['slug'] = \Illuminate\Support\Str::slug($input['sku']);
-            } else {
-                $input['slug'] = !empty($input['slug']) ? \Illuminate\Support\Str::slug($input['slug']) : \Illuminate\Support\Str::slug($item->name);
-            }
+        $rawSku = isset($input['sku']) ? trim($input['sku']) : '';
+        if (empty($rawSku)) {
+            $input['sku'] = !empty($item->sku) ? $item->sku : self::generateAutoSku();
+        } elseif (strlen($rawSku) < 6 || !preg_match('/[a-zA-Z]/', $rawSku) || !preg_match('/[0-9]/', $rawSku)) {
+            $input['sku'] = !empty($item->sku) ? $item->sku : self::generateAutoSku();
+        } else {
+            $input['sku'] = strtoupper($rawSku);
         }
+        $input['slug'] = \Illuminate\Support\Str::slug($input['sku']);
 
         $item->update($input);
         

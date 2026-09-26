@@ -321,10 +321,11 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="sku">{{ __('SKU') }} *</label>
-                        <input type="text" name="sku" class="form-control"
-                            id="sku" placeholder="{{ __('Enter SKU') }}"
-                            value="{{Str::random(10)}}" >
+                        <label for="sku">{{ __('SKU / Product ID') }} <span class="text-danger">*</span></label>
+                        <input type="text" name="sku" class="form-control text-uppercase"
+                            id="sku" placeholder="{{ __('Enter SKU / Product ID') }}"
+                            value="{{ old('sku', \App\Repositories\Back\ItemRepository::generateAutoSku()) }}" >
+                        <small class="text-muted d-block mt-1"><i class="fas fa-info-circle mr-1"></i> {{ __('Auto-assigned by system. Min 6 characters (must contain at least 1 alphabet and 1 number). If left blank, system automatically assigns.') }}</small>
                     </div>
                     <div class="form-group">
                         <label for="video">{{ __('Video Link') }} </label>
