@@ -33,17 +33,19 @@
             color: #1e3a8a !important;
         }
         .vendor-wallet-card .card-body {
-            padding: 10px 12px !important;
+            padding: 9px 12px !important;
         }
         .vendor-wallet-card .wallet-title-text,
         .vendor-wallet-card .text-white-50 {
             color: #2563eb !important;
             font-weight: 700 !important;
+            font-size: 11.5px !important;
         }
         .vendor-wallet-card .wallet-balance-amount,
         .vendor-wallet-card .text-white {
             color: #0f172a !important;
             font-weight: 800 !important;
+            font-size: 1.15rem !important;
         }
         .vendor-wallet-card .wallet-min-deposit,
         .vendor-wallet-card .wallet-min-deposit * {
@@ -64,9 +66,13 @@
         .vendor-wallet-card .rounded-circle {
             background: rgba(37, 99, 235, 0.12) !important;
             color: #2563eb !important;
+            width: 40px !important;
+            height: 40px !important;
+            font-size: 17px !important;
+            margin-right: 10px !important;
         }
         .vendor-wallet-btn-wrap {
-            margin-top: 4px !important;
+            margin-top: 2px !important;
         }
         .vendor-add-balance-btn {
             padding: 4px 36px !important;
@@ -129,16 +135,18 @@
     <div class="card shadow-sm mb-4 border-0 vendor-wallet-card" style="border-radius: 12px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #fff;">
         <div class="card-body py-2.5 px-3 p-md-4" style="padding: 12px 14px;">
             <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between">
-                <div class="d-flex align-items-center mb-2 mb-md-0 w-100" style="width: auto;">
+                <div class="d-flex align-items-center mb-1 mb-md-0 w-100" style="width: auto;">
                     <div class="rounded-circle d-flex align-items-center justify-content-center shadow flex-shrink-0 wallet-icon-badge" style="width: 44px; height: 44px; background: rgba(16, 185, 129, 0.2); color: #10b981; font-size: 19px; margin-right: 12px;">
                         <i class="fas fa-wallet"></i>
                     </div>
                     <div>
-                        <div class="text-uppercase small font-weight-bold wallet-title-text" style="letter-spacing: 0.5px; font-size: 11px; line-height: 1.2;">{{ __('Store Wallet Balance') }}</div>
-                        <h4 class="mb-0 font-weight-bold wallet-balance-amount" style="font-size: 1.25rem; line-height: 1.3;">
-                            {{ PriceHelper::adminCurrency() }} {{ number_format($seller->balance ?? 0, 2) }}
-                        </h4>
-                        <div class="d-flex flex-wrap align-items-center small mt-1" style="gap: 6px 12px; font-size: 11.5px; line-height: 1.2;">
+                        <div class="d-flex flex-wrap align-items-center" style="gap: 4px 8px;">
+                            <span class="text-uppercase small font-weight-bold wallet-title-text" style="letter-spacing: 0.5px; font-size: 11px; line-height: 1.2;">{{ __('Store Wallet Balance:') }}</span>
+                            <span class="font-weight-bold wallet-balance-amount" style="font-size: 1.25rem; line-height: 1.2;">
+                                {{ PriceHelper::adminCurrency() }} {{ number_format($seller->balance ?? 0, 2) }}
+                            </span>
+                        </div>
+                        <div class="d-flex flex-wrap align-items-center small mt-0.5" style="gap: 4px 10px; font-size: 11.5px; line-height: 1.2;">
                             @if($freeOrdersLeft > 0)
                                 <span class="text-success font-weight-bold"><i class="fas fa-gift mr-1"></i> {{ $freeOrdersLeft }} {{ __('Free order(s) left') }}</span>
                             @else
@@ -148,7 +156,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="d-flex justify-content-center justify-content-md-end w-100 mt-2 mt-md-0 vendor-wallet-btn-wrap" style="width: auto;">
+                <div class="d-flex justify-content-center justify-content-md-end w-100 mt-1 mt-md-0 vendor-wallet-btn-wrap" style="width: auto;">
                     <a href="{{ route('seller.wallet.index') }}" class="btn btn-success font-weight-bold shadow-sm vendor-add-balance-btn px-4 py-1.5" style="border-radius: 8px; font-size: 13px; white-space: nowrap;">
                         <i class="fas fa-plus-circle mr-1"></i> {{ __('Add Balance') }}
                     </a>
