@@ -11,7 +11,7 @@
         
         <div class="card-body p-4 p-md-4 position-relative" style="z-index: 2;">
             <div class="d-md-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center mb-3 mb-md-0">
+                <div class="d-flex align-items-start mb-2 mb-md-0">
                     <div class="d-flex align-items-center justify-content-center mr-3 shadow-lg announcement-hero-icon" style="width: 60px; height: 60px; min-width: 60px; border-radius: 16px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #ffffff; font-size: 26px; box-shadow: 0 8px 25px rgba(245, 158, 11, 0.45) !important;">
                         <i class="fas fa-bullhorn animated-horn"></i>
                     </div>
@@ -29,8 +29,8 @@
                         </p>
                     </div>
                 </div>
-                <div>
-                    <span class="badge px-3 py-2 text-white font-weight-bold shadow-sm d-inline-flex align-items-center" style="background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.22); border-radius: 30px; font-size: 12.5px;">
+                <div class="announcement-admin-badge-wrap">
+                    <span class="badge px-3 py-2 text-white font-weight-bold shadow-sm d-inline-flex align-items-center announcement-admin-badge" style="background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.22); border-radius: 30px; font-size: 12.5px;">
                         <i class="fas fa-broadcast-tower text-warning mr-2"></i> {{ __('Admin to All Vendors') }}
                     </span>
                 </div>
@@ -325,7 +325,9 @@
         min-width: 40px !important;
         border-radius: 10px !important;
         font-size: 17px !important;
-        margin-right: 8px !important;
+        margin-right: 10px !important;
+        margin-top: 4px !important;
+        flex-shrink: 0 !important;
     }
     .announcement-title-block {
         display: flex !important;
@@ -354,6 +356,16 @@
         font-size: 11px !important;
         line-height: 1.3 !important;
         margin-top: 3px !important;
+    }
+    .announcement-admin-badge-wrap {
+        display: flex !important;
+        justify-content: flex-end !important;
+        margin-top: 4px !important;
+    }
+    .announcement-admin-badge {
+        font-size: 10.5px !important;
+        padding: 2px 8px !important;
+        border-radius: 20px !important;
     }
 }
 </style>
