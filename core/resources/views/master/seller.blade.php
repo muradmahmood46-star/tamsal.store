@@ -1117,7 +1117,15 @@
                 @endphp
 
                 <div class="header-right-actions d-flex align-items-center ml-auto">
-                    <!-- Notification Bell Button on Header (Visible on Mobile & Desktop) -->
+                    <button class="navbar-toggler sidenav-toggler" type="button" data-toggle="collapse"
+                        data-target="collapse" aria-expanded="false" aria-label="Toggle navigation" title="{{ __('Menu') }}">
+                        <span class="navbar-toggler-icon d-flex align-items-center justify-content-center">
+                            <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 19px;"></i>
+                        </span>
+                    </button>
+                    <button class="topbar-toggler more" type="button" title="{{ __('More') }}"><i class="fa fa-ellipsis-v text-white" style="color: #ffffff !important; font-size: 19px;"></i></button>
+
+                    <!-- Notification Bell Button on Header (Rightmost Corner in Mobile) -->
                     <div class="dropdown no-arrow header-bell-wrap">
                         <a class="nav-link dropdown-toggle position-relative text-white d-flex align-items-center justify-content-center vendor-notf-trigger" href="#" id="vendorMobileAlertsDropdown" role="button"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255, 255, 255, 0.15); box-shadow: 0 2px 8px rgba(0,0,0,0.12); transition: all 0.2s;" title="{{ __('Notifications') }}">
@@ -1134,13 +1142,6 @@
                         </div>
                     </div>
 
-                    <button class="topbar-toggler more" type="button" title="{{ __('More') }}"><i class="fa fa-ellipsis-v text-white" style="color: #ffffff !important; font-size: 19px;"></i></button>
-                    <button class="navbar-toggler sidenav-toggler" type="button" data-toggle="collapse"
-                        data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon d-flex align-items-center justify-content-center">
-                            <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 19px;"></i>
-                        </span>
-                    </button>
                     <div class="navbar-minimize">
                         <button class="btn btn-minimize">
                             <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 18px;"></i>
