@@ -90,6 +90,18 @@
             .main-header .logo-header .navbar-minimize {
                 display: none !important;
             }
+            .main-header .logo-header .header-mob-nav-toggler {
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 38px !important;
+                height: 38px !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                border: none !important;
+                background: transparent !important;
+                opacity: 1 !important;
+            }
             .main-header .logo-header .header-right-actions {
                 display: flex !important;
                 flex-direction: row !important;
@@ -99,18 +111,13 @@
                 margin-left: auto !important;
                 width: auto !important;
             }
-            .main-header .logo-header .header-right-actions .navbar-toggler,
-            .main-header .logo-header .header-right-actions .sidenav-toggler {
+            .main-header .logo-header .header-right-actions .header-bell-wrap {
                 order: 1 !important;
             }
             .main-header .logo-header .header-right-actions .more,
             .main-header .logo-header .header-right-actions .topbar-toggler {
                 order: 2 !important;
             }
-            .main-header .logo-header .header-right-actions .header-bell-wrap {
-                order: 3 !important;
-            }
-            .main-header .logo-header .header-right-actions .navbar-toggler,
             .main-header .logo-header .header-right-actions .more,
             .main-header .logo-header .header-right-actions .header-bell-wrap {
                 position: static !important;
@@ -131,9 +138,9 @@
                 background: transparent !important;
                 opacity: 1 !important;
             }
-            .main-header .logo-header .header-right-actions .navbar-toggler i,
+            .main-header .logo-header .header-mob-nav-toggler i,
             .main-header .logo-header .header-right-actions .more i {
-                font-size: 18px !important;
+                font-size: 19px !important;
             }
             .main-header .logo-header {
                 width: 100% !important;
@@ -1126,6 +1133,14 @@
         <div class="main-header" style="background: linear-gradient(135deg, #1572e8 0%, #0d56b3 100%);">
             <!-- Logo Header -->
             <div class="logo-header d-flex align-items-center justify-content-between">
+                <!-- Hamburger Menu Button (Left on Mobile) -->
+                <button class="navbar-toggler sidenav-toggler header-mob-nav-toggler" type="button" data-toggle="collapse"
+                    data-target="collapse" aria-expanded="false" aria-label="Toggle navigation" title="{{ __('Menu') }}">
+                    <span class="navbar-toggler-icon d-flex align-items-center justify-content-center">
+                        <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 20px;"></i>
+                    </span>
+                </button>
+
                 <a href="{{ route('seller.dashboard') }}" class="logo">
                     <img src="{{ $setting->logo ? url('/core/public/storage/images/' . $setting->logo) : url('/core/public/storage/images/placeholder.png') }}"
                         alt="brand" class="navbar-brand" style="max-height: 40px;">
@@ -1135,16 +1150,9 @@
                     $vendorUnreadNotifCount = \App\Models\VendorNotification::unreadCount(Auth::id());
                 @endphp
 
+                <!-- Right Actions: Bell Icon on left of 3-dots, then 3-dots on top right corner -->
                 <div class="header-right-actions d-flex align-items-center ml-auto">
-                    <button class="navbar-toggler sidenav-toggler" type="button" data-toggle="collapse"
-                        data-target="collapse" aria-expanded="false" aria-label="Toggle navigation" title="{{ __('Menu') }}">
-                        <span class="navbar-toggler-icon d-flex align-items-center justify-content-center">
-                            <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 19px;"></i>
-                        </span>
-                    </button>
-                    <button class="topbar-toggler more" type="button" title="{{ __('More') }}"><i class="fa fa-ellipsis-v text-white" style="color: #ffffff !important; font-size: 19px;"></i></button>
-
-                    <!-- Notification Bell Button on Header (Rightmost Corner in Mobile) -->
+                    <!-- Notification Bell Button on Header (Left of 3-dots) -->
                     <div class="dropdown no-arrow header-bell-wrap">
                         <a class="nav-link dropdown-toggle position-relative text-white d-flex align-items-center justify-content-center vendor-notf-trigger" href="#" id="vendorMobileAlertsDropdown" role="button"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255, 255, 255, 0.15); box-shadow: 0 2px 8px rgba(0,0,0,0.12); transition: all 0.2s;" title="{{ __('Notifications') }}">
@@ -1160,6 +1168,9 @@
                             @include('seller.notification.index', ['notifications' => \App\Models\VendorNotification::where('vendor_id', Auth::id())->latest('id')->take(20)->get()])
                         </div>
                     </div>
+
+                    <!-- 3-Dots More Button (Top Right Corner) -->
+                    <button class="topbar-toggler more" type="button" title="{{ __('More') }}"><i class="fa fa-ellipsis-v text-white" style="color: #ffffff !important; font-size: 20px;"></i></button>
 
                     <div class="navbar-minimize">
                         <button class="btn btn-minimize">
