@@ -92,14 +92,33 @@
             }
             .main-header .logo-header .header-right-actions {
                 display: flex !important;
+                flex-direction: row !important;
                 align-items: center !important;
-                gap: 4px !important;
+                justify-content: flex-end !important;
+                gap: 6px !important;
                 margin-left: auto !important;
+                width: auto !important;
+            }
+            .main-header .logo-header .header-right-actions .navbar-toggler,
+            .main-header .logo-header .header-right-actions .sidenav-toggler {
+                order: 1 !important;
+            }
+            .main-header .logo-header .header-right-actions .more,
+            .main-header .logo-header .header-right-actions .topbar-toggler {
+                order: 2 !important;
+            }
+            .main-header .logo-header .header-right-actions .header-bell-wrap {
+                order: 3 !important;
             }
             .main-header .logo-header .header-right-actions .navbar-toggler,
             .main-header .logo-header .header-right-actions .more,
             .main-header .logo-header .header-right-actions .header-bell-wrap {
                 position: static !important;
+                top: auto !important;
+                left: auto !important;
+                right: auto !important;
+                bottom: auto !important;
+                float: none !important;
                 margin: 0 !important;
                 padding: 0 !important;
                 display: inline-flex !important;
@@ -119,7 +138,7 @@
             .main-header .logo-header {
                 width: 100% !important;
                 height: 58px !important;
-                padding: 0 10px !important;
+                padding: 0 12px !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: space-between !important;
