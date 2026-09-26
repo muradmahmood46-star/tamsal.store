@@ -27,9 +27,9 @@
             color: #38bdf8 !important;
         }
         .vendor-wallet-card {
-            background: linear-gradient(135deg, #f0f7ff 0%, #e0effe 100%) !important;
-            border: 1px solid #bfdbfe !important;
-            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.06) !important;
+            background: linear-gradient(135deg, #e0effe 0%, #c9e0ff 100%) !important;
+            border: 1px solid #93c5fd !important;
+            box-shadow: 0 2px 10px rgba(37, 99, 235, 0.08) !important;
             color: #1e3a8a !important;
         }
         .vendor-wallet-card .card-body {
@@ -37,38 +37,38 @@
         }
         .vendor-wallet-card .wallet-title-text,
         .vendor-wallet-card .text-white-50 {
-            color: #2563eb !important;
+            color: #1d4ed8 !important;
             font-weight: 700 !important;
-            font-size: 11.5px !important;
+            font-size: 11px !important;
         }
         .vendor-wallet-card .wallet-balance-amount,
         .vendor-wallet-card .text-white {
             color: #0f172a !important;
             font-weight: 800 !important;
-            font-size: 1.15rem !important;
+            font-size: 14.5px !important;
         }
         .vendor-wallet-card .wallet-min-deposit,
         .vendor-wallet-card .wallet-min-deposit * {
-            color: #475569 !important;
+            color: #334155 !important;
             font-weight: 600 !important;
-            font-size: 12.5px !important;
+            font-size: 12px !important;
         }
         .vendor-wallet-card .text-success,
         .vendor-wallet-card .text-success * {
-            color: #16a34a !important;
+            color: #15803d !important;
             font-weight: 700 !important;
-            font-size: 12.5px !important;
+            font-size: 12px !important;
         }
         .vendor-wallet-card .text-warning,
         .vendor-wallet-card .text-warning * {
             color: #d97706 !important;
             font-weight: 700 !important;
-            font-size: 12.5px !important;
+            font-size: 12px !important;
         }
         .vendor-wallet-card .wallet-icon-badge,
         .vendor-wallet-card .rounded-circle {
-            background: rgba(37, 99, 235, 0.12) !important;
-            color: #2563eb !important;
+            background: rgba(37, 99, 235, 0.18) !important;
+            color: #1d4ed8 !important;
             width: 40px !important;
             height: 40px !important;
             font-size: 17px !important;
