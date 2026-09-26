@@ -1116,8 +1116,8 @@
                         </li>
                         <li class="nav-item mr-3">
                             <a class="btn btn-sm btn-outline-light py-1 text-white font-weight-bold" title="website"
-                                href="{{ route('front.index') }}" target="_blank">
-                                <i class="fas fa-globe mr-1"></i> {{ __('View Store') }}
+                                href="{{ route('front.catalog', ['vendor' => Auth::id()]) }}" target="_blank">
+                                <i class="fas fa-store mr-1"></i> {{ __('View Store') }}
                             </a>
                         </li>
                         <li class="nav-item mr-3">

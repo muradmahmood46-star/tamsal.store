@@ -12,7 +12,9 @@
         <div class="user-data">
           <h4 class="h5">{{ $user->first_name . ' ' . $user->last_name }}</h4>
           @if($user->isSeller())
-            <span class="badge badge-success px-2 py-1 mb-1 font-weight-bold"><i class="fas fa-store mr-1"></i>{{ ($user->seller && !empty($user->seller->shop_name)) ? $user->seller->shop_name : __('Verified Seller') }}</span><br>
+            <a href="{{ route('front.catalog', ['vendor' => $user->id]) }}" target="_blank" title="{{ __('View Live Store') }}" style="text-decoration: none;">
+                <span class="badge badge-success px-2 py-1 mb-1 font-weight-bold"><i class="fas fa-store mr-1"></i>{{ ($user->seller && !empty($user->seller->shop_name)) ? $user->seller->shop_name : __('Verified Seller') }} <i class="fas fa-external-link-alt ml-1" style="font-size: 9px;"></i></span>
+            </a><br>
           @endif
           <span>{{__('Joined')}} {{$user->created_at ? $user->created_at->format('M d, Y') : ''}}</span>
         </div>
@@ -21,6 +23,7 @@
         <a class="list-group-item {{ request()->is('user/dashboard') ? 'active' : '' }}" href="{{route('user.dashboard')}}"><i class="icon-command"></i>{{__('Dashboard')}}</a>
         <a class="list-group-item {{ request()->is('user/profile') ? 'active' : '' }}" href="{{route('user.profile')}}"><i class="icon-user"></i>{{__('Profile')}}</a>
         @if($user->isSeller())
+            <a class="list-group-item text-success font-weight-bold" href="{{ route('front.catalog', ['vendor' => $user->id]) }}" target="_blank"><i class="fas fa-store"></i>{{__('My Store (Live)')}}</a>
             <a class="list-group-item text-primary font-weight-bold" href="{{route('seller.dashboard')}}"><i class="icon-layout"></i>{{__('Seller Dashboard')}}</a>
         @else
             <a class="list-group-item {{ request()->is('user/open-shop*') ? 'active' : '' }}" href="{{route('user.store.apply')}}"><i class="icon-shopping-bag"></i>{{__('Open Shop / List Product')}}</a>

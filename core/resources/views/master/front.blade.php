@@ -1026,6 +1026,7 @@ body_theme4 @endif
                                             </a>
                                             <a href="{{ route('user.profile') }}"><i class="icon-chevron-right pr-2"></i>{{ __('Profile') }}</a>
                                             @if(Auth::user()->isSeller())
+                                                <a href="{{ route('front.catalog', ['vendor' => Auth::id()]) }}" target="_blank" class="text-success font-weight-bold"><i class="icon-chevron-right pr-2"></i>{{ __('My Store (Live)') }}</a>
                                                 <a href="{{ route('seller.dashboard') }}" class="text-primary font-weight-bold"><i class="icon-chevron-right pr-2"></i>{{ __('Seller Dashboard') }}</a>
                                             @else
                                                 <a href="{{ route('user.store.apply') }}"><i class="icon-chevron-right pr-2"></i>{{ __('Open Shop / List Product') }}</a>
@@ -1086,6 +1087,7 @@ body_theme4 @endif
                                         </a>
                                         <a href="{{ route('user.profile') }}" style="font-size:11px; padding: 4px 8px;">{{ __('Profile') }}</a>
                                         @if(Auth::user()->isSeller())
+                                            <a href="{{ route('front.catalog', ['vendor' => Auth::id()]) }}" target="_blank" style="font-size:11px; padding: 4px 8px; font-weight: bold; color: #28a745;">{{ __('My Store (Live)') }}</a>
                                             <a href="{{ route('seller.dashboard') }}" style="font-size:11px; padding: 4px 8px; font-weight: bold; color: #007bff;">{{ __('Seller Dashboard') }}</a>
                                         @else
                                             <a href="{{ route('user.store.apply') }}" style="font-size:11px; padding: 4px 8px;">{{ __('Open Shop / List Product') }}</a>
