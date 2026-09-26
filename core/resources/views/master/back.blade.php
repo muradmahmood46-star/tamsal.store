@@ -933,23 +933,47 @@
     <div class="wrapper">
         <div class="main-header" style="background: linear-gradient(135deg, #1572e8 0%, #0d56b3 100%);">
             <!-- Logo Header -->
-            <div class="logo-header">
+            <div class="logo-header d-flex align-items-center justify-content-between">
 
                 <a href="{{ route('back.dashboard') }}" class="logo">
                     <img src="{{ $setting->logo ? url('/core/public/storage/images/' . $setting->logo) : url('/core/public/storage/images/placeholder.png') }}"
                         alt="navbar brand" class="navbar-brand">
                 </a>
-                <button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse"
-                    data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon">
-                        <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 20px;"></i>
-                    </span>
-                </button>
-                <button class="topbar-toggler more"><i class="fa fa-ellipsis-v text-white" style="color: #ffffff !important; font-size: 20px;"></i></button>
-                <div class="navbar-minimize">
-                    <button class="btn btn-minimize">
-                        <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 18px;"></i>
+
+                @php
+                    $adminUnreadNotifCount = App\Models\Notification::countRegistration() + App\Models\Notification::countOrder();
+                @endphp
+
+                <div class="d-flex align-items-center ml-auto">
+                    <!-- Notification Bell Button on Header (Visible on Mobile & Desktop) -->
+                    <div class="dropdown no-arrow mr-1 header-bell-wrap">
+                        <a class="nav-link dropdown-toggle position-relative text-white p-2 d-flex align-items-center justify-content-center admin-notf-trigger" href="#" id="adminHeaderAlertsDropdown" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 38px; height: 38px; border-radius: 50%; background: rgba(255, 255, 255, 0.15); box-shadow: 0 2px 8px rgba(0,0,0,0.12); transition: all 0.2s;" title="{{ __('Notifications') }}">
+                            <i class="fas fa-bell fa-fw" style="color: #fef08a !important; font-size: 17px; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));"></i>
+                            <span class="badge badge-danger badge-counter"
+                                style="position: absolute; top: -2px; right: -2px; font-size: 9.5px; padding: 2px 5px; border-radius: 10px; font-weight: 700; border: 2px solid #0d56b3; {{ $adminUnreadNotifCount > 0 ? '' : 'display: none;' }}">
+                                {{ $adminUnreadNotifCount }}
+                            </span>
+                        </a>
+                        <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in notf-display-box"
+                            aria-labelledby="adminHeaderAlertsDropdown" id="display-notf"
+                            data-href="{{ route('back.notifications') }}" style="min-width: 310px; max-width: 360px; padding: 0; border-radius: 8px; z-index: 10050;">
+                            @include('back.notification.index')
+                        </div>
+                    </div>
+
+                    <button class="navbar-toggler sidenav-toggler" type="button" data-toggle="collapse"
+                        data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon">
+                            <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 20px;"></i>
+                        </span>
                     </button>
+                    <button class="topbar-toggler more"><i class="fa fa-ellipsis-v text-white" style="color: #ffffff !important; font-size: 20px;"></i></button>
+                    <div class="navbar-minimize">
+                        <button class="btn btn-minimize">
+                            <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 18px;"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
             <!-- End Logo Header -->
@@ -963,25 +987,6 @@
                                 href="{{ route('front.index') }}" target="_blank">
                                 <b> {{ __('View Website') }}</b>
                             </a>
-                        </li>
-                        <!-- Nav Item - Alerts -->
-                        @php
-                            $adminUnreadNotifCount = App\Models\Notification::countRegistration() + App\Models\Notification::countOrder();
-                        @endphp
-                        <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-bell fa-fw"></i>
-                                <!-- Counter - Alerts -->
-                                <span
-                                    class="badge badge-danger badge-counter" style="{{ $adminUnreadNotifCount > 0 ? '' : 'display: none;' }}">{{ $adminUnreadNotifCount }}</span>
-                            </a>
-                            <!-- Dropdown - Alerts -->
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="alertsDropdown" id="display-notf"
-                                data-href={{ route('back.notifications') }}>
-                                @include('back.notification.index')
-                            </div>
                         </li>
 
                         <li class="nav-item dropdown hidden-caret">

@@ -1085,22 +1085,46 @@
     <div class="wrapper">
         <div class="main-header" style="background: linear-gradient(135deg, #1572e8 0%, #0d56b3 100%);">
             <!-- Logo Header -->
-            <div class="logo-header">
+            <div class="logo-header d-flex align-items-center justify-content-between">
                 <a href="{{ route('seller.dashboard') }}" class="logo">
                     <img src="{{ $setting->logo ? url('/core/public/storage/images/' . $setting->logo) : url('/core/public/storage/images/placeholder.png') }}"
                         alt="brand" class="navbar-brand" style="max-height: 40px;">
                 </a>
-                <button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse"
-                    data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon">
-                        <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 20px;"></i>
-                    </span>
-                </button>
-                <button class="topbar-toggler more"><i class="fa fa-ellipsis-v text-white" style="color: #ffffff !important; font-size: 20px;"></i></button>
-                <div class="navbar-minimize">
-                    <button class="btn btn-minimize">
-                        <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 18px;"></i>
+
+                @php
+                    $vendorUnreadNotifCount = \App\Models\VendorNotification::unreadCount(Auth::id());
+                @endphp
+
+                <div class="d-flex align-items-center ml-auto">
+                    <!-- Notification Bell Button on Header (Visible on Mobile & Desktop) -->
+                    <div class="dropdown no-arrow mr-1 header-bell-wrap">
+                        <a class="nav-link dropdown-toggle position-relative text-white p-2 d-flex align-items-center justify-content-center vendor-notf-trigger" href="#" id="vendorMobileAlertsDropdown" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 38px; height: 38px; border-radius: 50%; background: rgba(255, 255, 255, 0.15); box-shadow: 0 2px 8px rgba(0,0,0,0.12); transition: all 0.2s;" title="{{ __('Notifications') }}">
+                            <i class="fas fa-bell fa-fw" style="color: #fef08a !important; font-size: 17px; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));"></i>
+                            <span class="badge badge-danger vendor-badge-counter"
+                                style="position: absolute; top: -2px; right: -2px; font-size: 9.5px; padding: 2px 5px; border-radius: 10px; font-weight: 700; border: 2px solid #0d56b3; {{ $vendorUnreadNotifCount > 0 ? '' : 'display: none;' }}">
+                                {{ $vendorUnreadNotifCount }}
+                            </span>
+                        </a>
+                        <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in notf-display-box"
+                            aria-labelledby="vendorMobileAlertsDropdown"
+                            data-href="{{ route('seller.notifications') }}" style="min-width: 310px; max-width: 360px; padding: 0; border-radius: 8px; z-index: 10050;">
+                            @include('seller.notification.index', ['notifications' => \App\Models\VendorNotification::where('vendor_id', Auth::id())->latest('id')->take(20)->get()])
+                        </div>
+                    </div>
+
+                    <button class="navbar-toggler sidenav-toggler" type="button" data-toggle="collapse"
+                        data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon">
+                            <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 20px;"></i>
+                        </span>
                     </button>
+                    <button class="topbar-toggler more"><i class="fa fa-ellipsis-v text-white" style="color: #ffffff !important; font-size: 20px;"></i></button>
+                    <div class="navbar-minimize">
+                        <button class="btn btn-minimize">
+                            <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 18px;"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
             <!-- End Logo Header -->
@@ -1120,26 +1144,6 @@
                                 href="{{ route('user.dashboard') }}">
                                 <i class="fas fa-user mr-1"></i> {{ __('Customer Area') }}
                             </a>
-                        </li>
-
-                        <!-- Vendor Notification Bell Dropdown -->
-                        @php
-                            $vendorUnreadNotifCount = \App\Models\VendorNotification::unreadCount(Auth::id());
-                        @endphp
-                        <li class="nav-item dropdown no-arrow mr-3">
-                            <a class="nav-link dropdown-toggle position-relative text-white" href="#" id="vendorAlertsDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 18px; padding: 6px 10px;">
-                                <i class="fas fa-bell fa-fw" style="color: #ffffff !important;"></i>
-                                <span class="badge badge-danger vendor-badge-counter" id="vendor-notf-count"
-                                    style="position: absolute; top: 2px; right: 2px; font-size: 10px; padding: 2px 5px; border-radius: 10px; font-weight: 700; {{ $vendorUnreadNotifCount > 0 ? '' : 'display: none;' }}">
-                                    {{ $vendorUnreadNotifCount }}
-                                </span>
-                            </a>
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="vendorAlertsDropdown" id="display-vendor-notf"
-                                data-href="{{ route('seller.notifications') }}" style="min-width: 310px; max-width: 360px; padding: 0; border-radius: 8px;">
-                                @include('seller.notification.index', ['notifications' => \App\Models\VendorNotification::where('vendor_id', Auth::id())->latest('id')->take(20)->get()])
-                            </div>
                         </li>
 
                         <li class="nav-item dropdown hidden-caret">
@@ -1286,11 +1290,12 @@
     <script>
         $(document).ready(function() {
             // Vendor Notification Bell Dropdown Handling
-            $('#vendorAlertsDropdown').on('click', function() {
-                var href = $('#display-vendor-notf').data('href');
+            $(document).on('click', '.vendor-notf-trigger', function() {
+                var $box = $(this).closest('.dropdown').find('.notf-display-box');
+                var href = $box.data('href');
                 if (href) {
-                    $('#display-vendor-notf').load(href, function() {
-                        $('#vendor-notf-count').text('0').hide();
+                    $box.load(href, function() {
+                        $('.vendor-badge-counter').text('0').hide();
                     });
                 }
             });
@@ -1299,13 +1304,14 @@
                 e.preventDefault();
                 e.stopPropagation();
                 var clearUrl = $(this).data('href');
+                var $box = $(this).closest('.notf-display-box');
                 if (clearUrl) {
                     $.get(clearUrl, function() {
-                        var notfUrl = $('#display-vendor-notf').data('href');
+                        var notfUrl = $box.data('href');
                         if (notfUrl) {
-                            $('#display-vendor-notf').load(notfUrl);
+                            $box.load(notfUrl);
                         }
-                        $('#vendor-notf-count').text('0').hide();
+                        $('.vendor-badge-counter').text('0').hide();
                     });
                 }
             });
