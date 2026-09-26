@@ -4,9 +4,25 @@
 <style>
     @media (max-width: 991.98px) {
         .vendor-dash-heading-card {
-            background: linear-gradient(135deg, #f8fafc 0%, #edf4fc 100%) !important;
-            border: 1px solid #dbeafe !important;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+            background: linear-gradient(135deg, #f8f9fa 0%, #edf1f5 100%) !important;
+            border: 1px solid #dce2e8 !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+        }
+        .vendor-wallet-card {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important;
+            border: 1px solid #cbd5e1 !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+            color: #1e293b !important;
+        }
+        .vendor-wallet-card .text-white {
+            color: #0f172a !important;
+        }
+        .vendor-wallet-card .text-white-50 {
+            color: #64748b !important;
+        }
+        .vendor-wallet-card .rounded-circle {
+            background: rgba(16, 185, 129, 0.15) !important;
+            color: #059669 !important;
         }
         .vendor-add-balance-btn {
             padding: 4px 36px !important;
