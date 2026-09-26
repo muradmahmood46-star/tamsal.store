@@ -586,7 +586,8 @@ Route::group(['middleware' => 'maintainance'], function () {
         //------------ FRONT ------------
         Route::get('/', 'Front\FrontendController@index')->name('front.index');
         Route::get('/extra-index', 'Front\FrontendController@extraIndex')->name('front.extraindex');
-        Route::get('/product/{slug}', 'Front\FrontendController@product')->name('front.product');
+        Route::get('/p/{slug}', 'Front\FrontendController@product')->name('front.product');
+        Route::get('/product/{slug}', 'Front\FrontendController@product')->name('front.product.legacy');
         Route::get('/campaign/products', 'Front\FrontendController@compaignProduct')->name('front.campaign');
         Route::get('/top-rated/products', 'Front\FrontendController@topRatedProduct')->name('front.top_rated');
         Route::get('/newly-listed/products', 'Front\FrontendController@newlyListedProduct')->name('front.newly_listed');

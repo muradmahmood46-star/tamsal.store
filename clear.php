@@ -114,6 +114,12 @@ if (!empty($dbname)) {
             $dbStatus[] = "✔ Database column `items.custom_rating_count` created successfully!";
         }
 
+        // Auto-sync items slug to sku where sku is available for short URLs
+        try {
+            $pdo->exec("UPDATE `items` SET `slug` = `sku` WHERE `sku` IS NOT NULL AND TRIM(`sku`) != '' AND (`slug` IS NULL OR `slug` != `sku`)");
+            $dbStatus[] = "✔ Product slugs synced with SKU for short /p/{sku} links!";
+        } catch (\Throwable $e) {}
+
         // reviews.customer_name
         $stmt = $pdo->query("SHOW COLUMNS FROM `reviews` LIKE 'customer_name'");
         if ($stmt && $stmt->rowCount() == 0) {

@@ -92,7 +92,9 @@ class ItemRepository
         }
 
 
-        if (empty($input['slug'])) {
+        if (!empty($input['sku'])) {
+            $input['slug'] = \Illuminate\Support\Str::slug($input['sku']);
+        } elseif (empty($input['slug'])) {
             $input['slug'] = \Illuminate\Support\Str::slug($input['name'] ?? 'product');
         } else {
             $input['slug'] = \Illuminate\Support\Str::slug($input['slug']);
@@ -231,7 +233,11 @@ class ItemRepository
             $input['estimated_profit'] = ($input['estimated_profit'] !== '' && $input['estimated_profit'] !== null) ? (float)$input['estimated_profit'] : 0.00;
         }
         if (isset($input['slug'])) {
-            $input['slug'] = !empty($input['slug']) ? \Illuminate\Support\Str::slug($input['slug']) : \Illuminate\Support\Str::slug($item->name);
+            if (!empty($input['sku'])) {
+                $input['slug'] = \Illuminate\Support\Str::slug($input['sku']);
+            } else {
+                $input['slug'] = !empty($input['slug']) ? \Illuminate\Support\Str::slug($input['slug']) : \Illuminate\Support\Str::slug($item->name);
+            }
         }
 
         $item->update($input);

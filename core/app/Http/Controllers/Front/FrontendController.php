@@ -282,10 +282,12 @@ class FrontendController extends Controller
         $lowerSlugified = strtolower($slugified);
         $lowerSpaces = strtolower($withSpaces);
 
-        // 1. Match by exact slug, lowercase slug, space-normalized slug, or slugified
+        // 1. Match by SKU directly (e.g. /p/MOU-01 or /product/MOU-01) or exact/normalized Slug
         $item = Item::with(['category', 'galleries', 'attributes.options', 'reviews'])
-            ->where(function ($q) use ($cleanSlug, $slugified, $withSpaces, $lowerSlug, $lowerSlugified, $lowerSpaces) {
-                $q->where('slug', $cleanSlug)
+            ->where(function ($q) use ($cleanSlug, $lowerSlug, $slugified, $withSpaces, $lowerSlugified, $lowerSpaces) {
+                $q->where('sku', $cleanSlug)
+                  ->orWhereRaw('LOWER(sku) = ?', [$lowerSlug])
+                  ->orWhere('slug', $cleanSlug)
                   ->orWhere('slug', $slugified)
                   ->orWhere('slug', $withSpaces)
                   ->orWhereRaw('LOWER(slug) = ?', [$lowerSlug])

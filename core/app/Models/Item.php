@@ -239,4 +239,14 @@ class Item extends Model
      
     }
 
+    public function getProductSlugAttribute()
+    {
+        return !empty($this->sku) ? $this->sku : $this->slug;
+    }
+
+    public function productUrl()
+    {
+        return route('front.product', $this->product_slug);
+    }
+
 }
