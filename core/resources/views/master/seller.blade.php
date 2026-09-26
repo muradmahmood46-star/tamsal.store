@@ -75,18 +75,25 @@
                 display: none !important;
             }
             .main-header .logo-header .navbar-minimize {
-                display: block !important;
+                display: inline-flex !important;
+                align-items: center !important;
                 position: static !important;
-                margin-left: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                order: 1 !important;
+                flex-shrink: 0 !important;
             }
             .main-header .logo-header {
                 display: flex !important;
                 align-items: center !important;
                 justify-content: flex-start !important;
-                padding-left: 20px !important;
+                padding-left: 15px !important;
             }
             .main-header .logo-header .logo {
                 display: none !important;
+            }
+            .main-header .logo-header .header-right-actions {
+                margin-left: auto !important;
             }
         }
 
@@ -1224,6 +1231,13 @@
                     </span>
                 </button>
 
+                <!-- Desktop Sidebar Minimize Button (Left, next to hamburger) -->
+                <div class="navbar-minimize">
+                    <button class="btn btn-minimize">
+                        <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 18px;"></i>
+                    </button>
+                </div>
+
                 <a href="{{ route('seller.dashboard') }}" class="logo">
                     <img src="{{ $setting->logo ? url('/core/public/storage/images/' . $setting->logo) : url('/core/public/storage/images/placeholder.png') }}"
                         alt="brand" class="navbar-brand" style="max-height: 40px;">
@@ -1254,12 +1268,6 @@
 
                     <!-- 3-Dots More Button (Top Right Corner) -->
                     <button class="topbar-toggler more" type="button" title="{{ __('More') }}"><i class="fa fa-ellipsis-v text-white" style="color: #ffffff !important; font-size: 20px;"></i></button>
-
-                    <div class="navbar-minimize">
-                        <button class="btn btn-minimize">
-                            <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 18px;"></i>
-                        </button>
-                    </div>
                 </div>
             </div>
             <!-- End Logo Header -->
