@@ -80,7 +80,7 @@
                 position: static !important;
                 margin: 0 !important;
                 padding: 0 !important;
-                order: 1 !important;
+                order: -1 !important;
                 flex-shrink: 0 !important;
             }
             .main-header .logo-header {
@@ -151,7 +151,7 @@
                 position: static !important;
                 float: none !important;
                 line-height: 1 !important;
-                order: 1 !important;
+                order: -1 !important;
                 box-shadow: none !important;
                 outline: none !important;
                 flex-shrink: 0 !important;
@@ -181,9 +181,9 @@
                 width: auto !important;
                 height: auto !important;
                 max-height: 58px !important;
-                order: 2 !important;
+                order: 99 !important;
                 position: static !important;
-                float: none !important;
+                float: right !important;
                 flex-shrink: 0 !important;
                 line-height: 1 !important;
             }
