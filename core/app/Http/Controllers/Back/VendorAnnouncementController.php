@@ -37,12 +37,21 @@ class VendorAnnouncementController extends Controller
             'badge_type' => 'nullable|string|in:info,warning,danger,success,primary',
         ]);
 
-        VendorAnnouncement::create([
+        $announcement = VendorAnnouncement::create([
             'title'      => $request->title,
             'message'    => $request->message,
             'badge_type' => $request->badge_type ?: 'info',
             'status'     => 1,
         ]);
+
+        \App\Models\VendorNotification::broadcastAll(
+            'announcement',
+            __('New Announcement: :title', ['title' => $request->title]),
+            \Illuminate\Support\Str::limit(strip_tags($request->message), 120),
+            route('seller.announcement.index'),
+            'fas fa-bullhorn',
+            $request->badge_type ?: 'info'
+        );
 
         return redirect()->back()->withSuccess(__('Announcement posted successfully to all vendors.'));
     }

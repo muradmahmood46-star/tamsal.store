@@ -84,6 +84,16 @@ class VendorProductController extends Controller
             'reject_reason' => null
         ]);
 
+        \App\Models\VendorNotification::log(
+            $item->vendor_id,
+            'product_approved',
+            __('Product Approved!'),
+            __('Your product ":name" has been approved and is now live on the store.', ['name' => $item->name]),
+            route('seller.item.edit', $item->id),
+            'fas fa-check-circle',
+            'success'
+        );
+
         return redirect()->back()->withSuccess(__('Product ":name" has been approved and is now live on the store.', ['name' => $item->name]));
     }
 
@@ -104,6 +114,16 @@ class VendorProductController extends Controller
             'status' => 0,
             'reject_reason' => $request->reject_reason
         ]);
+
+        \App\Models\VendorNotification::log(
+            $item->vendor_id,
+            'product_rejected',
+            __('Product Submission Rejected'),
+            __('Your product ":name" was rejected. Reason: :reason', ['name' => $item->name, 'reason' => $request->reject_reason]),
+            route('seller.item.edit', $item->id),
+            'fas fa-times-circle',
+            'danger'
+        );
 
         return redirect()->back()->withSuccess(__('Product ":name" has been rejected. The rejection reason was sent to the vendor.', ['name' => $item->name]));
     }

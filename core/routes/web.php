@@ -516,6 +516,10 @@ Route::group(['middleware' => 'maintainance'], function () {
             Route::post('admin-messages/send', 'Seller\AdminMessageController@send')->name('seller.admin_message.send');
             Route::get('admin-messages/fetch', 'Seller\AdminMessageController@fetch')->name('seller.admin_message.fetch');
 
+            //------------ NOTIFICATIONS ------------
+            Route::get('notifications', 'Seller\VendorNotificationController@index')->name('seller.notifications');
+            Route::get('notifications/clear', 'Seller\VendorNotificationController@clear')->name('seller.notifications.clear');
+
             //------------ ANNOUNCEMENTS ------------
             Route::get('announcements', 'Seller\VendorAnnouncementController@index')->name('seller.announcement.index');
 

@@ -189,6 +189,20 @@ class FineApprovalController extends Controller
             'deleted_by_vendor' => 0,
         ]);
 
+        \App\Models\VendorNotification::log(
+            $user->id,
+            'fine_approved',
+            __('Fine Payment Approved! Store Unblocked'),
+            __('Your fine payment of :curr :amount has been verified and your store ":store" is unblocked.', [
+                'curr' => $curr,
+                'amount' => number_format($fineAmount, 2),
+                'store' => $storeName
+            ]),
+            route('seller.dashboard'),
+            'fas fa-shield-alt',
+            'success'
+        );
+
         return redirect()->back()->withSuccess(__('Fine payment approved! Store ":store" has been unblocked and all products restored successfully.', ['store' => $storeName]));
     }
 
@@ -268,6 +282,16 @@ class FineApprovalController extends Controller
             'vendor_unread_count' => $conversation->vendor_unread_count + 1,
             'deleted_by_vendor' => 0,
         ]);
+
+        \App\Models\VendorNotification::log(
+            $fine->user_id,
+            'fine_rejected',
+            __('Fine Payment Proof Rejected'),
+            __('Your fine payment proof was rejected. Reason: :reason', ['reason' => $reason]),
+            route('seller.dashboard'),
+            'fas fa-exclamation-triangle',
+            'danger'
+        );
 
         return redirect()->back()->withSuccess(__('Fine payment proof rejected. Vendor has been notified to resubmit correct proof.'));
     }

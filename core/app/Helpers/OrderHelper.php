@@ -213,6 +213,22 @@ class OrderHelper
                 'user_id' => $vendorId > 0 ? $vendorId : null
             ]);
 
+            if ($vendorId > 0) {
+                \App\Models\VendorNotification::log(
+                    $vendorId,
+                    'order',
+                    __('New Order Received!'),
+                    __('You have received a new order #:order of amount :currency :amount', [
+                        'order' => $order->transaction_number,
+                        'currency' => PriceHelper::adminCurrency(),
+                        'amount' => PriceHelper::OrderTotal($order, 'trns')
+                    ]),
+                    route('seller.order.invoice', $order->id),
+                    'fas fa-shopping-bag',
+                    'success'
+                );
+            }
+
             $createdOrders[] = $order;
         }
 

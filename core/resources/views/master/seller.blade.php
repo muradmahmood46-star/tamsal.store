@@ -1110,11 +1110,6 @@
                 <div class="container-fluid">
                     <ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
                         <li class="nav-item mr-3">
-                            <span class="badge badge-warning text-dark font-weight-bold px-3 py-2">
-                                <i class="fas fa-store mr-1"></i> {{ $storeName }}
-                            </span>
-                        </li>
-                        <li class="nav-item mr-3">
                             <a class="btn btn-sm btn-outline-light py-1 text-white font-weight-bold" title="website"
                                 href="{{ route('front.catalog', ['vendor' => Auth::id()]) }}" target="_blank">
                                 <i class="fas fa-store mr-1"></i> {{ __('View Store') }}
@@ -1125,6 +1120,26 @@
                                 href="{{ route('user.dashboard') }}">
                                 <i class="fas fa-user mr-1"></i> {{ __('Customer Area') }}
                             </a>
+                        </li>
+
+                        <!-- Vendor Notification Bell Dropdown -->
+                        @php
+                            $vendorUnreadNotifCount = \App\Models\VendorNotification::unreadCount(Auth::id());
+                        @endphp
+                        <li class="nav-item dropdown no-arrow mr-3">
+                            <a class="nav-link dropdown-toggle position-relative text-white" href="#" id="vendorAlertsDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 18px; padding: 6px 10px;">
+                                <i class="fas fa-bell fa-fw" style="color: #ffffff !important;"></i>
+                                <span class="badge badge-danger vendor-badge-counter" id="vendor-notf-count"
+                                    style="position: absolute; top: 2px; right: 2px; font-size: 10px; padding: 2px 5px; border-radius: 10px; font-weight: 700; {{ $vendorUnreadNotifCount > 0 ? '' : 'display: none;' }}">
+                                    {{ $vendorUnreadNotifCount }}
+                                </span>
+                            </a>
+                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                aria-labelledby="vendorAlertsDropdown" id="display-vendor-notf"
+                                data-href="{{ route('seller.notifications') }}" style="min-width: 310px; max-width: 360px; padding: 0; border-radius: 8px;">
+                                @include('seller.notification.index', ['notifications' => \App\Models\VendorNotification::where('vendor_id', Auth::id())->latest('id')->take(20)->get()])
+                            </div>
                         </li>
 
                         <li class="nav-item dropdown hidden-caret">
@@ -1270,6 +1285,31 @@
 
     <script>
         $(document).ready(function() {
+            // Vendor Notification Bell Dropdown Handling
+            $('#vendorAlertsDropdown').on('click', function() {
+                var href = $('#display-vendor-notf').data('href');
+                if (href) {
+                    $('#display-vendor-notf').load(href, function() {
+                        $('#vendor-notf-count').text('0').hide();
+                    });
+                }
+            });
+
+            $(document).on('click', '#clear-vendor-notf', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var clearUrl = $(this).data('href');
+                if (clearUrl) {
+                    $.get(clearUrl, function() {
+                        var notfUrl = $('#display-vendor-notf').data('href');
+                        if (notfUrl) {
+                            $('#display-vendor-notf').load(notfUrl);
+                        }
+                        $('#vendor-notf-count').text('0').hide();
+                    });
+                }
+            });
+
             // Dismiss sidebar when tapping on backdrop on mobile
             $(document).on('click', '.sidebar-overlay-backdrop', function() {
                 $('html').removeClass('nav_open');

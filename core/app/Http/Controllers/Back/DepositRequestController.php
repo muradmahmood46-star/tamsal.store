@@ -181,6 +181,19 @@ class DepositRequestController extends Controller
             $successMsg .= ' ' . __(':count previously locked order(s) have been unlocked and commission deducted.', ['count' => $unlockedOrdersCount]);
         }
 
+        \App\Models\VendorNotification::log(
+            $deposit->user_id,
+            'deposit_approved',
+            __('Deposit Approved!'),
+            __('Your deposit of :currency :amount has been approved and added to your store wallet.', [
+                'currency' => PriceHelper::adminCurrency(),
+                'amount' => number_format($depositAmount, 2)
+            ]),
+            route('seller.wallet.index'),
+            'fas fa-wallet',
+            'success'
+        );
+
         return redirect()->back()->withSuccess($successMsg);
     }
 
@@ -204,6 +217,20 @@ class DepositRequestController extends Controller
                 ])
             ]);
         }
+
+        \App\Models\VendorNotification::log(
+            $deposit->user_id,
+            'deposit_rejected',
+            __('Deposit Request Rejected'),
+            __('Your deposit of :currency :amount was rejected. Reason: :reason', [
+                'currency' => PriceHelper::adminCurrency(),
+                'amount' => number_format((float)$deposit->amount, 2),
+                'reason' => $request->admin_note ?: __('Details did not match bank verification.')
+            ]),
+            route('seller.wallet.index'),
+            'fas fa-exclamation-circle',
+            'danger'
+        );
 
         return redirect()->back()->withSuccess(__('Deposit request rejected successfully.'));
     }
