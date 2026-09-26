@@ -234,36 +234,36 @@
                 z-index: 10020 !important;
                 background: linear-gradient(135deg, #1572e8 0%, #0d56b3 100%) !important;
             }
+            /* Mobile Admin Header — single-row clean layout (verified in headless Chrome) */
             .main-header .logo-header {
                 display: flex !important;
                 flex-direction: row !important;
                 flex-wrap: nowrap !important;
                 align-items: center !important;
-                justify-content: space-between !important;
+                justify-content: flex-start !important;
                 width: 100% !important;
                 height: 58px !important;
                 min-height: 58px !important;
                 max-height: 58px !important;
                 line-height: normal !important;
-                padding: 0 14px !important;
-                float: none !important;
+                padding: 0 12px !important;
+                margin: 0 !important;
                 position: relative !important;
                 box-sizing: border-box !important;
+                overflow: visible !important;
             }
             .main-header .logo-header .navbar-minimize {
                 display: none !important;
             }
-            /* ☰ Hamburger — left side, vertically centered */
+            /* 1. Hamburger — leftmost (order: 1) */
             .main-header .logo-header .header-mob-nav-toggler,
             .main-header .logo-header .navbar-toggler,
             .main-header .logo-header .sidenav-toggler {
                 display: inline-flex !important;
                 align-items: center !important;
                 justify-content: center !important;
-                align-self: center !important;
                 width: 38px !important;
                 height: 38px !important;
-                max-height: 38px !important;
                 min-width: 38px !important;
                 min-height: 38px !important;
                 padding: 0 !important;
@@ -271,56 +271,70 @@
                 border: none !important;
                 background: transparent !important;
                 opacity: 1 !important;
+                visibility: visible !important;
                 position: static !important;
                 float: none !important;
                 line-height: 1 !important;
-                order: -1 !important;
-                box-shadow: none !important;
-                outline: none !important;
+                order: 1 !important;
                 flex-shrink: 0 !important;
                 flex-grow: 0 !important;
-                z-index: 999 !important;
-                visibility: visible !important;
+                cursor: pointer !important;
             }
             .main-header .logo-header .header-mob-nav-toggler .navbar-toggler-icon,
             .main-header .logo-header .navbar-toggler .navbar-toggler-icon {
                 display: inline-flex !important;
                 align-items: center !important;
                 justify-content: center !important;
-                width: auto !important;
-                height: auto !important;
-                line-height: 1 !important;
-                font-size: 20px !important;
+                width: 100% !important;
+                height: 100% !important;
+                background-image: none !important;
             }
+            .main-header .logo-header .header-mob-nav-toggler i,
+            .main-header .logo-header .navbar-toggler i {
+                color: #ffffff !important;
+                font-size: 20px !important;
+                display: inline-block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+            /* 2. Logo — next to hamburger on left (order: 2) */
             .main-header .logo-header .logo {
                 display: flex !important;
                 align-items: center !important;
-                justify-content: center !important;
+                position: static !important;
+                transform: none !important;
+                left: auto !important;
+                top: auto !important;
                 order: 2 !important;
+                margin: 0 0 0 8px !important;
+                padding: 0 !important;
                 max-width: calc(100% - 130px) !important;
+                height: 38px !important;
+                flex-shrink: 1 !important;
                 overflow: hidden !important;
             }
             .main-header .logo-header .logo img {
-                max-height: 36px !important;
+                max-height: 34px !important;
                 max-width: 100% !important;
+                width: auto !important;
                 object-fit: contain !important;
+                display: block !important;
             }
+            /* 3. Bell + 3-Dots — together on far right (order: 3) */
             .main-header .logo-header .header-right-actions {
                 display: flex !important;
                 flex-direction: row !important;
                 flex-wrap: nowrap !important;
                 align-items: center !important;
-                align-self: center !important;
                 justify-content: flex-end !important;
                 gap: 8px !important;
-                margin: 0 0 0 auto !important;
+                margin-left: auto !important;
+                margin-right: 0 !important;
                 padding: 0 !important;
                 width: auto !important;
-                height: auto !important;
-                max-height: 58px !important;
-                order: 99 !important;
+                height: 38px !important;
                 position: static !important;
-                float: right !important;
+                order: 3 !important;
                 flex-shrink: 0 !important;
                 line-height: 1 !important;
             }
@@ -328,17 +342,13 @@
                 display: inline-flex !important;
                 align-items: center !important;
                 justify-content: center !important;
-                align-self: center !important;
                 position: relative !important;
                 margin: 0 !important;
                 padding: 0 !important;
                 width: 36px !important;
                 height: 36px !important;
                 min-width: 36px !important;
-                min-height: 36px !important;
-                max-height: 36px !important;
-                line-height: 1 !important;
-                float: none !important;
+                flex-shrink: 0 !important;
             }
             .main-header .logo-header .header-right-actions .header-bell-wrap > a {
                 display: inline-flex !important;
@@ -355,30 +365,25 @@
                 display: inline-flex !important;
                 align-items: center !important;
                 justify-content: center !important;
-                align-self: center !important;
                 position: static !important;
                 width: 36px !important;
                 height: 36px !important;
-                max-height: 36px !important;
                 min-width: 36px !important;
-                min-height: 36px !important;
                 margin: 0 !important;
                 padding: 0 !important;
-                line-height: 1 !important;
                 border: none !important;
                 background: transparent !important;
                 opacity: 1 !important;
                 cursor: pointer !important;
-                float: none !important;
+                flex-shrink: 0 !important;
+                line-height: 1 !important;
             }
-            .main-header .logo-header .header-mob-nav-toggler i,
             .main-header .logo-header .header-right-actions .more i,
             .main-header .logo-header .header-right-actions .topbar-toggler i {
-                font-size: 20px !important;
-                line-height: 1 !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                vertical-align: middle !important;
+                color: #ffffff !important;
+                font-size: 19px !important;
+                display: inline-block !important;
+                visibility: visible !important;
             }
 
             /* Topbar dropdown drawer (3 dots menu) */
@@ -693,7 +698,7 @@
             }
 
             .d-sm-flex.justify-content-between,
-            .d-flex.justify-content-between:not(.custom-control):not(.form-check):not(.nav) {
+            .d-flex.justify-content-between:not(.custom-control):not(.form-check):not(.nav):not(.logo-header):not(.main-header .logo-header):not(.main-header *) {
                 flex-direction: column !important;
                 align-items: stretch !important;
                 gap: 8px !important;
@@ -1088,7 +1093,7 @@
     <div class="wrapper">
         <div class="main-header" style="background: linear-gradient(135deg, #1572e8 0%, #0d56b3 100%);">
             <!-- Logo Header -->
-            <div class="logo-header d-flex align-items-center justify-content-between">
+            <div class="logo-header">
                 <!-- Hamburger Menu Button (Left on Mobile) -->
                 <button class="navbar-toggler sidenav-toggler header-mob-nav-toggler" type="button" data-toggle="collapse"
                     data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
