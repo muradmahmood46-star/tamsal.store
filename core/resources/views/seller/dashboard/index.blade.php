@@ -1,9 +1,24 @@
 @extends('master.seller')
 
 @section('content')
+<style>
+    @media (max-width: 991.98px) {
+        .vendor-dash-heading-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #edf4fc 100%) !important;
+            border: 1px solid #dbeafe !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+        }
+        .vendor-add-balance-btn {
+            padding: 4px 36px !important;
+            font-size: 12.5px !important;
+            line-height: 1.3 !important;
+            min-width: 180px !important;
+        }
+    }
+</style>
 <div class="container-fluid">
     <!-- Page Heading -->
-    <div class="card mb-4">
+    <div class="card mb-4 vendor-dash-heading-card">
         <div class="card-body">
             <div class="d-flex flex-column flex-md-row align-items-center align-items-md-center justify-content-between text-center text-md-left" style="gap: 12px;">
                 <div class="w-100 w-md-auto" style="width: auto;">
@@ -71,7 +86,7 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-center justify-content-md-end w-100 mt-2 mt-md-0" style="width: auto;">
-                    <a href="{{ route('seller.wallet.index') }}" class="btn btn-success font-weight-bold shadow-sm px-4 py-1.5" style="border-radius: 8px; font-size: 13px; white-space: nowrap;">
+                    <a href="{{ route('seller.wallet.index') }}" class="btn btn-success font-weight-bold shadow-sm vendor-add-balance-btn px-4 py-1.5" style="border-radius: 8px; font-size: 13px; white-space: nowrap;">
                         <i class="fas fa-plus-circle mr-1"></i> {{ __('Add Balance') }}
                     </a>
                 </div>
