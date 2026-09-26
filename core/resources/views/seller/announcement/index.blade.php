@@ -358,15 +358,22 @@
         margin-top: 3px !important;
     }
     .announcement-admin-badge-wrap {
+        width: 100% !important;
         display: flex !important;
         justify-content: center !important;
+        align-items: center !important;
         text-align: center !important;
-        margin-top: 4px !important;
+        margin-top: 6px !important;
+        clear: both !important;
     }
     .announcement-admin-badge {
         font-size: 10.5px !important;
-        padding: 2px 8px !important;
+        padding: 2.5px 10px !important;
         border-radius: 20px !important;
+        margin: 0 auto !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
 }
 </style>
