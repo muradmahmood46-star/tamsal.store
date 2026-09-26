@@ -68,6 +68,41 @@
             opacity: 0.9;
         }
 
+        /* Circular Site Favicon Badge Styling */
+        .vendor-header-favicon-badge {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 35px !important;
+            height: 35px !important;
+            min-width: 35px !important;
+            min-height: 35px !important;
+            max-width: 35px !important;
+            max-height: 35px !important;
+            border-radius: 50% !important;
+            background: #ffffff !important;
+            border: 2px solid rgba(255, 255, 255, 0.7) !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+            overflow: hidden !important;
+            text-decoration: none !important;
+            flex-shrink: 0 !important;
+            padding: 0 !important;
+            transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+        }
+        .vendor-header-favicon-badge:hover {
+            transform: scale(1.05) !important;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25) !important;
+        }
+        .vendor-header-favicon-badge img.vendor-header-favicon-img {
+            width: 100% !important;
+            height: 100% !important;
+            max-width: 100% !important;
+            max-height: 100% !important;
+            object-fit: cover !important;
+            border-radius: 50% !important;
+            display: block !important;
+        }
+
         /* Desktop specific logo header layout */
         @media (min-width: 992px) {
             .main-header .logo-header .navbar-toggler,
@@ -78,10 +113,15 @@
                 display: inline-flex !important;
                 align-items: center !important;
                 position: static !important;
-                margin: 0 0 0 12px !important;
+                margin: 0 !important;
                 padding: 0 !important;
-                order: -1 !important;
+                order: 1 !important;
                 flex-shrink: 0 !important;
+            }
+            .main-header .logo-header .vendor-header-favicon-badge {
+                order: 2 !important;
+                margin-left: 12px !important;
+                position: static !important;
             }
             .main-header .logo-header {
                 display: flex !important;
@@ -131,6 +171,15 @@
             }
             .main-header .logo-header .logo {
                 display: none !important;
+            }
+            /* Mobile: Centered Site Favicon in header */
+            .main-header .logo-header .vendor-header-favicon-badge {
+                position: absolute !important;
+                left: 50% !important;
+                top: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                z-index: 10 !important;
+                margin: 0 !important;
             }
             /* ☰ Hamburger — left side, vertically centered */
             .main-header .logo-header .header-mob-nav-toggler,
@@ -1264,6 +1313,11 @@
                         <i class="fa fa-bars text-white" style="color: #ffffff !important; font-size: 18px;"></i>
                     </button>
                 </div>
+
+                <!-- Site Favicon Badge (Desktop: beside hamburger, Mobile: centered in header) -->
+                <a href="{{ route('seller.dashboard') }}" class="vendor-header-favicon-badge" title="{{ $setting->title }}">
+                    <img src="{{ $favUrl }}?v={{ $favVersion }}" alt="{{ $setting->title }}" class="vendor-header-favicon-img">
+                </a>
 
                 <a href="{{ route('seller.dashboard') }}" class="logo">
                     <img src="{{ $setting->logo ? url('/core/public/storage/images/' . $setting->logo) : url('/core/public/storage/images/placeholder.png') }}"
