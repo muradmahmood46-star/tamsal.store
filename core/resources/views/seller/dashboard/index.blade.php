@@ -48,19 +48,19 @@
         $currVendorOrdersCount = \App\Models\Order::where('vendor_id', Auth::id())->count();
         $freeOrdersLeft = max(0, $freeOrdersLimit - $currVendorOrdersCount);
     @endphp
-    <div class="card shadow-sm mb-4 border-0" style="border-radius: 12px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #fff;">
-        <div class="card-body p-3 p-md-4">
-            <div class="d-flex flex-wrap align-items-center justify-content-between">
-                <div class="d-flex align-items-center mb-3 mb-md-0">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center mr-3 shadow" style="width: 55px; height: 55px; background: rgba(16, 185, 129, 0.2); color: #10b981; font-size: 24px; margin-right: 15px;">
+    <div class="card shadow-sm mb-4 border-0 vendor-wallet-card" style="border-radius: 12px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #fff;">
+        <div class="card-body py-2.5 px-3 p-md-4" style="padding: 12px 14px;">
+            <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between">
+                <div class="d-flex align-items-center mb-2 mb-md-0 w-100" style="width: auto;">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow flex-shrink-0" style="width: 44px; height: 44px; background: rgba(16, 185, 129, 0.2); color: #10b981; font-size: 19px; margin-right: 12px;">
                         <i class="fas fa-wallet"></i>
                     </div>
                     <div>
-                        <div class="text-uppercase text-white-50 small font-weight-bold" style="letter-spacing: 0.5px;">{{ __('Store Wallet Balance') }}</div>
-                        <h3 class="mb-0 text-white font-weight-bold">
+                        <div class="text-uppercase text-white-50 small font-weight-bold" style="letter-spacing: 0.5px; font-size: 11px; line-height: 1.2;">{{ __('Store Wallet Balance') }}</div>
+                        <h4 class="mb-0 text-white font-weight-bold" style="font-size: 1.25rem; line-height: 1.3;">
                             {{ PriceHelper::adminCurrency() }} {{ number_format($seller->balance ?? 0, 2) }}
-                        </h3>
-                        <div class="d-flex flex-wrap align-items-center small text-white-50 mt-1" style="gap: 15px;">
+                        </h4>
+                        <div class="d-flex flex-wrap align-items-center small text-white-50 mt-1" style="gap: 6px 12px; font-size: 11.5px; line-height: 1.2;">
                             @if($freeOrdersLeft > 0)
                                 <span class="text-success font-weight-bold"><i class="fas fa-gift mr-1"></i> {{ $freeOrdersLeft }} {{ __('Free order(s) left') }}</span>
                             @else
@@ -70,8 +70,8 @@
                         </div>
                     </div>
                 </div>
-                <div>
-                    <a href="{{ route('seller.wallet.index') }}" class="btn btn-success font-weight-bold shadow-sm px-4 py-2" style="border-radius: 8px;">
+                <div class="d-flex justify-content-center justify-content-md-end w-100 mt-2 mt-md-0" style="width: auto;">
+                    <a href="{{ route('seller.wallet.index') }}" class="btn btn-success font-weight-bold shadow-sm px-4 py-1.5" style="border-radius: 8px; font-size: 13px; white-space: nowrap;">
                         <i class="fas fa-plus-circle mr-1"></i> {{ __('Add Balance') }}
                     </a>
                 </div>
