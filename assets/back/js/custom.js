@@ -676,8 +676,11 @@
 
 
     // Notification
-    $(document).on('click', '#alertsDropdown, #adminHeaderAlertsDropdown, .admin-notf-trigger', function () {
-        var $box = $(this).closest('.dropdown').find('#display-notf');
+    $(document).on('click', '#alertsDropdown, #adminHeaderAlertsDropdown, #adminHeaderAlertsDropdownDesktop, .admin-notf-trigger', function () {
+        var $box = $(this).closest('.dropdown').find('.notf-display-box');
+        if (!$box.length) {
+            $box = $(this).closest('.dropdown').find('#display-notf, #display-notf-desktop');
+        }
         if (!$box.length) {
             $box = $('#display-notf');
         }
@@ -693,7 +696,10 @@
         e.preventDefault();
         e.stopPropagation();
         var clearUrl = $(this).data('href');
-        var $box = $(this).closest('#display-notf');
+        var $box = $(this).closest('.notf-display-box');
+        if (!$box.length) {
+            $box = $(this).closest('#display-notf');
+        }
         if (!$box.length) {
             $box = $('#display-notf');
         }

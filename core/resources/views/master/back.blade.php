@@ -93,7 +93,7 @@
                 display: inline-flex !important;
                 align-items: center !important;
                 position: static !important;
-                margin: 0 !important;
+                margin: 0 0 0 12px !important;
                 padding: 0 !important;
                 order: 1 !important;
                 flex-shrink: 0 !important;
@@ -102,14 +102,13 @@
                 display: flex !important;
                 align-items: center !important;
                 justify-content: flex-start !important;
-                padding-left: 15px !important;
+                padding-left: 20px !important;
             }
             .main-header .logo-header .logo {
                 display: none !important;
             }
             .main-header .logo-header .header-right-actions {
-                margin-left: auto !important;
-                order: 3 !important;
+                display: none !important;
             }
         }
 
@@ -1128,11 +1127,11 @@
                 @endphp
 
                 <div class="header-right-actions d-flex align-items-center ml-auto">
-                    <!-- Notification Bell Button on Header (Visible on Mobile & Desktop) -->
+                    <!-- Notification Bell Button on Header (Visible on Mobile) -->
                     <div class="dropdown no-arrow header-bell-wrap">
                         <a class="nav-link dropdown-toggle position-relative text-white d-flex align-items-center justify-content-center admin-notf-trigger" href="#" id="adminHeaderAlertsDropdown" role="button"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255, 255, 255, 0.15); box-shadow: 0 2px 8px rgba(0,0,0,0.12); transition: all 0.2s;" title="{{ __('Notifications') }}">
-                            <i class="fas fa-bell fa-fw" style="color: #fef08a !important; font-size: 17px; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));"></i>
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 36px; height: 36px; background: transparent; border: none; box-shadow: none; padding: 0;" title="{{ __('Notifications') }}">
+                            <i class="fas fa-bell fa-fw" style="color: #fef08a !important; font-size: 19px;"></i>
                             <span class="badge badge-danger badge-counter"
                                 style="position: absolute; top: -2px; right: -2px; font-size: 9.5px; padding: 2px 5px; border-radius: 10px; font-weight: 700; border: 2px solid #0d56b3; {{ $adminUnreadNotifCount > 0 ? '' : 'display: none;' }}">
                                 {{ $adminUnreadNotifCount }}
@@ -1159,6 +1158,23 @@
                                 href="{{ route('front.index') }}" target="_blank">
                                 <b> {{ __('View Website') }}</b>
                             </a>
+                        </li>
+
+                        <!-- Desktop Notification Bell (Positioned between 'View Website' and Avatar/Profile) -->
+                        <li class="nav-item dropdown hidden-caret mr-3 d-none d-lg-flex align-items-center header-bell-wrap-desktop">
+                            <a class="nav-link dropdown-toggle position-relative text-white d-flex align-items-center justify-content-center admin-notf-trigger" href="#" id="adminHeaderAlertsDropdownDesktop" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 36px; height: 36px; background: transparent; border: none; box-shadow: none; padding: 0;" title="{{ __('Notifications') }}">
+                                <i class="fas fa-bell fa-fw" style="color: #fef08a !important; font-size: 19px;"></i>
+                                <span class="badge badge-danger badge-counter"
+                                    style="position: absolute; top: -2px; right: -2px; font-size: 9.5px; padding: 2px 5px; border-radius: 10px; font-weight: 700; border: 2px solid #0d56b3; {{ $adminUnreadNotifCount > 0 ? '' : 'display: none;' }}">
+                                    {{ $adminUnreadNotifCount }}
+                                </span>
+                            </a>
+                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in notf-display-box"
+                                aria-labelledby="adminHeaderAlertsDropdownDesktop" id="display-notf-desktop"
+                                data-href="{{ route('back.notifications') }}" style="min-width: 310px; max-width: 360px; padding: 0; border-radius: 8px; z-index: 10050;">
+                                @include('back.notification.index')
+                            </div>
                         </li>
 
                         <li class="nav-item dropdown hidden-caret">
