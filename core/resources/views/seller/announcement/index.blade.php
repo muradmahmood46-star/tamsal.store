@@ -15,16 +15,16 @@
                     <div class="d-flex align-items-center justify-content-center mr-3 shadow-lg announcement-hero-icon" style="width: 60px; height: 60px; min-width: 60px; border-radius: 16px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #ffffff; font-size: 26px; box-shadow: 0 8px 25px rgba(245, 158, 11, 0.45) !important;">
                         <i class="fas fa-bullhorn animated-horn"></i>
                     </div>
-                    <div>
-                        <div class="d-flex align-items-center flex-wrap" style="gap: 8px;">
-                            <h3 class="mb-0 font-weight-bold text-white" style="font-size: 22px; letter-spacing: -0.5px;">
+                    <div class="announcement-header-content flex-grow-1">
+                        <div class="announcement-title-block">
+                            <h3 class="mb-0 font-weight-bold text-white announcement-main-title">
                                 {{ __('Vendor Notice Board') }}
                             </h3>
-                            <span class="badge px-2 py-1 font-weight-bold" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: #fff; font-size: 11px; border-radius: 20px; box-shadow: 0 2px 10px rgba(239, 68, 68, 0.4);">
+                            <span class="badge px-2 py-1 font-weight-bold announcement-live-badge">
                                 <span class="live-pulse-dot mr-1"></span> {{ __('LIVE BROADCASTS') }}
                             </span>
                         </div>
-                        <p class="mb-0 text-white-50 mt-1" style="font-size: 13.5px;">
+                        <p class="mb-0 text-white-50 announcement-hero-desc">
                             {{ __('Official announcements, operational updates, and policy notifications from Tamsal Administration.') }}
                         </p>
                     </div>
@@ -286,6 +286,72 @@
 
 .announcement-card:hover .category-pill {
     transform: scale(1.03);
+}
+
+/* Notice Board Hero Heading Styles */
+.announcement-title-block {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.announcement-main-title {
+    font-size: 22px;
+    letter-spacing: -0.5px;
+}
+.announcement-live-badge {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: #fff;
+    font-size: 11px;
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(239, 68, 68, 0.4);
+}
+.announcement-hero-desc {
+    font-size: 13.5px;
+    margin-top: 4px;
+}
+
+/* Mobile-Only Heading Spacing & Layout Optimization */
+@media (max-width: 767.98px) {
+    .announcement-hero-banner {
+        border-radius: 12px !important;
+    }
+    .announcement-hero-banner .card-body {
+        padding: 12px 14px !important;
+    }
+    .announcement-hero-icon {
+        width: 44px !important;
+        height: 44px !important;
+        min-width: 44px !important;
+        border-radius: 12px !important;
+        font-size: 19px !important;
+        margin-right: 12px !important;
+    }
+    .announcement-title-block {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 2px !important;
+    }
+    .announcement-main-title {
+        font-size: 16px !important;
+        line-height: 1.25 !important;
+        letter-spacing: -0.2px !important;
+    }
+    .announcement-live-badge {
+        font-size: 9.5px !important;
+        padding: 2px 7px !important;
+        border-radius: 10px !important;
+        line-height: 1.2 !important;
+        margin-top: 0 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+    }
+    .announcement-hero-desc {
+        font-size: 11.5px !important;
+        line-height: 1.35 !important;
+        margin-top: 3px !important;
+    }
 }
 </style>
 @endsection
