@@ -14,15 +14,26 @@
 
     @media (max-width: 991.98px) {
         .vendor-dash-heading-card {
-            background: linear-gradient(135deg, #f8f9fa 0%, #edf1f5 100%) !important;
-            border: 1px solid #dce2e8 !important;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+            border: 1px solid #334155 !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+        }
+        .vendor-dash-heading-card h3,
+        .vendor-dash-heading-card .text-dark,
+        .vendor-dash-heading-card b {
+            color: #ffffff !important;
+        }
+        .vendor-dash-heading-card .fa-store {
+            color: #38bdf8 !important;
         }
         .vendor-wallet-card {
             background: #ffffff !important;
             border: 1px solid #e2e8f0 !important;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06) !important;
             color: #1e293b !important;
+        }
+        .vendor-wallet-card .card-body {
+            padding: 10px 12px !important;
         }
         .vendor-wallet-card .wallet-title-text,
         .vendor-wallet-card .text-white-50 {
@@ -53,6 +64,9 @@
         .vendor-wallet-card .rounded-circle {
             background: rgba(16, 185, 129, 0.15) !important;
             color: #059669 !important;
+        }
+        .vendor-wallet-btn-wrap {
+            margin-top: 4px !important;
         }
         .vendor-add-balance-btn {
             padding: 4px 36px !important;
@@ -133,7 +147,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="d-flex justify-content-center justify-content-md-end w-100 mt-2 mt-md-0" style="width: auto;">
+                <div class="d-flex justify-content-center justify-content-md-end w-100 mt-2 mt-md-0 vendor-wallet-btn-wrap" style="width: auto;">
                     <a href="{{ route('seller.wallet.index') }}" class="btn btn-success font-weight-bold shadow-sm vendor-add-balance-btn px-4 py-1.5" style="border-radius: 8px; font-size: 13px; white-space: nowrap;">
                         <i class="fas fa-plus-circle mr-1"></i> {{ __('Add Balance') }}
                     </a>
