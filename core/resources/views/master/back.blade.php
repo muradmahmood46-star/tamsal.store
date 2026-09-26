@@ -297,21 +297,9 @@
                 visibility: visible !important;
                 opacity: 1 !important;
             }
-            /* 2. Logo — next to hamburger on left (order: 2) */
+            /* 2. Logo — hidden on mobile (removed per design requirement) */
             .main-header .logo-header .logo {
-                display: flex !important;
-                align-items: center !important;
-                position: static !important;
-                transform: none !important;
-                left: auto !important;
-                top: auto !important;
-                order: 2 !important;
-                margin: 0 0 0 8px !important;
-                padding: 0 !important;
-                max-width: calc(100% - 130px) !important;
-                height: 38px !important;
-                flex-shrink: 1 !important;
-                overflow: hidden !important;
+                display: none !important;
             }
             .main-header .logo-header .logo img {
                 max-height: 34px !important;
@@ -384,6 +372,27 @@
                 font-size: 19px !important;
                 display: inline-block !important;
                 visibility: visible !important;
+            }
+
+            /* Mobile — Notification dropdown centered on screen */
+            .main-header .logo-header .header-bell-wrap .notf-display-box,
+            .main-header .logo-header .header-bell-wrap .dropdown-menu {
+                position: fixed !important;
+                top: 64px !important;
+                left: 50% !important;
+                right: auto !important;
+                transform: translateX(-50%) !important;
+                width: calc(100vw - 24px) !important;
+                max-width: 380px !important;
+                min-width: 280px !important;
+                max-height: calc(100vh - 80px) !important;
+                overflow-y: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                z-index: 10060 !important;
+                border-radius: 10px !important;
+                box-shadow: 0 8px 30px rgba(0,0,0,0.18) !important;
+                margin: 0 !important;
+                padding: 0 !important;
             }
 
             /* Topbar dropdown drawer (3 dots menu) */
