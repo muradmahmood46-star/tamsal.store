@@ -285,34 +285,35 @@ window._infiniteInit && window._infiniteInit();
 
 /* Category Badge on Product Card */
 .product-card .product-category {
-    margin-bottom: 6px;
-    display: flex;
-    align-items: center;
+    margin-bottom: 4px;
+    display: block;
 }
 .product-card .product-category a {
-    display: inline-flex;
-    align-items: center;
-    font-size: 10.5px;
-    font-weight: 700;
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.35px;
-    color: #8CCF00 !important;
-    background: #f0fdf4;
-    padding: 3px 8px;
-    border-radius: 6px;
+    letter-spacing: 0.3px;
+    color: #15803d !important;
+    background: transparent !important;
+    padding: 0 !important;
+    border-radius: 0;
     text-decoration: none !important;
     transition: all 0.2s ease;
-    border: 1px solid #bbf7d0;
+    border: none !important;
+    box-shadow: none !important;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    line-height: 1.3;
+    line-height: 1.2;
 }
 .product-card .product-category a:hover {
-    background: #8CCF00;
-    border-color: #8CCF00;
-    color: #ffffff !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #0f5132 !important;
+    text-decoration: underline !important;
 }
 
 /* Mobile responsive adjustments */
@@ -343,12 +344,14 @@ window._infiniteInit && window._infiniteInit();
         border-radius: 16px;
     }
     .product-card .product-category {
-        margin-bottom: 4px;
+        margin-bottom: 2px;
     }
     .product-card .product-category a {
-        font-size: 9px;
-        padding: 2px 6px;
-        border-radius: 4px;
+        font-size: 10px;
+        padding: 0 !important;
+        border-radius: 0;
+        border: none !important;
+        background: transparent !important;
     }
 }
 </style>

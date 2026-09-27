@@ -2191,14 +2191,18 @@
     @endif
     <style>
         .product-card .product-category a {
-            color: {{ $setting->primary_color ?? '#8CCF00' }} !important;
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
+            color: #15803d !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
         }
         .product-card .product-category a:hover {
-            background: {{ $setting->primary_color ?? '#8CCF00' }};
-            border-color: {{ $setting->primary_color ?? '#8CCF00' }};
-            color: #ffffff !important;
+            color: #0f5132 !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            text-decoration: underline !important;
         }
     </style>
 @endsection
