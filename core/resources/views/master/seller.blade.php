@@ -127,7 +127,7 @@
                 display: flex !important;
                 align-items: center !important;
                 justify-content: flex-start !important;
-                padding-left: 20px !important;
+                padding-left: 36px !important;
             }
             .main-header .logo-header .logo {
                 display: none !important;
