@@ -1123,7 +1123,7 @@
                 </a>
 
                 @php
-                    $adminUnreadNotifCount = App\Models\Notification::countRegistration() + App\Models\Notification::countOrder();
+                    $adminUnreadNotifCount = App\Models\Notification::totalUnread();
                 @endphp
 
                 <div class="header-right-actions d-flex align-items-center ml-auto">

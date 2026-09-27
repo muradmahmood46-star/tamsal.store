@@ -94,6 +94,19 @@ class WalletController extends Controller
             'status' => 'pending',
         ]);
 
+        // Create notification for admin
+        try {
+            \App\Models\Notification::ensureColumns();
+            \App\Models\Notification::create([
+                'deposit_id' => $deposit->id,
+                'user_id'    => null,
+                'order_id'   => null,
+                'is_read'    => 0,
+            ]);
+        } catch (\Throwable $e) {
+            // Notification table fallback safety
+        }
+
         VendorTransaction::create([
             'seller_id' => $seller->id,
             'user_id' => $user->id,

@@ -687,7 +687,7 @@
         var href = $box.data('href');
         if (href) {
             $box.load(href, function () {
-                $('.badge-counter').text('0').hide();
+                $('.header-bell-wrap .badge-counter, .header-bell-wrap-desktop .badge-counter, #alertsDropdown .badge-counter').text('0').hide();
             });
         }
     });
@@ -709,7 +709,7 @@
                 if (notfUrl) {
                     $box.load(notfUrl);
                 }
-                $('.badge-counter').text('0').hide();
+                $('.header-bell-wrap .badge-counter, .header-bell-wrap-desktop .badge-counter, #alertsDropdown .badge-counter').text('0').hide();
             });
         }
     });

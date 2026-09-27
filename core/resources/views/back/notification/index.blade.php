@@ -1,5 +1,6 @@
 @php
-    $allNotifs = App\Models\Notification::with(['user', 'order'])->orderby('id','desc')->get();
+    App\Models\Notification::ensureColumns();
+    $allNotifs = App\Models\Notification::with(['user', 'order', 'deposit.seller', 'deposit.user'])->orderby('id','desc')->get();
     $notifCount = $allNotifs->count();
 @endphp
 
@@ -15,6 +16,33 @@
 
     <div class="notf-list-scrollable" style="max-height: 280px; overflow-y: auto; -webkit-overflow-scrolling: touch;">
         @foreach($allNotifs as $notf)
+            @if($notf->deposit_id != null)
+                <a class="dropdown-item d-flex align-items-center py-2 px-3 border-bottom text-wrap" href="{{ route('back.deposit_request.index', ['search' => ($notf->deposit && $notf->deposit->txn_id) ? $notf->deposit->txn_id : '']) }}" style="transition: background 0.15s; text-decoration: none;">
+                    <div class="mr-3 flex-shrink-0">
+                        <div class="icon-circle bg-warning text-white d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; border-radius: 50%;">
+                            <i class="fas fa-hand-holding-usd" style="font-size: 14px;"></i>
+                        </div>
+                    </div>
+                    <div style="min-width: 0; flex-grow: 1;">
+                        <div class="font-weight-bold text-dark" style="font-size: 12.5px; line-height: 1.3;">
+                            {{ __('New deposit request received.') }}
+                        </div>
+                        @if($notf->deposit)
+                            <div class="text-muted text-truncate" style="font-size: 11.5px;">
+                                @if($notf->deposit->seller && $notf->deposit->seller->shop_name)
+                                    <span class="font-weight-600 text-dark">{{ $notf->deposit->seller->shop_name }}</span>
+                                @elseif($notf->deposit->user)
+                                    <span class="font-weight-600 text-dark">{{ trim($notf->deposit->user->first_name . ' ' . $notf->deposit->user->last_name) ?: $notf->deposit->user->email }}</span>
+                                @endif
+                                &bull; <span class="text-primary font-weight-bold">{{ \App\Helpers\PriceHelper::adminCurrency() }} {{ number_format((float)$notf->deposit->amount, 2) }}</span>
+                            </div>
+                        @endif
+                        <div class="small text-muted" style="font-size: 10.5px; margin-top: 2px;">
+                            <i class="fas fa-clock mr-1"></i> {{ $notf->created_at ? $notf->created_at->diffForHumans() : '' }}
+                        </div>
+                    </div>
+                </a>
+            @endif
             @if($notf->user_id != null)
                 <a class="dropdown-item d-flex align-items-center py-2 px-3 border-bottom text-wrap" href="{{ route('back.user.show', $notf->user_id) }}" style="transition: background 0.15s; text-decoration: none;">
                     <div class="mr-3 flex-shrink-0">

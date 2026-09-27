@@ -29,7 +29,42 @@
 			@include('alerts.alerts')
             
             <div class="list-group list-group-flush">
-                @forelse(App\Models\Notification::with(['user', 'order'])->orderby('id','desc')->get() as $notf)
+                @forelse(App\Models\Notification::with(['user', 'order', 'deposit.seller', 'deposit.user'])->orderby('id','desc')->get() as $notf)
+                    @if($notf->deposit_id != null)
+                        <div class="list-group-item list-group-item-action d-flex align-items-center justify-content-between py-3 px-3 px-md-4">
+                            <a class="d-flex align-items-center text-decoration-none text-dark flex-grow-1 mr-3" href="{{ route('back.deposit_request.index', ['search' => ($notf->deposit && $notf->deposit->txn_id) ? $notf->deposit->txn_id : '']) }}">
+                                <div class="mr-3 flex-shrink-0">
+                                    <div class="icon-circle bg-warning text-white d-flex align-items-center justify-content-center shadow-sm" style="width: 42px; height: 42px; border-radius: 50%;">
+                                        <i class="fas fa-hand-holding-usd" style="font-size: 16px;"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="font-weight-bold" style="font-size: 14px;">{{ __('New deposit request received.') }}</div>
+                                    @if($notf->deposit)
+                                        <div class="text-muted small">
+                                            @if($notf->deposit->seller && $notf->deposit->seller->shop_name)
+                                                <span class="font-weight-bold text-dark">{{ $notf->deposit->seller->shop_name }}</span>
+                                            @elseif($notf->deposit->user)
+                                                <span class="font-weight-bold text-dark">{{ trim($notf->deposit->user->first_name . ' ' . $notf->deposit->user->last_name) ?: $notf->deposit->user->email }}</span>
+                                            @endif
+                                            &bull; <span class="text-primary font-weight-bold">{{ \App\Helpers\PriceHelper::adminCurrency() }} {{ number_format((float)$notf->deposit->amount, 2) }}</span>
+                                            @if($notf->deposit->txn_id)
+                                                <span class="text-muted">(Txn: {{ $notf->deposit->txn_id }})</span>
+                                            @endif
+                                        </div>
+                                    @endif
+                                    <div class="text-muted" style="font-size: 11px; margin-top: 2px;">
+                                        <i class="fas fa-clock mr-1"></i> {{ $notf->created_at ? $notf->created_at->diffForHumans() : '' }}
+                                    </div>
+                                </div>
+                            </a>
+                            <div class="flex-shrink-0">
+                                <a class="btn btn-outline-danger btn-sm rounded-circle" href="{{route('back.notification.delete',$notf->id)}}" title="{{ __('Delete Notification') }}" style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-trash-alt" style="font-size: 12px;"></i>
+                                </a>
+                            </div>
+                        </div>
+                    @endif
                     @if($notf->user_id != null)
                         <div class="list-group-item list-group-item-action d-flex align-items-center justify-content-between py-3 px-3 px-md-4">
                             <a class="d-flex align-items-center text-decoration-none text-dark flex-grow-1 mr-3" href="{{ route('back.user.show',$notf->user_id) }}">
