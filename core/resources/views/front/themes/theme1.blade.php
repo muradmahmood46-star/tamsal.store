@@ -801,9 +801,9 @@
                 padding-right: 5px;
             }
             .home-promo-card {
-                padding: 12px 10px;
+                padding: 10px 10px;
                 border-radius: 12px;
-                min-height: 120px;
+                min-height: auto;
             }
             .promo-card-inner {
                 display: flex;
@@ -816,22 +816,13 @@
                 width: 100%;
             }
             .promo-badge {
-                display: inline-flex;
-                align-items: center;
-                padding: 3px 8px;
-                font-size: 9.5px;
-                font-weight: 600;
-                margin-bottom: 6px;
-                border-radius: 12px;
-                white-space: normal;
-                line-height: 1.25;
-                max-width: 100%;
+                display: none !important;
             }
             .promo-title {
                 font-size: 13.5px;
                 font-weight: 700;
                 margin-top: 0;
-                margin-bottom: 6px;
+                margin-bottom: 4px;
                 line-height: 1.25;
                 display: block;
                 width: 100%;
