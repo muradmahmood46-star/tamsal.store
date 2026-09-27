@@ -570,7 +570,7 @@
             @media (max-width: 575.98px) {
                 .services-ticker-section {
                     padding: 0 0 5px 0 !important;
-                    margin-top: -15px !important;
+                    margin-top: -20px !important;
                 }
                 .services-ticker-section .container {
                     padding-left: 15px !important;
