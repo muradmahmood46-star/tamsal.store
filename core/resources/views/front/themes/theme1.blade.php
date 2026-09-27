@@ -274,7 +274,8 @@
                     object-fit: cover !important;
                 }
                 .slider-area-wrapper {
-                    padding-top: 10px;
+                    padding-top: 2px !important;
+                    margin-top: -4px !important;
                 }
                 .slider-area-wrapper .container {
                     padding-left: 15px !important;
@@ -287,9 +288,9 @@
                     height: auto !important;
                 }
                 .hero-slider .item {
-                    height: 155px !important;
-                    min-height: 155px !important;
-                    max-height: 165px !important;
+                    height: 175px !important;
+                    min-height: 175px !important;
+                    max-height: 185px !important;
                     aspect-ratio: auto !important;
                     background-size: cover !important;
                     background-position: center center !important;
