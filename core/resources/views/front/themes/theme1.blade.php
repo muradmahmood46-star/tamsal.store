@@ -13,8 +13,6 @@
         @endphp
         @if (!in_array($firstSlideExt, ['json', 'lottie']) && !empty($firstSlidePhoto))
             <link rel="preload" as="image" href="{{ url('/core/public/storage/images/' . $firstSlidePhoto) }}" fetchpriority="high">
-        @elseif (in_array($firstSlideExt, ['json', 'lottie']) && !empty($firstSlidePhoto))
-            <link rel="preload" as="fetch" href="{{ url('/core/public/storage/images/' . $firstSlidePhoto) }}" crossorigin>
         @endif
     @endif
     @if (isset($hero_banner))
@@ -24,14 +22,10 @@
             $hImg2 = $hero_banner['img2'] ?? '';
             $hExt2 = strtolower(pathinfo($hImg2, PATHINFO_EXTENSION));
         @endphp
-        @if (in_array($hExt1, ['json', 'lottie']) && !empty($hImg1))
-            <link rel="preload" as="fetch" href="{{ url('/core/public/storage/images/' . $hImg1) }}" crossorigin>
-        @elseif (!empty($hImg1))
+        @if (!in_array($hExt1, ['json', 'lottie']) && !empty($hImg1))
             <link rel="preload" as="image" href="{{ url('/core/public/storage/images/' . $hImg1) }}">
         @endif
-        @if (in_array($hExt2, ['json', 'lottie']) && !empty($hImg2))
-            <link rel="preload" as="fetch" href="{{ url('/core/public/storage/images/' . $hImg2) }}" crossorigin>
-        @elseif (!empty($hImg2))
+        @if (!in_array($hExt2, ['json', 'lottie']) && !empty($hImg2))
             <link rel="preload" as="image" href="{{ url('/core/public/storage/images/' . $hImg2) }}">
         @endif
     @endif

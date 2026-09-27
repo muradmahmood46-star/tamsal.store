@@ -65,6 +65,31 @@
     <!-- Lottie & dotLottie Web Animation Players -->
     <script src="https://unpkg.com/@lottiefiles/lottie-player@2.0.8/dist/lottie-player.js"></script>
     <script type="module" src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs"></script>
+    <script>
+        (function() {
+            function attachLottieRecovery(el) {
+                if (!el || el.__lottieRecoverAttached) return;
+                el.__lottieRecoverAttached = true;
+                el.addEventListener('error', function(e) {
+                    var retryCount = parseInt(el.dataset.retries || '0', 10);
+                    if (retryCount < 3) {
+                        el.dataset.retries = (retryCount + 1).toString();
+                        var src = el.getAttribute('src');
+                        setTimeout(function() {
+                            if (el.load && typeof el.load === 'function' && src) {
+                                el.load(src);
+                            } else if (src) {
+                                el.setAttribute('src', src);
+                            }
+                        }, 400 * (retryCount + 1));
+                    }
+                });
+            }
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('dotlottie-player, lottie-player').forEach(attachLottieRecovery);
+            });
+        })();
+    </script>
     <!-- Color css -->
     <link
         href="{{ asset('assets/front/css/color.php?primary_color=') . str_replace('#', '', $setting->primary_color) }}"
@@ -78,6 +103,16 @@
     @endif
     <style>
         {{ $setting->custom_css }}
+
+        /* Lottie Player Error Shield & Smoothing */
+        dotlottie-player::part(error),
+        lottie-player::part(error),
+        dotlottie-player [class*="error"],
+        lottie-player [class*="error"] {
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+        }
 
         /* User & Header Dropdown Menu Styling Fix - High Contrast & Visible */
         .menu-top-area .t-h-dropdown-menu,

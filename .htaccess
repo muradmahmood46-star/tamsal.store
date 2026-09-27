@@ -44,8 +44,19 @@
     ExpiresByType font/woff2 "access plus 1 year"
 </IfModule>
 
-# Enable Cache-Control Headers
+# Enable MIME types for Lottie and JSON
+<IfModule mod_mime.c>
+    AddType application/json .json
+    AddType application/zip .lottie
+    AddType application/octet-stream .lottie
+</IfModule>
+
+# Enable Cache-Control & CORS Headers
 <IfModule mod_headers.c>
+    <FilesMatch "\.(lottie|json)$">
+        Header set Access-Control-Allow-Origin "*"
+        Header set Cache-Control "max-age=2592000, public"
+    </FilesMatch>
     <FilesMatch "\.(ico|jpe?g|png|gif|webp|svg|woff|woff2|ttf|css|js)$">
         Header set Cache-Control "max-age=2592000, public"
     </FilesMatch>
