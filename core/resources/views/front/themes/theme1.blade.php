@@ -277,8 +277,12 @@
                 .slider-area-wrapper {
                     padding-top: 10px;
                 }
+                .slider-area-wrapper .container {
+                    padding-left: 15px !important;
+                    padding-right: 15px !important;
+                }
                 .hero-slider {
-                    margin: 0 10px !important;
+                    margin: 0 !important;
                     border-radius: 14px !important;
                 }
                 .hero-slider .item {
@@ -561,8 +565,8 @@
                     margin-top: -15px !important;
                 }
                 .services-ticker-section .container {
-                    padding-left: 20px !important;
-                    padding-right: 20px !important;
+                    padding-left: 15px !important;
+                    padding-right: 15px !important;
                 }
                 .services-ticker-track {
                     animation-duration: {{ max(round($scrollDuration * 0.65), 14) }}s !important;
@@ -792,13 +796,17 @@
                 margin-top: 5px;
                 margin-bottom: 15px;
             }
+            .home-promo-actions-section .container {
+                padding-left: 15px !important;
+                padding-right: 15px !important;
+            }
             .home-promo-actions-section .row {
-                margin-left: -5px;
-                margin-right: -5px;
+                margin-left: -4px !important;
+                margin-right: -4px !important;
             }
             .home-promo-actions-section .col-6 {
-                padding-left: 5px;
-                padding-right: 5px;
+                padding-left: 4px !important;
+                padding-right: 4px !important;
             }
             .home-promo-card {
                 padding: 10px 10px;
