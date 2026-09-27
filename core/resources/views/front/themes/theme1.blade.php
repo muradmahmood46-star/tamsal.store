@@ -43,15 +43,14 @@
         <style>
             /* Hero Slider & Banner Visual Upgrades */
             .hero-slider {
-                background: #f8fafc;
                 border-radius: 14px;
-                min-height: 280px;
             }
             .hero-slider .item {
                 position: relative;
                 overflow: hidden;
-                background-color: #f8fafc;
-                min-height: 280px;
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
             }
             .hero-slider .item::before {
                 content: '';
@@ -283,14 +282,19 @@
                 }
                 .hero-slider {
                     margin: 0 !important;
-                    border-radius: 14px !important;
+                    border-radius: 12px !important;
+                    min-height: unset !important;
+                    height: auto !important;
                 }
                 .hero-slider .item {
-                    height: auto !important;
-                    aspect-ratio: 16 / 9 !important;
+                    height: 155px !important;
+                    min-height: 155px !important;
+                    max-height: 165px !important;
+                    aspect-ratio: auto !important;
                     background-size: cover !important;
-                    background-position: center !important;
-                    min-height: 200px !important;
+                    background-position: center center !important;
+                    background-repeat: no-repeat !important;
+                    border-radius: 12px !important;
                 }
                 .hero-slider .item-inner {
                     padding: 16px 14px !important;
@@ -576,24 +580,24 @@
                     margin-right: 10px;
                 }
                 .services-ticker-item .single-service {
-                    padding: 12px 8px !important;
+                    padding: 8px 6px !important;
                     border-radius: 8px;
                 }
                 .services-ticker-item .single-service img {
-                    max-width: 34px !important;
-                    height: 34px !important;
-                    margin-bottom: 6px !important;
+                    max-width: 28px !important;
+                    height: 28px !important;
+                    margin-bottom: 4px !important;
                 }
                 .services-ticker-item .single-service .content {
-                    margin-top: 2px !important;
+                    margin-top: 0 !important;
                 }
                 .services-ticker-item .single-service h6 {
-                    font-size: 11.5px !important;
-                    margin-bottom: 3px !important;
+                    font-size: 11px !important;
+                    margin-bottom: 2px !important;
                     line-height: 1.2 !important;
                 }
                 .services-ticker-item .single-service p {
-                    font-size: 9.5px !important;
+                    font-size: 9px !important;
                     line-height: 1.2 !important;
                 }
             }
