@@ -274,8 +274,17 @@
                     object-fit: cover !important;
                 }
                 .slider-area-wrapper {
-                    padding-top: 2px !important;
-                    margin-top: -4px !important;
+                    padding-top: 8px !important;
+                    margin-top: 0 !important;
+                    position: relative;
+                }
+                .slider-area-wrapper::before {
+                    content: '';
+                    display: block;
+                    width: 100%;
+                    height: 2px;
+                    background: linear-gradient(90deg, rgba(37, 99, 235, 0.15) 0%, #2563eb 25%, #3b82f6 50%, #2563eb 75%, rgba(37, 99, 235, 0.15) 100%);
+                    margin-bottom: 8px;
                 }
                 .slider-area-wrapper .container {
                     padding-left: 15px !important;
