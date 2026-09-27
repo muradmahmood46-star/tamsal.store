@@ -402,57 +402,210 @@
     @endif
 
 
-    @if ($setting->is_service == 1)
+    @if ($setting->is_service == 1 && count($services) > 0)
+        @php
+            $rawServices = $services;
+            $serviceCount = count($rawServices);
+            $repeatMultiplier = $serviceCount < 2 ? 4 : ($serviceCount < 4 ? 2 : 1);
+            $tickerGroup = [];
+            for ($r = 0; $r < $repeatMultiplier; $r++) {
+                foreach ($rawServices as $s) {
+                    $tickerGroup[] = $s;
+                }
+            }
+            $scrollDuration = max(count($tickerGroup) * 7, 22);
+        @endphp
         <style>
-            @media (max-width: 575px) {
-                .mobile-compact-service {
-                    padding: 10px 5px !important;
-                    flex-direction: column !important;
-                    text-align: center !important;
-                    justify-content: center !important;
+            .services-ticker-section {
+                padding: 15px 0 10px 0 !important;
+                overflow: hidden !important;
+                width: 100% !important;
+                position: relative !important;
+                box-sizing: border-box !important;
+            }
+            .services-ticker-wrapper {
+                overflow: hidden !important;
+                width: 100% !important;
+                position: relative !important;
+                mask-image: linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%);
+                -webkit-mask-image: linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%);
+            }
+            .services-ticker-track {
+                display: flex !important;
+                width: max-content !important;
+                will-change: transform !important;
+                animation: servicesTickerScroll {{ $scrollDuration }}s linear infinite !important;
+            }
+            .services-ticker-track:hover {
+                animation-play-state: paused !important;
+            }
+            .services-ticker-group {
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                align-items: stretch !important;
+            }
+            .services-ticker-item {
+                flex-shrink: 0 !important;
+                width: 275px;
+                margin-right: 18px;
+                display: flex;
+            }
+            .services-ticker-item .single-service {
+                width: 100%;
+                background: #ffffff;
+                border-radius: 10px;
+                padding: 18px 16px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+                border: 1px solid #f1f5f9;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                transition: transform 0.25s ease, box-shadow 0.25s ease;
+                box-sizing: border-box;
+            }
+            .services-ticker-item .single-service:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
+            }
+            .services-ticker-item .single-service img {
+                max-width: 48px;
+                height: 48px;
+                object-fit: contain;
+                margin-bottom: 10px;
+                flex-shrink: 0;
+            }
+            .services-ticker-item .single-service .content {
+                text-align: center;
+                width: 100%;
+            }
+            .services-ticker-item .single-service h6 {
+                font-size: 14px;
+                font-weight: 600;
+                color: #1e293b;
+                margin-bottom: 4px;
+                line-height: 1.3;
+            }
+            .services-ticker-item .single-service p {
+                font-size: 12px;
+                color: #64748b;
+                margin-bottom: 0;
+                line-height: 1.35;
+            }
+
+            @media (max-width: 991.98px) {
+                .services-ticker-item {
+                    width: 230px;
+                    margin-right: 14px;
                 }
-                .mobile-compact-service img {
-                    max-width: 35px !important;
-                    height: auto !important;
-                    margin-bottom: 8px !important;
-                    margin-right: 0 !important;
-                    flex-shrink: 0 !important;
-                    object-fit: contain !important;
+                .services-ticker-item .single-service {
+                    padding: 15px 12px;
                 }
-                .mobile-compact-service .content {
-                    text-align: center !important;
-                    margin-top: 5px !important;
+                .services-ticker-item .single-service img {
+                    max-width: 40px;
+                    height: 40px;
+                    margin-bottom: 8px;
                 }
-                .mobile-compact-service h6 {
-                    font-size: 12px !important;
-                    margin-bottom: 4px !important;
+                .services-ticker-item .single-service h6 {
+                    font-size: 13px;
+                }
+                .services-ticker-item .single-service p {
+                    font-size: 11px;
+                }
+            }
+
+            @media (max-width: 575.98px) {
+                .services-ticker-section {
+                    padding: 10px 0 5px 0 !important;
+                }
+                .services-ticker-item {
+                    width: 175px;
+                    margin-right: 10px;
+                }
+                .services-ticker-item .single-service {
+                    padding: 12px 8px !important;
+                    border-radius: 8px;
+                }
+                .services-ticker-item .single-service img {
+                    max-width: 34px !important;
+                    height: 34px !important;
+                    margin-bottom: 6px !important;
+                }
+                .services-ticker-item .single-service .content {
+                    margin-top: 2px !important;
+                }
+                .services-ticker-item .single-service h6 {
+                    font-size: 11.5px !important;
+                    margin-bottom: 3px !important;
                     line-height: 1.2 !important;
                 }
-                .mobile-compact-service p {
-                    font-size: 10px !important;
+                .services-ticker-item .single-service p {
+                    font-size: 9.5px !important;
                     line-height: 1.2 !important;
                 }
-                .service-section .col-6 {
-                    padding-right: 5px;
-                    padding-left: 5px;
-                    margin-bottom: 10px !important;
+            }
+
+            @keyframes servicesTickerScroll {
+                0% {
+                    transform: translate3d(0, 0, 0);
+                }
+                100% {
+                    transform: translate3d(-50%, 0, 0);
                 }
             }
         </style>
-        <section class="service-section">
-            <div class="container">
-                <div class="row" style="margin-left: -5px; margin-right: -5px;">
-                    @foreach ($services as $service)
-                        <div class="col-6 col-lg-3 text-center mb-30">
-                            <div class="single-service single-service2 mobile-compact-service" style="height: 100%;">
-                                <img src="{{ url('/core/public/storage/images/' . $service->photo) }}" alt="Shipping">
-                                <div class="content">
-                                    <h6 class="mb-2">{{ $service->title }}</h6>
-                                    <p class="text-sm text-muted mb-0">{{ $service->details }}</p>
+        <section class="service-section services-ticker-section">
+            <div class="container-fluid px-0">
+                <div class="services-ticker-wrapper">
+                    <div class="services-ticker-track">
+                        {{-- Group 1 --}}
+                        <div class="services-ticker-group">
+                            @foreach ($tickerGroup as $service)
+                                <div class="services-ticker-item">
+                                    <div class="single-service single-service2 mobile-compact-service">
+                                        @php
+                                            $srv_ext = strtolower(pathinfo($service->photo ?? '', PATHINFO_EXTENSION));
+                                        @endphp
+                                        @if ($srv_ext == 'lottie')
+                                            <dotlottie-player src="{{ url('/core/public/storage/images/' . $service->photo) }}" background="transparent" speed="1" loop autoplay style="max-width: 45px; height: 45px; margin: 0 auto 8px; display: block;"></dotlottie-player>
+                                        @elseif ($srv_ext == 'json')
+                                            <lottie-player src="{{ url('/core/public/storage/images/' . $service->photo) }}" background="transparent" speed="1" loop autoplay style="max-width: 45px; height: 45px; margin: 0 auto 8px; display: block;"></lottie-player>
+                                        @else
+                                            <img src="{{ url('/core/public/storage/images/' . $service->photo) }}" alt="{{ $service->title }}">
+                                        @endif
+                                        <div class="content">
+                                            <h6>{{ $service->title }}</h6>
+                                            <p class="text-muted">{{ $service->details }}</p>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            @endforeach
                         </div>
-                    @endforeach
+                        {{-- Group 2 (Clone for infinite seamless loop) --}}
+                        <div class="services-ticker-group" aria-hidden="true">
+                            @foreach ($tickerGroup as $service)
+                                <div class="services-ticker-item">
+                                    <div class="single-service single-service2 mobile-compact-service">
+                                        @php
+                                            $srv_ext = strtolower(pathinfo($service->photo ?? '', PATHINFO_EXTENSION));
+                                        @endphp
+                                        @if ($srv_ext == 'lottie')
+                                            <dotlottie-player src="{{ url('/core/public/storage/images/' . $service->photo) }}" background="transparent" speed="1" loop autoplay style="max-width: 45px; height: 45px; margin: 0 auto 8px; display: block;"></dotlottie-player>
+                                        @elseif ($srv_ext == 'json')
+                                            <lottie-player src="{{ url('/core/public/storage/images/' . $service->photo) }}" background="transparent" speed="1" loop autoplay style="max-width: 45px; height: 45px; margin: 0 auto 8px; display: block;"></lottie-player>
+                                        @else
+                                            <img src="{{ url('/core/public/storage/images/' . $service->photo) }}" alt="{{ $service->title }}">
+                                        @endif
+                                        <div class="content">
+                                            <h6>{{ $service->title }}</h6>
+                                            <p class="text-muted">{{ $service->details }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
