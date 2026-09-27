@@ -402,9 +402,11 @@
     @endif
 
 
-    @if ($setting->is_service == 1 && count($services) > 0)
+    @php
+        $rawServices = (isset($services) && count($services) > 0) ? $services : \App\Models\Service::orderby('id', 'desc')->get();
+    @endphp
+    @if (count($rawServices) > 0)
         @php
-            $rawServices = $services;
             $serviceCount = count($rawServices);
             $repeatMultiplier = $serviceCount < 2 ? 4 : ($serviceCount < 4 ? 2 : 1);
             $tickerGroup = [];
