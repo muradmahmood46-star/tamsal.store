@@ -291,9 +291,9 @@
                     height: auto !important;
                 }
                 .hero-slider .item {
-                    height: 175px !important;
-                    min-height: 175px !important;
-                    max-height: 185px !important;
+                    height: 188px !important;
+                    min-height: 188px !important;
+                    max-height: 198px !important;
                     aspect-ratio: auto !important;
                     background-size: cover !important;
                     background-position: center center !important;
