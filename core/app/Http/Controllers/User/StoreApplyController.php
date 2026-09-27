@@ -23,7 +23,8 @@ class StoreApplyController extends Controller
         $user = Auth::user();
 
         // If user is already approved as seller
-        if ($user->isSeller()) {
+        $seller = \App\Models\Seller::where('user_id', $user->id)->first();
+        if ($user->isSeller() && $seller) {
             return redirect()->route('seller.dashboard')->withSuccess(__('You are already an approved seller. Welcome to your store dashboard!'));
         }
 
@@ -42,9 +43,10 @@ class StoreApplyController extends Controller
             } elseif ($latestRequest->status == 'Rejected') {
                 return view('user.store.status', compact('user', 'latestRequest'));
             } elseif ($latestRequest->status == 'Approved') {
-                // In case status is approved but is_seller flag wasn't synced
-                $user->update(['is_seller' => 1]);
-                return redirect()->route('seller.dashboard');
+                if ($seller) {
+                    $user->update(['is_seller' => 1]);
+                    return redirect()->route('seller.dashboard');
+                }
             }
         }
 

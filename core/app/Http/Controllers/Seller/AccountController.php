@@ -19,13 +19,7 @@ class AccountController extends Controller
     public function profile()
     {
         $user = Auth::user();
-        $seller = Seller::firstOrCreate(['user_id' => $user->id], [
-            'shop_name' => $user->first_name . '\'s Store',
-            'shop_address' => $user->ship_address1 ?: '',
-            'shop_phone' => $user->phone ?: '',
-            'shop_email' => $user->email ?: '',
-            'status' => 1
-        ]);
+        $seller = Seller::where('user_id', $user->id)->firstOrFail();
 
         return view('seller.profile.index', compact('user', 'seller'));
     }

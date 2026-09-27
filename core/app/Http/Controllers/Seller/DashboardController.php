@@ -376,13 +376,10 @@ class DashboardController extends Controller
     public function index()
     {
         $vendorId = Auth::id();
-        $seller = Seller::firstOrCreate(['user_id' => $vendorId], [
-            'shop_name' => Auth::user()->first_name . '\'s Store',
-            'shop_address' => Auth::user()->ship_address1 ?: '',
-            'shop_phone' => Auth::user()->phone ?: '',
-            'shop_email' => Auth::user()->email ?: '',
-            'status' => 1
-        ]);
+        $seller = Seller::where('user_id', $vendorId)->first();
+        if (!$seller) {
+            return redirect()->route('user.store.apply')->withErrors(__('You must have an approved store application to access the Seller Dashboard.'));
+        }
 
         $totalProducts = Item::where('vendor_id', $vendorId)->count();
         $totalCategories = Category::where('vendor_id', $vendorId)->count();

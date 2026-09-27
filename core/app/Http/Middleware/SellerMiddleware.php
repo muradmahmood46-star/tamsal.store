@@ -21,7 +21,8 @@ class SellerMiddleware
             return redirect()->route('user.login');
         }
 
-        if (!Auth::user()->isSeller()) {
+        $seller = \App\Models\Seller::where('user_id', Auth::id())->first();
+        if (!Auth::user()->isSeller() || !$seller) {
             return redirect()->route('user.store.apply')->withErrors(__('You must have an approved store application to access the Seller Dashboard.'));
         }
 
