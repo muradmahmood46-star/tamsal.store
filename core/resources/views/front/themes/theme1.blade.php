@@ -521,6 +521,10 @@
                 .services-ticker-section {
                     padding: 10px 0 5px 0 !important;
                 }
+                .services-ticker-section .container {
+                    padding-left: 20px !important;
+                    padding-right: 20px !important;
+                }
                 .services-ticker-item {
                     width: 175px;
                     margin-right: 10px;
