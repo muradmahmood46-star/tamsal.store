@@ -558,7 +558,7 @@
             }
         </style>
         <section class="service-section services-ticker-section">
-            <div class="container-fluid px-0">
+            <div class="container">
                 <div class="services-ticker-wrapper">
                     <div class="services-ticker-track">
                         {{-- Group 1 --}}
