@@ -202,13 +202,22 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="action-btn-group">
+                                        <!-- View Store Details Modal -->
+                                        <button type="button" 
+                                                class="btn btn-info btn-sm font-weight-bold shadow-sm" 
+                                                data-toggle="modal" 
+                                                data-target="#storeDetailsModal{{ $seller->id }}" 
+                                                title="{{ __('View Store Details') }}">
+                                            <i class="fas fa-eye mr-1"></i> {{ __('View') }}
+                                        </button>
+
                                         <!-- Login As Store (Impersonate) -->
                                         <a href="{{ route('back.stores.loginAs', $seller->id) }}" 
                                            target="_blank"
                                            class="btn btn-success btn-sm font-weight-bold shadow-sm" 
                                            title="{{ __('Login as Store (Open Vendor Panel)') }}"
                                            onclick="return confirm('Open vendor panel and login as {{ addslashes($seller->shop_name) }}?');">
-                                            <i class="fas fa-sign-in-alt mr-1"></i> {{ __('Login as Store') }}
+                                            <i class="fas fa-sign-in-alt mr-1"></i> {{ __('Login') }}
                                         </a>
 
                                         <!-- Toggle Status (Block/Unblock) -->
@@ -227,6 +236,173 @@
                                                 </button>
                                             </form>
                                         @endif
+
+                                        <!-- Delete Store -->
+                                        <form action="{{ route('back.stores.destroy', $seller->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to permanently delete store &quot;{{ addslashes($seller->shop_name) }}&quot;?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-outline-danger btn-sm" title="{{ __('Delete Store') }}">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                    <!-- Store Details Modal -->
+                                    <div class="modal fade" id="storeDetailsModal{{ $seller->id }}" tabindex="-1" role="dialog" aria-labelledby="storeDetailsModalLabel{{ $seller->id }}" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg modal-dialog-centered text-left" role="document">
+                                            <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
+                                                <div class="modal-header bg-primary text-white py-3 px-4">
+                                                    <div class="d-flex align-items-center">
+                                                        <img src="{{ $seller->logoUrl() }}" alt="Logo" class="rounded-circle mr-3 border bg-white shadow-sm" style="width: 48px; height: 48px; object-fit: cover;">
+                                                        <div>
+                                                            <h5 class="modal-title font-weight-bold text-white mb-0" id="storeDetailsModalLabel{{ $seller->id }}">
+                                                                {{ $seller->shop_name }}
+                                                            </h5>
+                                                            <small class="text-white-50">
+                                                                {{ __('Store ID') }}: #{{ $seller->id }} &bull; 
+                                                                @if($seller->status == 1)
+                                                                    <span class="badge badge-success">{{ __('Active') }}</span>
+                                                                @else
+                                                                    <span class="badge badge-danger">{{ __('Blocked') }}</span>
+                                                                @endif
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                    <button type="button" class="close text-white opacity-1" data-dismiss="modal" aria-label="Close" style="opacity: 0.9;">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body p-4" style="max-height: 75vh; overflow-y: auto;">
+                                                    @if($seller->bannerUrl())
+                                                        <div class="mb-3 rounded overflow-hidden shadow-sm" style="max-height: 160px;">
+                                                            <img src="{{ $seller->bannerUrl() }}" alt="Banner" class="w-100 h-100" style="object-fit: cover;">
+                                                        </div>
+                                                    @endif
+
+                                                    <div class="row">
+                                                        <!-- Left: Store Information -->
+                                                        <div class="col-md-6 mb-3">
+                                                            <div class="card border-0 bg-light h-100 shadow-none">
+                                                                <div class="card-body p-3">
+                                                                    <h6 class="font-weight-bold text-primary mb-3 border-bottom pb-2">
+                                                                        <i class="fas fa-store mr-1"></i> {{ __('Store Details') }}
+                                                                    </h6>
+                                                                    <table class="table table-sm table-borderless mb-0" style="font-size: 13px;">
+                                                                        <tr>
+                                                                            <td class="text-muted font-weight-bold" style="width: 40%;">{{ __('Shop Name') }}:</td>
+                                                                            <td class="text-dark font-weight-bold">{{ $seller->shop_name }}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td class="text-muted font-weight-bold">{{ __('Shop Email') }}:</td>
+                                                                            <td class="text-dark">{{ $seller->shop_email ?: 'N/A' }}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td class="text-muted font-weight-bold">{{ __('Shop Phone') }}:</td>
+                                                                            <td class="text-dark">{{ $seller->shop_phone ?: 'N/A' }}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td class="text-muted font-weight-bold">{{ __('Address') }}:</td>
+                                                                            <td class="text-dark">{{ $seller->shop_address ?: 'N/A' }}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td class="text-muted font-weight-bold">{{ __('Courier Company') }}:</td>
+                                                                            <td class="text-dark">{{ $seller->courier_company ?: 'N/A' }}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td class="text-muted font-weight-bold">{{ __('Product Types') }}:</td>
+                                                                            <td class="text-dark">{{ $seller->product_types ?: 'N/A' }}</td>
+                                                                        </tr>
+                                                                        @if($seller->shop_details)
+                                                                            <tr>
+                                                                                <td class="text-muted font-weight-bold">{{ __('About Store') }}:</td>
+                                                                                <td class="text-dark">{{ $seller->shop_details }}</td>
+                                                                            </tr>
+                                                                        @endif
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Right: Owner & Performance Stats -->
+                                                        <div class="col-md-6 mb-3">
+                                                            <div class="card border-0 bg-light h-100 shadow-none">
+                                                                <div class="card-body p-3">
+                                                                    <h6 class="font-weight-bold text-primary mb-3 border-bottom pb-2">
+                                                                        <i class="fas fa-user-circle mr-1"></i> {{ __('Owner & Statistics') }}
+                                                                    </h6>
+                                                                    <table class="table table-sm table-borderless mb-0" style="font-size: 13px;">
+                                                                        <tr>
+                                                                            <td class="text-muted font-weight-bold" style="width: 40%;">{{ __('Owner Name') }}:</td>
+                                                                            <td>
+                                                                                @if($owner && !empty($owner->id))
+                                                                                    <a href="{{ route('back.user.show', $owner->id) }}" class="font-weight-bold text-primary" target="_blank">
+                                                                                        {{ $owner->first_name }} {{ $owner->last_name }} <i class="fas fa-external-link-alt small ml-1"></i>
+                                                                                    </a>
+                                                                                @else
+                                                                                    <span class="text-muted">N/A</span>
+                                                                                @endif
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td class="text-muted font-weight-bold">{{ __('User ID') }}:</td>
+                                                                            <td class="text-dark">{{ $owner ? ('#' . $owner->id) : 'N/A' }}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td class="text-muted font-weight-bold">{{ __('Owner Email') }}:</td>
+                                                                            <td class="text-dark">{{ $owner->email ?? 'N/A' }}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td class="text-muted font-weight-bold">{{ __('Owner Phone') }}:</td>
+                                                                            <td class="text-dark">{{ $owner->phone ?? 'N/A' }}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td class="text-muted font-weight-bold">{{ __('Wallet Balance') }}:</td>
+                                                                            <td>
+                                                                                <span class="badge badge-success font-weight-bold" style="font-size: 13px; padding: 4px 8px;">
+                                                                                    {{ PriceHelper::adminCurrency() }} {{ number_format($seller->balance ?? 0, 2) }}
+                                                                                </span>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td class="text-muted font-weight-bold">{{ __('Total Products') }}:</td>
+                                                                            <td class="font-weight-bold text-dark">{{ $seller->total_products_count ?? 0 }}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td class="text-muted font-weight-bold">{{ __('Total Orders') }}:</td>
+                                                                            <td class="font-weight-bold text-dark">
+                                                                                {{ $seller->total_orders_count ?? 0 }}
+                                                                                @if(isset($seller->pending_orders_count) && $seller->pending_orders_count > 0)
+                                                                                    <span class="badge badge-warning ml-1">{{ $seller->pending_orders_count }} {{ __('pending') }}</span>
+                                                                                @endif
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td class="text-muted font-weight-bold">{{ __('Registered On') }}:</td>
+                                                                            <td class="text-dark">{{ $seller->created_at ? $seller->created_at->format('M d, Y - h:i A') : 'N/A' }}</td>
+                                                                        </tr>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer bg-light py-2 px-4 justify-content-between">
+                                                    <div>
+                                                        @if($seller->user_id)
+                                                            <a href="{{ route('front.catalog', ['vendor' => $seller->user_id]) }}" target="_blank" class="btn btn-outline-primary btn-sm font-weight-bold">
+                                                                <i class="fas fa-external-link-alt mr-1"></i> {{ __('Public Storefront') }}
+                                                            </a>
+                                                        @endif
+                                                    </div>
+                                                    <div class="d-flex align-items-center">
+                                                        <a href="{{ route('back.stores.loginAs', $seller->id) }}" target="_blank" class="btn btn-success btn-sm font-weight-bold mr-2" onclick="return confirm('Open vendor panel and login as {{ addslashes($seller->shop_name) }}?');">
+                                                            <i class="fas fa-sign-in-alt mr-1"></i> {{ __('Login as Store') }}
+                                                        </a>
+                                                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">{{ __('Close') }}</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
