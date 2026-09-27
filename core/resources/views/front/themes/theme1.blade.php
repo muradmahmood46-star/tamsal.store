@@ -526,6 +526,9 @@
                     padding-left: 20px !important;
                     padding-right: 20px !important;
                 }
+                .services-ticker-track {
+                    animation-duration: {{ max(round($scrollDuration * 0.65), 14) }}s !important;
+                }
                 .services-ticker-item {
                     width: 175px;
                     margin-right: 10px;
