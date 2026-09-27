@@ -4,16 +4,54 @@
     <meta name="description" content="{{ $setting->meta_description }}">
 @endsection
 
-@section('content')
+@section('styles')
+    @if ($setting->is_slider == 1 && isset($sliders) && count($sliders) > 0)
+        @php
+            $firstSlide = $sliders[0];
+            $firstSlidePhoto = $firstSlide->photo ?? '';
+            $firstSlideExt = strtolower(pathinfo($firstSlidePhoto, PATHINFO_EXTENSION));
+        @endphp
+        @if (!in_array($firstSlideExt, ['json', 'lottie']) && !empty($firstSlidePhoto))
+            <link rel="preload" as="image" href="{{ url('/core/public/storage/images/' . $firstSlidePhoto) }}" fetchpriority="high">
+        @elseif (in_array($firstSlideExt, ['json', 'lottie']) && !empty($firstSlidePhoto))
+            <link rel="preload" as="fetch" href="{{ url('/core/public/storage/images/' . $firstSlidePhoto) }}" crossorigin>
+        @endif
+    @endif
+    @if (isset($hero_banner))
+        @php
+            $hImg1 = $hero_banner['img1'] ?? '';
+            $hExt1 = strtolower(pathinfo($hImg1, PATHINFO_EXTENSION));
+            $hImg2 = $hero_banner['img2'] ?? '';
+            $hExt2 = strtolower(pathinfo($hImg2, PATHINFO_EXTENSION));
+        @endphp
+        @if (in_array($hExt1, ['json', 'lottie']) && !empty($hImg1))
+            <link rel="preload" as="fetch" href="{{ url('/core/public/storage/images/' . $hImg1) }}" crossorigin>
+        @elseif (!empty($hImg1))
+            <link rel="preload" as="image" href="{{ url('/core/public/storage/images/' . $hImg1) }}">
+        @endif
+        @if (in_array($hExt2, ['json', 'lottie']) && !empty($hImg2))
+            <link rel="preload" as="fetch" href="{{ url('/core/public/storage/images/' . $hImg2) }}" crossorigin>
+        @elseif (!empty($hImg2))
+            <link rel="preload" as="image" href="{{ url('/core/public/storage/images/' . $hImg2) }}">
+        @endif
+    @endif
+@endsection
 
-    <script type="module" src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs"></script>
+@section('content')
 
     @if ($setting->is_slider == 1)
         <style>
             /* Hero Slider & Banner Visual Upgrades */
+            .hero-slider {
+                background: #f8fafc;
+                border-radius: 14px;
+                min-height: 280px;
+            }
             .hero-slider .item {
                 position: relative;
                 overflow: hidden;
+                background-color: #f8fafc;
+                min-height: 280px;
             }
             .hero-slider .item::before {
                 content: '';

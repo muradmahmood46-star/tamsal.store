@@ -49,6 +49,10 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{{ $favUrl }}?v={{ $favVersion }}">
     <link rel="apple-touch-icon" sizes="167x167" href="{{ $favUrl }}?v={{ $favVersion }}">
 
+    <!-- Preconnect & DNS-Prefetch for Fast CDN and Asset Delivery -->
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="dns-prefetch" href="https://unpkg.com">
+
     <!-- Vendor Styles including: Bootstrap, Font Icons, Plugins, etc.-->
     <link rel="stylesheet" media="screen" href="{{ asset('assets/front/css/plugins.min.css') }}">
 
@@ -59,8 +63,8 @@
     <link rel="stylesheet" media="screen" href="{{ asset('assets/front/css/responsive.css') }}?v={{ time() }}">
 
     <!-- Lottie & dotLottie Web Animation Players -->
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-    <script type="module" src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@2.0.8/dist/lottie-player.js"></script>
+    <script type="module" src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs"></script>
     <!-- Color css -->
     <link
         href="{{ asset('assets/front/css/color.php?primary_color=') . str_replace('#', '', $setting->primary_color) }}"

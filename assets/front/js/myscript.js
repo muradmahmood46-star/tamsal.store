@@ -90,11 +90,9 @@ $(function ($) {
         }
 
         $hero_slider_main.on('initialized.owl.carousel', function () {
-            setTimeout(function () {
-                $hero_slider_main.find('[data-slider-background]').each(function () {
-                    loadHeroSliderBackground($(this));
-                });
-            }, 500);
+            $hero_slider_main.find('[data-slider-background]').each(function () {
+                loadHeroSliderBackground($(this));
+            });
         });
 
         $hero_slider_main.owlCarousel({
