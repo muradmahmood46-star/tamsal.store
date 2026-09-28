@@ -383,6 +383,30 @@
                             <i class="fas fa-shield-alt text-primary mr-1"></i> {{ __('Only for internal admin/vendor calculations (never shown to buyers/users on product page). When an order with this product is accepted, this profit is added to total earnings.') }}
                         </small>
                     </div>
+                    <div class="form-group">
+                        <label for="product_from" class="font-weight-bold text-info d-flex flex-wrap align-items-center justify-content-between" style="gap: 6px;">
+                            <span><i class="fas fa-truck-loading mr-1"></i> {{ __('Product From') }}</span>
+                            <span class="badge badge-secondary text-white" style="font-size: 11px; padding: 4px 8px; border-radius: 4px;">{{ __('Admin Only (Dropshipping)') }}</span>
+                        </label>
+                        <input type="text" name="product_from" class="form-control"
+                            id="product_from" placeholder="{{ __('Enter supplier/seller name (e.g. Ali Express, Local Wholesaler)') }}"
+                            value="{{ old('product_from', $item->product_from ?? '') }}">
+                        <small class="form-text text-muted font-italic">
+                            <i class="fas fa-user-secret text-secondary mr-1"></i> {{ __('Internal dropshipping supplier name. Visible ONLY to admin.') }}
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact_number" class="font-weight-bold text-info d-flex flex-wrap align-items-center justify-content-between" style="gap: 6px;">
+                            <span><i class="fas fa-phone-alt mr-1"></i> {{ __('Contact Number') }}</span>
+                            <span class="badge badge-secondary text-white" style="font-size: 11px; padding: 4px 8px; border-radius: 4px;">{{ __('Admin Only (Dropshipping)') }}</span>
+                        </label>
+                        <input type="text" name="contact_number" class="form-control"
+                            id="contact_number" placeholder="{{ __('Enter supplier/seller contact number (e.g. 03001234567)') }}"
+                            value="{{ old('contact_number', $item->contact_number ?? '') }}">
+                        <small class="form-text text-muted font-italic">
+                            <i class="fas fa-phone text-secondary mr-1"></i> {{ __('Supplier contact number for quick order fulfillment. Visible ONLY to admin.') }}
+                        </small>
+                    </div>
                 </div>
             </div>
         </div>

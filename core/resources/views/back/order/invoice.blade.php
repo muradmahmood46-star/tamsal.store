@@ -382,7 +382,31 @@
                                     @endphp
                                     <tr>
                                         <td class="px-0">
-                                            {{$item['name']}}
+                                            <div class="font-weight-bold text-dark">{{$item['name']}}</div>
+                                            @if($productModel && (!empty($productModel->product_from) || !empty($productModel->contact_number)))
+                                                <div class="mt-2 p-2 rounded bg-light border" style="font-size: 12px; line-height: 1.4; border-left: 3px solid #17a2b8 !important; max-width: 320px;">
+                                                    @if(!empty($productModel->product_from))
+                                                        <div class="text-dark">
+                                                            <span class="font-weight-bold text-info"><i class="fas fa-truck-loading mr-1"></i> {{ __('Product From') }}:</span>
+                                                            <span class="font-weight-bold">{{ $productModel->product_from }}</span>
+                                                        </div>
+                                                    @endif
+                                                    @if(!empty($productModel->contact_number))
+                                                        <div class="text-dark mt-1">
+                                                            <span class="font-weight-bold text-info"><i class="fas fa-phone-alt mr-1"></i> {{ __('Contact Number') }}:</span>
+                                                            <a href="tel:{{ $productModel->contact_number }}" class="font-weight-bold text-primary">{{ $productModel->contact_number }}</a>
+                                                            @php
+                                                                $cleanPhone = preg_replace('/[^0-9]/', '', $productModel->contact_number);
+                                                            @endphp
+                                                            @if(!empty($cleanPhone))
+                                                                <a href="https://wa.me/{{ $cleanPhone }}" target="_blank" class="badge badge-success ml-1 text-white" style="font-size: 11px; padding: 2px 6px;">
+                                                                    <i class="fab fa-whatsapp"></i> WhatsApp
+                                                                </a>
+                                                            @endif
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            @endif
                                         </td>
                                         <td class="px-0">
                                             @if(!empty($item['attribute']['option_name']))

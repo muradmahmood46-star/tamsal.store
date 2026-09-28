@@ -37,6 +37,9 @@ class AffiliateRequest extends FormRequest
             'sort_details'    => 'required',
             'discount_price'  => 'required|max:50',
             'previous_price'  => 'max:50',
+            'estimated_profit' => 'nullable|numeric|min:0',
+            'product_from'    => 'nullable|string|max:255',
+            'contact_number'  => 'nullable|string|max:100',
             'photo'           => [$required, 'mimes:jpeg,jpg,png,svg,webp,gif,bmp,tiff,tif,avif,ico,jfif,heic,heif']
         ];
     }

@@ -84,6 +84,8 @@ class ItemRequest extends FormRequest
             'previous_price'  => 'nullable|max:50',
             'stock'           => 'nullable|numeric|max:9999999999',
             'estimated_profit' => 'nullable|numeric|min:0',
+            'product_from'    => 'nullable|string|max:255',
+            'contact_number'  => 'nullable|string|max:100',
             'tax_id'          => 'nullable',
             'photo'           => [$required, 'mimes:jpeg,jpg,png,svg,webp,gif,bmp,tiff,tif,avif,ico,jfif,heic,heif']
         ];
