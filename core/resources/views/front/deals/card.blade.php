@@ -44,7 +44,7 @@
                         $savedPrice = (float)$deal->original_price - (float)$deal->discounted_price;
                     @endphp
                     @if($savedPrice > 0)
-                        <span class="font-weight-bold text-nowrap" style="font-size: 10.5px; color: #dc2626; background: #fee2e2; border: 1px solid #fecaca; padding: 1px 6px; border-radius: 4px;">
+                        <span class="font-weight-bold text-nowrap" style="font-size: 10.5px; color: #15803d; background: #dcfce7; border: 1px solid #bbf7d0; padding: 1px 6px; border-radius: 4px;">
                             {{ __('Save') }} {{ PriceHelper::setCurrencyPrice($savedPrice) }}
                         </span>
                     @endif
