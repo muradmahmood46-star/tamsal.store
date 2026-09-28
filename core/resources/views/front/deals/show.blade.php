@@ -689,4 +689,5 @@
         setInteractiveRating(5);
     });
 </script>
+@include('front.deals.countdown-script')
 @endsection

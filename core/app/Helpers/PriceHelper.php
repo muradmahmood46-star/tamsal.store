@@ -110,6 +110,29 @@ class PriceHelper
         }
     }
 
+    public static function setIntegerCurrencyPrice($price)
+    {
+        if (Session::has('currency')) {
+            $curr = Currency::find(Session::get('currency'));
+        }
+        if (empty($curr)) {
+            $curr = Currency::where('is_default', 1)->first();
+        }
+
+        $setting = Setting::first();
+        $currVal = $curr ? self::parsePrice($curr->value) : 1;
+        $currSign = $curr ? $curr->sign : '';
+        $intPrice = round(self::parsePrice($price) * $currVal);
+        $thSep = ($setting && $setting->thousand_separator) ? $setting->thousand_separator : ',';
+        $formatted = number_format($intPrice, 0, '.', $thSep);
+
+        if ($setting && $setting->currency_direction == 1) {
+            return $currSign . $formatted;
+        } else {
+            return $formatted . $currSign;
+        }
+    }
+
     public static function setPreviousPrice($price)
     {
         if (Session::has('currency')) {

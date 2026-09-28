@@ -81,7 +81,16 @@
             var days = Math.floor(seconds / 86400); seconds %= 86400;
             var hours = Math.floor(seconds / 3600); seconds %= 3600;
             var minutes = Math.floor(seconds / 60); seconds %= 60;
-            var value = (days ? days + 'd ' : '') + hours + 'h ' + minutes + 'm ' + seconds + 's';
+            
+            var timeParts = [];
+            if (days > 0) {
+                timeParts.push(days + 'd');
+            }
+            timeParts.push((hours < 10 ? '0' + hours : hours) + 'h');
+            timeParts.push((minutes < 10 ? '0' + minutes : minutes) + 'm');
+            timeParts.push((seconds < 10 ? '0' + seconds : seconds) + 's');
+            
+            var value = timeParts.join('  :  ');
             card.querySelectorAll('.deal-countdown').forEach(function (target) { target.textContent = value; });
         });
     }

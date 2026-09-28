@@ -9,7 +9,7 @@
     @endphp
     <article class="card h-100 border-0 shadow-sm deal-card" data-deal-end="{{ $dealEndIso }}">
         <div class="card-header bg-success text-white d-flex justify-content-between align-items-center py-1 px-2">
-            <small class="font-weight-bold" style="font-size: 11px;"><i class="icon-clock"></i> <span class="deal-countdown">--</span></small>
+            <small class="font-weight-bold d-inline-flex align-items-center" style="font-size: 11px;"><i class="icon-clock mr-1"></i> <span class="deal-countdown" style="letter-spacing: 0.5px;">--</span></small>
             <span class="badge badge-warning text-dark" style="font-size: 10px;">{{ $deal->discount_badge }}</span>
         </div>
         @php
@@ -48,7 +48,7 @@
                     @endphp
                     @if($savedPrice > 0)
                         <span class="font-weight-bold text-nowrap" style="font-size: 10.5px; color: #15803d; background: #dcfce7; border: 1px solid #bbf7d0; padding: 1px 6px; border-radius: 4px;">
-                            {{ __('Save') }} {{ PriceHelper::setCurrencyPrice($savedPrice) }}
+                            {{ __('Save') }} <span class="d-none d-md-inline">{{ PriceHelper::setCurrencyPrice($savedPrice) }}</span><span class="d-inline d-md-none">{{ PriceHelper::setIntegerCurrencyPrice($savedPrice) }}</span>
                         </span>
                     @endif
                 </div>
