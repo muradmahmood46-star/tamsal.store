@@ -12,14 +12,14 @@
             <small class="font-weight-bold" style="font-size: 11px;"><i class="icon-clock"></i> <span class="deal-countdown">--</span></small>
             <span class="badge badge-warning text-dark" style="font-size: 10px;">{{ $deal->discount_badge }}</span>
         </div>
-        <a href="{{ route('front.deal.details', $deal->slug) }}" class="d-flex align-items-center justify-content-center bg-white" style="overflow: hidden;">
+        <a href="{{ route('front.deal.details', $deal->slug) }}" class="deal-thumb d-block bg-white" style="overflow: hidden;">
             @if($deal->photo)
                 @php
                     $cardImg = \Illuminate\Support\Str::startsWith($deal->photo, 'images/')
                         ? url('/core/public/storage/' . $deal->photo)
                         : url('/core/public/storage/images/' . $deal->photo);
                 @endphp
-                <img class="card-img-top p-2" style="height:140px;object-fit:contain" src="{{ $cardImg }}" alt="{{ $deal->name }}">
+                <img class="card-img-top" src="{{ $cardImg }}" alt="{{ $deal->name }}">
             @else
                 @php
                     $firstItem = $deal->dealItems->first()->item ?? null;
@@ -31,7 +31,7 @@
                             ? url('/core/public/storage/' . $firstThumb)
                             : url('/core/public/storage/images/' . $firstThumb);
                     @endphp
-                    <img class="card-img-top p-2" style="height:140px;object-fit:contain" src="{{ $firstImg }}" alt="{{ $deal->name }}">
+                    <img class="card-img-top" src="{{ $firstImg }}" alt="{{ $deal->name }}">
                 @endif
             @endif
         </a>

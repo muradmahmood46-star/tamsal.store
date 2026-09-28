@@ -467,14 +467,45 @@
             border-color: #cbd5e1 !important;
         }
 
+        .deal-card .deal-thumb,
+        .deal-card a.deal-thumb {
+            display: block !important;
+            position: relative !important;
+            width: 100% !important;
+            height: 190px !important;
+            aspect-ratio: 1 / 1 !important;
+            overflow: hidden !important;
+            background-color: #ffffff !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        @supports (aspect-ratio: 1 / 1) {
+            .deal-card .deal-thumb,
+            .deal-card a.deal-thumb {
+                height: auto !important;
+            }
+        }
+
         .deal-card .card-img-top,
+        .deal-card .deal-thumb img,
         .deal-card img {
+            width: 100% !important;
+            height: 100% !important;
+            max-width: 100% !important;
+            max-height: 100% !important;
+            object-fit: cover !important;
+            object-position: center !important;
+            display: block !important;
+            padding: 0 !important;
+            margin: 0 auto !important;
             transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
         }
 
         .deal-card:hover .card-img-top,
+        .deal-card:hover .deal-thumb img,
         .deal-card:hover img {
-            transform: scale(1.08) !important;
+            transform: scale(1.05) !important;
         }
 
         .deal-card .deal-title a {
@@ -661,11 +692,24 @@
                 font-size: 9.5px !important;
                 padding: 2px 4px !important;
             }
-            .deal-card img.card-img-top {
-                height: 115px !important;
-                max-height: 115px !important;
-                padding: 4px !important;
-                object-fit: contain !important;
+            .deal-card .deal-thumb,
+            .deal-card a.deal-thumb {
+                height: 145px !important;
+                min-height: 145px !important;
+                max-height: 145px !important;
+                aspect-ratio: 1 / 1 !important;
+                padding: 0 !important;
+                overflow: hidden !important;
+            }
+            .deal-card img.card-img-top,
+            .deal-card .deal-thumb img {
+                height: 100% !important;
+                max-height: 100% !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 0 !important;
+                object-fit: cover !important;
+                object-position: center !important;
             }
             .deal-card .card-body {
                 padding: 6px 8px 8px !important;
