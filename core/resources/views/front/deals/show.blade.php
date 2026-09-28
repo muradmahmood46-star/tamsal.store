@@ -31,6 +31,14 @@
                     <span class="ml-3">
                         <del>{{ PriceHelper::setCurrencyPrice($deal->original_price) }}</del>
                         <strong class="text-success ml-1" style="font-size:18px;">{{ PriceHelper::setCurrencyPrice($deal->discounted_price) }}</strong>
+                        @php
+                            $savedPrice = (float)$deal->original_price - (float)$deal->discounted_price;
+                        @endphp
+                        @if($savedPrice > 0)
+                            <span class="badge font-weight-bold ml-2" style="font-size: 11.5px; color: #dc2626; background: #fee2e2; border: 1px solid #fecaca; padding: 2px 7px; border-radius: 4px;">
+                                {{ __('Save') }} {{ PriceHelper::setCurrencyPrice($savedPrice) }}
+                            </span>
+                        @endif
                     </span>
                 </div>
                 <div>

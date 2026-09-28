@@ -38,7 +38,17 @@
         <div class="card-body d-flex flex-column p-2 p-md-3">
             <h3 class="h6 font-weight-bold deal-title mb-1" style="font-size: 13px; line-height: 1.3;"><a href="{{ route('front.deal.details', $deal->slug) }}" class="text-dark">{{ Str::limit($deal->name, 75) }}</a></h3>
             <div class="mt-auto">
-                <del class="text-muted small">{{ PriceHelper::setCurrencyPrice($deal->original_price) }}</del>
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <del class="text-muted small">{{ PriceHelper::setCurrencyPrice($deal->original_price) }}</del>
+                    @php
+                        $savedPrice = (float)$deal->original_price - (float)$deal->discounted_price;
+                    @endphp
+                    @if($savedPrice > 0)
+                        <span class="font-weight-bold text-nowrap" style="font-size: 10.5px; color: #dc2626; background: #fee2e2; border: 1px solid #fecaca; padding: 1px 6px; border-radius: 4px;">
+                            {{ __('Save') }} {{ PriceHelper::setCurrencyPrice($savedPrice) }}
+                        </span>
+                    @endif
+                </div>
                 <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap" style="gap:2px;">
                     <strong class="text-success h5 deal-price mb-0" style="font-size: 14px;">{{ PriceHelper::setCurrencyPrice($deal->discounted_price) }}</strong>
                     @if($deal->is_free_delivery)
