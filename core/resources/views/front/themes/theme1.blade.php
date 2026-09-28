@@ -1205,7 +1205,7 @@
                                     </div>
                                     <h3 class="product-title"><a
                                             href="{{ route('front.product', $popular_category_item->slug) }}">
-                                            {{ Str::limit($popular_category_item->name, 35) }}
+                                            {{ Str::limit($popular_category_item->name, 70) }}
                                         </a></h3>
                                      <div class="rating-stars">
                                          {!! Helper::renderStarRating($popular_category_item->customer_rating) !!}
@@ -1456,7 +1456,7 @@
                                     </div>
                                     <h3 class="product-title"><a
                                             href="{{ route('front.product', $feature_category_item->slug) }}">
-                                            {{ Str::limit($feature_category_item->name, 35) }}
+                                            {{ Str::limit($feature_category_item->name, 70) }}
                                         </a></h3>
                                      <div class="rating-stars">
                                          {!! Helper::renderStarRating($feature_category_item) !!}
