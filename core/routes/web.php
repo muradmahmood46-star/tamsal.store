@@ -626,9 +626,12 @@ Route::group(['middleware' => 'maintainance'], function () {
 
         //------------ CART ------------
         Route::get('/cart', 'Front\CartController@index')->name('front.cart');
-        Route::get('/flash-deals', 'Front\DealController@index')->name('front.deal.index');
-        Route::get('/flash-deals/{slug}', 'Front\DealController@show')->name('front.deal.details');
-        Route::post('/flash-deals/{slug}/add-to-cart', 'Front\DealController@addToCart')->name('front.deal.add_to_cart');
+        Route::get('/f', 'Front\DealController@index')->name('front.deal.index');
+        Route::get('/f/{slug}', 'Front\DealController@show')->name('front.deal.details');
+        Route::post('/f/{slug}/add-to-cart', 'Front\DealController@addToCart')->name('front.deal.add_to_cart');
+        Route::get('/flash-deals', 'Front\DealController@index');
+        Route::get('/flash-deals/{slug}', 'Front\DealController@show');
+        Route::post('/flash-deals/{slug}/add-to-cart', 'Front\DealController@addToCart');
         Route::get('/front/cart/clear', 'Front\CartController@cartClear')->name('front.cart.clear');
         Route::get('/header/cart/load', 'Front\CartController@headerCartLoad')->name('front.header.cart');
         Route::get('/main/cart/load', 'Front\CartController@CartLoad')->name('cart.get.load');

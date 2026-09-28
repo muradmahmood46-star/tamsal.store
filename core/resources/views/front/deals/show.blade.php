@@ -36,11 +36,11 @@
             @endif
 
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-2">
-                <div>
-                    <h1 class="h3 font-weight-bold text-dark mb-1 d-inline-block">{{ $deal->name }}</h1>
+                <div class="d-flex align-items-center flex-wrap" style="gap: 8px;">
+                    <h1 class="h3 font-weight-bold text-dark mb-0 d-inline-block">{{ $deal->name }}</h1>
                     @if(!empty($deal->sku))
-                        <span class="badge badge-light border text-primary ml-2 px-2 py-1 font-weight-bold" style="font-size: 12px; vertical-align: middle;">
-                            <i class="fas fa-barcode mr-1"></i>SKU: {{ $deal->sku }}
+                        <span class="d-inline-flex align-items-center px-2.5 py-1 font-weight-bold" style="font-size: 13px; color: #1e3a8a; background: #e0f2fe; border: 1.5px solid #38bdf8; border-radius: 6px; letter-spacing: 0.5px; box-shadow: 0 2px 6px rgba(56, 189, 248, 0.25);">
+                            <i class="fas fa-barcode mr-1.5 text-primary" style="font-size: 14px;"></i>SKU:&nbsp;<span style="color: #0369a1; font-weight: 800; font-family: monospace, sans-serif; letter-spacing: 1px;">{{ $deal->sku }}</span>
                         </span>
                     @endif
                 </div>
