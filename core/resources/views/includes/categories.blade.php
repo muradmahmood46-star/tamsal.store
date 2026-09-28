@@ -1,7 +1,9 @@
 
     @php
-        $categoryLimit = \App\Models\Setting::first()->buyer_category_limit ?? 50;
-        $categories = App\Models\Category::with('subcategory')->whereStatus(1)->orderby('serial','asc')->take($categoryLimit)->get();
+        $categoryLimit = $setting->buyer_category_limit ?? 50;
+        $categories = \Illuminate\Support\Facades\Cache::remember('nested_categories_tree_' . $categoryLimit, 300, function() use ($categoryLimit) {
+            return \App\Models\Category::with('subcategory.childcategory')->whereStatus(1)->orderby('serial','asc')->take($categoryLimit)->get();
+        });
     @endphp
 
 

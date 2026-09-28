@@ -98,7 +98,7 @@
     <!-- Modernizr-->
     <script src="{{ asset('assets/front/js/modernizr.min.js') }}"></script>
 
-    @if (DB::table('languages')->where('is_default', 1)->first()->rtl == 1)
+    @if (($default_language->rtl ?? 0) == 1)
         <link rel="stylesheet" href="{{ asset('assets/front/css/rtl.css') }}">
     @endif
     <style>
@@ -1184,7 +1184,7 @@ body_theme4 @endif
                             <div class="t-h-dropdown ">
                                 <a class="main-link" href="#">{{ __('Currency') }}<i class="icon-chevron-down"></i></a>
                                 <div class="t-h-dropdown-menu">
-                                    @foreach (DB::table('currencies')->get() as $currency)
+                                    @foreach ($all_currencies as $currency)
                                         <a class="{{ Session::get('currency') == $currency->id ? 'active' : ($currency->is_default == 1 && !Session::has('currency') ? 'active' : '') }}"
                                             href="{{ route('front.currency.setup', $currency->id) }}"><i class="icon-chevron-right pr-2"></i>{{ $currency->name }}</a>
                                     @endforeach
@@ -1244,7 +1244,7 @@ body_theme4 @endif
                         <div class="t-h-dropdown" style="margin:0;">
                             <a class="main-link" href="#" style="padding:0; font-size:13px; font-weight:600; color:#333;">{{ __('Currency') }}<i class="icon-chevron-down" style="font-size:10px; margin-left: 3px;"></i></a>
                             <div class="t-h-dropdown-menu" style="min-width: 100px; left: 50%; transform: translateX(-50%);">
-                                @foreach (DB::table('currencies')->get() as $currency)
+                                @foreach ($all_currencies as $currency)
                                     <a class="{{ Session::get('currency') == $currency->id ? 'active' : ($currency->is_default == 1 && !Session::has('currency') ? 'active' : '') }}"
                                         href="{{ route('front.currency.setup', $currency->id) }}" style="font-size:12px; padding: 6px 8px;"><i class="icon-chevron-right pr-2"></i>{{ $currency->name }}</a>
                                 @endforeach
@@ -1309,7 +1309,7 @@ body_theme4 @endif
                                     <div class="search-box d-flex">
                                         <select name="category" id="category_select" class="categoris">
                                             <option value="">{{ __('All') }}</option>
-                                            @foreach (DB::table('categories')->whereStatus(1)->take($setting->buyer_category_limit ?? 50)->get() as $category)
+                                            @foreach ($header_categories as $category)
                                                 <option value="{{ $category->slug }}">{{ $category->name }}</option>
                                             @endforeach
                                         </select>
@@ -1448,7 +1448,7 @@ body_theme4 @endif
                                                                 href="{{ route('front.faq') }}"><i
                                                                     class="icon-chevron-right pr-2"></i>{{ __('Faq') }}</a>
                                                         @endif
-                                                        @foreach (DB::table('pages')->wherePos(0)->orwhere('pos', 2)->get() as $page)
+                                                        @foreach ($footer_pages_pos0_2 as $page)
                                                             <a class="{{ request()->url() == route('front.page', $page->slug) ? 'active' : '' }} "
                                                                 href="{{ route('front.page', $page->slug) }}"><i
                                                                     class="icon-chevron-right pr-2"></i>{{ $page->title }}</a>
@@ -1493,10 +1493,7 @@ body_theme4 @endif
                             @include('master.inc.site-menu')
                         </div>
                         @php
-                            $free_shipping = DB::table('shipping_services')
-                                ->whereStatus(1)
-                                ->whereIsCondition(1)
-                                ->first();
+                            $free_shipping = $free_shipping_global;
                         @endphp
 
                     </div>
@@ -1584,7 +1581,7 @@ body_theme4 @endif
                                     <a class="" href="{{ route('front.faq') }}">{{ __('Faq') }}</a>
                                 </li>
                             @endif
-                            @foreach (DB::table('pages')->wherePos(2)->orwhere('pos', 1)->get() as $page)
+                            @foreach ($footer_pages_pos1_2 as $page)
                                 <li><a href="{{ route('front.page', $page->slug) }}">{{ $page->title }}</a></li>
                             @endforeach
 
@@ -1813,7 +1810,7 @@ body_theme4 @endif
         </script>
     @endif
     @php
-        $global_popup = \Illuminate\Support\Facades\DB::table('global_popup_settings')->first();
+        $global_popup = $global_popup_shared;
     @endphp
     @if($global_popup && $global_popup->is_enabled)
         <style>

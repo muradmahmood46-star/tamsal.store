@@ -341,7 +341,7 @@
                                         $hasSliderContent = !empty($slider->title) || !empty($slider->details);
                                     @endphp
                                     <div class="item {{ $hasSliderContent ? '' : 'hero-slider-no-content' }}
-                                    @if (DB::table('languages')->where('is_default', 1)->first()->rtl == 1) d-flex justify-content-end @endif
+                                    @if (($default_language->rtl ?? 0) == 1) d-flex justify-content-end @endif
                                     "
                                         @if (!$isLottieSlider)
                                             style="background: url('{{ url('/core/public/storage/images/' . $slider->photo) }}')"
@@ -959,161 +959,78 @@
                         </div>
                     </div>
                 </div>
-                <div class="row g-3">
+                <div class="row g-3 gx-2 gx-md-3">
+                    @foreach ($campaign_items->take(8) as $compaign_item)
+                        @php
+                            $item = isset($compaign_item->item) ? $compaign_item->item : $compaign_item;
+                        @endphp
+                        <div class="col-6 col-md-4 col-lg-3 mb-3">
+                            <div class="product-card">
+                                <div class="product-thumb">
+                                    @if (!$item->is_stock())
+                                        <div class="product-badge bg-secondary border-default text-body">
+                                            {{ __('out of stock') }}</div>
+                                    @endif
 
-                    <div class="col-lg-12 d-none d-md-block">
-                        <div class="row g-3 gx-2 gx-md-3">
-                            @foreach ($campaign_items->take(8) as $compaign_item)
-                                @php
-                                    $item = isset($compaign_item->item) ? $compaign_item->item : $compaign_item;
-                                @endphp
-                                <div class="col-6 col-md-4 col-lg-3 mb-3">
-                                    <div class="product-card">
-                                        <div class="product-thumb">
-                                            @if (!$item->is_stock())
-                                                <div class="product-badge bg-secondary border-default text-body">
-                                                    {{ __('out of stock') }}</div>
-                                            @endif
+                                    @if ($item->is_free_delivery == 1)
+                                        <div class="product-badge bg-success">{{ __('Free Delivery') }}</div>
+                                    @endif
 
-                                            @if ($item->is_free_delivery == 1)
-                                                <div class="product-badge bg-success">{{ __('Free Delivery') }}</div>
-                                            @endif
-
-                                            @if ($item->previous_price && $item->previous_price != 0)
-                                                <div class="product-badge product-badge2 bg-info">
-                                                    -{{ PriceHelper::DiscountPercentage($item) }}</div>
-                                            @endif
-                                            <img src="{{ url('/core/public/storage/images/' . ($item->photo ?: $item->thumbnail)) }}" class="lazy"
-                                                data-src="{{ url('/core/public/storage/images/' . ($item->photo ?: $item->thumbnail)) }}"
-                                                alt="{{ $item->name ?? 'Product' }}">
-                                            <div class="product-button-group">
-                                                <a class="product-button wishlist_store"
-                                                    href="{{ route('user.wishlist.store', $item->id) }}"
-                                                    title="{{ __('Wishlist') }}"><i class="icon-heart"></i></a>
-                                                <a data-target="{{ route('fornt.compare.product', $item->id) }}"
-                                                    class="product-button product_compare" href="javascript:;"
-                                                    title="{{ __('Compare') }}"><i class="icon-repeat"></i></a>
-                                                @if ($item->is_stock())
-                                                    <a class="product-button add_to_single_cart"
-                                                        data-target="{{ $item->id }}" href="javascript:;"
-                                                        title="{{ __('To Cart') }}"><i class="icon-shopping-cart"></i>
-                                                    </a>
-                                                @else
-                                                    <a class="product-button"
-                                                        href="{{ route('front.product', $item->slug) }}"
-                                                        title="{{ __('Details') }}"><i class="icon-arrow-right"></i></a>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        <div class="product-card-body">
-                                            <div class="product-category">
-                                                @if($item->subcategory && $item->subcategory->name)
-                                                    <a href="{{ route('front.catalog') . '?subcategory=' . $item->subcategory->slug }}">{{ $item->subcategory->name }}</a>
-                                                @endif
-                                            </div>
-                                            <h3 class="product-title"><a
-                                                    href="{{ route('front.product', $item->slug) }}">
-                                                    {{ Str::limit($item->name, 70) }}
-                                                </a></h3>
-                                             <div class="rating-stars">
-                                                 {!! Helper::renderStarRating($item) !!}
-                                                 @if($item && $item->rating > 0)
-                                                     <span class="text-muted ml-1" style="font-size: 11px; font-weight: 600;">({{ number_format($item->rating, 1) }})</span>
-                                                 @endif
-                                             </div>
-                                            <h4 class="product-price">
-                                                @if ($item->previous_price != 0)
-                                                    <del>{{ PriceHelper::setPreviousPrice($item->previous_price) }}</del>
-                                                @endif
-
-                                                {{ PriceHelper::grandCurrencyPrice($item) }}
-                                            </h4>
-
-                                        </div>
-
+                                    @if ($item->previous_price && $item->previous_price != 0)
+                                        <div class="product-badge product-badge2 bg-info">
+                                            -{{ PriceHelper::DiscountPercentage($item) }}</div>
+                                    @endif
+                                    <img src="{{ url('/core/public/storage/images/' . ($item->photo ?: $item->thumbnail)) }}" class="lazy"
+                                        data-src="{{ url('/core/public/storage/images/' . ($item->photo ?: $item->thumbnail)) }}"
+                                        alt="{{ $item->name ?? 'Product' }}">
+                                    <div class="product-button-group">
+                                        <a class="product-button wishlist_store"
+                                            href="{{ route('user.wishlist.store', $item->id) }}"
+                                            title="{{ __('Wishlist') }}"><i class="icon-heart"></i></a>
+                                        <a data-target="{{ route('fornt.compare.product', $item->id) }}"
+                                            class="product-button product_compare" href="javascript:;"
+                                            title="{{ __('Compare') }}"><i class="icon-repeat"></i></a>
+                                        @if ($item->is_stock())
+                                            <a class="product-button add_to_single_cart"
+                                                data-target="{{ $item->id }}" href="javascript:;"
+                                                title="{{ __('To Cart') }}"><i class="icon-shopping-cart"></i>
+                                            </a>
+                                        @else
+                                            <a class="product-button"
+                                                href="{{ route('front.product', $item->slug) }}"
+                                                title="{{ __('Details') }}"><i class="icon-arrow-right"></i></a>
+                                        @endif
                                     </div>
                                 </div>
-                            @endforeach
-                        </div>
-
-                    </div>
-
-                    <div class="col-12 d-md-none">
-                        <div class="row gx-2 gy-2 mobile-product-grid">
-                            @foreach ($campaign_items->take(6) as $compaign_item)
-                                @php
-                                    $item = isset($compaign_item->item) ? $compaign_item->item : $compaign_item;
-                                @endphp
-                                <div class="col-6 mb-2">
-                                    <div class="product-card">
-                                        <div class="product-thumb">
-                                            @if (!$item->is_stock())
-                                                <div class="product-badge bg-secondary border-default text-body">
-                                                    {{ __('out of stock') }}</div>
-                                            @endif
-
-                                            @if ($item->is_free_delivery == 1)
-                                                <div class="product-badge bg-success">{{ __('Free Delivery') }}</div>
-                                            @endif
-
-                                            @if ($item->previous_price && $item->previous_price != 0)
-                                                <div class="product-badge product-badge2 bg-info">
-                                                    -{{ PriceHelper::DiscountPercentage($item) }}</div>
-                                            @endif
-                                            <img src="{{ url('/core/public/storage/images/' . ($item->photo ?: $item->thumbnail)) }}" class="lazy"
-                                                data-src="{{ url('/core/public/storage/images/' . ($item->photo ?: $item->thumbnail)) }}"
-                                                alt="{{ $item->name ?? 'Product' }}">
-                                            <div class="product-button-group">
-                                                <a class="product-button wishlist_store"
-                                                    href="{{ route('user.wishlist.store', $item->id) }}"
-                                                    title="{{ __('Wishlist') }}"><i class="icon-heart"></i></a>
-                                                <a data-target="{{ route('fornt.compare.product', $item->id) }}"
-                                                    class="product-button product_compare" href="javascript:;"
-                                                    title="{{ __('Compare') }}"><i class="icon-repeat"></i></a>
-                                                @if ($item->is_stock())
-                                                    <a class="product-button add_to_single_cart"
-                                                        data-target="{{ $item->id }}" href="javascript:;"
-                                                        title="{{ __('To Cart') }}"><i class="icon-shopping-cart"></i>
-                                                    </a>
-                                                @else
-                                                    <a class="product-button"
-                                                        href="{{ route('front.product', $item->slug) }}"
-                                                        title="{{ __('Details') }}"><i class="icon-arrow-right"></i></a>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        <div class="product-card-body">
-                                            <div class="product-category">
-                                                @if($item->subcategory && $item->subcategory->name)
-                                                    <a href="{{ route('front.catalog') . '?subcategory=' . $item->subcategory->slug }}">{{ $item->subcategory->name }}</a>
-                                                @endif
-                                            </div>
-                                            <h3 class="product-title"><a
-                                                    href="{{ route('front.product', $item->slug) }}">
-                                                    {{ Str::limit($item->name, 70) }}
-                                                </a></h3>
-                                             <div class="rating-stars">
-                                                 {!! Helper::renderStarRating($item) !!}
-                                                 @if($item && $item->rating > 0)
-                                                     <span class="text-muted ml-1" style="font-size: 11px; font-weight: 600;">({{ number_format($item->rating, 1) }})</span>
-                                                 @endif
-                                             </div>
-                                            <h4 class="product-price">
-                                                @if ($item->previous_price != 0)
-                                                    <del>{{ PriceHelper::setPreviousPrice($item->previous_price) }}</del>
-                                                @endif
-
-                                                {{ PriceHelper::grandCurrencyPrice($item) }}
-                                            </h4>
-
-                                        </div>
-
+                                <div class="product-card-body">
+                                    <div class="product-category">
+                                        @if($item->subcategory && $item->subcategory->name)
+                                            <a href="{{ route('front.catalog') . '?subcategory=' . $item->subcategory->slug }}">{{ $item->subcategory->name }}</a>
+                                        @endif
                                     </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
+                                    <h3 class="product-title"><a
+                                            href="{{ route('front.product', $item->slug) }}">
+                                            {{ Str::limit($item->name, 70) }}
+                                        </a></h3>
+                                     <div class="rating-stars">
+                                         {!! Helper::renderStarRating($item) !!}
+                                         @if($item && $item->rating > 0)
+                                             <span class="text-muted ml-1" style="font-size: 11px; font-weight: 600;">({{ number_format($item->rating, 1) }})</span>
+                                         @endif
+                                     </div>
+                                    <h4 class="product-price">
+                                        @if ($item->previous_price != 0)
+                                            <del>{{ PriceHelper::setPreviousPrice($item->previous_price) }}</del>
+                                        @endif
 
+                                        {{ PriceHelper::grandCurrencyPrice($item) }}
+                                    </h4>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -1245,137 +1162,67 @@
                     </div>
                 </div>
 
-                <div class="row" id="popular_category_view">
-                    <div class="col-lg-12 d-none d-md-block">
-                        <div class="row g-3 gx-2 gx-md-3">
-                            @foreach ($popular_category_items->take(8) as $popular_category_item)
-                                <div class="col-6 col-md-4 col-lg-3 mb-3">
-                                    <div class="product-card">
-                                        <div class="product-thumb">
+                <div class="row g-3 gx-2 gx-md-3" id="popular_category_view">
+                    @foreach ($popular_category_items->take(8) as $popular_category_item)
+                        <div class="col-6 col-md-4 col-lg-3 mb-3">
+                            <div class="product-card">
+                                <div class="product-thumb">
 
-                                            @if (!$popular_category_item->is_stock())
-                                                <div
-                                                    class="product-badge bg-secondary border-default text-body
-                                            ">
-                                                    {{ __('out of stock') }}</div>
-                                            @endif
-                                            @if ($popular_category_item->is_free_delivery == 1)
-                                                <div class="product-badge bg-success">{{ __('Free Delivery') }}</div>
-                                            @endif
-                                            @if ($popular_category_item->previous_price && $popular_category_item->previous_price != 0)
-                                                <div class="product-badge product-badge2 bg-info">
-                                                    -{{ PriceHelper::DiscountPercentage($popular_category_item) }}</div>
-                                            @endif
-                                            <img src="{{ url('/core/public/storage/images/' . ($popular_category_item->photo ?: $popular_category_item->thumbnail)) }}" class="lazy"
-                                                data-src="{{ url('/core/public/storage/images/' . ($popular_category_item->photo ?: $popular_category_item->thumbnail)) }}"
-                                                alt="{{ $popular_category_item->name ?? 'Product' }}">
-                                            <div class="product-button-group">
-                                                <a class="product-button wishlist_store"
-                                                    href="{{ route('user.wishlist.store', $popular_category_item->id) }}"
-                                                    title="{{ __('Wishlist') }}"><i class="icon-heart"></i></a>
-                                                <a data-target="{{ route('fornt.compare.product', $popular_category_item->id) }}"
-                                                    class="product-button product_compare" href="javascript:;"
-                                                    title="{{ __('Compare') }}"><i class="icon-repeat"></i></a>
-                                                @include('includes.item_footer', [
-                                                    'sitem' => $popular_category_item,
-                                                ])
-                                            </div>
-                                        </div>
-                                        <div class="product-card-body">
-                                            <div class="product-category">
-                                                @if($popular_category_item->subcategory && $popular_category_item->subcategory->name)
-                                                    <a
-                                                        href="{{ route('front.catalog') . '?subcategory=' . $popular_category_item->subcategory->slug }}">{{ $popular_category_item->subcategory->name }}</a>
-                                                @endif
-                                            </div>
-                                            <h3 class="product-title"><a
-                                                    href="{{ route('front.product', $popular_category_item->slug) }}">
-                                                    {{ Str::limit($popular_category_item->name, 35) }}
-                                                </a></h3>
-                                             <div class="rating-stars">
-                                                 {!! Helper::renderStarRating($popular_category_item->customer_rating) !!}
-                                                 @if($popular_category_item->customer_rating > 0)
-                                                     <span class="text-muted ml-1" style="font-size: 11px; font-weight: 600;">({{ number_format($popular_category_item->customer_rating, 1) }})</span>
-                                                 @endif
-                                             </div>
-                                            <h4 class="product-price">
-                                                @if ($popular_category_item->previous_price != 0)
-                                                    <del>{{ PriceHelper::setPreviousPrice($popular_category_item->previous_price) }}</del>
-                                                @endif
-                                                {{ PriceHelper::grandCurrencyPrice($popular_category_item) }}
-                                            </h4>
-                                        </div>
+                                    @if (!$popular_category_item->is_stock())
+                                        <div
+                                            class="product-badge bg-secondary border-default text-body
+                                    ">
+                                            {{ __('out of stock') }}</div>
+                                    @endif
+                                    @if ($popular_category_item->is_free_delivery == 1)
+                                        <div class="product-badge bg-success">{{ __('Free Delivery') }}</div>
+                                    @endif
+                                    @if ($popular_category_item->previous_price && $popular_category_item->previous_price != 0)
+                                        <div class="product-badge product-badge2 bg-info">
+                                            -{{ PriceHelper::DiscountPercentage($popular_category_item) }}</div>
+                                    @endif
+                                    <img src="{{ url('/core/public/storage/images/' . ($popular_category_item->photo ?: $popular_category_item->thumbnail)) }}" class="lazy"
+                                        data-src="{{ url('/core/public/storage/images/' . ($popular_category_item->photo ?: $popular_category_item->thumbnail)) }}"
+                                        alt="{{ $popular_category_item->name ?? 'Product' }}">
+                                    <div class="product-button-group">
+                                        <a class="product-button wishlist_store"
+                                            href="{{ route('user.wishlist.store', $popular_category_item->id) }}"
+                                            title="{{ __('Wishlist') }}"><i class="icon-heart"></i></a>
+                                        <a data-target="{{ route('fornt.compare.product', $popular_category_item->id) }}"
+                                            class="product-button product_compare" href="javascript:;"
+                                            title="{{ __('Compare') }}"><i class="icon-repeat"></i></a>
+                                        @include('includes.item_footer', [
+                                            'sitem' => $popular_category_item,
+                                        ])
                                     </div>
                                 </div>
-                            @endforeach
-                        </div>
-                    </div>
-
-                    <div class="col-12 d-md-none">
-                        <div class="row gx-2 gy-2 mobile-product-grid">
-                            @foreach ($popular_category_items->take(6) as $popular_category_item)
-                                <div class="col-6 mb-2">
-                                    <div class="product-card">
-                                        <div class="product-thumb">
-
-                                            @if (!$popular_category_item->is_stock())
-                                                <div
-                                                    class="product-badge bg-secondary border-default text-body
-                                            ">
-                                                    {{ __('out of stock') }}</div>
-                                            @endif
-                                            @if ($popular_category_item->is_free_delivery == 1)
-                                                <div class="product-badge bg-success">{{ __('Free Delivery') }}</div>
-                                            @endif
-                                            @if ($popular_category_item->previous_price && $popular_category_item->previous_price != 0)
-                                                <div class="product-badge product-badge2 bg-info">
-                                                    -{{ PriceHelper::DiscountPercentage($popular_category_item) }}</div>
-                                            @endif
-                                            <img src="{{ url('/core/public/storage/images/' . ($popular_category_item->photo ?: $popular_category_item->thumbnail)) }}" class="lazy"
-                                                data-src="{{ url('/core/public/storage/images/' . ($popular_category_item->photo ?: $popular_category_item->thumbnail)) }}"
-                                                alt="{{ $popular_category_item->name ?? 'Product' }}">
-                                            <div class="product-button-group">
-                                                <a class="product-button wishlist_store"
-                                                    href="{{ route('user.wishlist.store', $popular_category_item->id) }}"
-                                                    title="{{ __('Wishlist') }}"><i class="icon-heart"></i></a>
-                                                <a data-target="{{ route('fornt.compare.product', $popular_category_item->id) }}"
-                                                    class="product-button product_compare" href="javascript:;"
-                                                    title="{{ __('Compare') }}"><i class="icon-repeat"></i></a>
-                                                @include('includes.item_footer', [
-                                                    'sitem' => $popular_category_item,
-                                                ])
-                                            </div>
-                                        </div>
-                                        <div class="product-card-body">
-                                            <div class="product-category">
-                                                @if($popular_category_item->subcategory && $popular_category_item->subcategory->name)
-                                                    <a
-                                                        href="{{ route('front.catalog') . '?subcategory=' . $popular_category_item->subcategory->slug }}">{{ $popular_category_item->subcategory->name }}</a>
-                                                @endif
-                                            </div>
-                                            <h3 class="product-title"><a
-                                                    href="{{ route('front.product', $popular_category_item->slug) }}">
-                                                    {{ Str::limit($popular_category_item->name, 35) }}
-                                                </a></h3>
-                                             <div class="rating-stars">
-                                                 {!! Helper::renderStarRating($popular_category_item->customer_rating) !!}
-                                                 @if($popular_category_item->customer_rating > 0)
-                                                     <span class="text-muted ml-1" style="font-size: 11px; font-weight: 600;">({{ number_format($popular_category_item->customer_rating, 1) }})</span>
-                                                 @endif
-                                             </div>
-                                            <h4 class="product-price">
-                                                @if ($popular_category_item->previous_price != 0)
-                                                    <del>{{ PriceHelper::setPreviousPrice($popular_category_item->previous_price) }}</del>
-                                                @endif
-                                                {{ PriceHelper::grandCurrencyPrice($popular_category_item) }}
-                                            </h4>
-                                        </div>
+                                <div class="product-card-body">
+                                    <div class="product-category">
+                                        @if($popular_category_item->subcategory && $popular_category_item->subcategory->name)
+                                            <a
+                                                href="{{ route('front.catalog') . '?subcategory=' . $popular_category_item->subcategory->slug }}">{{ $popular_category_item->subcategory->name }}</a>
+                                        @endif
                                     </div>
+                                    <h3 class="product-title"><a
+                                            href="{{ route('front.product', $popular_category_item->slug) }}">
+                                            {{ Str::limit($popular_category_item->name, 35) }}
+                                        </a></h3>
+                                     <div class="rating-stars">
+                                         {!! Helper::renderStarRating($popular_category_item->customer_rating) !!}
+                                         @if($popular_category_item->customer_rating > 0)
+                                             <span class="text-muted ml-1" style="font-size: 11px; font-weight: 600;">({{ number_format($popular_category_item->customer_rating, 1) }})</span>
+                                         @endif
+                                     </div>
+                                    <h4 class="product-price">
+                                        @if ($popular_category_item->previous_price != 0)
+                                            <del>{{ PriceHelper::setPreviousPrice($popular_category_item->previous_price) }}</del>
+                                        @endif
+                                        {{ PriceHelper::grandCurrencyPrice($popular_category_item) }}
+                                    </h4>
                                 </div>
-                            @endforeach
+                            </div>
                         </div>
-                    </div>
-
+                    @endforeach
                 </div>
             </div>
         </section>
