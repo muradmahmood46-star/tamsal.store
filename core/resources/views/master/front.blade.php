@@ -472,19 +472,13 @@
             display: block !important;
             position: relative !important;
             width: 100% !important;
-            height: 190px !important;
-            aspect-ratio: 1 / 1 !important;
+            height: 155px !important;
+            min-height: 155px !important;
+            max-height: 155px !important;
             overflow: hidden !important;
             background-color: #ffffff !important;
             padding: 0 !important;
             margin: 0 !important;
-        }
-
-        @supports (aspect-ratio: 1 / 1) {
-            .deal-card .deal-thumb,
-            .deal-card a.deal-thumb {
-                height: auto !important;
-            }
         }
 
         .deal-card .card-img-top,
@@ -506,6 +500,26 @@
         .deal-card:hover .deal-thumb img,
         .deal-card:hover img {
             transform: scale(1.05) !important;
+        }
+
+        .deal-card .card-body {
+            display: flex !important;
+            flex-direction: column !important;
+            flex: 1 1 auto !important;
+            justify-content: space-between !important;
+            padding: 10px !important;
+        }
+
+        .deal-card .deal-title,
+        .deal-card h3.h6 {
+            min-height: 34px !important;
+            max-height: 34px !important;
+            line-height: 1.3 !important;
+            overflow: hidden !important;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 2 !important;
+            -webkit-box-orient: vertical !important;
+            margin-bottom: 4px !important;
         }
 
         .deal-card .deal-title a {
@@ -694,10 +708,10 @@
             }
             .deal-card .deal-thumb,
             .deal-card a.deal-thumb {
-                height: 145px !important;
-                min-height: 145px !important;
-                max-height: 145px !important;
-                aspect-ratio: 1 / 1 !important;
+                height: 120px !important;
+                min-height: 120px !important;
+                max-height: 120px !important;
+                aspect-ratio: unset !important;
                 padding: 0 !important;
                 overflow: hidden !important;
             }
