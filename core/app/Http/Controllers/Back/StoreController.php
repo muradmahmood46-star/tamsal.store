@@ -18,7 +18,6 @@ class StoreController extends Controller
     {
         $this->middleware('auth:admin');
         $this->middleware('adminlocalize');
-        Helper::ensureStoreTables();
     }
 
     /**
@@ -26,7 +25,6 @@ class StoreController extends Controller
      */
     public function index(Request $request)
     {
-        Helper::ensureStoreTables();
 
         $status = $request->status;
         $search = $request->search;

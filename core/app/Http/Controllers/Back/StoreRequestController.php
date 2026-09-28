@@ -16,7 +16,6 @@ class StoreRequestController extends Controller
     {
         $this->middleware('auth:admin');
         $this->middleware('adminlocalize');
-        Helper::ensureStoreTables();
     }
 
     public function index(Request $request)

@@ -14,7 +14,6 @@ class StoreSettingController extends Controller
     {
         $this->middleware('auth:admin');
         $this->middleware('adminlocalize');
-        Helper::ensureStoreTables();
     }
 
     public function index()

@@ -110,138 +110,140 @@ class Helper
      */
     public static function getMostSellingProducts($limit = null)
     {
-        // 1. Calculate sales count (total sold units) for all items from non-canceled orders
-        $orders = Order::where('order_status', '!=', 'Canceled')
-            ->select('id', 'cart')
-            ->get();
+        $cacheKey = 'helper_most_selling_products_' . ($limit ?? 'all');
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, 180, function() use ($limit) {
+            // 1. Calculate sales count (total sold units) from latest non-canceled orders
+            $orders = Order::where('order_status', '!=', 'Canceled')
+                ->select('id', 'cart')
+                ->latest('id')
+                ->take(500)
+                ->get();
 
-        $itemSales = [];
-        foreach ($orders as $order) {
-            $cart = json_decode($order->cart, true);
-            if (is_array($cart)) {
-                foreach ($cart as $key => $cartItem) {
-                    $itemId = (int) explode('-', $key)[0];
-                    if ($itemId > 0) {
-                        $qty = isset($cartItem['qty']) ? (int) $cartItem['qty'] : 1;
-                        $itemSales[$itemId] = ($itemSales[$itemId] ?? 0) + $qty;
+            $itemSales = [];
+            foreach ($orders as $order) {
+                $cart = json_decode($order->cart, true);
+                if (is_array($cart)) {
+                    foreach ($cart as $key => $cartItem) {
+                        $itemId = (int) explode('-', $key)[0];
+                        if ($itemId > 0) {
+                            $qty = isset($cartItem['qty']) ? (int) $cartItem['qty'] : 1;
+                            $itemSales[$itemId] = ($itemSales[$itemId] ?? 0) + $qty;
+                        }
                     }
                 }
             }
-        }
 
-        // 2. Fetch active, approved items that are not blocked/hidden
-        $allItems = Item::with(['category', 'tax'])
-            ->where('status', 1)
-            ->where(function ($query) {
-                $query->where('approval_status', 'Approved')
-                    ->orWhereNull('approval_status');
-            })
-            ->where(function ($query) {
-                $query->whereNull('is_hidden_by_block')
-                    ->orWhere('is_hidden_by_block', 0);
-            })
-            ->get();
+            // 2. Fetch active, approved items that are not blocked/hidden
+            $allItems = Item::with(['category', 'tax'])
+                ->where('status', 1)
+                ->where(function ($query) {
+                    $query->where('approval_status', 'Approved')
+                        ->orWhereNull('approval_status');
+                })
+                ->where(function ($query) {
+                    $query->whereNull('is_hidden_by_block')
+                        ->orWhere('is_hidden_by_block', 0);
+                })
+                ->get();
 
-        // 3. Attach calculated sales_count to each item
-        foreach ($allItems as $item) {
-            $item->sales_count = $itemSales[$item->id] ?? 0;
-        }
-
-        // 4. Split into Admin items (vendor_id == 0 or null) and Vendor items (vendor_id > 0)
-        // Sort each pool descending by sales_count, then by id descending
-        $adminItems = $allItems->filter(function ($item) {
-            return empty($item->vendor_id) || $item->vendor_id == 0;
-        })->sort(function ($a, $b) {
-            if ($b->sales_count !== $a->sales_count) {
-                return $b->sales_count <=> $a->sales_count;
-            }
-            return $b->id <=> $a->id;
-        })->values();
-
-        $vendorItems = $allItems->filter(function ($item) {
-            return !empty($item->vendor_id) && $item->vendor_id > 0;
-        })->sort(function ($a, $b) {
-            if ($b->sales_count !== $a->sales_count) {
-                return $b->sales_count <=> $a->sales_count;
-            }
-            return $b->id <=> $a->id;
-        })->values();
-
-        // 5. If limit is specified (e.g. 8 for homepage, 4, etc.):
-        // 30% Admin and 70% Vendor, max $limit total
-        if ($limit && $limit > 0 && $limit <= 20) {
-            $adminCount = $adminItems->count();
-            $vendorCount = $vendorItems->count();
-
-            $targetAdmin = $adminCount > 0 ? max(1, (int) round($limit * 0.30)) : 0;
-            $targetVendor = $limit - $targetAdmin;
-
-            // Balance if one pool has fewer items than targets
-            if ($vendorCount < $targetVendor) {
-                $targetVendor = $vendorCount;
-                $targetAdmin = min($adminCount, $limit - $targetVendor);
-            }
-            if ($adminCount < $targetAdmin) {
-                $targetAdmin = $adminCount;
-                $targetVendor = min($vendorCount, $limit - $targetAdmin);
+            // 3. Attach calculated sales_count to each item
+            foreach ($allItems as $item) {
+                $item->sales_count = $itemSales[$item->id] ?? 0;
             }
 
-            $adminSlice = $adminItems->take($targetAdmin);
-            $vendorSlice = $vendorItems->take($targetVendor);
-
-            // Merge and sort overall by sales_count descending
-            $merged = $adminSlice->concat($vendorSlice)->sort(function ($a, $b) {
+            // 4. Split into Admin items (vendor_id == 0 or null) and Vendor items (vendor_id > 0)
+            // Sort each pool descending by sales_count, then by id descending
+            $adminItems = $allItems->filter(function ($item) {
+                return empty($item->vendor_id) || $item->vendor_id == 0;
+            })->sort(function ($a, $b) {
                 if ($b->sales_count !== $a->sales_count) {
                     return $b->sales_count <=> $a->sales_count;
                 }
                 return $b->id <=> $a->id;
             })->values();
 
-            return $merged;
-        }
-
-        // 6. For View All (Full list):
-        // Proportional distribution (70% vendor, 30% admin) interleaved in chunks,
-        // with admin products guaranteed to appear even with 0 sales
-        $result = collect();
-        $adminQueue = $adminItems;
-        $vendorQueue = $vendorItems;
-
-        while ($adminQueue->isNotEmpty() || $vendorQueue->isNotEmpty()) {
-            $chunk = collect();
-
-            $vTake = min(7, $vendorQueue->count());
-            if ($vTake > 0) {
-                $chunk = $chunk->concat($vendorQueue->splice(0, $vTake));
-            }
-
-            $aTake = min(3, $adminQueue->count());
-            if ($aTake > 0) {
-                $chunk = $chunk->concat($adminQueue->splice(0, $aTake));
-            }
-
-            if ($vendorQueue->isEmpty() && $adminQueue->isNotEmpty()) {
-                $chunk = $chunk->concat($adminQueue->splice(0, $adminQueue->count()));
-            }
-            if ($adminQueue->isEmpty() && $vendorQueue->isNotEmpty()) {
-                $chunk = $chunk->concat($vendorQueue->splice(0, $vendorQueue->count()));
-            }
-
-            $chunkSorted = $chunk->sort(function ($a, $b) {
+            $vendorItems = $allItems->filter(function ($item) {
+                return !empty($item->vendor_id) && $item->vendor_id > 0;
+            })->sort(function ($a, $b) {
                 if ($b->sales_count !== $a->sales_count) {
                     return $b->sales_count <=> $a->sales_count;
                 }
                 return $b->id <=> $a->id;
-            });
+            })->values();
 
-            $result = $result->concat($chunkSorted);
-        }
+            // 5. If limit is specified (e.g. 8 for homepage, 4, etc.):
+            // 30% Admin and 70% Vendor, max $limit total
+            if ($limit && $limit > 0 && $limit <= 20) {
+                $adminCount = $adminItems->count();
+                $vendorCount = $vendorItems->count();
 
-        if ($limit && $limit > 0) {
-            return $result->take($limit)->values();
-        }
+                $targetAdmin = $adminCount > 0 ? max(1, (int) round($limit * 0.30)) : 0;
+                $targetVendor = $limit - $targetAdmin;
 
-        return $result->values();
+                // Balance if one pool has fewer items than targets
+                if ($vendorCount < $targetVendor) {
+                    $targetVendor = $vendorCount;
+                    $targetAdmin = min($adminCount, $limit - $targetVendor);
+                }
+                if ($adminCount < $targetAdmin) {
+                    $targetAdmin = $adminCount;
+                    $targetVendor = min($vendorCount, $limit - $targetAdmin);
+                }
+
+                $adminSlice = $adminItems->take($targetAdmin);
+                $vendorSlice = $vendorItems->take($targetVendor);
+
+                return $adminSlice->concat($vendorSlice)->sort(function ($a, $b) {
+                    if ($b->sales_count !== $a->sales_count) {
+                        return $b->sales_count <=> $a->sales_count;
+                    }
+                    return $b->id <=> $a->id;
+                })->values();
+            }
+
+            // 6. For View All (Full list):
+            // Proportional distribution (70% vendor, 30% admin) interleaved in chunks,
+            // with admin products guaranteed to appear even with 0 sales
+            $result = collect();
+            $adminQueue = $adminItems;
+            $vendorQueue = $vendorItems;
+
+            while ($adminQueue->isNotEmpty() || $vendorQueue->isNotEmpty()) {
+                $chunk = collect();
+
+                $vTake = min(7, $vendorQueue->count());
+                if ($vTake > 0) {
+                    $chunk = $chunk->concat($vendorQueue->splice(0, $vTake));
+                }
+
+                $aTake = min(3, $adminQueue->count());
+                if ($aTake > 0) {
+                    $chunk = $chunk->concat($adminQueue->splice(0, $aTake));
+                }
+
+                if ($vendorQueue->isEmpty() && $adminQueue->isNotEmpty()) {
+                    $chunk = $chunk->concat($adminQueue->splice(0, $adminQueue->count()));
+                }
+                if ($adminQueue->isEmpty() && $vendorQueue->isNotEmpty()) {
+                    $chunk = $chunk->concat($vendorQueue->splice(0, $vendorQueue->count()));
+                }
+
+                $chunkSorted = $chunk->sort(function ($a, $b) {
+                    if ($b->sales_count !== $a->sales_count) {
+                        return $b->sales_count <=> $a->sales_count;
+                    }
+                    return $b->id <=> $a->id;
+                });
+
+                $result = $result->concat($chunkSorted);
+            }
+
+            if ($limit && $limit > 0) {
+                return $result->take($limit)->values();
+            }
+
+            return $result->values();
+        });
     }
 
     /**
@@ -252,75 +254,32 @@ class Helper
      */
     public static function getTopRatedProducts($limit = null)
     {
-        // 1. Fetch active, approved items that are not blocked/hidden with reviews
-        $allItems = Item::with(['category', 'tax', 'reviews'])
-            ->where('status', 1)
-            ->where(function ($query) {
-                $query->where('approval_status', 'Approved')
-                    ->orWhereNull('approval_status');
-            })
-            ->where(function ($query) {
-                $query->whereNull('is_hidden_by_block')
-                    ->orWhere('is_hidden_by_block', 0);
-            })
-            ->get();
+        $cacheKey = 'helper_top_rated_products_' . ($limit ?? 'all');
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, 180, function() use ($limit) {
+            // 1. Fetch active, approved items that are not blocked/hidden with reviews
+            $allItems = Item::with(['category', 'tax', 'reviews'])
+                ->where('status', 1)
+                ->where(function ($query) {
+                    $query->where('approval_status', 'Approved')
+                        ->orWhereNull('approval_status');
+                })
+                ->where(function ($query) {
+                    $query->whereNull('is_hidden_by_block')
+                        ->orWhere('is_hidden_by_block', 0);
+                })
+                ->get();
 
-        // Attach computed customer_rating and customer_rating_count for sorting
-        foreach ($allItems as $item) {
-            $item->computed_customer_rating = $item->customer_rating;
-            $item->computed_customer_rating_count = $item->customer_rating_count;
-        }
-
-        // 2. Separate into Admin items and Vendor items
-        // Sort each collection descending by customer_rating, then by customer_rating_count, then by id
-        $adminItems = $allItems->filter(function ($item) {
-            return empty($item->vendor_id) || $item->vendor_id == 0;
-        })->sort(function ($a, $b) {
-            if ($b->computed_customer_rating != $a->computed_customer_rating) {
-                return $b->computed_customer_rating <=> $a->computed_customer_rating;
-            }
-            if ($b->computed_customer_rating_count != $a->computed_customer_rating_count) {
-                return $b->computed_customer_rating_count <=> $a->computed_customer_rating_count;
-            }
-            return $b->id <=> $a->id;
-        })->values();
-
-        $vendorItems = $allItems->filter(function ($item) {
-            return !empty($item->vendor_id) && $item->vendor_id > 0;
-        })->sort(function ($a, $b) {
-            if ($b->computed_customer_rating != $a->computed_customer_rating) {
-                return $b->computed_customer_rating <=> $a->computed_customer_rating;
-            }
-            if ($b->computed_customer_rating_count != $a->computed_customer_rating_count) {
-                return $b->computed_customer_rating_count <=> $a->computed_customer_rating_count;
-            }
-            return $b->id <=> $a->id;
-        })->values();
-
-        $adminCount = $adminItems->count();
-        $vendorCount = $vendorItems->count();
-
-        // If limit is specified (e.g. 4 for homepage, 100 for view all):
-        if ($limit && $limit > 0) {
-            // Calculate 20% admin quota (at least 1 admin product if listed and limit >= 1)
-            $targetAdmin = $adminCount > 0 ? max(1, (int) round($limit * 0.20)) : 0;
-            $targetVendor = $limit - $targetAdmin;
-
-            // Balance if one pool has fewer items than targets
-            if ($vendorCount < $targetVendor) {
-                $targetVendor = $vendorCount;
-                $targetAdmin = min($adminCount, $limit - $targetVendor);
-            }
-            if ($adminCount < $targetAdmin) {
-                $targetAdmin = $adminCount;
-                $targetVendor = min($vendorCount, $limit - $targetAdmin);
+            // Attach computed customer_rating and customer_rating_count for sorting
+            foreach ($allItems as $item) {
+                $item->computed_customer_rating = $item->customer_rating;
+                $item->computed_customer_rating_count = $item->customer_rating_count;
             }
 
-            $adminSlice = $adminItems->take($targetAdmin);
-            $vendorSlice = $vendorItems->take($targetVendor);
-
-            // Merge and sort overall by customer rating descending
-            $merged = $adminSlice->concat($vendorSlice)->sort(function ($a, $b) {
+            // 2. Separate into Admin items and Vendor items
+            // Sort each collection descending by customer_rating, then by customer_rating_count, then by id
+            $adminItems = $allItems->filter(function ($item) {
+                return empty($item->vendor_id) || $item->vendor_id == 0;
+            })->sort(function ($a, $b) {
                 if ($b->computed_customer_rating != $a->computed_customer_rating) {
                     return $b->computed_customer_rating <=> $a->computed_customer_rating;
                 }
@@ -330,35 +289,9 @@ class Helper
                 return $b->id <=> $a->id;
             })->values();
 
-            return $merged;
-        }
-
-        // Full list (20% admin, 80% vendor interleaved):
-        $result = collect();
-        $adminQueue = $adminItems;
-        $vendorQueue = $vendorItems;
-
-        while ($adminQueue->isNotEmpty() || $vendorQueue->isNotEmpty()) {
-            $chunk = collect();
-
-            $vTake = min(4, $vendorQueue->count());
-            if ($vTake > 0) {
-                $chunk = $chunk->concat($vendorQueue->splice(0, $vTake));
-            }
-
-            $aTake = min(1, $adminQueue->count());
-            if ($aTake > 0) {
-                $chunk = $chunk->concat($adminQueue->splice(0, $aTake));
-            }
-
-            if ($vendorQueue->isEmpty() && $adminQueue->isNotEmpty()) {
-                $chunk = $chunk->concat($adminQueue->splice(0, $adminQueue->count()));
-            }
-            if ($adminQueue->isEmpty() && $vendorQueue->isNotEmpty()) {
-                $chunk = $chunk->concat($vendorQueue->splice(0, $vendorQueue->count()));
-            }
-
-            $chunkSorted = $chunk->sort(function ($a, $b) {
+            $vendorItems = $allItems->filter(function ($item) {
+                return !empty($item->vendor_id) && $item->vendor_id > 0;
+            })->sort(function ($a, $b) {
                 if ($b->computed_customer_rating != $a->computed_customer_rating) {
                     return $b->computed_customer_rating <=> $a->computed_customer_rating;
                 }
@@ -366,12 +299,82 @@ class Helper
                     return $b->computed_customer_rating_count <=> $a->computed_customer_rating_count;
                 }
                 return $b->id <=> $a->id;
-            });
+            })->values();
 
-            $result = $result->concat($chunkSorted);
-        }
+            $adminCount = $adminItems->count();
+            $vendorCount = $vendorItems->count();
 
-        return $result->values();
+            // If limit is specified (e.g. 4 for homepage, 100 for view all):
+            if ($limit && $limit > 0) {
+                // Calculate 20% admin quota (at least 1 admin product if listed and limit >= 1)
+                $targetAdmin = $adminCount > 0 ? max(1, (int) round($limit * 0.20)) : 0;
+                $targetVendor = $limit - $targetAdmin;
+
+                // Balance if one pool has fewer items than targets
+                if ($vendorCount < $targetVendor) {
+                    $targetVendor = $vendorCount;
+                    $targetAdmin = min($adminCount, $limit - $targetVendor);
+                }
+                if ($adminCount < $targetAdmin) {
+                    $targetAdmin = $adminCount;
+                    $targetVendor = min($vendorCount, $limit - $targetAdmin);
+                }
+
+                $adminSlice = $adminItems->take($targetAdmin);
+                $vendorSlice = $vendorItems->take($targetVendor);
+
+                // Merge and sort overall by customer rating descending
+                return $adminSlice->concat($vendorSlice)->sort(function ($a, $b) {
+                    if ($b->computed_customer_rating != $a->computed_customer_rating) {
+                        return $b->computed_customer_rating <=> $a->computed_customer_rating;
+                    }
+                    if ($b->computed_customer_rating_count != $a->computed_customer_rating_count) {
+                        return $b->computed_customer_rating_count <=> $a->computed_customer_rating_count;
+                    }
+                    return $b->id <=> $a->id;
+                })->values();
+            }
+
+            // Full list (20% admin, 80% vendor interleaved):
+            $result = collect();
+            $adminQueue = $adminItems;
+            $vendorQueue = $vendorItems;
+
+            while ($adminQueue->isNotEmpty() || $vendorQueue->isNotEmpty()) {
+                $chunk = collect();
+
+                $vTake = min(4, $vendorQueue->count());
+                if ($vTake > 0) {
+                    $chunk = $chunk->concat($vendorQueue->splice(0, $vTake));
+                }
+
+                $aTake = min(1, $adminQueue->count());
+                if ($aTake > 0) {
+                    $chunk = $chunk->concat($adminQueue->splice(0, $aTake));
+                }
+
+                if ($vendorQueue->isEmpty() && $adminQueue->isNotEmpty()) {
+                    $chunk = $chunk->concat($adminQueue->splice(0, $adminQueue->count()));
+                }
+                if ($adminQueue->isEmpty() && $vendorQueue->isNotEmpty()) {
+                    $chunk = $chunk->concat($vendorQueue->splice(0, $vendorQueue->count()));
+                }
+
+                $chunkSorted = $chunk->sort(function ($a, $b) {
+                    if ($b->computed_customer_rating != $a->computed_customer_rating) {
+                        return $b->computed_customer_rating <=> $a->computed_customer_rating;
+                    }
+                    if ($b->computed_customer_rating_count != $a->computed_customer_rating_count) {
+                        return $b->computed_customer_rating_count <=> $a->computed_customer_rating_count;
+                    }
+                    return $b->id <=> $a->id;
+                });
+
+                $result = $result->concat($chunkSorted);
+            }
+
+            return $result->values();
+        });
     }
 
     /**
@@ -382,24 +385,27 @@ class Helper
      */
     public static function getNewlyListedProducts($limit = null)
     {
-        $query = Item::with(['category', 'tax'])
-            ->where('status', 1)
-            ->where(function ($query) {
-                $query->where('approval_status', 'Approved')
-                    ->orWhereNull('approval_status');
-            })
-            ->where(function ($query) {
-                $query->whereNull('is_hidden_by_block')
-                    ->orWhere('is_hidden_by_block', 0);
-            })
-            ->orderBy('created_at', 'desc')
-            ->orderBy('id', 'desc');
+        $cacheKey = 'helper_newly_listed_products_' . ($limit ?? 'all');
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, 180, function() use ($limit) {
+            $query = Item::with(['category', 'tax'])
+                ->where('status', 1)
+                ->where(function ($query) {
+                    $query->where('approval_status', 'Approved')
+                        ->orWhereNull('approval_status');
+                })
+                ->where(function ($query) {
+                    $query->whereNull('is_hidden_by_block')
+                        ->orWhere('is_hidden_by_block', 0);
+                })
+                ->orderBy('created_at', 'desc')
+                ->orderBy('id', 'desc');
 
-        if ($limit && $limit > 0) {
-            return $query->take($limit)->get();
-        }
+            if ($limit && $limit > 0) {
+                return $query->take($limit)->get();
+            }
 
-        return $query->get();
+            return $query->get();
+        });
     }
 
     /**
@@ -411,16 +417,19 @@ class Helper
     public static function getActiveDeals($limit = null)
     {
         try {
-            $query = \App\Models\Deal::with(['items.category', 'dealItems.item', 'vendor'])
-                ->active()
-                ->orderBy('orders_count', 'desc')
-                ->orderBy('created_at', 'desc');
+            $cacheKey = 'helper_active_deals_' . ($limit ?? 'all');
+            return \Illuminate\Support\Facades\Cache::remember($cacheKey, 60, function() use ($limit) {
+                $query = \App\Models\Deal::with(['items.category', 'dealItems.item', 'vendor'])
+                    ->active()
+                    ->orderBy('orders_count', 'desc')
+                    ->orderBy('created_at', 'desc');
 
-            if ($limit && $limit > 0) {
-                return $query->take($limit)->get();
-            }
+                if ($limit && $limit > 0) {
+                    return $query->take($limit)->get();
+                }
 
-            return $query->get();
+                return $query->get();
+            });
         } catch (\Throwable $e) {
             return collect();
         }

@@ -20,7 +20,6 @@ class SellerDealController extends Controller
     public function __construct()
     {
         $this->middleware(['auth', 'seller']);
-        \App\Helpers\Helper::ensureDealsTable();
     }
 
     public function index()
