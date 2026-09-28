@@ -520,14 +520,15 @@
 
         .deal-card .deal-title,
         .deal-card h3.h6 {
-            min-height: 34px !important;
-            max-height: 34px !important;
-            line-height: 1.3 !important;
+            min-height: 38px !important;
+            max-height: 42px !important;
+            font-size: 13.5px !important;
+            line-height: 1.35 !important;
             overflow: hidden !important;
             display: -webkit-box !important;
             -webkit-line-clamp: 2 !important;
             -webkit-box-orient: vertical !important;
-            margin-bottom: 4px !important;
+            margin-bottom: 6px !important;
         }
 
         .deal-card .deal-title a {

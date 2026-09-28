@@ -36,7 +36,7 @@
             @endif
         </a>
         <div class="card-body d-flex flex-column p-2 p-md-3">
-            <h3 class="h6 font-weight-bold deal-title mb-1" style="font-size: 13px; line-height: 1.3;"><a href="{{ route('front.deal.details', $deal->slug) }}" class="text-dark">{{ Str::limit($deal->name, 35) }}</a></h3>
+            <h3 class="h6 font-weight-bold deal-title mb-1" style="font-size: 13px; line-height: 1.3;"><a href="{{ route('front.deal.details', $deal->slug) }}" class="text-dark">{{ Str::limit($deal->name, 75) }}</a></h3>
             <div class="mt-auto">
                 <del class="text-muted small">{{ PriceHelper::setCurrencyPrice($deal->original_price) }}</del>
                 <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap" style="gap:2px;">
