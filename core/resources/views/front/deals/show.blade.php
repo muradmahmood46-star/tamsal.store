@@ -25,7 +25,7 @@
             <span class="badge badge-warning text-dark float-right">{{ $deal->discount_badge }}</span>
             <h1 class="h3">{{ $deal->name }}</h1>
             @if($deal->description)<p class="text-muted">{{ $deal->description }}</p>@endif
-            <div class="alert alert-danger mb-0 d-flex justify-content-between align-items-center flex-wrap" style="gap:10px;">
+            <div class="alert alert-success mb-0 d-flex justify-content-between align-items-center flex-wrap" style="gap:10px; background-color: #f0fdf4; border-color: #bbf7d0; color: #166534;">
                 <div>
                     <strong>{{ __('Ends in:') }}</strong> <span class="deal-countdown">--</span>
                     <span class="ml-3">

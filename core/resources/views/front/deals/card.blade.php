@@ -8,7 +8,7 @@
         }
     @endphp
     <article class="card h-100 border-0 shadow-sm deal-card" data-deal-end="{{ $dealEndIso }}">
-        <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center py-1 px-2">
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center py-1 px-2">
             <small class="font-weight-bold" style="font-size: 11px;"><i class="icon-clock"></i> <span class="deal-countdown">--</span></small>
             <span class="badge badge-warning text-dark" style="font-size: 10px;">{{ $deal->discount_badge }}</span>
         </div>

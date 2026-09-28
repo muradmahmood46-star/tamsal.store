@@ -467,6 +467,14 @@
             border-color: #cbd5e1 !important;
         }
 
+        .deal-card .card-header {
+            background-color: #16a34a !important;
+            background: #16a34a !important;
+            color: #ffffff !important;
+            border-bottom: none !important;
+            padding: 5px 8px !important;
+        }
+
         .deal-card .deal-thumb,
         .deal-card a.deal-thumb {
             display: block !important;
