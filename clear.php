@@ -225,6 +225,30 @@ if (!empty($dbname)) {
             $dbStatus[] = "✔ Database table `deals` created successfully!";
         } else {
             // Check individual columns of deals
+            $stmt = $pdo->query("SHOW COLUMNS FROM `deals` LIKE 'sku'");
+            if ($stmt && $stmt->rowCount() == 0) {
+                $pdo->exec("ALTER TABLE `deals` ADD COLUMN `sku` VARCHAR(100) NULL AFTER `name`");
+                try {
+                    $pdo->exec("ALTER TABLE `deals` ADD INDEX `deals_sku_index` (`sku`)");
+                } catch (\Throwable $e) {}
+                $dbStatus[] = "✔ Database column `deals.sku` created successfully!";
+            }
+
+            // Backfill SKU for any deals that don't have one
+            try {
+                $missingDeals = $pdo->query("SELECT id, name, slug FROM `deals` WHERE `sku` IS NULL OR `sku` = ''")->fetchAll(PDO::FETCH_ASSOC);
+                if (!empty($missingDeals)) {
+                    $letters = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+                    $digits = '23456789';
+                    $chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+                    foreach ($missingDeals as $md) {
+                        $sku = 'BD' . $letters[random_int(0, strlen($letters) - 1)] . $digits[random_int(0, strlen($digits) - 1)] . $chars[random_int(0, strlen($chars) - 1)] . $chars[random_int(0, strlen($chars) - 1)];
+                        $pdo->prepare("UPDATE `deals` SET `sku` = ?, `slug` = ? WHERE `id` = ?")->execute([$sku, $sku, $md['id']]);
+                    }
+                    $dbStatus[] = "✔ Generated unique SKUs and synced URLs for " . count($missingDeals) . " existing deals!";
+                }
+            } catch (\Throwable $e) {}
+
             $stmt = $pdo->query("SHOW COLUMNS FROM `deals` LIKE 'photo'");
             if ($stmt && $stmt->rowCount() == 0) {
                 $pdo->exec("ALTER TABLE `deals` ADD COLUMN `photo` VARCHAR(255) NULL AFTER `slug`");
