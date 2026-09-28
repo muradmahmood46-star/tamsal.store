@@ -1482,16 +1482,10 @@
                         </div>
                     </div>
                 </div>
-                <!-- Desktop View: 8 Bundles, 4 in 1 line -->
-                <div class="row d-none d-md-flex">
+                <!-- Unified Responsive Bundles Grid: 4 per row desktop, 2 per row mobile -->
+                <div class="row g-2 g-md-3">
                     @foreach($bundleDeals->take(8) as $deal)
-                        @include('front.deals.card', ['deal' => $deal, 'column' => 'col-lg-3 col-md-4 col-sm-6 mb-4'])
-                    @endforeach
-                </div>
-                <!-- Mobile View: 6 Bundles, 2 in each row -->
-                <div class="row gx-2 gy-2 d-flex d-md-none mobile-bundle-grid">
-                    @foreach($bundleDeals->take(6) as $deal)
-                        @include('front.deals.card', ['deal' => $deal, 'column' => 'col-6 mb-2 px-1'])
+                        @include('front.deals.card', ['deal' => $deal, 'column' => 'col-6 col-sm-6 col-md-4 col-lg-3 mb-3 px-1 px-md-2'])
                     @endforeach
                 </div>
             </div>
