@@ -60,7 +60,11 @@ class Deal extends Model
 
     public function scopeActive($query)
     {
-        return $query->where('status', 1);
+        return $query->where('status', 1)
+                     ->where(function ($q) {
+                         $q->whereNull('end_date')
+                           ->orWhere('end_date', '>', Carbon::now());
+                     });
     }
 
     public function scopeExpired($query)
@@ -73,7 +77,12 @@ class Deal extends Model
 
     public function isExpired()
     {
-        return $this->status == 0 || ($this->end_date && $this->end_date->isPast());
+        return $this->status == 0 || ($this->end_date && Carbon::parse($this->end_date)->isPast());
+    }
+
+    public function isActive()
+    {
+        return !$this->isExpired();
     }
 
     public function getDiscountBadgeAttribute()

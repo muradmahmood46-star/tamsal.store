@@ -1469,7 +1469,7 @@
         @php
             $bundleDeals = (isset($flash_deals) && $flash_deals->isNotEmpty())
                 ? $flash_deals
-                : (class_exists(\App\Models\Deal::class) ? \App\Models\Deal::where('status', 1)->with(['dealItems.item'])->get() : collect());
+                : \App\Helpers\Helper::getActiveDeals(8);
         @endphp
         @if($bundleDeals->isNotEmpty())
         <div class="flash-sell-new-section mt-50">
