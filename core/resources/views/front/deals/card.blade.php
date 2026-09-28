@@ -19,7 +19,7 @@
                         ? url('/core/public/storage/' . $deal->photo)
                         : url('/core/public/storage/images/' . $deal->photo);
                 @endphp
-                <img class="card-img-top" src="{{ $cardImg }}" alt="{{ $deal->name }}">
+                <img class="card-img-top" src="{{ $cardImg }}" alt="{{ $deal->name }}" loading="eager" fetchpriority="high" decoding="async">
             @else
                 @php
                     $firstItem = $deal->dealItems->first()->item ?? null;
@@ -31,7 +31,7 @@
                             ? url('/core/public/storage/' . $firstThumb)
                             : url('/core/public/storage/images/' . $firstThumb);
                     @endphp
-                    <img class="card-img-top" src="{{ $firstImg }}" alt="{{ $deal->name }}">
+                    <img class="card-img-top" src="{{ $firstImg }}" alt="{{ $deal->name }}" loading="eager" fetchpriority="high" decoding="async">
                 @endif
             @endif
         </a>
