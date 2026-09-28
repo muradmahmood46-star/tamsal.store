@@ -85,6 +85,59 @@ class Deal extends Model
         return !$this->isExpired();
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'deal_id');
+    }
+
+    public function getRatingAttribute()
+    {
+        $avg = $this->reviews()->where('status', 1)->avg('rating');
+        if ($avg) {
+            return (float) $avg;
+        }
+        if ($this->relationLoaded('dealItems') || $this->dealItems()->exists()) {
+            $itemIds = $this->dealItems->pluck('item_id')->toArray();
+            if (!empty($itemIds)) {
+                $itemAvg = Review::whereIn('item_id', $itemIds)->where('status', 1)->avg('rating');
+                if ($itemAvg) {
+                    return (float) $itemAvg;
+                }
+            }
+        }
+        return 5.0;
+    }
+
+    public function getRatingCountAttribute()
+    {
+        $count = $this->reviews()->where('status', 1)->count();
+        if ($count > 0) {
+            return $count;
+        }
+        if ($this->relationLoaded('dealItems') || $this->dealItems()->exists()) {
+            $itemIds = $this->dealItems->pluck('item_id')->toArray();
+            if (!empty($itemIds)) {
+                return Review::whereIn('item_id', $itemIds)->where('status', 1)->count();
+            }
+        }
+        return 0;
+    }
+
+    public function getStoreNameAttribute()
+    {
+        if ($this->vendor_id && $this->vendor) {
+            if ($this->vendor->seller && !empty($this->vendor->seller->shop_name)) {
+                return $this->vendor->seller->shop_name;
+            }
+            if (!empty($this->vendor->shop_name)) {
+                return $this->vendor->shop_name;
+            }
+            return trim($this->vendor->first_name . ' ' . $this->vendor->last_name . "'s Store");
+        }
+        $setting = \App\Models\Setting::find(1);
+        return $setting->title ?? 'Tamsal Store';
+    }
+
     public function getDiscountBadgeAttribute()
     {
         if ($this->discount_type === 'percent') {

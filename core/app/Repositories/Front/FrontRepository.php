@@ -64,7 +64,8 @@ class FrontRepository
         }
 
         $input = [
-            'item_id' => $request->item_id,
+            'item_id' => $request->item_id ?: null,
+            'deal_id' => $request->deal_id ?: null,
             'rating'  => $request->rating,
             'subject' => $request->subject,
             'review'  => $request->review,
@@ -95,8 +96,12 @@ class FrontRepository
             $input['photo'] = json_encode($uploadedPhotos);
         }
 
-        // Check if the user already has a review for this item
-        $existingReview = $user->reviews()->where('item_id', $request->item_id)->first();
+        // Check if the user already has a review for this item or deal
+        if (!empty($request->deal_id)) {
+            $existingReview = $user->reviews()->where('deal_id', $request->deal_id)->first();
+        } else {
+            $existingReview = $user->reviews()->where('item_id', $request->item_id)->first();
+        }
 
         if ($existingReview) {
             if (!empty($uploadedPhotos) && !empty($existingReview->photo)) {

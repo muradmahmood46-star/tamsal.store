@@ -13,11 +13,107 @@ use Illuminate\Support\Facades\Auth;
 class ChatController extends Controller
 {
     /**
-     * Initialize or load conversation for a product
+     * Initialize or load conversation for a product or bundle/deal
      */
     public function init(Request $request)
     {
+        $dealId = $request->deal_id;
         $itemId = $request->item_id;
+
+        if ($dealId) {
+            $deal = \App\Models\Deal::with('vendor.seller')->find($dealId);
+            if (!$deal) {
+                return response()->json(['success' => false, 'message' => __('Bundle not found.')], 404);
+            }
+
+            $dealPhoto = \Illuminate\Support\Str::startsWith($deal->photo, 'images/')
+                ? url('/core/public/storage/' . $deal->photo)
+                : url('/core/public/storage/images/' . $deal->photo);
+
+            if (!Auth::check()) {
+                return response()->json([
+                    'success' => true,
+                    'auth_required' => true,
+                    'login_url' => route('user.login'),
+                    'store_name' => $deal->store_name,
+                    'product' => [
+                        'id' => $deal->id,
+                        'name' => $deal->name,
+                        'price' => \App\Helpers\PriceHelper::setCurrencyPrice($deal->discounted_price),
+                        'photo' => $dealPhoto,
+                        'sku' => 'Bundle #' . $deal->id,
+                    ]
+                ]);
+            }
+
+            $userId = Auth::id();
+            $vendorId = $deal->vendor_id ? (int)$deal->vendor_id : 0;
+
+            // Find or create conversation for deal
+            $conversation = Conversation::firstOrCreate([
+                'deal_id' => $deal->id,
+                'user_id' => $userId,
+                'vendor_id' => $vendorId,
+            ], [
+                'item_id' => null,
+                'last_message' => __('Started conversation about bundle :item', ['item' => $deal->name]),
+                'last_message_at' => Carbon::now(),
+                'user_unread_count' => 0,
+                'vendor_unread_count' => 0,
+                'deleted_by_user' => 0,
+                'deleted_by_vendor' => 0,
+            ]);
+
+            // Reopen for user if previously deleted
+            if ($conversation->deleted_by_user) {
+                $conversation->update(['deleted_by_user' => 0]);
+            }
+
+            // Mark user unread count as 0
+            if ($conversation->user_unread_count > 0) {
+                $conversation->update(['user_unread_count' => 0]);
+                ChatMessage::where('conversation_id', $conversation->id)
+                    ->where('sender_type', '!=', 'user')
+                    ->where('is_read', 0)
+                    ->update(['is_read' => 1]);
+            }
+
+            $messages = ChatMessage::where('conversation_id', $conversation->id)
+                ->where('deleted_by_user', 0)
+                ->orderBy('id', 'asc')
+                ->get()
+                ->map(function ($msg) {
+                    return [
+                        'id' => $msg->id,
+                        'sender_type' => $msg->sender_type,
+                        'message' => $msg->message,
+                        'time' => $msg->created_at ? $msg->created_at->format('h:i A') : '',
+                        'date' => $msg->created_at ? $msg->created_at->format('M d, Y') : '',
+                        'is_me' => ($msg->sender_type === 'user'),
+                    ];
+                });
+
+            $isBlocked = \App\Helpers\ChatPolicyHelper::isUserBlocked(Auth::user());
+
+            return response()->json([
+                'success' => true,
+                'auth_required' => false,
+                'is_chat_blocked' => $isBlocked,
+                'chat_blocked_message' => $isBlocked ? __('Your account is blocked from sending chat messages due to policy violations.') : null,
+                'conversation_id' => $conversation->id,
+                'store_name' => $deal->store_name,
+                'is_vendor' => ($vendorId > 0),
+                'product' => [
+                    'id' => $deal->id,
+                    'name' => $deal->name,
+                    'price' => \App\Helpers\PriceHelper::setCurrencyPrice($deal->discounted_price),
+                    'photo' => $dealPhoto,
+                    'sku' => 'Bundle #' . $deal->id,
+                ],
+                'messages' => $messages
+            ]);
+        }
+
         $item = Item::with('seller', 'user')->find($itemId);
 
         if (!$item) {

@@ -341,6 +341,30 @@
     }
 </style>
 
+@php
+    $chatEntity = isset($deal) ? $deal : (isset($item) ? $item : null);
+    $isDealMode = isset($deal);
+    $chatStoreName = $chatEntity ? $chatEntity->store_name : 'ORIVO';
+    $chatEntityName = $chatEntity ? $chatEntity->name : 'Product';
+    $chatVendorId = $chatEntity ? ($chatEntity->vendor_id ?: 0) : 0;
+    
+    if ($isDealMode && isset($deal)) {
+        $chatEntityPhoto = \Illuminate\Support\Str::startsWith($deal->photo, 'images/')
+            ? url('/core/public/storage/' . $deal->photo)
+            : url('/core/public/storage/images/' . $deal->photo);
+        $chatEntityPrice = \App\Helpers\PriceHelper::setCurrencyPrice($deal->discounted_price);
+        $chatEntityBadge = 'Bundle #' . $deal->id;
+    } elseif (isset($item)) {
+        $chatEntityPhoto = url('/core/public/storage/images/' . $item->photo);
+        $chatEntityPrice = \App\Helpers\PriceHelper::grandCurrencyPrice($item);
+        $chatEntityBadge = $item->sku ? '#' . $item->sku : 'ID #' . $item->id;
+    } else {
+        $chatEntityPhoto = '';
+        $chatEntityPrice = '';
+        $chatEntityBadge = '';
+    }
+@endphp
+
 <!-- Floating WhatsApp Chatbox Modal Container -->
 <div id="whatsapp_chat_widget">
     <!-- Header -->
@@ -350,7 +374,7 @@
                 <i class="fas fa-store"></i>
             </div>
             <div class="wa-header-info">
-                <h6 class="wa-header-title" id="wa_store_name">{{ $item->store_name }}</h6>
+                <h6 class="wa-header-title" id="wa_store_name">{{ $chatStoreName }}</h6>
                 <div class="wa-header-status">
                     <span class="wa-online-dot"></span>
                     <span id="wa_status_text">{{ __('Online • Typically replies instantly') }}</span>
@@ -360,14 +384,14 @@
         <button class="wa-close-btn" onclick="toggleWhatsAppChat()"><i class="fas fa-times"></i></button>
     </div>
 
-    <!-- Pinned Product Information -->
+    <!-- Pinned Product / Bundle Information -->
     <div class="wa-product-pinned">
-        <img src="{{ url('/core/public/storage/images/' . $item->photo) }}" alt="{{ $item->name }}">
+        <img src="{{ $chatEntityPhoto }}" alt="{{ $chatEntityName }}">
         <div class="wa-product-info">
-            <h6 class="wa-product-title">{{ $item->name }}</h6>
+            <h6 class="wa-product-title">{{ $chatEntityName }}</h6>
             <div class="d-flex justify-content-between align-items-center">
-                <span class="wa-product-price">{{ PriceHelper::grandCurrencyPrice($item) }}</span>
-                <span class="badge badge-light border text-muted" style="font-size: 10.5px;">{{ $item->sku ? '#' . $item->sku : 'ID #' . $item->id }}</span>
+                <span class="wa-product-price">{{ $chatEntityPrice }}</span>
+                <span class="badge badge-light border text-muted" style="font-size: 10.5px;">{{ $chatEntityBadge }}</span>
             </div>
         </div>
     </div>
@@ -382,8 +406,8 @@
 
     <!-- Quick Action Suggestion Chips -->
     <div class="wa-quick-chips">
-        <button type="button" class="wa-chip-btn" onclick="sendQuickChip('{{ __('Is this product available in stock?') }}')">
-            {{ __('Is this in stock?') }}
+        <button type="button" class="wa-chip-btn" onclick="sendQuickChip('{{ $isDealMode ? __('Is this bundle offer active and available?') : __('Is this product available in stock?') }}')">
+            {{ $isDealMode ? __('Is bundle active?') : __('Is this in stock?') }}
         </button>
         <button type="button" class="wa-chip-btn" onclick="sendQuickChip('{{ __('What is the delivery time for this item?') }}')">
             {{ __('Delivery time?') }}
@@ -404,7 +428,7 @@
 
 <!-- Mobile Sticky Bottom Action Bar (Daraz App Style) -->
 <div class="mobile-daraz-bar">
-    <a href="{{ route('front.catalog') . '?vendor=' . ($item->vendor_id ?: 'admin') }}" class="daraz-icon-btn">
+    <a href="{{ route('front.catalog') . '?vendor=' . ($chatVendorId ?: 'admin') }}" class="daraz-icon-btn">
         <i class="fas fa-store text-primary"></i>
         <span>{{ __('Store') }}</span>
     </a>
@@ -413,17 +437,26 @@
         <span>{{ __('Chat') }}</span>
     </button>
     <div class="daraz-actions-group">
-        @if ($item->is_stock())
-            <button type="button" class="daraz-btn-cart" onclick="document.getElementById('add_to_cart').click()">
+        @if ($isDealMode)
+            <button type="button" class="daraz-btn-cart" onclick="var bBtn = document.getElementById('bundle_add_to_cart_btn'); if(bBtn) { bBtn.click(); } else { document.querySelector('form[action*=\'add_to_cart\'] button').click(); }">
                 {{ __('Add to Cart') }}
             </button>
-            <button type="button" class="daraz-btn-buy" onclick="document.getElementById('but_to_cart').click()">
+            <button type="button" class="daraz-btn-buy" onclick="var bBuy = document.getElementById('bundle_buy_now_btn'); if(bBuy) { bBuy.click(); } else { document.querySelectorAll('form[action*=\'add_to_cart\']')[1].querySelector('button').click(); }">
                 {{ __('Buy Now') }}
             </button>
         @else
-            <button type="button" class="daraz-btn-cart" style="background:#94a3b8;" disabled>
-                {{ __('Out of stock') }}
-            </button>
+            @if (isset($item) && $item->is_stock())
+                <button type="button" class="daraz-btn-cart" onclick="document.getElementById('add_to_cart').click()">
+                    {{ __('Add to Cart') }}
+                </button>
+                <button type="button" class="daraz-btn-buy" onclick="document.getElementById('but_to_cart').click()">
+                    {{ __('Buy Now') }}
+                </button>
+            @else
+                <button type="button" class="daraz-btn-cart" style="background:#94a3b8;" disabled>
+                    {{ __('Out of stock') }}
+                </button>
+            @endif
         @endif
     </div>
 </div>
@@ -432,7 +465,8 @@
 <script>
     let currentConversationId = null;
     let chatPollInterval = null;
-    const currentItemId = {{ $item->id }};
+    const currentItemId = {{ isset($item) ? $item->id : 'null' }};
+    const currentDealId = {{ isset($deal) ? $deal->id : 'null' }};
     const chatInitUrl = "{{ route('front.chat.init') }}";
     const chatSendUrl = "{{ route('front.chat.send') }}";
     const chatFetchUrlBase = "{{ url('/chat/fetch') }}";
@@ -463,13 +497,20 @@
             </div>
         `;
 
+        const chatPayload = {};
+        if (currentDealId) {
+            chatPayload.deal_id = currentDealId;
+        } else if (currentItemId) {
+            chatPayload.item_id = currentItemId;
+        }
+
         fetch(chatInitUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': csrfToken
             },
-            body: JSON.stringify({ item_id: currentItemId })
+            body: JSON.stringify(chatPayload)
         })
         .then(res => res.json())
         .then(data => {
@@ -480,7 +521,7 @@
                             <i class="fas fa-user-lock fa-2x"></i>
                         </div>
                         <h6 class="font-weight-bold text-dark mb-1">{{ __('Sign in to Chat') }}</h6>
-                        <p class="text-muted small mb-3">{{ __('Please login to chat directly with :store and view your messages anytime.', ['store' => $item->store_name]) }}</p>
+                        <p class="text-muted small mb-3">{{ __('Please login to chat directly with :store and view your messages anytime.', ['store' => $chatStoreName]) }}</p>
                         <a href="${data.login_url}" class="btn btn-success btn-sm w-100 py-2 font-weight-bold" style="background:#008069; border-color:#008069; border-radius: 20px;">
                             <i class="fas fa-sign-in-alt mr-1"></i> {{ __('Login / Register to Chat') }}
                         </a>
@@ -531,7 +572,7 @@
             container.innerHTML = `
                 <div class="text-center my-auto p-3 text-muted small bg-white rounded shadow-sm mx-2">
                     <i class="fas fa-comments fa-2x text-success mb-2 d-block" style="color:#008069 !important;"></i>
-                    <strong>{{ __('Say hello to :store!', ['store' => $item->store_name]) }}</strong>
+                    <strong>{{ __('Say hello to :store!', ['store' => $chatStoreName]) }}</strong>
                     <div class="mt-1 text-muted" style="font-size: 11.5px;">{{ __('Ask anything about this product or delivery.') }}</div>
                 </div>
             `;

@@ -8,6 +8,7 @@ class Conversation extends Model
 {
     protected $fillable = [
         'item_id',
+        'deal_id',
         'user_id',
         'vendor_id',
         'last_message',
@@ -25,6 +26,11 @@ class Conversation extends Model
     public function item()
     {
         return $this->belongsTo('App\Models\Item', 'item_id')->withDefault();
+    }
+
+    public function deal()
+    {
+        return $this->belongsTo('App\Models\Deal', 'deal_id')->withDefault();
     }
 
     public function user()

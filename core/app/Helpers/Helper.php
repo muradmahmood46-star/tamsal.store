@@ -12,7 +12,7 @@ class Helper
 
     public static function renderStarRating($rating, $maxRating = 5)
     {
-        if ($rating instanceof \App\Models\Item) {
+        if ($rating instanceof \App\Models\Item || $rating instanceof \App\Models\Deal) {
             $rating = $rating->rating;
         } elseif (is_numeric($rating)) {
             $rating = (float) $rating;
@@ -495,6 +495,22 @@ class Helper
                 if (!\Illuminate\Support\Facades\Schema::hasColumn('deal_items', 'quantity')) {
                     \Illuminate\Support\Facades\Schema::table('deal_items', function ($table) {
                         $table->unsignedInteger('quantity')->default(1)->after('item_id');
+                    });
+                }
+            }
+
+            if (\Illuminate\Support\Facades\Schema::hasTable('reviews')) {
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('reviews', 'deal_id')) {
+                    \Illuminate\Support\Facades\Schema::table('reviews', function ($table) {
+                        $table->unsignedBigInteger('deal_id')->nullable()->default(null)->after('item_id')->index();
+                    });
+                }
+            }
+
+            if (\Illuminate\Support\Facades\Schema::hasTable('conversations')) {
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('conversations', 'deal_id')) {
+                    \Illuminate\Support\Facades\Schema::table('conversations', function ($table) {
+                        $table->unsignedBigInteger('deal_id')->nullable()->default(null)->after('item_id')->index();
                     });
                 }
             }

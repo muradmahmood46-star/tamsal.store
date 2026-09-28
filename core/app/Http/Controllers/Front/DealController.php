@@ -24,7 +24,7 @@ class DealController extends Controller
 
     public function show($slug)
     {
-        $deal = Deal::with(['dealItems.item.category', 'vendor'])
+        $deal = Deal::with(['dealItems.item.category', 'vendor.seller'])
             ->active()
             ->where('slug', $slug)
             ->first();
@@ -33,7 +33,15 @@ class DealController extends Controller
             return redirect()->route('front.deal.index')->with('error', __('This bundle has expired or is no longer available.'));
         }
 
-        return view('front.deals.show', compact('deal'));
+        $directReviews = $deal->reviews()->where('status', 1)->latest()->get();
+        if ($directReviews->isEmpty()) {
+            $itemIds = $deal->dealItems->pluck('item_id')->toArray();
+            $reviews = \App\Models\Review::with('user')->whereIn('item_id', $itemIds)->where('status', 1)->latest()->paginate(10);
+        } else {
+            $reviews = $deal->reviews()->with('user')->where('status', 1)->latest()->paginate(10);
+        }
+
+        return view('front.deals.show', compact('deal', 'reviews'));
     }
 
     public function addToCart(Request $request, $slug)

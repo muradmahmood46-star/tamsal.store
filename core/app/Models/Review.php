@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Review extends Model
 {
-    protected $fillable = ['user_id','item_id','customer_name','is_admin_added','review','rating','status','subject','photo'];
+    protected $fillable = ['user_id','item_id','deal_id','customer_name','is_admin_added','review','rating','status','subject','photo'];
 
     public function user()
     {
@@ -16,6 +16,11 @@ class Review extends Model
     public function item()
     {
     	return $this->belongsTo('App\Models\Item')->withDefault();
+    }
+
+    public function deal()
+    {
+    	return $this->belongsTo('App\Models\Deal')->withDefault();
     }
 
     public function getReviewerNameAttribute()
