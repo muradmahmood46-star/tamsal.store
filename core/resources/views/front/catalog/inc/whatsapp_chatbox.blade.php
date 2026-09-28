@@ -342,9 +342,11 @@
 </style>
 
 @php
+    $setting = \App\Models\Setting::find(1);
+    $defaultAdminStoreName = ($setting && !empty($setting->brand_name)) ? $setting->brand_name : (($setting && !empty($setting->title)) ? $setting->title : 'Official Store');
     $chatEntity = isset($deal) ? $deal : (isset($item) ? $item : null);
     $isDealMode = isset($deal);
-    $chatStoreName = $chatEntity ? $chatEntity->store_name : 'ORIVO';
+    $chatStoreName = $chatEntity ? $chatEntity->store_name : $defaultAdminStoreName;
     $chatEntityName = $chatEntity ? $chatEntity->name : 'Product';
     $chatVendorId = $chatEntity ? ($chatEntity->vendor_id ?: 0) : 0;
     

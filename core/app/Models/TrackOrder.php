@@ -44,7 +44,9 @@ class TrackOrder extends Model
         // Get store / vendor name
         $vendor = \App\Models\User::find($order->vendor_id);
         $seller = $vendor ? \App\Models\Seller::where('user_id', $vendor->id)->first() : null;
-        $storeName = $seller && !empty($seller->shop_name) ? $seller->shop_name : ($vendor && !empty($vendor->first_name) ? $vendor->first_name . '\'s Store' : __('ORIVO'));
+        $setting = \App\Models\Setting::find(1);
+        $adminStore = ($setting && !empty($setting->brand_name)) ? $setting->brand_name : (($setting && !empty($setting->title)) ? $setting->title : 'Official Store');
+        $storeName = $seller && !empty($seller->shop_name) ? $seller->shop_name : ($vendor && !empty($vendor->first_name) ? $vendor->first_name . '\'s Store' : $adminStore);
 
         // Default descriptive messages in English
         if (!$customText) {

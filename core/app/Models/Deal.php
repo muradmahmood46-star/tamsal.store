@@ -135,7 +135,7 @@ class Deal extends Model
             return trim($this->vendor->first_name . ' ' . $this->vendor->last_name . "'s Store");
         }
         $setting = \App\Models\Setting::find(1);
-        return $setting->title ?? 'Tamsal Store';
+        return ($setting && !empty($setting->brand_name)) ? $setting->brand_name : (($setting && !empty($setting->title)) ? $setting->title : 'Official Store');
     }
 
     public function getDiscountBadgeAttribute()

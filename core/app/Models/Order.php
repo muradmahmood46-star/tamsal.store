@@ -55,7 +55,8 @@ class Order extends Model
     public function getStoreNameAttribute()
     {
         if (empty($this->vendor_id) || $this->vendor_id == 0) {
-            return __('ORIVO');
+            $setting = \App\Models\Setting::find(1);
+            return ($setting && !empty($setting->brand_name)) ? $setting->brand_name : (($setting && !empty($setting->title)) ? $setting->title : 'Official Store');
         }
         $seller = \App\Models\Seller::where('user_id', $this->vendor_id)->first();
         if ($seller && $seller->shop_name) {

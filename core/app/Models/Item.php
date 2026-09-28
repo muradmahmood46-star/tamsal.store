@@ -177,7 +177,7 @@ class Item extends Model
             return 'Vendor Store';
         }
         $setting = \App\Models\Setting::find(1);
-        return ($setting && $setting->brand_name) ? $setting->brand_name : 'Official Store';
+        return ($setting && !empty($setting->brand_name)) ? $setting->brand_name : (($setting && !empty($setting->title)) ? $setting->title : 'Official Store');
     }
 
     public function isPending()

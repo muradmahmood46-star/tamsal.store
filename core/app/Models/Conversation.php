@@ -64,7 +64,8 @@ class Conversation extends Model
             }
             return 'Vendor Store';
         }
-        return 'ORIVO';
+        $setting = \App\Models\Setting::find(1);
+        return ($setting && !empty($setting->brand_name)) ? $setting->brand_name : (($setting && !empty($setting->title)) ? $setting->title : 'Official Store');
     }
 
     public function getBuyerNameAttribute()
