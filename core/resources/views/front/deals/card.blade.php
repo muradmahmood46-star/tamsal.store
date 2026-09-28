@@ -40,11 +40,6 @@
         </a>
         <div class="card-body d-flex flex-column p-2 p-md-3">
             <h3 class="h6 font-weight-bold deal-title mb-1" style="font-size: 13px; line-height: 1.3;"><a href="{{ $dealUrl }}" class="text-dark">{{ Str::limit($deal->name, 75) }}</a></h3>
-            @if(!empty($deal->sku))
-                <div class="mb-1">
-                    <span class="badge badge-light border text-primary px-1 py-0 font-weight-bold" style="font-size: 10px;">SKU: {{ $deal->sku }}</span>
-                </div>
-            @endif
             <div class="mt-auto">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                     <del class="text-muted small">{{ PriceHelper::setCurrencyPrice($deal->original_price) }}</del>

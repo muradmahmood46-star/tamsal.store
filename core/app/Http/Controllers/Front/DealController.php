@@ -24,22 +24,39 @@ class DealController extends Controller
 
     public function show($slug)
     {
+        $slugClean = trim($slug);
+
         $deal = Deal::with(['dealItems.item.category', 'vendor.seller'])
-            ->active()
-            ->where(function ($q) use ($slug) {
-                $q->where('slug', $slug)
-                  ->orWhere('sku', $slug);
+            ->where(function ($q) use ($slugClean) {
+                $q->where('sku', $slugClean)
+                  ->orWhere('slug', $slugClean)
+                  ->orWhere('id', is_numeric($slugClean) ? (int)$slugClean : 0)
+                  ->orWhere('name', 'like', '%' . str_replace('-', ' ', $slugClean) . '%');
             })
             ->first();
 
         if (!$deal) {
-            return redirect()->route('front.deal.index')->with('error', __('This bundle has expired or is no longer available.'));
+            $words = array_values(array_filter(explode('-', $slugClean), function($w) { return strlen($w) >= 3; }));
+            if (!empty($words)) {
+                $deal = Deal::with(['dealItems.item.category', 'vendor.seller'])
+                    ->where(function($q) use ($words) {
+                        foreach ($words as $w) {
+                            $q->orWhere('name', 'like', '%' . $w . '%');
+                        }
+                    })->first();
+            }
+        }
+
+        if (!$deal) {
+            return redirect()->route('front.deal.index')->with('error', __('This bundle is currently unavailable.'));
         }
 
         $directReviews = $deal->reviews()->where('status', 1)->latest()->get();
         if ($directReviews->isEmpty()) {
             $itemIds = $deal->dealItems->pluck('item_id')->toArray();
-            $reviews = \App\Models\Review::with('user')->whereIn('item_id', $itemIds)->where('status', 1)->latest()->paginate(10);
+            $reviews = !empty($itemIds)
+                ? \App\Models\Review::with('user')->whereIn('item_id', $itemIds)->where('status', 1)->latest()->paginate(10)
+                : collect();
         } else {
             $reviews = $deal->reviews()->with('user')->where('status', 1)->latest()->paginate(10);
         }
@@ -49,16 +66,31 @@ class DealController extends Controller
 
     public function addToCart(Request $request, $slug)
     {
+        $slugClean = trim($slug);
+
         $deal = Deal::with(['dealItems.item'])
-            ->active()
-            ->where(function ($q) use ($slug) {
-                $q->where('slug', $slug)
-                  ->orWhere('sku', $slug);
+            ->where(function ($q) use ($slugClean) {
+                $q->where('sku', $slugClean)
+                  ->orWhere('slug', $slugClean)
+                  ->orWhere('id', is_numeric($slugClean) ? (int)$slugClean : 0)
+                  ->orWhere('name', 'like', '%' . str_replace('-', ' ', $slugClean) . '%');
             })
             ->first();
 
         if (!$deal) {
-            return redirect()->route('front.deal.index')->with('error', __('This bundle has expired or is no longer available.'));
+            $words = array_values(array_filter(explode('-', $slugClean), function($w) { return strlen($w) >= 3; }));
+            if (!empty($words)) {
+                $deal = Deal::with(['dealItems.item'])
+                    ->where(function($q) use ($words) {
+                        foreach ($words as $w) {
+                            $q->orWhere('name', 'like', '%' . $w . '%');
+                        }
+                    })->first();
+            }
+        }
+
+        if (!$deal || $deal->status == 0) {
+            return redirect()->route('front.deal.index')->with('error', __('This bundle is currently unavailable.'));
         }
 
         $cart = Session::get('cart', []);
