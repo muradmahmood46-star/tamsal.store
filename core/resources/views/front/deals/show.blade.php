@@ -36,7 +36,14 @@
             @endif
 
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-2">
-                <h1 class="h3 font-weight-bold text-dark mb-1">{{ $deal->name }}</h1>
+                <div>
+                    <h1 class="h3 font-weight-bold text-dark mb-1 d-inline-block">{{ $deal->name }}</h1>
+                    @if(!empty($deal->sku))
+                        <span class="badge badge-light border text-primary ml-2 px-2 py-1 font-weight-bold" style="font-size: 12px; vertical-align: middle;">
+                            <i class="fas fa-barcode mr-1"></i>SKU: {{ $deal->sku }}
+                        </span>
+                    @endif
+                </div>
                 <div class="d-flex align-items-center" style="gap: 6px;">
                     <div style="font-size: 15px;">
                         {!! Helper::renderStarRating($deal) !!}
@@ -85,13 +92,13 @@
 
             <!-- Action Buttons Area -->
             <div class="mt-3 pt-2 d-flex align-items-center flex-wrap" style="gap:10px;">
-                <form action="{{ route('front.deal.add_to_cart', $deal->slug) }}" method="post" class="d-inline">
+                <form action="{{ route('front.deal.add_to_cart', !empty($deal->sku) ? $deal->sku : $deal->slug) }}" method="post" class="d-inline">
                     @csrf
                     <button type="submit" id="bundle_add_to_cart_btn" class="btn btn-primary btn-md px-4 font-weight-bold shadow-sm" style="border-radius: 8px;">
                         <i class="icon-shopping-cart mr-1"></i> {{ __('Add Bundle to Cart') }}
                     </button>
                 </form>
-                <form action="{{ route('front.deal.add_to_cart', $deal->slug) }}" method="post" class="d-inline">
+                <form action="{{ route('front.deal.add_to_cart', !empty($deal->sku) ? $deal->sku : $deal->slug) }}" method="post" class="d-inline">
                     @csrf
                     <input type="hidden" name="buy_now" value="1">
                     <button type="submit" id="bundle_buy_now_btn" class="btn btn-success btn-md px-4 font-weight-bold shadow-sm" style="border-radius: 8px; background: #16a34a; border-color: #16a34a;">
@@ -125,7 +132,7 @@
                 @include('includes.copy_share_link', [
                     'shareInputId' => 'bundle-share-link-' . $deal->id,
                     'shareLabel' => __('Bundle Link'),
-                    'shareUrl' => route('front.deal.details', $deal->slug),
+                    'shareUrl' => route('front.deal.details', !empty($deal->sku) ? $deal->sku : $deal->slug),
                 ])
             </div>
         </div>

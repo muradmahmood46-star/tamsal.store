@@ -26,7 +26,10 @@ class DealController extends Controller
     {
         $deal = Deal::with(['dealItems.item.category', 'vendor.seller'])
             ->active()
-            ->where('slug', $slug)
+            ->where(function ($q) use ($slug) {
+                $q->where('slug', $slug)
+                  ->orWhere('sku', $slug);
+            })
             ->first();
 
         if (!$deal) {
@@ -48,7 +51,10 @@ class DealController extends Controller
     {
         $deal = Deal::with(['dealItems.item'])
             ->active()
-            ->where('slug', $slug)
+            ->where(function ($q) use ($slug) {
+                $q->where('slug', $slug)
+                  ->orWhere('sku', $slug);
+            })
             ->first();
 
         if (!$deal) {

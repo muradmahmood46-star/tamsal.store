@@ -12,7 +12,10 @@
             <small class="font-weight-bold" style="font-size: 11px;"><i class="icon-clock"></i> <span class="deal-countdown">--</span></small>
             <span class="badge badge-warning text-dark" style="font-size: 10px;">{{ $deal->discount_badge }}</span>
         </div>
-        <a href="{{ route('front.deal.details', $deal->slug) }}" class="deal-thumb d-block bg-white" style="overflow: hidden;">
+        @php
+            $dealUrl = route('front.deal.details', !empty($deal->sku) ? $deal->sku : $deal->slug);
+        @endphp
+        <a href="{{ $dealUrl }}" class="deal-thumb d-block bg-white" style="overflow: hidden;">
             @if($deal->photo)
                 @php
                     $cardImg = \Illuminate\Support\Str::startsWith($deal->photo, 'images/')
@@ -36,7 +39,12 @@
             @endif
         </a>
         <div class="card-body d-flex flex-column p-2 p-md-3">
-            <h3 class="h6 font-weight-bold deal-title mb-1" style="font-size: 13px; line-height: 1.3;"><a href="{{ route('front.deal.details', $deal->slug) }}" class="text-dark">{{ Str::limit($deal->name, 75) }}</a></h3>
+            <h3 class="h6 font-weight-bold deal-title mb-1" style="font-size: 13px; line-height: 1.3;"><a href="{{ $dealUrl }}" class="text-dark">{{ Str::limit($deal->name, 75) }}</a></h3>
+            @if(!empty($deal->sku))
+                <div class="mb-1">
+                    <span class="badge badge-light border text-primary px-1 py-0 font-weight-bold" style="font-size: 10px;">SKU: {{ $deal->sku }}</span>
+                </div>
+            @endif
             <div class="mt-auto">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                     <del class="text-muted small">{{ PriceHelper::setCurrencyPrice($deal->original_price) }}</del>
@@ -57,13 +65,13 @@
                         <span class="badge badge-light border text-dark" style="font-size:10px;"><i class="fas fa-truck"></i> {{ PriceHelper::setCurrencyPrice($deal->delivery_charge) }}</span>
                     @endif
                 </div>
-                <a href="{{ route('front.deal.details', $deal->slug) }}" class="btn btn-outline-primary btn-sm btn-block mb-1 py-1" style="font-size: 11.5px;">{{ __('View Bundle') }}</a>
+                <a href="{{ $dealUrl }}" class="btn btn-outline-primary btn-sm btn-block mb-1 py-1" style="font-size: 11.5px;">{{ __('View Bundle') }}</a>
                 <div class="d-flex" style="gap:4px;">
-                    <form action="{{ route('front.deal.add_to_cart', $deal->slug) }}" method="post" class="flex-grow-1 mb-0">
+                    <form action="{{ route('front.deal.add_to_cart', !empty($deal->sku) ? $deal->sku : $deal->slug) }}" method="post" class="flex-grow-1 mb-0">
                         @csrf
                         <button type="submit" class="btn btn-primary btn-sm btn-block text-nowrap px-1 py-1" title="{{ __('Add Bundle to Cart') }}" style="font-size: 11px;"><i class="icon-shopping-cart"></i> <span class="d-none d-sm-inline">{{ __('Add to ') }}</span>{{ __('Cart') }}</button>
                     </form>
-                    <form action="{{ route('front.deal.add_to_cart', $deal->slug) }}" method="post" class="flex-grow-1 mb-0">
+                    <form action="{{ route('front.deal.add_to_cart', !empty($deal->sku) ? $deal->sku : $deal->slug) }}" method="post" class="flex-grow-1 mb-0">
                         @csrf
                         <input type="hidden" name="buy_now" value="1">
                         <button type="submit" class="btn btn-success btn-sm btn-block text-nowrap px-1 py-1" title="{{ __('Buy Bundle Now') }}" style="font-size: 11px;"><i class="fas fa-bolt"></i> {{ __('Buy') }}<span class="d-none d-sm-inline">{{ __(' Now') }}</span></button>

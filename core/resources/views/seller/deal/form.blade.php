@@ -17,9 +17,20 @@
 
                 <div class="row">
                     <div class="col-lg-7">
-                        <div class="form-group">
-                            <label>{{ __('Bundle Name') }} *</label>
-                            <input class="form-control" name="name" required value="{{ old('name', (isset($deal) && $deal) ? $deal->name : '') }}" placeholder="{{ __('e.g. Mega Summer Bundle Deal') }}">
+                        <div class="row">
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    <label>{{ __('Bundle Name') }} *</label>
+                                    <input class="form-control" name="name" required value="{{ old('name', (isset($deal) && $deal) ? $deal->name : '') }}" placeholder="{{ __('e.g. Mega Summer Bundle Deal') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label>{{ __('Bundle SKU / ID') }} <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control text-uppercase font-weight-bold" name="sku" value="{{ old('sku', (isset($deal) && $deal && $deal->sku) ? $deal->sku : \App\Models\Deal::generateAutoSku()) }}" required placeholder="e.g. BD2M8K">
+                                    <small class="text-muted">{{ __('Min 6 alphanumeric chars (auto-generated).') }}</small>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>{{ __('Bundle Description') }}</label>

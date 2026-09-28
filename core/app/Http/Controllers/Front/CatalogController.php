@@ -16,6 +16,7 @@ use App\Models\Attribute;
 use App\Models\AttributeOption;
 use App\Models\Brand;
 use App\Models\ChieldCategory;
+use App\Models\Deal;
 use App\Models\Setting;
 use App\Models\Subcategory;
 use Illuminate\Support\Facades\Session;
@@ -336,6 +337,41 @@ class CatalogController extends Controller
             }
         }
 
+        $deals = collect();
+        if (!empty($search)) {
+            $dealSearchWords = array_values(array_filter(explode(' ', preg_replace('/[^\p{L}\p{N}\-_]+/u', ' ', $search)), function($w) {
+                return mb_strlen($w) >= 2;
+            }));
+            $escapedDeal = addslashes($search);
+
+            $deals = Deal::with(['dealItems.item'])
+                ->active()
+                ->where(function($q) use ($search, $dealSearchWords) {
+                    $q->where('name', 'like', '%' . $search . '%')
+                      ->orWhere('sku', 'like', '%' . $search . '%')
+                      ->orWhere('slug', 'like', '%' . $search . '%')
+                      ->orWhere('description', 'like', '%' . $search . '%');
+
+                    if (count($dealSearchWords) > 1) {
+                        foreach ($dealSearchWords as $word) {
+                            $q->orWhere('name', 'like', '%' . $word . '%')
+                              ->orWhere('sku', 'like', '%' . $word . '%');
+                        }
+                    }
+                })
+                ->orderByRaw("
+                    (CASE 
+                        WHEN LOWER(sku) = LOWER('{$escapedDeal}') THEN 1000
+                        WHEN LOWER(name) = LOWER('{$escapedDeal}') THEN 900
+                        WHEN LOWER(sku) LIKE LOWER('{$escapedDeal}%') THEN 800
+                        WHEN LOWER(name) LIKE LOWER('{$escapedDeal}%') THEN 700
+                        WHEN LOWER(name) LIKE LOWER('%{$escapedDeal}%') THEN 500
+                        ELSE 10 
+                    END) DESC, id DESC
+                ")
+                ->get();
+        }
+
         if($request->ajax()) $blade = 'front.catalog.catalog';
 
         return view($blade,[
@@ -343,6 +379,7 @@ class CatalogController extends Controller
             'options' => $options,
             'brand' => $brand,
             'items' => $items,
+            'deals' => $deals,
             'name_string_count' => $name_string_count,
             'category' => $category,
             'selected_categories' => $selected_categories,
@@ -458,7 +495,38 @@ class CatalogController extends Controller
 
         $items = $query->take(12)->get();
 
-        return view('includes.search_suggest', compact('items', 'search'));
+        $deals = collect();
+        if (!empty($search)) {
+            $deals = Deal::with(['dealItems.item'])
+                ->active()
+                ->where(function($q) use ($search, $searchWords) {
+                    $q->where('name', 'like', '%' . $search . '%')
+                      ->orWhere('sku', 'like', '%' . $search . '%')
+                      ->orWhere('slug', 'like', '%' . $search . '%')
+                      ->orWhere('description', 'like', '%' . $search . '%');
+
+                    if (count($searchWords) > 1) {
+                        foreach ($searchWords as $word) {
+                            $q->orWhere('name', 'like', '%' . $word . '%')
+                              ->orWhere('sku', 'like', '%' . $word . '%');
+                        }
+                    }
+                })
+                ->orderByRaw("
+                    (CASE 
+                        WHEN LOWER(sku) = LOWER('{$escaped}') THEN 1000
+                        WHEN LOWER(name) = LOWER('{$escaped}') THEN 900
+                        WHEN LOWER(sku) LIKE LOWER('{$escaped}%') THEN 800
+                        WHEN LOWER(name) LIKE LOWER('{$escaped}%') THEN 700
+                        WHEN LOWER(name) LIKE LOWER('%{$escaped}%') THEN 500
+                        ELSE 10 
+                    END) DESC, id DESC
+                ")
+                ->take(4)
+                ->get();
+        }
+
+        return view('includes.search_suggest', compact('items', 'deals', 'search'));
     }
 
 }

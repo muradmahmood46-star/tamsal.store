@@ -1,4 +1,27 @@
 <div class="row g-3" id="main_div">
+    @if(isset($deals) && $deals->count() > 0)
+        <div class="col-12 catalog-deals-block mb-4">
+            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #86efac !important; border-radius: 14px; overflow: hidden;">
+                <div class="card-body p-3">
+                    <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap" style="gap:8px;">
+                        <div class="d-flex align-items-center">
+                            <span class="badge badge-success px-2 py-1 mr-2" style="font-size: 13px; letter-spacing: 0.5px;"><i class="fas fa-boxes mr-1"></i> {{ __('Matching Bundle Offers') }}</span>
+                            <span class="text-success font-weight-bold small">({{ $deals->count() }} {{ __('Bundles Found') }})</span>
+                        </div>
+                        <a href="{{ route('front.deal.index') }}" class="btn btn-sm btn-outline-success font-weight-bold" style="border-radius: 20px; font-size: 12px; padding: 4px 12px;">
+                            {{ __('All Bundles') }} <i class="icon-chevron-right ml-1"></i>
+                        </a>
+                    </div>
+                    <div class="row g-3 gx-2 gx-md-3">
+                        @foreach ($deals as $deal)
+                            @include('front.deals.card', ['deal' => $deal, 'column' => 'col-xxl-3 col-md-4 col-6 mb-2'])
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     @if($items->count() > 0)
         @php
             $categoryGroups = $items->groupBy(function($item) {
@@ -174,7 +197,7 @@
                 </div>
             </div>
         @endforeach
-    @else
+    @elseif(!isset($deals) || $deals->count() == 0)
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body text-center py-5">

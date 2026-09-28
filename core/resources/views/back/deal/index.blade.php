@@ -61,7 +61,12 @@
                             <tbody>
                                 @foreach ($deals->where('status', 1)->filter(fn($d) => !$d->isExpired()) as $data)
                                     <tr>
-                                        <td class="deal-name-cell"><strong>{{ $data->name }}</strong></td>
+                                        <td class="deal-name-cell">
+                                            <strong>{{ $data->name }}</strong>
+                                            @if($data->sku)
+                                                <br><span class="badge badge-light border text-muted mt-1" style="font-size:11px;letter-spacing:0.5px;"><i class="fas fa-barcode mr-1"></i>{{ $data->sku }}</span>
+                                            @endif
+                                        </td>
                                         <td>
                                             @if($data->vendor_id > 0 && $data->vendor)
                                                 <span class="badge badge-info">{{ __('Vendor') }}</span>
@@ -125,7 +130,12 @@
                             <tbody>
                                 @foreach ($deals->filter(fn($d) => $d->isExpired()) as $data)
                                     <tr>
-                                        <td class="deal-name-cell"><strong>{{ $data->name }}</strong></td>
+                                        <td class="deal-name-cell">
+                                            <strong>{{ $data->name }}</strong>
+                                            @if($data->sku)
+                                                <br><span class="badge badge-light border text-muted mt-1" style="font-size:11px;letter-spacing:0.5px;"><i class="fas fa-barcode mr-1"></i>{{ $data->sku }}</span>
+                                            @endif
+                                        </td>
                                         <td>
                                             @if($data->vendor_id > 0 && $data->vendor)
                                                 <span class="badge badge-info">{{ __('Vendor') }}</span>
@@ -203,6 +213,7 @@ $dealsData = [];
 foreach($deals as $d) {
     $dealsData[$d->id] = [
         'name'        => $d->name,
+        'sku'         => $d->sku,
         'description' => $d->description,
         'creator'     => $d->vendor_id > 0 && $d->vendor ? ($d->vendor->first_name.' '.$d->vendor->last_name.' (Vendor)') : 'Admin',
         'original'    => PriceHelper::setCurrencyPrice($d->original_price),
@@ -214,7 +225,7 @@ foreach($deals as $d) {
         'end'         => $d->end_date ? $d->end_date->format('M d, Y h:i A') : '-',
         'timeleft'    => $d->end_date ? $d->end_date->diffForHumans(['parts' => 2]) : '-',
         'expired'     => $d->isExpired(),
-        'store_url'   => $d->slug ? route('front.deal.details', $d->slug) : '#',
+        'store_url'   => $d->slug ? route('front.deal.details', $d->sku ?: $d->slug) : '#',
         'items'       => $d->dealItems->map(fn($di) => ['name' => optional($di->item)->name ?? 'Product', 'original' => PriceHelper::setCurrencyPrice($di->original_price), 'price' => PriceHelper::setCurrencyPrice($di->discounted_price)])->toArray(),
     ];
 }
@@ -237,6 +248,7 @@ function viewDeal(id) {
         + '<div class="col-md-6">'
         + '<table class="table table-sm table-borderless mb-0">'
         + '<tr><th class="text-muted" style="width:130px">{{ __("Bundle Name") }}</th><td><strong>' + d.name + '</strong></td></tr>'
+        + (d.sku ? '<tr><th class="text-muted">{{ __("Bundle SKU") }}</th><td><span class="badge badge-light border font-weight-bold" style="letter-spacing:1px;"><i class="fas fa-barcode mr-1"></i>' + d.sku + '</span></td></tr>' : '')
         + (d.description ? '<tr><th class="text-muted">{{ __("Description") }}</th><td>' + d.description + '</td></tr>' : '')
         + '<tr><th class="text-muted">{{ __("Creator") }}</th><td>' + d.creator + '</td></tr>'
         + '<tr><th class="text-muted">{{ __("Original Price") }}</th><td><del>' + d.original + '</del></td></tr>'

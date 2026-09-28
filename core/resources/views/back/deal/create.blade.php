@@ -73,9 +73,20 @@
                 <div class="row">
                     <!-- Left Column: Deal Details & Product Selection -->
                     <div class="col-lg-7">
-                        <div class="form-group">
-                            <label for="name">{{ __('Deal Name') }} *</label>
-                            <input type="text" required class="form-control" name="name" id="name" value="{{ old('name') }}" placeholder="{{ __('e.g. Mega Summer Bundle Deal') }}">
+                        <div class="row">
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    <label for="name">{{ __('Bundle Name') }} *</label>
+                                    <input type="text" required class="form-control" name="name" id="name" value="{{ old('name') }}" placeholder="{{ __('e.g. Mega Summer Bundle Deal') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label for="sku">{{ __('Bundle SKU / ID') }} <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control text-uppercase font-weight-bold" name="sku" id="sku" value="{{ old('sku', \App\Models\Deal::generateAutoSku()) }}" required placeholder="e.g. BD2M8K">
+                                    <small class="text-muted">{{ __('Min 6 alphanumeric chars (auto-generated).') }}</small>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-group">

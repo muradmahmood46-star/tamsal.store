@@ -479,6 +479,21 @@ class Helper
                         $table->unsignedInteger('orders_count')->default(0)->after('status')->index();
                     });
                 }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('deals', 'sku')) {
+                    \Illuminate\Support\Facades\Schema::table('deals', function ($table) {
+                        $table->string('sku')->nullable()->after('name')->index();
+                    });
+                }
+                // Backfill any deals that do not have SKU
+                if (\Illuminate\Support\Facades\Schema::hasColumn('deals', 'sku')) {
+                    $emptyDeals = \App\Models\Deal::whereNull('sku')->orWhere('sku', '')->get();
+                    foreach ($emptyDeals as $ed) {
+                        $newSku = \App\Models\Deal::generateAutoSku();
+                        $ed->sku = $newSku;
+                        $ed->slug = \Illuminate\Support\Str::slug($newSku);
+                        $ed->save();
+                    }
+                }
             }
 
             if (!\Illuminate\Support\Facades\Schema::hasTable('deal_items')) {

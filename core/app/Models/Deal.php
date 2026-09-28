@@ -10,6 +10,7 @@ class Deal extends Model
     protected $fillable = [
         'vendor_id',
         'name',
+        'sku',
         'slug',
         'photo',
         'description',
@@ -145,5 +146,25 @@ class Deal extends Model
         } else {
             return '-' . \App\Helpers\PriceHelper::setCurrencyPrice($this->discount_value) . ' OFF';
         }
+    }
+
+    /**
+     * Auto-generate a unique 6-character alphanumeric SKU for bundles
+     */
+    public static function generateAutoSku()
+    {
+        $letters = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+        $digits = '23456789';
+        $chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+
+        do {
+            // Generates 6-character alphanumeric SKU: BD + Letter + Digit + 2 Chars
+            $sku = 'BD' . $letters[random_int(0, strlen($letters) - 1)] . $digits[random_int(0, strlen($digits) - 1)];
+            for ($i = 0; $i < 2; $i++) {
+                $sku .= $chars[random_int(0, strlen($chars) - 1)];
+            }
+        } while (self::where('sku', $sku)->exists() || \App\Models\Item::where('sku', $sku)->exists());
+
+        return $sku;
     }
 }

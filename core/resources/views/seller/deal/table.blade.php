@@ -14,7 +14,12 @@
         <tbody>
             @forelse($rows as $deal)
                 <tr>
-                    <td data-label="{{ __('Bundle') }}"><strong>{{ $deal->name }}</strong></td>
+                    <td data-label="{{ __('Bundle') }}">
+                        <strong>{{ $deal->name }}</strong>
+                        @if($deal->sku)
+                            <br><span class="badge badge-light border text-muted mt-1" style="font-size:11px;letter-spacing:0.5px;"><i class="fas fa-barcode mr-1"></i>{{ $deal->sku }}</span>
+                        @endif
+                    </td>
                     <td data-label="{{ __('Items') }}"><span class="badge badge-secondary">{{ $deal->dealItems->count() }}</span></td>
                     <td data-label="{{ __('Original') }}"><del class="text-muted">{{ PriceHelper::setCurrencyPrice($deal->original_price) }}</del></td>
                     <td data-label="{{ __('Price') }}"><strong class="text-success">{{ PriceHelper::setCurrencyPrice($deal->discounted_price) }}</strong></td>
@@ -51,6 +56,7 @@ $sellerDealsData = [];
 foreach($rows as $d) {
     $sellerDealsData[$d->id] = [
         'name'        => $d->name,
+        'sku'         => $d->sku,
         'description' => $d->description,
         'original'    => PriceHelper::setCurrencyPrice($d->original_price),
         'price'       => PriceHelper::setCurrencyPrice($d->discounted_price),
@@ -78,6 +84,7 @@ function sellerViewDeal(id) {
         + '<div class="col-md-6">'
         + '<table class="table table-sm table-borderless mb-0">'
         + '<tr><th class="text-muted" style="width:130px">Bundle Name</th><td><strong>' + d.name + '</strong></td></tr>'
+        + (d.sku ? '<tr><th class="text-muted">Bundle SKU</th><td><span class="badge badge-light border font-weight-bold" style="letter-spacing:1px;"><i class="fas fa-barcode mr-1"></i>' + d.sku + '</span></td></tr>' : '')
         + (d.description ? '<tr><th class="text-muted">Description</th><td>' + d.description + '</td></tr>' : '')
         + '<tr><th class="text-muted">Original Price</th><td><del>' + d.original + '</del></td></tr>'
         + '<tr><th class="text-muted">Deal Price</th><td><strong class="text-success">' + d.price + '</strong></td></tr>'

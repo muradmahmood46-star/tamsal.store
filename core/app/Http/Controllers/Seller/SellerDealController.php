@@ -145,13 +145,14 @@ class SellerDealController extends Controller
         $startDate = Carbon::now();
         $endDate = (clone $startDate)->addDays($durationDays);
 
-        $baseSlug = Str::slug($request->name) ?: 'bundle-' . time();
-        $slug = $baseSlug;
-        $counter = 1;
-        while (Deal::where('slug', $slug)->exists()) {
-            $slug = $baseSlug . '-' . $counter;
-            $counter++;
+        $rawSku = trim($request->sku ?? '');
+        if (empty($rawSku) || strlen($rawSku) < 6 || !preg_match('/[a-zA-Z]/', $rawSku) || !preg_match('/[0-9]/', $rawSku)) {
+            $sku = Deal::generateAutoSku();
+        } else {
+            $sku = strtoupper($rawSku);
         }
+
+        $slug = Str::slug($sku);
 
         try {
             DB::beginTransaction();
@@ -164,6 +165,7 @@ class SellerDealController extends Controller
             $deal = Deal::create([
                 'vendor_id' => $vendorId,
                 'name' => $request->name,
+                'sku' => $sku,
                 'slug' => $slug,
                 'photo' => $photo,
                 'description' => $request->description,
@@ -308,6 +310,17 @@ class SellerDealController extends Controller
         $durationDays = (int) $request->duration_days;
         $endDate = Carbon::now()->addDays($durationDays);
 
+        $rawSku = trim($request->sku ?? '');
+        if (empty($rawSku)) {
+            $sku = !empty($deal->sku) ? $deal->sku : Deal::generateAutoSku();
+        } elseif (strlen($rawSku) < 6 || !preg_match('/[a-zA-Z]/', $rawSku) || !preg_match('/[0-9]/', $rawSku)) {
+            $sku = !empty($deal->sku) ? $deal->sku : Deal::generateAutoSku();
+        } else {
+            $sku = strtoupper($rawSku);
+        }
+
+        $slug = Str::slug($sku);
+
         try {
             DB::beginTransaction();
 
@@ -318,6 +331,8 @@ class SellerDealController extends Controller
 
             $deal->update([
                 'name' => $request->name,
+                'sku' => $sku,
+                'slug' => $slug,
                 'photo' => $photo,
                 'description' => $request->description,
                 'discount_type' => $discountType,
