@@ -624,15 +624,19 @@
             color: #ffffff !important;
             font-size: 8.5px !important;
             font-weight: 700 !important;
-            padding: 1px 13px !important;
+            padding: 2px 10px !important;
+            height: auto !important;
+            min-height: unset !important;
+            max-height: 18px !important;
             border-radius: 4px !important;
             line-height: 1.1 !important;
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.22) !important;
-            letter-spacing: 0.4px !important;
+            letter-spacing: 0.35px !important;
             text-transform: capitalize !important;
             pointer-events: none !important;
             display: inline-flex !important;
             align-items: center !important;
+            justify-content: center !important;
             margin: 0 !important;
         }
 
@@ -649,10 +653,13 @@
             .product-card .product-thumb .product-badge-free-delivery,
             .product-card .product-badge.product-badge-free-delivery,
             .product-badge-free-delivery {
-                font-size: 7.5px !important;
-                padding: 0.5px 9.5px !important;
-                line-height: 1.05 !important;
-                letter-spacing: 0.35px !important;
+                font-size: 7px !important;
+                padding: 1px 6.5px !important;
+                height: 14px !important;
+                min-height: 14px !important;
+                max-height: 14px !important;
+                line-height: 12px !important;
+                letter-spacing: 0.25px !important;
                 bottom: 4px !important;
                 left: 4px !important;
                 border-radius: 3px !important;
