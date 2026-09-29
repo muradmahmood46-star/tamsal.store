@@ -71,43 +71,47 @@
 
                     <!-- 2. Select Duration -->
                     <div class="form-group mb-4" id="duration-section">
-                        <label class="font-weight-bold text-dark d-block" style="font-size: 15px;">
-                            <i class="fas fa-clock text-primary mr-1"></i> {{ __('Promotion Duration') }}
+                        <label class="font-weight-bold text-dark d-block mb-2" style="font-size: 15px;">
+                            <i class="fas fa-clock text-primary mr-1"></i> {{ __('Promotion Duration / Validity') }}
                         </label>
                         
                         <div class="border rounded p-3 bg-light">
-                            <div class="form-check mb-3">
-                                <input class="form-check-input duration-mode-input" type="radio" name="promotion_duration_mode" id="mode_permanent" value="permanent" 
-                                    {{ (empty($item->promotion_expires_at) || !$item->isPromotionActive()) ? 'checked' : '' }} 
-                                    style="cursor:pointer; width: 18px; height: 18px; margin-top: 2px;">
-                                <label class="form-check-label font-weight-bold text-dark ml-2" for="mode_permanent" style="cursor:pointer; font-size: 14.5px;">
-                                    {{ __('Permanent / Unlimited') }} <span class="text-muted font-weight-normal">({{ __('Badge will stay active forever until removed') }})</span>
+                            <!-- Radio Option 1: Permanent -->
+                            <div class="custom-control custom-radio mb-3">
+                                <input type="radio" id="mode_permanent" name="promotion_duration_mode" value="permanent" class="custom-control-input" 
+                                    {{ (empty($item->promotion_expires_at) || !$item->isPromotionActive()) ? 'checked' : '' }}>
+                                <label class="custom-control-label font-weight-bold text-dark" for="mode_permanent" style="font-size: 14.5px; cursor: pointer;">
+                                    <i class="fas fa-infinity text-primary mr-1"></i> {{ __('Permanent / Unlimited') }} 
+                                    <span class="text-muted font-weight-normal d-block small">{{ __('(Badge will stay on product forever until manually removed)') }}</span>
                                 </label>
                             </div>
 
-                            <div class="form-check mb-2">
-                                <input class="form-check-input duration-mode-input" type="radio" name="promotion_duration_mode" id="mode_days" value="days" 
-                                    {{ ($item->promotion_expires_at && $item->isPromotionActive()) ? 'checked' : '' }} 
-                                    style="cursor:pointer; width: 18px; height: 18px; margin-top: 2px;">
-                                <label class="form-check-label font-weight-bold text-dark ml-2" for="mode_days" style="cursor:pointer; font-size: 14.5px;">
-                                    {{ __('Set Duration in Days') }} <span class="text-muted font-weight-normal">({{ __('Badge will automatically expire after specified days') }})</span>
+                            <hr class="my-3">
+
+                            <!-- Radio Option 2: Number of Days -->
+                            <div class="custom-control custom-radio mb-2">
+                                <input type="radio" id="mode_days" name="promotion_duration_mode" value="days" class="custom-control-input"
+                                    {{ ($item->promotion_expires_at && $item->isPromotionActive()) ? 'checked' : '' }}>
+                                <label class="custom-control-label font-weight-bold text-dark" for="mode_days" style="font-size: 14.5px; cursor: pointer;">
+                                    <i class="fas fa-hourglass-half text-warning mr-1"></i> {{ __('Expire After Days') }}
+                                    <span class="text-muted font-weight-normal d-block small">{{ __('(Badge will automatically be removed after the specified number of days)') }}</span>
                                 </label>
                             </div>
 
-                            <!-- Enter Number of Days Input Box -->
-                            <div id="days-input-wrapper" class="mt-2 ml-4 p-3 bg-white rounded border shadow-sm" style="max-width: 320px; {{ ($item->promotion_expires_at && $item->isPromotionActive()) ? '' : 'display:none;' }}">
-                                <label for="promotion_days" class="small font-weight-bold text-dark mb-1 d-block">
-                                    <i class="fas fa-calendar-day text-primary mr-1"></i> {{ __('Enter Number of Days:') }}
+                            <!-- ALWAYS VISIBLE DAYS INPUT BOX -->
+                            <div class="mt-2 ml-4 p-3 bg-white rounded border" style="max-width: 320px;">
+                                <label for="promotion_days" class="font-weight-bold text-dark mb-1 d-block" style="font-size: 13px;">
+                                    <i class="fas fa-calendar-alt text-success mr-1"></i> {{ __('Enter Number of Days:') }}
                                 </label>
                                 <div class="input-group">
                                     <input type="number" name="promotion_days" id="promotion_days" class="form-control font-weight-bold text-center" 
-                                           min="1" max="3650" value="{{ $item->promotion_days ?: 30 }}" placeholder="30" style="font-size: 16px;">
+                                           min="1" max="3650" value="{{ $item->promotion_days ?: 30 }}" placeholder="30" style="font-size: 16px; background-color: #f8fafc;">
                                     <div class="input-group-append">
                                         <span class="input-group-text font-weight-bold bg-light">{{ __('Days') }}</span>
                                     </div>
                                 </div>
-                                <small class="text-muted d-block mt-2" style="font-size: 12px; line-height: 1.4;">
-                                    <i class="fas fa-info-circle text-info mr-1"></i>{{ __('Enter days (e.g. 15, 30). After this time, the badge will be automatically removed.') }}
+                                <small class="text-muted d-block mt-2" style="font-size: 11.5px; line-height: 1.4;">
+                                    {{ __('Example: Write 7, 15, 30 or 60 days.') }}
                                 </small>
                             </div>
                         </div>
@@ -115,17 +119,20 @@
 
                     <hr class="my-4">
 
-                    <!-- 3. Legacy Section Category (is_type) -->
+                    <!-- 3. Section Category (is_type) -->
                     <div class="form-group mb-3">
                         <label for="is_type" class="font-weight-bold text-dark">{{ __('Homepage Section Category') }}</label>
                         <select name="is_type" id="is_type" class="form-control">
-                            <option value="undefine" {{ $item->is_type == 'undefine' ? 'selected' : '' }}>{{ __('Undefine / Default') }}</option>
+                            <option value="undefine" {{ $item->is_type == 'undefine' ? 'selected' : '' }}>
+                                {{ __('Everywhere / All Pages (Default)') }}
+                            </option>
                             <option value="new" {{ $item->is_type == 'new' ? 'selected' : '' }}>{{ __('New Arrival') }}</option>
                             <option value="feature" {{ $item->is_type == 'feature' ? 'selected' : '' }}>{{ __('Feature Product') }}</option>
                             <option value="top" {{ $item->is_type == 'top' ? 'selected' : '' }}>{{ __('Top Product') }}</option>
                             <option value="best" {{ $item->is_type == 'best' ? 'selected' : '' }}>{{ __('Best Product') }}</option>
                             <option value="flash_deal" {{ $item->is_type == 'flash_deal' ? 'selected' : '' }}>{{ __('Flash Deal Product') }}</option>
                         </select>
+                        <small class="form-text text-muted">{{ __('"Everywhere / All Pages" is default: product badge will show wherever product appears on Home, Shop, and Product pages.') }}</small>
                     </div>
 
                     <div class="form-group show-datepicker {{ $item->is_type == 'flash_deal' ? '' : 'd-none' }} mb-4">
@@ -171,18 +178,9 @@ $(document).ready(function() {
         }
     });
 
-    // Toggle Days input
-    function toggleDaysInput() {
-        if ($('#mode_days').is(':checked')) {
-            $('#days-input-wrapper').slideDown(150);
-            $('#promotion_days').focus();
-        } else {
-            $('#days-input-wrapper').slideUp(150);
-        }
-    }
-
-    $(document).on('change click', 'input[name="promotion_duration_mode"], .form-check-label', function() {
-        setTimeout(toggleDaysInput, 50);
+    // When clicking or typing into days input box, auto-select the "Expire After Days" radio
+    $('#promotion_days').on('focus input change', function() {
+        $('#mode_days').prop('checked', true);
     });
 
     // Toggle duration section if "none" is selected
@@ -197,8 +195,6 @@ $(document).ready(function() {
     if ($('#promotion_tag_id').val() === 'none') {
         $('#duration-section').hide();
     }
-
-    toggleDaysInput();
 });
 </script>
 @endsection
