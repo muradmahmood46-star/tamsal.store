@@ -13,9 +13,6 @@
     </td>
     <td>
         {{ $data->name }}
-        @if($data->isPromotionActive())
-            <br><span class="badge badge-warning text-dark mt-1 font-weight-bold" style="font-size: 10.5px; background: #fef08a; border: 1px solid #facc15;"><i class="fas fa-crown text-warning mr-1"></i>{{ $data->promotion_tag }}</span>
-        @endif
     </td>
     <td>
         {{ PriceHelper::adminCurrencyPrice($data->discount_price) }}
