@@ -92,36 +92,44 @@
 
                     <!-- 2. Select Duration -->
                     <div class="form-group mb-4" id="duration-section">
-                        <label class="font-weight-bold text-dark" style="font-size: 15px;">
+                        <label class="font-weight-bold text-dark d-block" style="font-size: 15px;">
                             <i class="fas fa-clock text-primary mr-1"></i> {{ __('Promotion Duration') }}
                         </label>
                         
                         <div class="border rounded p-3 bg-light">
-                            <div class="custom-control custom-radio mb-2">
-                                <input type="radio" id="mode_permanent" name="promotion_duration_mode" value="permanent" class="custom-control-input" 
-                                    {{ (empty($deal->promotion_expires_at) || !$deal->isPromotionActive()) ? 'checked' : '' }}>
-                                <label class="custom-control-label font-weight-bold text-dark" for="mode_permanent">
-                                    {{ __('Permanent / Unlimited') }} <span class="text-muted font-weight-normal">({{ __('No Expiry Date') }})</span>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input duration-mode-input" type="radio" name="promotion_duration_mode" id="mode_permanent" value="permanent" 
+                                    {{ (empty($deal->promotion_expires_at) || !$deal->isPromotionActive()) ? 'checked' : '' }} 
+                                    style="cursor:pointer; width: 18px; height: 18px; margin-top: 2px;">
+                                <label class="form-check-label font-weight-bold text-dark ml-2" for="mode_permanent" style="cursor:pointer; font-size: 14.5px;">
+                                    {{ __('Permanent / Unlimited') }} <span class="text-muted font-weight-normal">({{ __('Badge will stay active forever until removed') }})</span>
                                 </label>
                             </div>
 
-                            <div class="custom-control custom-radio">
-                                <input type="radio" id="mode_days" name="promotion_duration_mode" value="days" class="custom-control-input"
-                                    {{ ($deal->promotion_expires_at && $deal->isPromotionActive()) ? 'checked' : '' }}>
-                                <label class="custom-control-label font-weight-bold text-dark" for="mode_days">
-                                    {{ __('Number of Days') }}
+                            <div class="form-check mb-2">
+                                <input class="form-check-input duration-mode-input" type="radio" name="promotion_duration_mode" id="mode_days" value="days" 
+                                    {{ ($deal->promotion_expires_at && $deal->isPromotionActive()) ? 'checked' : '' }} 
+                                    style="cursor:pointer; width: 18px; height: 18px; margin-top: 2px;">
+                                <label class="form-check-label font-weight-bold text-dark ml-2" for="mode_days" style="cursor:pointer; font-size: 14.5px;">
+                                    {{ __('Set Duration in Days') }} <span class="text-muted font-weight-normal">({{ __('Badge will automatically expire after specified days') }})</span>
                                 </label>
                             </div>
 
-                            <div id="days-input-wrapper" class="mt-3 pl-4" style="{{ ($deal->promotion_expires_at && $deal->isPromotionActive()) ? '' : 'display:none;' }}">
-                                <div class="input-group" style="max-width: 220px;">
-                                    <input type="number" name="promotion_days" id="promotion_days" class="form-control" 
-                                           min="1" max="3650" value="{{ $deal->promotion_days ?: 30 }}" placeholder="30">
+                            <!-- Enter Number of Days Input Box -->
+                            <div id="days-input-wrapper" class="mt-2 ml-4 p-3 bg-white rounded border shadow-sm" style="max-width: 320px; {{ ($deal->promotion_expires_at && $deal->isPromotionActive()) ? '' : 'display:none;' }}">
+                                <label for="promotion_days" class="small font-weight-bold text-dark mb-1 d-block">
+                                    <i class="fas fa-calendar-day text-primary mr-1"></i> {{ __('Enter Number of Days:') }}
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" name="promotion_days" id="promotion_days" class="form-control font-weight-bold text-center" 
+                                           min="1" max="3650" value="{{ $deal->promotion_days ?: 30 }}" placeholder="30" style="font-size: 16px;">
                                     <div class="input-group-append">
-                                        <span class="input-group-text">{{ __('Days') }}</span>
+                                        <span class="input-group-text font-weight-bold bg-light">{{ __('Days') }}</span>
                                     </div>
                                 </div>
-                                <small class="form-text text-muted">{{ __('Badge will automatically expire after these days.') }}</small>
+                                <small class="text-muted d-block mt-2" style="font-size: 12px; line-height: 1.4;">
+                                    <i class="fas fa-info-circle text-info mr-1"></i>{{ __('Enter days (e.g. 15, 30). After this time, the badge will be automatically removed.') }}
+                                </small>
                             </div>
                         </div>
                     </div>
@@ -148,12 +156,17 @@
 <script>
 $(document).ready(function() {
     // Toggle Days input
-    $('input[name="promotion_duration_mode"]').on('change', function() {
-        if ($(this).val() === 'days') {
+    function toggleDaysInput() {
+        if ($('#mode_days').is(':checked')) {
             $('#days-input-wrapper').slideDown(150);
+            $('#promotion_days').focus();
         } else {
             $('#days-input-wrapper').slideUp(150);
         }
+    }
+
+    $(document).on('change click', 'input[name="promotion_duration_mode"], .form-check-label', function() {
+        setTimeout(toggleDaysInput, 50);
     });
 
     // Toggle duration section if "none" is selected
@@ -168,6 +181,8 @@ $(document).ready(function() {
     if ($('#promotion_tag_id').val() === 'none') {
         $('#duration-section').hide();
     }
+
+    toggleDaysInput();
 });
 </script>
 @endsection
