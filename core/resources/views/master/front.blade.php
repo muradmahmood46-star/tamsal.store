@@ -473,6 +473,11 @@
             color: #ffffff !important;
             border-bottom: none !important;
             padding: 5px 8px !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
         }
 
         .deal-card .deal-thumb,
@@ -708,15 +713,25 @@
                 border-radius: 8px !important;
             }
             .deal-card .card-header {
-                padding: 4px 6px !important;
+                padding: 3px 6px !important;
                 font-size: 10px !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                min-height: 25px !important;
+                max-height: 25px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: space-between !important;
             }
             .deal-card .card-header .deal-countdown {
-                font-size: 10.5px !important;
+                font-size: 10px !important;
+                white-space: nowrap !important;
+                letter-spacing: 0.2px !important;
             }
             .deal-card .card-header .badge {
-                font-size: 9.5px !important;
+                font-size: 9px !important;
                 padding: 2px 4px !important;
+                white-space: nowrap !important;
             }
             .deal-card .deal-thumb,
             .deal-card a.deal-thumb {
@@ -738,43 +753,47 @@
                 object-position: center !important;
             }
             .deal-card .card-body {
-                padding: 6px 8px 8px !important;
+                padding: 5px 6px 6px !important;
             }
             .deal-card h3.deal-title,
             .deal-card h3.h6 {
-                font-size: 12.5px !important;
-                font-weight: 700 !important;
+                font-size: 12px !important;
+                font-weight: 600 !important;
                 line-height: 1.3 !important;
-                min-height: 32px !important;
-                max-height: 32px !important;
+                min-height: 31px !important;
+                max-height: 31px !important;
                 display: -webkit-box !important;
                 -webkit-line-clamp: 2 !important;
                 -webkit-box-orient: vertical !important;
                 overflow: hidden !important;
-                margin-bottom: 4px !important;
+                text-overflow: ellipsis !important;
+                margin-bottom: 3px !important;
             }
             .deal-card h3.deal-title a {
                 color: #0f172a !important;
-                font-weight: 700 !important;
+                font-weight: 600 !important;
             }
             .deal-card del {
-                font-size: 10.5px !important;
+                font-size: 10px !important;
             }
             .deal-card .deal-price,
             .deal-card strong.h5 {
                 font-size: 13px !important;
+                white-space: nowrap !important;
             }
             .deal-card .badge {
-                font-size: 9.5px !important;
+                font-size: 9px !important;
                 padding: 2px 4px !important;
+                white-space: nowrap !important;
             }
             .deal-card .btn {
-                font-size: 11px !important;
+                font-size: 10.5px !important;
                 padding: 3px 4px !important;
                 border-radius: 4px !important;
+                line-height: 1.2 !important;
             }
             .deal-card .btn-outline-primary {
-                margin-bottom: 4px !important;
+                margin-bottom: 3px !important;
             }
 
             /* Section Spacing on Mobile */
