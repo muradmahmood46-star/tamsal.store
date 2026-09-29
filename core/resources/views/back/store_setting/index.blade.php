@@ -196,6 +196,155 @@
             </div>
         </div>
     </div>
+
+    <!-- 3. PROMOTION SETTINGS (1A: Highlight Tags & 1B: Days & Pricing) -->
+    <div class="card shadow-sm mb-4 border-0" style="border-radius: 12px; overflow: hidden;">
+        <div class="card-header bg-dark text-white py-3 d-flex align-items-center justify-content-between flex-wrap">
+            <div>
+                <h5 class="m-0 font-weight-bold text-white"><i class="fas fa-bullhorn text-warning mr-2"></i> {{ __('Promotion Settings (Vendor Product & Bundle Badges)') }}</h5>
+                <small class="text-white-50">{{ __('Manage highlight badge tags and set global promotion durations & prices for vendor products and bundles.') }}</small>
+            </div>
+        </div>
+        <div class="card-body p-4 bg-light">
+            <div class="row">
+                <!-- 1A: Highlight Tags Management -->
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <div class="card shadow-sm h-100 border-0">
+                        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom">
+                            <div>
+                                <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-tags mr-1"></i> {{ __('1A) Highlight Tags (Badges)') }}</h6>
+                                <small class="text-muted">{{ __('Tags available for vendors to pick when promoting items (e.g. Best Product, Trending).') }}</small>
+                            </div>
+                            <button type="button" class="btn btn-primary btn-sm font-weight-bold shadow-sm" data-toggle="modal" data-target="#addTagModal">
+                                <i class="fas fa-plus-circle mr-1"></i> {{ __('Add Tag') }}
+                            </button>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-striped mb-0">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>{{ __('Tag Name') }}</th>
+                                            <th class="text-center">{{ __('Badge Preview') }}</th>
+                                            <th class="text-center">{{ __('Status') }}</th>
+                                            <th class="text-center" style="width: 100px;">{{ __('Actions') }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($promotionTags as $tag)
+                                            <tr>
+                                                <td class="font-weight-bold">{{ $loop->iteration }}</td>
+                                                <td><strong class="text-dark">{{ $tag->name }}</strong></td>
+                                                <td class="text-center">
+                                                    <span class="badge badge-success px-2 py-1 font-weight-bold" style="background: linear-gradient(135deg, #15803d, #16a34a); letter-spacing: 0.3px; font-size: 11px;">
+                                                        <i class="fas fa-certificate mr-1"></i> {{ $tag->name }}
+                                                    </span>
+                                                </td>
+                                                <td class="text-center">
+                                                    @if($tag->status == 1)
+                                                        <span class="badge badge-success">{{ __('Active') }}</span>
+                                                    @else
+                                                        <span class="badge badge-secondary">{{ __('Inactive') }}</span>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="btn-group btn-group-sm">
+                                                        <button type="button" class="btn btn-info" onclick='openEditTagModal({!! json_encode($tag) !!})' title="{{ __('Edit') }}">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-danger" onclick="confirmDeleteTag('{{ route('back.store_setting.tag.delete', $tag->id) }}')" title="{{ __('Delete') }}">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="5" class="text-center py-4 text-muted">
+                                                    {{ __('No highlight tags added yet. Click "Add Tag" above to create tags (e.g. Best Product, Hot Deal).') }}
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 1B: Days & Pricing Management -->
+                <div class="col-lg-6">
+                    <div class="card shadow-sm h-100 border-0">
+                        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom">
+                            <div>
+                                <h6 class="m-0 font-weight-bold text-success"><i class="fas fa-calendar-alt mr-1"></i> {{ __('1B) Promotion Days & Pricing') }}</h6>
+                                <small class="text-muted">{{ __('Define promotion durations and price charged per product/bundle.') }}</small>
+                            </div>
+                            <button type="button" class="btn btn-success btn-sm font-weight-bold shadow-sm" data-toggle="modal" data-target="#addPlanModal">
+                                <i class="fas fa-plus-circle mr-1"></i> {{ __('Add Duration & Price') }}
+                            </button>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-striped mb-0">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>{{ __('Duration (Days)') }}</th>
+                                            <th>{{ __('Price Per Item') }}</th>
+                                            <th class="text-center">{{ __('Status') }}</th>
+                                            <th class="text-center" style="width: 100px;">{{ __('Actions') }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($promotionPlans as $plan)
+                                            <tr>
+                                                <td class="font-weight-bold">{{ $loop->iteration }}</td>
+                                                <td>
+                                                    <span class="badge badge-primary px-2 py-1 font-weight-bold" style="font-size: 12px;">
+                                                        <i class="fas fa-clock mr-1"></i> {{ $plan->days }} {{ __('Days') }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <strong class="text-success h6 mb-0 font-weight-bold">
+                                                        {{ PriceHelper::adminCurrency() }} {{ number_format($plan->price, 2) }}
+                                                    </strong>
+                                                </td>
+                                                <td class="text-center">
+                                                    @if($plan->status == 1)
+                                                        <span class="badge badge-success">{{ __('Active') }}</span>
+                                                    @else
+                                                        <span class="badge badge-secondary">{{ __('Inactive') }}</span>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="btn-group btn-group-sm">
+                                                        <button type="button" class="btn btn-info" onclick='openEditPlanModal({!! json_encode($plan) !!})' title="{{ __('Edit') }}">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-danger" onclick="confirmDeletePlan('{{ route('back.store_setting.plan.delete', $plan->id) }}')" title="{{ __('Delete') }}">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="5" class="text-center py-4 text-muted">
+                                                    {{ __('No duration options added yet. Click "Add Duration & Price" above to set day/pricing options (e.g. 3 Days = PKR 100).') }}
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- ADD ACCOUNT MODAL -->
@@ -322,6 +471,221 @@
         </div>
     </div>
 </div>
+
+<!-- 1A: ADD TAG MODAL -->
+<div class="modal fade" id="addTagModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title text-white"><i class="fas fa-tag mr-2"></i> {{ __('Add Highlight Tag') }}</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('back.store_setting.tag.store') }}" method="POST">
+                @csrf
+                <div class="modal-body p-4">
+                    <div class="form-group mb-3">
+                        <label for="add_tag_name" class="font-weight-bold">{{ __('Tag Name / Badge Text') }} <span class="text-danger">*</span></label>
+                        <input type="text" name="name" id="add_tag_name" class="form-control" placeholder="e.g. Best Product, Trending, Hot Deal, Most Selling" required>
+                        <small class="text-muted">{{ __('This exact text will be displayed at top-center of promoted product and bundle cards.') }}</small>
+                    </div>
+                    <div class="form-group mb-0">
+                        <label for="add_tag_status" class="font-weight-bold">{{ __('Status') }}</label>
+                        <select name="status" id="add_tag_status" class="form-control">
+                            <option value="1">{{ __('Active (Visible in vendor dropdown)') }}</option>
+                            <option value="0">{{ __('Inactive (Hidden)') }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Cancel') }}</button>
+                    <button type="submit" class="btn btn-primary px-4">{{ __('Add Tag') }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 1A: EDIT TAG MODAL -->
+<div class="modal fade" id="editTagModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title text-white"><i class="fas fa-edit mr-2"></i> {{ __('Edit Highlight Tag') }}</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="editTagForm" method="POST">
+                @csrf
+                <div class="modal-body p-4">
+                    <div class="form-group mb-3">
+                        <label for="edit_tag_name" class="font-weight-bold">{{ __('Tag Name / Badge Text') }} <span class="text-danger">*</span></label>
+                        <input type="text" name="name" id="edit_tag_name" class="form-control" required>
+                    </div>
+                    <div class="form-group mb-0">
+                        <label for="edit_tag_status" class="font-weight-bold">{{ __('Status') }}</label>
+                        <select name="status" id="edit_tag_status" class="form-control">
+                            <option value="1">{{ __('Active (Visible in vendor dropdown)') }}</option>
+                            <option value="0">{{ __('Inactive (Hidden)') }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Cancel') }}</button>
+                    <button type="submit" class="btn btn-info px-4">{{ __('Update Tag') }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 1A: DELETE TAG MODAL -->
+<div class="modal fade" id="deleteTagModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title text-white"><i class="fas fa-trash mr-2"></i> {{ __('Delete Highlight Tag') }}</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="deleteTagForm" method="POST">
+                @csrf
+                @method('DELETE')
+                <div class="modal-body p-4 text-center">
+                    <p class="text-dark">{{ __('Are you sure you want to delete this highlight tag? Existing active promotions with this tag will continue until expiry.') }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Cancel') }}</button>
+                    <button type="submit" class="btn btn-danger">{{ __('Delete Tag') }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 1B: ADD PLAN MODAL -->
+<div class="modal fade" id="addPlanModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title text-white"><i class="fas fa-plus-circle mr-2"></i> {{ __('Add Duration & Price Option') }}</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('back.store_setting.plan.store') }}" method="POST">
+                @csrf
+                <div class="modal-body p-4">
+                    <div class="form-group mb-3">
+                        <label for="add_plan_days" class="font-weight-bold">{{ __('Number of Days') }} <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="number" step="1" min="1" name="days" id="add_plan_days" class="form-control" placeholder="e.g. 3, 7, 15, 30" required>
+                            <div class="input-group-append">
+                                <span class="input-group-text">{{ __('Days') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="add_plan_price" class="font-weight-bold">{{ __('Price Per Product/Bundle') }} <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">{{ PriceHelper::adminCurrency() }}</span>
+                            </div>
+                            <input type="number" step="0.01" min="0" name="price" id="add_plan_price" class="form-control" placeholder="e.g. 100, 200, 350" required>
+                        </div>
+                    </div>
+                    <div class="form-group mb-0">
+                        <label for="add_plan_status" class="font-weight-bold">{{ __('Status') }}</label>
+                        <select name="status" id="add_plan_status" class="form-control">
+                            <option value="1">{{ __('Active (Available to vendors)') }}</option>
+                            <option value="0">{{ __('Inactive (Hidden)') }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Cancel') }}</button>
+                    <button type="submit" class="btn btn-success px-4">{{ __('Add Option') }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 1B: EDIT PLAN MODAL -->
+<div class="modal fade" id="editPlanModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title text-white"><i class="fas fa-edit mr-2"></i> {{ __('Edit Duration & Price') }}</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="editPlanForm" method="POST">
+                @csrf
+                <div class="modal-body p-4">
+                    <div class="form-group mb-3">
+                        <label for="edit_plan_days" class="font-weight-bold">{{ __('Number of Days') }} <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="number" step="1" min="1" name="days" id="edit_plan_days" class="form-control" required>
+                            <div class="input-group-append">
+                                <span class="input-group-text">{{ __('Days') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="edit_plan_price" class="font-weight-bold">{{ __('Price Per Product/Bundle') }} <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">{{ PriceHelper::adminCurrency() }}</span>
+                            </div>
+                            <input type="number" step="0.01" min="0" name="price" id="edit_plan_price" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-group mb-0">
+                        <label for="edit_plan_status" class="font-weight-bold">{{ __('Status') }}</label>
+                        <select name="status" id="edit_plan_status" class="form-control">
+                            <option value="1">{{ __('Active (Available to vendors)') }}</option>
+                            <option value="0">{{ __('Inactive (Hidden)') }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Cancel') }}</button>
+                    <button type="submit" class="btn btn-info px-4">{{ __('Update Option') }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 1B: DELETE PLAN MODAL -->
+<div class="modal fade" id="deletePlanModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title text-white"><i class="fas fa-trash mr-2"></i> {{ __('Delete Duration Option') }}</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="deletePlanForm" method="POST">
+                @csrf
+                @method('DELETE')
+                <div class="modal-body p-4 text-center">
+                    <p class="text-dark">{{ __('Are you sure you want to delete this promotion duration and pricing option?') }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Cancel') }}</button>
+                    <button type="submit" class="btn btn-danger">{{ __('Delete Option') }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')
@@ -359,6 +723,37 @@
     function confirmDeleteAccount(url) {
         $('#deleteAccountForm').attr('action', url);
         $('#deleteAccountModal').modal('show');
+    }
+
+    // 1A: Tag Edit & Delete
+    function openEditTagModal(tag) {
+        $('#edit_tag_name').val(tag.name);
+        $('#edit_tag_status').val(tag.status);
+
+        const updateUrl = "{{ url('admin/store-settings/promotion-tag/update') }}/" + tag.id;
+        $('#editTagForm').attr('action', updateUrl);
+        $('#editTagModal').modal('show');
+    }
+
+    function confirmDeleteTag(url) {
+        $('#deleteTagForm').attr('action', url);
+        $('#deleteTagModal').modal('show');
+    }
+
+    // 1B: Plan Edit & Delete
+    function openEditPlanModal(plan) {
+        $('#edit_plan_days').val(plan.days);
+        $('#edit_plan_price').val(plan.price);
+        $('#edit_plan_status').val(plan.status);
+
+        const updateUrl = "{{ url('admin/store-settings/promotion-plan/update') }}/" + plan.id;
+        $('#editPlanForm').attr('action', updateUrl);
+        $('#editPlanModal').modal('show');
+    }
+
+    function confirmDeletePlan(url) {
+        $('#deletePlanForm').attr('action', url);
+        $('#deletePlanModal').modal('show');
     }
 </script>
 @endsection

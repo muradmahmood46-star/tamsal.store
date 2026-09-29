@@ -147,6 +147,10 @@
                                         <span class="badge badge-danger px-2 py-1 font-weight-normal">
                                             <i class="fas fa-minus-circle mr-1"></i> {{ __('Commission Cut') }}
                                         </span>
+                                    @elseif($txn->type === 'promotion_fee')
+                                        <span class="badge badge-info px-2 py-1 font-weight-normal" style="background-color: #059669; color: #ffffff;">
+                                            <i class="fas fa-bullhorn mr-1"></i> {{ __('Promotion Badge') }}
+                                        </span>
                                     @else
                                         <span class="badge badge-secondary px-2 py-1 font-weight-normal">
                                             {{ ucfirst(str_replace('_', ' ', $txn->type)) }}

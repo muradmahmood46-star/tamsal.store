@@ -80,6 +80,15 @@ Route::group(['middleware' => ['adminlocalize', 'demo']], function () {
         Route::post('store-settings/account/update/{id}', 'Back\StoreSettingController@updateAccount')->name('back.store_setting.account.update');
         Route::delete('store-settings/account/delete/{id}', 'Back\StoreSettingController@deleteAccount')->name('back.store_setting.account.delete');
 
+        // Promotion Settings (Tags & Pricing)
+        Route::post('store-settings/promotion-tag/store', 'Back\StoreSettingController@storeTag')->name('back.store_setting.tag.store');
+        Route::post('store-settings/promotion-tag/update/{id}', 'Back\StoreSettingController@updateTag')->name('back.store_setting.tag.update');
+        Route::delete('store-settings/promotion-tag/delete/{id}', 'Back\StoreSettingController@deleteTag')->name('back.store_setting.tag.delete');
+
+        Route::post('store-settings/promotion-plan/store', 'Back\StoreSettingController@storePlan')->name('back.store_setting.plan.store');
+        Route::post('store-settings/promotion-plan/update/{id}', 'Back\StoreSettingController@updatePlan')->name('back.store_setting.plan.update');
+        Route::delete('store-settings/promotion-plan/delete/{id}', 'Back\StoreSettingController@deletePlan')->name('back.store_setting.plan.delete');
+
         //------------ ALL STORES (MANAGEMENT & IMPERSONATION) ------------
         Route::get('stores', 'Back\StoreController@index')->name('back.stores.index');
         Route::get('stores/login-as/{id}', 'Back\StoreController@loginAs')->name('back.stores.loginAs');
@@ -554,6 +563,10 @@ Route::group(['middleware' => 'maintainance'], function () {
             //------------ WALLET & BALANCE ------------
             Route::get('wallet', 'Seller\WalletController@index')->name('seller.wallet.index');
             Route::post('wallet/store', 'Seller\WalletController@store')->name('seller.wallet.store');
+
+            //------------ PROMOTION BADGES ------------
+            Route::get('promotions', 'Seller\PromotionController@index')->name('seller.promotion.index');
+            Route::post('promotions/purchase', 'Seller\PromotionController@purchase')->name('seller.promotion.purchase');
 
             //------------ TRANSACTIONS ------------
             Route::get('transactions', 'Seller\TransactionController@index')->name('seller.transaction.index');

@@ -71,7 +71,12 @@
                     @if ($checkType != 'list')
                         @foreach ($catItems as $item)
                             <div class="col-xxl-3 col-md-4 col-6">
-                                <div class="product-card">
+                                <div class="product-card {{ $item->isPromotionActive() ? 'promoted-card' : '' }}">
+                                    @if($item->isPromotionActive())
+                                        <div class="promoted-tag-badge">
+                                            <i class="fas fa-crown mr-1"></i> {{ $item->promotion_tag }}
+                                        </div>
+                                    @endif
                                     @if ($item->is_stock())
                                         @if($item->is_type != 'undefine')
                                         <div class="product-badge
@@ -131,7 +136,12 @@
                     @else
                         @foreach ($catItems as $item)
                             <div class="col-lg-12">
-                                <div class="product-card product-list">
+                                <div class="product-card product-list {{ $item->isPromotionActive() ? 'promoted-card' : '' }}">
+                                    @if($item->isPromotionActive())
+                                        <div class="promoted-tag-badge">
+                                            <i class="fas fa-crown mr-1"></i> {{ $item->promotion_tag }}
+                                        </div>
+                                    @endif
                                     <div class="product-thumb">
                                         @if ($item->is_stock())
                                             @if($item->is_type != 'undefine')

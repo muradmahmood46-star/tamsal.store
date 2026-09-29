@@ -965,8 +965,13 @@
                             $item = isset($compaign_item->item) ? $compaign_item->item : $compaign_item;
                         @endphp
                         <div class="col-6 col-md-4 col-lg-3 mb-3">
-                            <div class="product-card">
+                            <div class="product-card {{ $item->isPromotionActive() ? 'promoted-card' : '' }}">
                                 <div class="product-thumb">
+                                    @if($item->isPromotionActive())
+                                        <div class="promoted-tag-badge">
+                                            <i class="fas fa-crown mr-1"></i> {{ $item->promotion_tag }}
+                                        </div>
+                                    @endif
                                     @if (!$item->is_stock())
                                         <div class="product-badge bg-secondary border-default text-body">
                                             {{ __('out of stock') }}</div>
@@ -1415,8 +1420,13 @@
                 <div class="row g-3 gx-2 gx-md-3" id="feature_category_view">
                     @forelse ($feature_category_items as $feature_category_item)
                         <div class="col-6 col-md-4 col-lg-3 mb-3">
-                            <div class="product-card">
+                            <div class="product-card {{ $feature_category_item->isPromotionActive() ? 'promoted-card' : '' }}">
                                 <div class="product-thumb">
+                                    @if($feature_category_item->isPromotionActive())
+                                        <div class="promoted-tag-badge">
+                                            <i class="fas fa-crown mr-1"></i> {{ $feature_category_item->promotion_tag }}
+                                        </div>
+                                    @endif
 
                                     @if (!$feature_category_item->is_stock())
                                         <div

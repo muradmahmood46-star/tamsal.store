@@ -156,6 +156,13 @@
         </a>
     </li>
 
+    <li class="nav-item {{ request()->is('seller/promotion*') ? 'active' : '' }}">
+        <a href="{{ route('seller.promotion.index') }}">
+            <i class="fas fa-bullhorn text-success"></i>
+            <p>{{ __('Promotion') }}</p>
+        </a>
+    </li>
+
     <li class="nav-item {{ request()->is('seller/transactions*') ? 'active' : '' }}">
         <a href="{{ route('seller.transaction.index') }}">
             <i class="fas fa-random"></i>

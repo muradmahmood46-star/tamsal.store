@@ -7,7 +7,12 @@
                 : \Carbon\Carbon::parse($deal->end_date)->toIso8601String();
         }
     @endphp
-    <article class="card h-100 border-0 shadow-sm deal-card" data-deal-end="{{ $dealEndIso }}">
+    <article class="card h-100 border-0 shadow-sm deal-card {{ $deal->isPromotionActive() ? 'promoted-card' : '' }}" data-deal-end="{{ $dealEndIso }}">
+        @if($deal->isPromotionActive())
+            <div class="promoted-tag-badge">
+                <i class="fas fa-crown mr-1"></i> {{ $deal->promotion_tag }}
+            </div>
+        @endif
         <div class="card-header bg-success text-white d-flex justify-content-between align-items-center py-1 px-1 px-sm-2" style="white-space: nowrap; overflow: hidden; min-height: 26px; gap: 4px;">
             <small class="font-weight-bold d-inline-flex align-items-center text-nowrap" style="font-size: 9.5px; line-height: 1;"><i class="icon-clock" style="font-size: 9px; margin-right: 5px;"></i><span class="deal-countdown">--</span></small>
             <span class="badge badge-warning text-dark ml-1 font-weight-bold text-nowrap flex-shrink-0" style="font-size: 8.5px; padding: 2px 4px; line-height: 1;">{{ $deal->discount_badge }}</span>

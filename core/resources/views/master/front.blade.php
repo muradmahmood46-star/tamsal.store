@@ -564,6 +564,64 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15) !important;
         }
 
+        /* ==========================================================================
+           Promoted Products & Bundles (Badge & Greenish Highlight Border)
+           ========================================================================== */
+        .product-card.promoted-card,
+        .deal-card.promoted-card {
+            border: 2px solid #16a34a !important;
+            box-shadow: 0 0 0 1px #86efac, 0 4px 14px rgba(22, 163, 74, 0.18) !important;
+            position: relative !important;
+        }
+
+        .product-card.promoted-card:hover,
+        .deal-card.promoted-card:hover {
+            border-color: #15803d !important;
+            box-shadow: 0 0 0 2px #4ade80, 0 8px 22px rgba(22, 163, 74, 0.28) !important;
+        }
+
+        .promoted-tag-badge {
+            position: absolute !important;
+            top: 0 !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            z-index: 9 !important;
+            background: linear-gradient(135deg, #15803d 0%, #16a34a 100%) !important;
+            color: #ffffff !important;
+            font-size: 10px !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.3px !important;
+            text-transform: uppercase !important;
+            padding: 2.5px 9px !important;
+            border-bottom-left-radius: 6px !important;
+            border-bottom-right-radius: 6px !important;
+            box-shadow: 0 2px 8px rgba(22, 163, 74, 0.35) !important;
+            white-space: nowrap !important;
+            pointer-events: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            line-height: 1.2 !important;
+        }
+
+        .promoted-tag-badge i {
+            font-size: 8.5px !important;
+            margin-right: 3px !important;
+            color: #fef08a !important;
+        }
+
+        @media (max-width: 767px) {
+            .promoted-tag-badge {
+                font-size: 8.5px !important;
+                padding: 2px 6px !important;
+                letter-spacing: 0.2px !important;
+            }
+            .promoted-tag-badge i {
+                font-size: 7.5px !important;
+                margin-right: 2px !important;
+            }
+        }
+
         @media (max-width: 767px) {
             /* Product Card Mobile Height Reduction */
             .product-card {

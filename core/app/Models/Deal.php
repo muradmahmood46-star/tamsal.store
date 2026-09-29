@@ -26,6 +26,13 @@ class Deal extends Model
         'end_date',
         'status',
         'orders_count',
+        'is_promoted',
+        'promotion_tag',
+        'promotion_tag_id',
+        'promotion_days',
+        'promotion_price',
+        'promotion_starts_at',
+        'promotion_expires_at',
     ];
 
     protected $casts = [
@@ -166,5 +173,22 @@ class Deal extends Model
         } while (self::where('sku', $sku)->exists() || \App\Models\Item::where('sku', $sku)->exists());
 
         return $sku;
+    }
+
+    public function isPromotionActive()
+    {
+        if ($this->is_promoted == 1 && !empty($this->promotion_tag) && $this->promotion_expires_at) {
+            try {
+                return Carbon::parse($this->promotion_expires_at)->isFuture();
+            } catch (\Throwable $e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public function getActivePromotionTagAttribute()
+    {
+        return $this->isPromotionActive() ? $this->promotion_tag : null;
     }
 }

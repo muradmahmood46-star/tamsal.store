@@ -42,8 +42,13 @@
                     $item = isset($compaign_item->item) ? $compaign_item->item : $compaign_item;
                 @endphp
                 <div class="col-gd">
-                <div class="product-card">
+                <div class="product-card {{ $item->isPromotionActive() ? 'promoted-card' : '' }}">
                     <div class="product-thumb">
+                        @if($item->isPromotionActive())
+                            <div class="promoted-tag-badge">
+                                <i class="fas fa-crown mr-1"></i> {{ $item->promotion_tag }}
+                            </div>
+                        @endif
                         @if ($item->is_stock())
                             @if($item->is_type != 'undefine')
                             <div class="product-badge

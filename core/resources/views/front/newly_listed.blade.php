@@ -39,8 +39,13 @@
             <div class="row g-3 gx-2 gx-md-3">
                 @forelse ($items as $item)
                 <div class="col-6 col-md-4 col-lg-3 mb-3">
-                <div class="product-card">
+                <div class="product-card {{ $item->isPromotionActive() ? 'promoted-card' : '' }}">
                     <div class="product-thumb">
+                        @if($item->isPromotionActive())
+                            <div class="promoted-tag-badge">
+                                <i class="fas fa-crown mr-1"></i> {{ $item->promotion_tag }}
+                            </div>
+                        @endif
                         @if ($item->is_stock())
                             @if($item->is_type != 'undefine')
                             <div class="product-badge

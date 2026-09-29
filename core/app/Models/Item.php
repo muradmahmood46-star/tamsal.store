@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Item extends Model
 {
 
-    protected $fillable = ['category_id','subcategory_id','childcategory_id','brand_id','name','slug','sku','tags','video','estimated_profit','product_from','contact_number','sort_details','specification_name','specification_description','is_specification','details','photo','thumbnail','discount_price','previous_price','stock','item_variants','meta_keywords','meta_description','status','approval_status','reject_reason','is_hidden_by_block','vendor_id','is_type','tax_id','date','item_type','file','link','file_type','license_name','license_key','affiliate_link', "advance_payment_type", "advance_payment_amount", "is_free_delivery", "delivery_fee", "is_custom_rating", "custom_rating", "custom_rating_count", "is_returnable", "return_days"];
+    protected $fillable = ['category_id','subcategory_id','childcategory_id','brand_id','name','slug','sku','tags','video','estimated_profit','product_from','contact_number','sort_details','specification_name','specification_description','is_specification','details','photo','thumbnail','discount_price','previous_price','stock','item_variants','meta_keywords','meta_description','status','approval_status','reject_reason','is_hidden_by_block','vendor_id','is_type','tax_id','date','item_type','file','link','file_type','license_name','license_key','affiliate_link', "advance_payment_type", "advance_payment_amount", "is_free_delivery", "delivery_fee", "is_custom_rating", "custom_rating", "custom_rating_count", "is_returnable", "return_days", "is_promoted", "promotion_tag", "promotion_tag_id", "promotion_days", "promotion_price", "promotion_starts_at", "promotion_expires_at"];
 
     public function getRatingAttribute()
     {
@@ -249,4 +249,20 @@ class Item extends Model
         return route('front.product', $this->product_slug);
     }
 
+    public function isPromotionActive()
+    {
+        if ($this->is_promoted == 1 && !empty($this->promotion_tag) && $this->promotion_expires_at) {
+            try {
+                return \Carbon\Carbon::parse($this->promotion_expires_at)->isFuture();
+            } catch (\Throwable $e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public function getActivePromotionTagAttribute()
+    {
+        return $this->isPromotionActive() ? $this->promotion_tag : null;
+    }
 }

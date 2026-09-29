@@ -951,7 +951,12 @@
                     <div class="relatedproductslider owl-carousel">
                         @foreach ($related_items as $related)
                             <div class="slider-item">
-                                <div class="product-card">
+                                <div class="product-card {{ $related->isPromotionActive() ? 'promoted-card' : '' }}">
+                                    @if($related->isPromotionActive())
+                                        <div class="promoted-tag-badge">
+                                            <i class="fas fa-crown mr-1"></i> {{ $related->promotion_tag }}
+                                        </div>
+                                    @endif
 
                                     @if ($related->is_stock())
                                         @if($related->is_type != 'undefine')
