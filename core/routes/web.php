@@ -85,6 +85,8 @@ Route::group(['middleware' => ['adminlocalize', 'demo']], function () {
         Route::get('stores/login-as/{id}', 'Back\StoreController@loginAs')->name('back.stores.loginAs');
         Route::post('stores/status/{id}/{status}', 'Back\StoreController@status')->name('back.stores.status');
         Route::delete('stores/delete/{id}', 'Back\StoreController@destroy')->name('back.stores.destroy');
+        Route::post('stores/send-message/{id}', 'Back\StoreController@sendMessage')->name('back.stores.send_message');
+        Route::get('stores/messages/{id}', 'Back\StoreController@fetchMessages')->name('back.stores.messages');
 
         //------------ VENDOR PRODUCTS (REVIEW & APPROVAL) ------------
         Route::get('vendor-products', 'Back\VendorProductController@index')->name('back.vendor_product.index');

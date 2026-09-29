@@ -385,6 +385,30 @@
                                                             </div>
                                                         </div>
                                                     </div>
+
+                                                    <!-- Direct Message / Chat with Vendor -->
+                                                    <div class="card border mt-2 shadow-sm" style="border-radius: 8px; border-color: #cbd5e1 !important;">
+                                                        <div class="card-header bg-dark text-white py-2 d-flex justify-content-between align-items-center" style="border-radius: 7px 7px 0 0;">
+                                                            <span class="font-weight-bold" style="font-size: 13px;">
+                                                                <i class="fas fa-paper-plane mr-1 text-info"></i> {{ __('Direct Message / Chat with Vendor') }}
+                                                            </span>
+                                                            <span class="badge badge-info small">{{ __('Direct Line') }}</span>
+                                                        </div>
+                                                        <div class="card-body p-3 bg-white">
+                                                            <!-- History of messages -->
+                                                            <div id="modalChatHistory{{ $seller->id }}" class="p-2 mb-3 bg-light border rounded" style="max-height: 170px; overflow-y: auto; font-size: 12.5px; display: none;"></div>
+
+                                                            <div class="input-group">
+                                                                <input type="text" id="modalStoreMessageInput{{ $seller->id }}" class="form-control" placeholder="{{ __('Type a direct message to :store (e.g. Regarding product policy, order updates, congratulations, etc.)...', ['store' => $seller->shop_name]) }}" onkeypress="handleStoreMsgKey(event, {{ $seller->id }})">
+                                                                <div class="input-group-append">
+                                                                    <button type="button" class="btn btn-primary font-weight-bold" id="modalSendStoreMsgBtn{{ $seller->id }}" onclick="sendDirectStoreMessage({{ $seller->id }})">
+                                                                        <i class="fas fa-paper-plane mr-1"></i> {{ __('Send Message') }}
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            <div id="modalMsgSuccessAlert{{ $seller->id }}" class="alert alert-success mt-2 py-1 px-2 small d-none"></div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <div class="modal-footer bg-light py-2 px-4 justify-content-between">
                                                     <div>
@@ -425,4 +449,102 @@
         @endif
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        // When any store details modal opens, load chat history
+        $('.modal[id^="storeDetailsModal"]').on('shown.bs.modal', function() {
+            const modalId = $(this).attr('id');
+            const sellerId = modalId.replace('storeDetailsModal', '');
+            if (sellerId) {
+                loadStoreMessages(sellerId);
+            }
+        });
+    });
+
+    function loadStoreMessages(id) {
+        const historyBox = $('#modalChatHistory' + id);
+        historyBox.html('<div class="text-center text-muted small py-2"><i class="fas fa-spinner fa-spin mr-1"></i> {{ __("Loading message history...") }}</div>').show();
+
+        fetch("{{ url('admin/stores/messages') }}/" + id, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.success && res.messages && res.messages.length > 0) {
+                let html = '';
+                res.messages.forEach(m => {
+                    const isAdmin = m.is_admin;
+                    html += `
+                        <div class="p-2 mb-2 rounded ${isAdmin ? 'bg-white border text-right' : 'bg-info-light border text-left'}" style="background: ${isAdmin ? '#eff6ff' : '#f0fdf4'}; border-color: ${isAdmin ? '#bfdbfe' : '#bbf7d0'} !important;">
+                            <div class="font-weight-bold" style="font-size: 11px; color: ${isAdmin ? '#1e40af' : '#15803d'};">
+                                <i class="fas ${isAdmin ? 'fa-user-shield' : 'fa-store'} mr-1"></i>
+                                ${isAdmin ? '{{ __("Admin") }}' : '{{ __("Vendor") }}'} • <span class="text-muted font-weight-normal">${m.time} (${m.date})</span>
+                            </div>
+                            <div class="text-dark mt-1" style="font-size: 12.5px;">${escapeHtml(m.message)}</div>
+                        </div>
+                    `;
+                });
+                historyBox.html(html).show();
+                historyBox.scrollTop(historyBox[0].scrollHeight);
+            } else {
+                historyBox.html('<div class="text-center text-muted small py-2">{{ __("No messages exchanged yet with this vendor. Send a direct message below.") }}</div>').show();
+            }
+        })
+        .catch(e => {
+            historyBox.html('<div class="text-center text-muted small py-2">{{ __("No previous messages.") }}</div>').show();
+        });
+    }
+
+    function sendDirectStoreMessage(id) {
+        const input = $('#modalStoreMessageInput' + id);
+        const text = input.val().trim();
+        if (!text) return;
+
+        const btn = $('#modalSendStoreMsgBtn' + id);
+        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i> {{ __("Sending...") }}');
+
+        fetch("{{ url('admin/stores/send-message') }}/" + id, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ message: text })
+        })
+        .then(r => r.json())
+        .then(res => {
+            btn.prop('disabled', false).html('<i class="fas fa-paper-plane mr-1"></i> {{ __("Send Message") }}');
+            if (res.success) {
+                input.val('');
+                $('#modalMsgSuccessAlert' + id).removeClass('d-none').text(res.message);
+                setTimeout(() => {
+                    $('#modalMsgSuccessAlert' + id).addClass('d-none');
+                }, 4000);
+                loadStoreMessages(id);
+            } else {
+                alert(res.message || '{{ __("Failed to send message.") }}');
+            }
+        })
+        .catch(err => {
+            btn.prop('disabled', false).html('<i class="fas fa-paper-plane mr-1"></i> {{ __("Send Message") }}');
+            alert('{{ __("Error sending message.") }}');
+        });
+    }
+
+    function handleStoreMsgKey(e, id) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            sendDirectStoreMessage(id);
+        }
+    }
+
+    function escapeHtml(t) {
+        const m = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+        return t.replace(/[&<>"']/g, function(k) { return m[k]; });
+    }
+</script>
 @endsection

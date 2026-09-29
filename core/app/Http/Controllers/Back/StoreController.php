@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Back;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Models\ChatMessage;
+use App\Models\Conversation;
 use App\Models\Item;
 use App\Models\Order;
 use App\Models\Seller;
 use App\Models\StoreRequest;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -185,5 +188,123 @@ class StoreController extends Controller
         $seller->delete();
 
         return redirect()->back()->withSuccess(__('Store ":store" deleted successfully.', ['store' => $shopName]));
+    }
+
+    /**
+     * Send direct message to vendor from Store Details view/modal
+     */
+    public function sendMessage(Request $request, $id)
+    {
+        $request->validate([
+            'message' => 'required|string|max:2000'
+        ]);
+
+        $seller = Seller::findOrFail($id);
+        $userId = $seller->user_id;
+
+        if (!$userId && $seller->shop_email) {
+            $user = User::where('email', $seller->shop_email)->first();
+            if ($user) {
+                $userId = $user->id;
+                $seller->user_id = $userId;
+                $seller->save();
+            }
+        }
+
+        if (!$userId) {
+            return response()->json(['success' => false, 'message' => __('No linked user account found for this store.')], 422);
+        }
+
+        $conversation = Conversation::firstOrCreate([
+            'user_id' => 0,
+            'vendor_id' => $userId,
+            'item_id' => null,
+        ], [
+            'last_message' => __('Direct line with Administration'),
+            'last_message_at' => Carbon::now(),
+            'user_unread_count' => 0,
+            'vendor_unread_count' => 0,
+            'deleted_by_user' => 0,
+            'deleted_by_vendor' => 0,
+        ]);
+
+        $adminId = Auth::guard('admin')->id() ?: 0;
+
+        $msg = ChatMessage::create([
+            'conversation_id' => $conversation->id,
+            'sender_type' => 'admin',
+            'sender_id' => $adminId,
+            'message' => trim($request->message),
+            'is_read' => 0,
+            'deleted_by_user' => 0,
+            'deleted_by_vendor' => 0,
+        ]);
+
+        $conversation->update([
+            'last_message' => trim($request->message),
+            'last_message_at' => Carbon::now(),
+            'vendor_unread_count' => $conversation->vendor_unread_count + 1,
+            'deleted_by_vendor' => 0,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => __('Message sent to :store successfully!', ['store' => $seller->shop_name]),
+            'data' => [
+                'id' => $msg->id,
+                'message' => $msg->message,
+                'time' => $msg->created_at->format('h:i A'),
+                'date' => $msg->created_at->format('M d, Y'),
+                'sender_type' => 'admin',
+            ]
+        ]);
+    }
+
+    /**
+     * Fetch direct message history for a store
+     */
+    public function fetchMessages($id)
+    {
+        $seller = Seller::findOrFail($id);
+        $userId = $seller->user_id;
+
+        if (!$userId && $seller->shop_email) {
+            $user = User::where('email', $seller->shop_email)->first();
+            if ($user) {
+                $userId = $user->id;
+            }
+        }
+
+        if (!$userId) {
+            return response()->json(['success' => true, 'messages' => []]);
+        }
+
+        $conversation = Conversation::where('user_id', 0)
+            ->where('vendor_id', $userId)
+            ->whereNull('item_id')
+            ->first();
+
+        if (!$conversation) {
+            return response()->json(['success' => true, 'messages' => []]);
+        }
+
+        $messages = ChatMessage::where('conversation_id', $conversation->id)
+            ->orderBy('id', 'asc')
+            ->get()
+            ->map(function ($msg) {
+                return [
+                    'id' => $msg->id,
+                    'sender_type' => $msg->sender_type,
+                    'message' => $msg->message,
+                    'time' => $msg->created_at ? $msg->created_at->format('h:i A') : '',
+                    'date' => $msg->created_at ? $msg->created_at->format('M d, Y') : '',
+                    'is_admin' => ($msg->sender_type === 'admin'),
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'messages' => $messages
+        ]);
     }
 }
