@@ -615,7 +615,7 @@
         .product-card .product-badge.product-badge-free-delivery,
         .product-badge-free-delivery {
             position: absolute !important;
-            bottom: 6px !important;
+            bottom: 2px !important;
             left: 6px !important;
             top: auto !important;
             right: auto !important;
@@ -660,7 +660,7 @@
                 max-height: 14px !important;
                 line-height: 12px !important;
                 letter-spacing: 0.25px !important;
-                bottom: 4px !important;
+                bottom: 0px !important;
                 left: 4px !important;
                 border-radius: 3px !important;
             }
