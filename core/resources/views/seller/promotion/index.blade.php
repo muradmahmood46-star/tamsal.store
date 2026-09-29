@@ -32,35 +32,41 @@
     }
     @media (max-width: 767.98px) {
         .promo-item-name {
-            font-size: 12px !important;
-            line-height: 1.25 !important;
-            max-width: 160px !important;
+            font-size: 11.5px !important;
+            line-height: 1.2 !important;
+            max-width: 155px !important;
+            margin-left: 0 !important;
         }
         .promo-thumb-img {
-            width: 36px !important;
-            height: 36px !important;
-            margin-right: 5px !important;
+            width: 34px !important;
+            height: 34px !important;
+            margin-right: 4px !important;
+            border-radius: 4px !important;
         }
         .promo-item-meta {
-            gap: 3px !important;
+            gap: 2.5px !important;
             margin-top: 1px !important;
             margin-left: 0 !important;
             padding-left: 0 !important;
             justify-content: flex-start !important;
         }
         .promo-type-badge {
-            font-size: 8.5px !important;
-            padding: 1px 4px !important;
+            font-size: 8px !important;
+            padding: 0.5px 3.5px !important;
             line-height: 1.1 !important;
             font-weight: 600 !important;
             margin-left: 0 !important;
         }
         .promo-sku-badge {
-            font-size: 8.5px !important;
-            padding: 1px 3px !important;
+            font-size: 7.5px !important;
+            padding: 0.5px 3px !important;
+            line-height: 1.1 !important;
+            margin-left: 0 !important;
+            font-weight: 500 !important;
         }
         .promo-price-text {
-            font-size: 10.5px !important;
+            font-size: 9.5px !important;
+            line-height: 1.1 !important;
         }
     }
 </style>
