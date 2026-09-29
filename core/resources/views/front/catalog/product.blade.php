@@ -972,8 +972,6 @@
                                 @elseif($related->is_type == 'best') bg-dark
                                 @elseif($related->is_type == 'flash_deal') bg-success @endif
                                 ">{{ ucfirst(str_replace('_', ' ', $related->is_type)) }}</div>
-                                        @elseif($related->is_free_delivery == 1)
-                                        <div class="product-badge bg-success">{{ __('Free Delivery') }}</div>
                                         @endif
                                     @else
                                         <div class="product-badge bg-secondary border-default text-body">{{ __('out of stock') }}</div>
@@ -983,11 +981,10 @@
                                             -{{ PriceHelper::DiscountPercentage($related) }}</div>
                                     @endif
 
-                                    @if ($related->previous_price && $related->previous_price != 0)
-                                        <div class="product-badge product-badge2 bg-info">
-                                            -{{ PriceHelper::DiscountPercentage($related) }}</div>
-                                    @endif
                                     <div class="product-thumb">
+                                        @if($related->is_free_delivery == 1)
+                                            <div class="product-badge product-badge-free-delivery bg-success">{{ __('Free Delivery') }}</div>
+                                        @endif
                                         <img src="{{ url('/core/public/storage/images/' . ($related->photo ?: $related->thumbnail)) }}" class="lazy"
                                             data-src="{{ url('/core/public/storage/images/' . ($related->photo ?: $related->thumbnail)) }}"
                                             alt="{{ $related->name ?? 'Product' }}">

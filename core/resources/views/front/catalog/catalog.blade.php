@@ -88,8 +88,6 @@
                                             @endif
                                             "> {{ __(str_replace('_',' ',$item->is_type)) }}
                                         </div>
-                                        @elseif($item->is_free_delivery == 1)
-                                        <div class="product-badge bg-success">{{ __('Free Delivery') }}</div>
                                         @endif
                                     @else
                                         <div class="product-badge bg-secondary border-default text-body">
@@ -101,6 +99,9 @@
                                         <div class="product-badge product-badge2 bg-info"> -{{PriceHelper::DiscountPercentage($item)}}</div>
                                     @endif
                                     <div class="product-thumb">
+                                        @if($item->is_free_delivery == 1)
+                                            <div class="product-badge product-badge-free-delivery bg-success">{{ __('Free Delivery') }}</div>
+                                        @endif
                                         <img src="{{url('/core/public/storage/images/'.($item->photo ?: $item->thumbnail))}}" class="lazy" data-src="{{url('/core/public/storage/images/'.($item->photo ?: $item->thumbnail))}}" alt="{{ $item->name ?? 'Product' }}">
                                         <div class="product-button-group">
                                             <a class="product-button wishlist_store" href="{{route('user.wishlist.store',$item->id)}}" title="{{__('Wishlist')}}"><i class="icon-heart"></i></a>
@@ -154,8 +155,6 @@
                                                 @endif
                                                 ">{{ __(ucfirst(str_replace('_',' ',$item->is_type))) }}
                                             </div>
-                                            @elseif($item->is_free_delivery == 1)
-                                            <div class="product-badge bg-success">{{ __('Free Delivery') }}</div>
                                             @endif
                                         @else
                                             <div class="product-badge bg-secondary border-default text-body">
@@ -164,6 +163,10 @@
                                         @endif
                                         @if($item->previous_price && $item->previous_price !=0)
                                             <div class="product-badge product-badge2 bg-info"> -{{PriceHelper::DiscountPercentage($item)}}</div>
+                                        @endif
+
+                                        @if($item->is_free_delivery == 1)
+                                            <div class="product-badge product-badge-free-delivery bg-success">{{ __('Free Delivery') }}</div>
                                         @endif
 
                                         <img src="{{url('/core/public/storage/images/'.($item->photo ?: $item->thumbnail))}}" class="lazy" data-src="{{url('/core/public/storage/images/'.($item->photo ?: $item->thumbnail))}}" alt="{{ $item->name ?? 'Product' }}">

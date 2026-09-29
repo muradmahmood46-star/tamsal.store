@@ -610,6 +610,32 @@
             color: #fef08a !important;
         }
 
+        /* Free Delivery Badge at Bottom of Product Picture */
+        .product-card .product-thumb .product-badge-free-delivery,
+        .product-card .product-badge.product-badge-free-delivery,
+        .product-badge-free-delivery {
+            position: absolute !important;
+            bottom: 6px !important;
+            left: 6px !important;
+            top: auto !important;
+            right: auto !important;
+            z-index: 6 !important;
+            background: #16a34a !important;
+            color: #ffffff !important;
+            font-size: 9.5px !important;
+            font-weight: 700 !important;
+            padding: 2.5px 7.5px !important;
+            border-radius: 4px !important;
+            line-height: 1.2 !important;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.22) !important;
+            letter-spacing: 0.2px !important;
+            text-transform: capitalize !important;
+            pointer-events: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            margin: 0 !important;
+        }
+
         @media (max-width: 767px) {
             .promoted-tag-badge {
                 font-size: 8.5px !important;
@@ -619,6 +645,15 @@
             .promoted-tag-badge i {
                 font-size: 7.5px !important;
                 margin-right: 2px !important;
+            }
+            .product-card .product-thumb .product-badge-free-delivery,
+            .product-card .product-badge.product-badge-free-delivery,
+            .product-badge-free-delivery {
+                font-size: 8px !important;
+                padding: 1.5px 5px !important;
+                bottom: 4px !important;
+                left: 4px !important;
+                border-radius: 3px !important;
             }
         }
 

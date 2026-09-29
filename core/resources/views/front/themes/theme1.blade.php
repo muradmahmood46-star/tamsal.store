@@ -978,7 +978,7 @@
                                     @endif
 
                                     @if ($item->is_free_delivery == 1)
-                                        <div class="product-badge bg-success">{{ __('Free Delivery') }}</div>
+                                        <div class="product-badge product-badge-free-delivery bg-success">{{ __('Free Delivery') }}</div>
                                     @endif
 
                                     @if ($item->previous_price && $item->previous_price != 0)
@@ -1185,7 +1185,7 @@
                                             {{ __('out of stock') }}</div>
                                     @endif
                                     @if ($popular_category_item->is_free_delivery == 1)
-                                        <div class="product-badge bg-success">{{ __('Free Delivery') }}</div>
+                                        <div class="product-badge product-badge-free-delivery bg-success">{{ __('Free Delivery') }}</div>
                                     @endif
                                     @if ($popular_category_item->previous_price && $popular_category_item->previous_price != 0)
                                         <div class="product-badge product-badge2 bg-info">
@@ -1440,7 +1440,7 @@
                                             {{ __('out of stock') }}</div>
                                     @endif
                                     @if ($feature_category_item->is_free_delivery == 1)
-                                        <div class="product-badge bg-success">{{ __('Free Delivery') }}</div>
+                                        <div class="product-badge product-badge-free-delivery bg-success">{{ __('Free Delivery') }}</div>
                                     @endif
                                     @if ($feature_category_item->previous_price && $feature_category_item->previous_price != 0)
                                         <div class="product-badge product-badge2 bg-info">
