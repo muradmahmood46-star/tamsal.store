@@ -57,6 +57,11 @@
             <!-- Poduct Gallery-->
             <div class="col-xxl-5 col-lg-6 col-md-6">
                 <div class="product-gallery">
+                    @if($item->isPromotionActive())
+                        <div class="promoted-tag-badge" style="position: absolute; top: 12px; left: 12px; z-index: 10; border-radius: 6px !important;">
+                            <i class="fas fa-crown mr-1"></i> {{ $item->promotion_tag }}
+                        </div>
+                    @endif
                     @if ($item->video)
                         <div class="gallery-wrapper">
                             <div class="gallery-item video-btn text-center">

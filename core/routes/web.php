@@ -148,6 +148,8 @@ Route::group(['middleware' => ['adminlocalize', 'demo']], function () {
             //------------ BUNDLED FLASH DEALS ------------
             Route::resource('deal', 'Back\DealController', ['as' => 'back', 'except' => 'show']);
             Route::get('deal/status/{id}/{status}', 'Back\DealController@status')->name('back.deal.status');
+            Route::get('deal/highlight/{deal}', 'Back\DealController@highlight')->name('back.deal.highlight');
+            Route::post('deal/highlight/update/{deal}', 'Back\DealController@highlight_update')->name('back.deal.highlight.update');
 
             // Bulk product upload
             Route::get('/product/csv/export', 'Back\CsvProductController@export')->name('back.csv.export');

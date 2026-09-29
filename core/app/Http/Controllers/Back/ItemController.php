@@ -14,6 +14,8 @@ use App\Helpers\ImageHelper;
 use App\Models\Category;
 use App\Models\ChieldCategory;
 use App\Models\Currency;
+use App\Models\PromotionTag;
+use App\Models\PromotionPlan;
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
 
@@ -254,8 +256,16 @@ class ItemController extends Controller
 
     public function highlight(Item $item)
     {
+        PromotionTag::ensureTable();
+        PromotionPlan::ensureTable();
+
+        $tags = PromotionTag::where('status', 1)->orderBy('name', 'asc')->get();
+        $plans = PromotionPlan::where('status', 1)->orderBy('days', 'asc')->get();
+
         return view('back.item.highlight', [
-            'item' => $item
+            'item' => $item,
+            'tags' => $tags,
+            'plans' => $plans,
         ]);
     }
     public function highlight_update(Item $item, Request $request)

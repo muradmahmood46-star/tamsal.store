@@ -66,6 +66,9 @@
                                             @if($data->sku)
                                                 <br><span class="badge badge-light border text-muted mt-1" style="font-size:11px;letter-spacing:0.5px;"><i class="fas fa-barcode mr-1"></i>{{ $data->sku }}</span>
                                             @endif
+                                            @if($data->isPromotionActive())
+                                                <br><span class="badge badge-warning text-dark mt-1 font-weight-bold" style="font-size:10.5px; background:#fef08a; border:1px solid #facc15;"><i class="fas fa-crown text-warning mr-1"></i>{{ $data->promotion_tag }}</span>
+                                            @endif
                                         </td>
                                         <td>
                                             @if($data->vendor_id > 0 && $data->vendor)
@@ -99,6 +102,7 @@
                                         <td>
                                             <div class="d-flex" style="gap:4px">
                                                 <button class="btn btn-info btn-sm" onclick="viewDeal({{ $data->id }})" title="{{ __('View') }}"><i class="fas fa-eye"></i></button>
+                                                <a class="btn btn-warning btn-sm text-dark font-weight-bold" href="{{ route('back.deal.highlight', $data->id) }}" title="{{ __('Highlight') }}"><i class="fas fa-crown"></i></a>
                                                 <a class="btn btn-secondary btn-sm" href="{{ route('back.deal.edit', $data->id) }}" title="{{ __('Edit') }}"><i class="fas fa-edit"></i></a>
                                                 <a class="btn btn-danger btn-sm" data-toggle="modal" data-target="#confirm-delete" href="javascript:;" data-href="{{ route('back.deal.destroy', $data->id) }}" title="{{ __('Delete') }}"><i class="fas fa-trash-alt"></i></a>
                                             </div>
@@ -135,6 +139,9 @@
                                             @if($data->sku)
                                                 <br><span class="badge badge-light border text-muted mt-1" style="font-size:11px;letter-spacing:0.5px;"><i class="fas fa-barcode mr-1"></i>{{ $data->sku }}</span>
                                             @endif
+                                            @if($data->isPromotionActive())
+                                                <br><span class="badge badge-warning text-dark mt-1 font-weight-bold" style="font-size:10.5px; background:#fef08a; border:1px solid #facc15;"><i class="fas fa-crown text-warning mr-1"></i>{{ $data->promotion_tag }}</span>
+                                            @endif
                                         </td>
                                         <td>
                                             @if($data->vendor_id > 0 && $data->vendor)
@@ -152,6 +159,7 @@
                                         <td>
                                             <div class="d-flex" style="gap:4px">
                                                 <button class="btn btn-info btn-sm" onclick="viewDeal({{ $data->id }})" title="{{ __('View') }}"><i class="fas fa-eye"></i></button>
+                                                <a class="btn btn-warning btn-sm text-dark font-weight-bold" href="{{ route('back.deal.highlight', $data->id) }}" title="{{ __('Highlight') }}"><i class="fas fa-crown"></i></a>
                                                 <a class="btn btn-secondary btn-sm" href="{{ route('back.deal.edit', $data->id) }}" title="{{ __('Edit') }}"><i class="fas fa-edit"></i></a>
                                                 <a class="btn btn-danger btn-sm" data-toggle="modal" data-target="#confirm-delete" href="javascript:;" data-href="{{ route('back.deal.destroy', $data->id) }}" title="{{ __('Delete') }}"><i class="fas fa-trash-alt"></i></a>
                                             </div>

@@ -1170,8 +1170,13 @@
                 <div class="row g-3 gx-2 gx-md-3" id="popular_category_view">
                     @foreach ($popular_category_items->take(8) as $popular_category_item)
                         <div class="col-6 col-md-4 col-lg-3 mb-3">
-                            <div class="product-card">
+                            <div class="product-card {{ $popular_category_item->isPromotionActive() ? 'promoted-card' : '' }}">
                                 <div class="product-thumb">
+                                    @if($popular_category_item->isPromotionActive())
+                                        <div class="promoted-tag-badge">
+                                            <i class="fas fa-crown mr-1"></i> {{ $popular_category_item->promotion_tag }}
+                                        </div>
+                                    @endif
 
                                     @if (!$popular_category_item->is_stock())
                                         <div

@@ -38,44 +38,65 @@
 <div class="card mb-4">
     <div class="card-body">
         <div class="d-sm-flex align-items-center justify-content-between">
-            <h3 class="mb-0 bc-title"><b>{{ __('Highlight Product') }}</b></h3>
-            <a class="btn btn-primary btn-sm" href="{{route('back.item.index')}}"><i class="fas fa-chevron-left"></i> {{ __('Back to Products') }}</a>
+            <h3 class="mb-0 bc-title"><b>{{ __('Highlight Bundle Deal') }}</b></h3>
+            <a class="btn btn-primary btn-sm" href="{{route('back.deal.index')}}"><i class="fas fa-chevron-left"></i> {{ __('Back to Bundles') }}</a>
         </div>
     </div>
 </div>
 
-<!-- Product Quick Overview -->
+@php
+    $bundleImg = '';
+    if ($deal->photo) {
+        $bundleImg = \Illuminate\Support\Str::startsWith($deal->photo, 'images/')
+            ? url('/core/public/storage/' . $deal->photo)
+            : url('/core/public/storage/images/' . $deal->photo);
+    } else {
+        $firstItem = $deal->dealItems->first()->item ?? null;
+        if ($firstItem) {
+            $firstThumb = $firstItem->photo ?: $firstItem->thumbnail;
+            $bundleImg = \Illuminate\Support\Str::startsWith($firstThumb, 'images/')
+                ? url('/core/public/storage/' . $firstThumb)
+                : url('/core/public/storage/images/' . $firstThumb);
+        } else {
+            $bundleImg = url('/core/public/storage/images/placeholder.png');
+        }
+    }
+@endphp
+
+<!-- Bundle Quick Overview -->
 <div class="card mb-4 shadow-sm border-0">
     <div class="card-body py-3">
         <div class="row align-items-center">
             <div class="col-auto">
-                <img src="{{ $item->thumbnail ? url('/core/public/storage/images/'.$item->thumbnail) : url('/core/public/storage/images/placeholder.png') }}" 
-                     alt="{{ $item->name }}" 
+                <img src="{{ $bundleImg }}" 
+                     alt="{{ $deal->name }}" 
                      style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px; border: 2px solid #e2e8f0;">
             </div>
             <div class="col">
-                <h5 class="mb-1 font-weight-bold text-dark">{{ $item->name }}</h5>
+                <h5 class="mb-1 font-weight-bold text-dark">{{ $deal->name }}</h5>
                 <div class="d-flex flex-wrap align-items-center" style="gap: 8px; font-size: 13px;">
-                    @if($item->sku)
-                        <span class="badge badge-light border text-muted"><i class="fas fa-barcode mr-1"></i>{{ $item->sku }}</span>
+                    @if($deal->sku)
+                        <span class="badge badge-light border text-muted"><i class="fas fa-barcode mr-1"></i>{{ $deal->sku }}</span>
                     @endif
-                    <span class="text-success font-weight-bold">{{ PriceHelper::adminCurrencyPrice($item->discount_price) }}</span>
-                    @if($item->vendor_id > 0 && $item->vendor)
-                        <span class="badge badge-info"><i class="fas fa-store mr-1"></i>{{ $item->vendor->shop_name ?: $item->vendor->first_name }}</span>
+                    <span class="badge badge-secondary">{{ $deal->dealItems->count() }} {{ __('Items') }}</span>
+                    <span class="text-success font-weight-bold">{{ PriceHelper::adminCurrencyPrice($deal->discounted_price) }}</span>
+                    <span class="badge badge-warning text-dark font-weight-bold">{{ $deal->discount_badge }}</span>
+                    @if($deal->vendor_id > 0 && $deal->vendor)
+                        <span class="badge badge-info"><i class="fas fa-store mr-1"></i>{{ $deal->vendor->shop_name ?: $deal->vendor->first_name }}</span>
                     @else
-                        <span class="badge badge-primary"><i class="fas fa-user-shield mr-1"></i>{{ __('Admin Product') }}</span>
+                        <span class="badge badge-primary"><i class="fas fa-user-shield mr-1"></i>{{ __('Admin Bundle') }}</span>
                     @endif
                 </div>
             </div>
             <div class="col-12 col-md-auto mt-2 mt-md-0">
-                @if($item->isPromotionActive())
+                @if($deal->isPromotionActive())
                     <div class="alert alert-success mb-0 py-2 px-3 d-inline-flex align-items-center" style="border-radius: 8px; font-size: 13px;">
                         <i class="fas fa-crown text-warning mr-2" style="font-size: 16px;"></i>
                         <div>
-                            <strong class="d-block text-success">{{ __('Active Highlight Badge:') }} {{ $item->promotion_tag }}</strong>
+                            <strong class="d-block text-success">{{ __('Active Highlight Badge:') }} {{ $deal->promotion_tag }}</strong>
                             <small class="text-muted">
-                                @if($item->promotion_expires_at)
-                                    {{ __('Expires:') }} {{ \Carbon\Carbon::parse($item->promotion_expires_at)->format('d M, Y') }} ({{ \Carbon\Carbon::parse($item->promotion_expires_at)->diffForHumans() }})
+                                @if($deal->promotion_expires_at)
+                                    {{ __('Expires:') }} {{ \Carbon\Carbon::parse($deal->promotion_expires_at)->format('d M, Y') }} ({{ \Carbon\Carbon::parse($deal->promotion_expires_at)->diffForHumans() }})
                                 @else
                                     {{ __('Unlimited / Permanent') }}
                                 @endif
@@ -96,10 +117,10 @@
         <div class="card o-hidden border-0 shadow-sm mb-4">
             <div class="card-header bg-white py-3 border-bottom">
                 <h5 class="m-0 font-weight-bold text-primary"><i class="fas fa-crown text-warning mr-2"></i>{{ __('Highlight Badge & Promotion Settings') }}</h5>
-                <small class="text-muted">{{ __('This tag displays as a golden crown badge on the product card and product page across the store.') }}</small>
+                <small class="text-muted">{{ __('This badge displays on the bundle card and bundle detail page with a highlighted green border.') }}</small>
             </div>
             <div class="card-body">
-                <form class="admin-form" action="{{ route('back.item.highlight.update', $item->id) }}" method="POST">
+                <form class="admin-form" action="{{ route('back.deal.highlight.update', $deal->id) }}" method="POST">
                     @csrf
                     @include('alerts.alerts')
 
@@ -107,30 +128,30 @@
                     <div class="form-group mb-3">
                         <label for="promotion_tag_id" class="font-weight-bold text-dark">{{ __('Select Highlight Tag') }} *</label>
                         <select name="promotion_tag_id" id="promotion_tag_id" class="form-control select2">
-                            <option value="none" {{ (!$item->isPromotionActive() && empty($item->promotion_tag)) ? 'selected' : '' }}>
+                            <option value="none" {{ (!$deal->isPromotionActive() && empty($deal->promotion_tag)) ? 'selected' : '' }}>
                                 {{ __('-- No Highlight Badge (Remove) --') }}
                             </option>
                             @foreach($tags as $tag)
                                 <option value="{{ $tag->id }}" 
                                     data-name="{{ $tag->name }}"
-                                    {{ ($item->promotion_tag_id == $tag->id || ($item->isPromotionActive() && $item->promotion_tag == $tag->name)) ? 'selected' : '' }}>
+                                    {{ ($deal->promotion_tag_id == $tag->id || ($deal->isPromotionActive() && $deal->promotion_tag == $tag->name)) ? 'selected' : '' }}>
                                     ⭐ {{ $tag->name }}
                                 </option>
                             @endforeach
                             <option value="custom" 
-                                data-name="{{ ($item->isPromotionActive() && !$item->promotion_tag_id) ? $item->promotion_tag : '' }}"
-                                {{ ($item->isPromotionActive() && !$item->promotion_tag_id && !empty($item->promotion_tag)) ? 'selected' : '' }}>
+                                data-name="{{ ($deal->isPromotionActive() && !$deal->promotion_tag_id) ? $deal->promotion_tag : '' }}"
+                                {{ ($deal->isPromotionActive() && !$deal->promotion_tag_id && !empty($deal->promotion_tag)) ? 'selected' : '' }}>
                                 ✍️ {{ __('+ Custom Tag Name...') }}
                             </option>
                         </select>
                     </div>
 
                     <!-- Custom Tag Input -->
-                    <div class="form-group mb-3" id="custom-tag-group" style="{{ ($item->isPromotionActive() && !$item->promotion_tag_id && !empty($item->promotion_tag)) ? '' : 'display:none;' }}">
+                    <div class="form-group mb-3" id="custom-tag-group" style="{{ ($deal->isPromotionActive() && !$deal->promotion_tag_id && !empty($deal->promotion_tag)) ? '' : 'display:none;' }}">
                         <label for="custom_promotion_tag" class="font-weight-bold text-dark">{{ __('Enter Custom Tag Name') }} *</label>
                         <input type="text" name="custom_promotion_tag" id="custom_promotion_tag" class="form-control" 
-                               placeholder="{{ __('e.g. Best Deal, Trending Now, Eid Offer') }}"
-                               value="{{ ($item->isPromotionActive() && !$item->promotion_tag_id) ? $item->promotion_tag : '' }}">
+                               placeholder="{{ __('e.g. Mega Deal, Best Combo, Super Bundle') }}"
+                               value="{{ ($deal->isPromotionActive() && !$deal->promotion_tag_id) ? $deal->promotion_tag : '' }}">
                         <small class="form-text text-muted">{{ __('Keep it short (max 20 characters) for optimal mobile display.') }}</small>
                     </div>
 
@@ -142,10 +163,10 @@
                             <div class="col-md-6 mb-2">
                                 <div class="custom-control custom-radio border rounded p-3 h-100 bg-light">
                                     <input type="radio" id="mode_permanent" name="promotion_duration_mode" value="permanent" class="custom-control-input duration-mode-radio" 
-                                        {{ (empty($item->promotion_expires_at) || !$item->isPromotionActive()) ? 'checked' : '' }}>
+                                        {{ (empty($deal->promotion_expires_at) || !$deal->isPromotionActive()) ? 'checked' : '' }}>
                                     <label class="custom-control-label font-weight-bold text-dark" for="mode_permanent">
                                         <i class="fas fa-infinity text-primary mr-1"></i> {{ __('Unlimited / Permanent') }}
-                                        <small class="d-block text-muted font-weight-normal mt-1">{{ __('Badge stays active until manually removed.') }}</small>
+                                        <small class="d-block text-muted font-weight-normal mt-1">{{ __('Badge stays active until manually removed or deal ends.') }}</small>
                                     </label>
                                 </div>
                             </div>
@@ -153,7 +174,7 @@
                             <div class="col-md-6 mb-2">
                                 <div class="custom-control custom-radio border rounded p-3 h-100 bg-light">
                                     <input type="radio" id="mode_plan" name="promotion_duration_mode" value="plan" class="custom-control-input duration-mode-radio"
-                                        {{ ($item->promotion_expires_at && $item->promotion_days && $plans->where('days', $item->promotion_days)->count() > 0) ? 'checked' : '' }}>
+                                        {{ ($deal->promotion_expires_at && $deal->promotion_days && $plans->where('days', $deal->promotion_days)->count() > 0) ? 'checked' : '' }}>
                                     <label class="custom-control-label font-weight-bold text-dark" for="mode_plan">
                                         <i class="fas fa-calendar-check text-success mr-1"></i> {{ __('Standard Plan Duration') }}
                                         <small class="d-block text-muted font-weight-normal mt-1">{{ __('Choose from predefined store plans.') }}</small>
@@ -187,7 +208,7 @@
                             <label for="promotion_plan_id" class="font-weight-bold text-dark">{{ __('Select Plan') }}</label>
                             <select name="promotion_plan_id" id="promotion_plan_id" class="form-control">
                                 @foreach($plans as $plan)
-                                    <option value="{{ $plan->id }}" {{ ($item->promotion_days == $plan->days) ? 'selected' : '' }}>
+                                    <option value="{{ $plan->id }}" {{ ($deal->promotion_days == $plan->days) ? 'selected' : '' }}>
                                         {{ $plan->days }} {{ __('Days') }} ({{ PriceHelper::adminCurrencyPrice($plan->price) }})
                                     </option>
                                 @endforeach
@@ -199,7 +220,7 @@
                         <div class="form-group mb-3 duration-input-group" id="days-input-group" style="display: none;">
                             <label for="promotion_custom_days" class="font-weight-bold text-dark">{{ __('Number of Days') }}</label>
                             <input type="number" name="promotion_custom_days" id="promotion_custom_days" class="form-control" 
-                                   min="1" max="3650" value="{{ $item->promotion_days ?: 30 }}" placeholder="{{ __('e.g. 15, 30, 60') }}">
+                                   min="1" max="3650" value="{{ $deal->promotion_days ?: 30 }}" placeholder="{{ __('e.g. 15, 30, 60') }}">
                         </div>
 
                         <!-- Specific Date Input -->
@@ -207,37 +228,15 @@
                             <label for="promotion_expires_at" class="font-weight-bold text-dark">{{ __('Select Expiry Date') }}</label>
                             <input type="text" name="promotion_expires_at" id="promotion_expires_at" class="form-control datepicker" 
                                    placeholder="{{ __('YYYY-MM-DD') }}" 
-                                   value="{{ $item->promotion_expires_at ? \Carbon\Carbon::parse($item->promotion_expires_at)->format('Y-m-d') : '' }}">
+                                   value="{{ $deal->promotion_expires_at ? \Carbon\Carbon::parse($deal->promotion_expires_at)->format('Y-m-d') : '' }}">
                         </div>
-                    </div>
-
-                    <hr class="my-4">
-
-                    <!-- Legacy Homepage Section Type -->
-                    <div class="form-group mb-3">
-                        <label for="is_type" class="font-weight-bold text-dark">{{ __('Homepage Section Category') }}</label>
-                        <select name="is_type" id="is_type" class="form-control">
-                            <option value="undefine" {{ $item->is_type == 'undefine' ? 'selected' : '' }}>{{ __('Undefine / Default') }}</option>
-                            <option value="new" {{ $item->is_type == 'new' ? 'selected' : '' }}>{{ __('New Arrival') }}</option>
-                            <option value="feature" {{ $item->is_type == 'feature' ? 'selected' : '' }}>{{ __('Feature Product') }}</option>
-                            <option value="top" {{ $item->is_type == 'top' ? 'selected' : '' }}>{{ __('Top Product') }}</option>
-                            <option value="best" {{ $item->is_type == 'best' ? 'selected' : '' }}>{{ __('Best Product') }}</option>
-                            <option value="flash_deal" {{ $item->is_type == 'flash_deal' ? 'selected' : '' }}>{{ __('Flash Deal Product') }}</option>
-                        </select>
-                        <small class="form-text text-muted">{{ __('Used for section filtering on homepage.') }}</small>
-                    </div>
-
-                    <div class="form-group show-datepicker {{ $item->is_type == 'flash_deal' ? '' : 'd-none' }} mb-4">
-                        <label for="datepicker" class="font-weight-bold text-dark">{{ __('Flash Deal Date') }} *</label>
-                        <input type="text" name="date" class="form-control datepicker" id="datepicker"
-                            placeholder="{{ __('Enter Date') }}" value="{{ $item->date }}">
                     </div>
 
                     <div class="form-group mt-4 mb-2">
                         <button type="submit" class="btn btn-success btn-lg px-4 font-weight-bold shadow-sm">
                             <i class="fas fa-check-circle mr-1"></i> {{ __('Save & Apply Highlight') }}
                         </button>
-                        <a href="{{ route('back.item.index') }}" class="btn btn-light btn-lg px-3 ml-2 border">
+                        <a href="{{ route('back.deal.index') }}" class="btn btn-light btn-lg px-3 ml-2 border">
                             {{ __('Cancel') }}
                         </a>
                     </div>
@@ -250,41 +249,47 @@
     <div class="col-xl-4 col-lg-4 col-md-12">
         <div class="card shadow-sm border-0 mb-4 sticky-top" style="top: 20px;">
             <div class="card-header bg-white py-3 border-bottom">
-                <h6 class="m-0 font-weight-bold text-dark"><i class="fas fa-eye text-primary mr-2"></i>{{ __('Live Store Badge Preview') }}</h6>
+                <h6 class="m-0 font-weight-bold text-dark"><i class="fas fa-eye text-primary mr-2"></i>{{ __('Live Store Bundle Preview') }}</h6>
             </div>
             <div class="card-body text-center p-4">
-                <div class="border rounded p-4 bg-light position-relative shadow-sm" style="max-width: 260px; margin: 0 auto; border-radius: 12px !important; border: 2px solid #e2e8f0 !important;">
+                <div class="border rounded p-3 bg-white position-relative shadow-sm" style="max-width: 260px; margin: 0 auto; border-radius: 12px !important; border: 2px solid #16a34a !important;">
                     <!-- Badge Preview Element -->
-                    <div id="preview-badge-wrapper" style="{{ ($item->isPromotionActive() || old('promotion_tag_id')) ? '' : 'display:none;' }}">
-                        <div class="promoted-tag-badge-preview mb-3">
+                    <div id="preview-badge-wrapper" style="{{ ($deal->isPromotionActive() || old('promotion_tag_id')) ? '' : 'display:none;' }}">
+                        <div class="promoted-tag-badge-preview mb-2">
                             <i class="fas fa-crown"></i>
-                            <span id="preview-badge-text">{{ $item->promotion_tag ?: 'Best Product' }}</span>
+                            <span id="preview-badge-text">{{ $deal->promotion_tag ?: 'Best Product' }}</span>
                         </div>
                     </div>
 
-                    <div id="no-badge-preview" class="py-3 text-muted" style="{{ ($item->isPromotionActive() || old('promotion_tag_id')) ? 'display:none;' : '' }}">
-                        <i class="fas fa-tag fa-2x mb-2 text-muted"></i>
-                        <p class="small mb-0">{{ __('Select a highlight tag on the left to preview how the crown badge appears on the storefront.') }}</p>
+                    <div id="no-badge-preview" class="py-2 text-muted" style="{{ ($deal->isPromotionActive() || old('promotion_tag_id')) ? 'display:none;' : '' }}">
+                        <i class="fas fa-tag fa-2x mb-1 text-muted"></i>
+                        <p class="small mb-0">{{ __('Select a highlight tag on the left to preview.') }}</p>
+                    </div>
+
+                    <!-- Mock Bundle Header -->
+                    <div class="bg-success text-white py-1 px-2 rounded mb-2 d-flex justify-content-between align-items-center" style="font-size: 9.5px;">
+                        <span><i class="fas fa-clock mr-1"></i> 2d 14h left</span>
+                        <span class="badge badge-warning text-dark">{{ $deal->discount_badge }}</span>
                     </div>
 
                     <!-- Mock Thumbnail -->
-                    <img src="{{ $item->thumbnail ? url('/core/public/storage/images/'.$item->thumbnail) : url('/core/public/storage/images/placeholder.png') }}" 
-                         alt="{{ $item->name }}" 
-                         class="img-fluid rounded mb-3" 
-                         style="width: 140px; height: 140px; object-fit: cover; border: 1px solid #e2e8f0;">
+                    <img src="{{ $bundleImg }}" 
+                         alt="{{ $deal->name }}" 
+                         class="img-fluid rounded mb-2" 
+                         style="width: 130px; height: 130px; object-fit: cover; border: 1px solid #e2e8f0;">
 
-                    <h6 class="font-weight-bold text-truncate mb-1" style="font-size: 14px;">{{ $item->name }}</h6>
-                    <div class="text-success font-weight-bold mb-2">{{ PriceHelper::adminCurrencyPrice($item->discount_price) }}</div>
+                    <h6 class="font-weight-bold text-truncate mb-1" style="font-size: 13px;">{{ $deal->name }}</h6>
+                    <div class="text-success font-weight-bold mb-2" style="font-size: 14px;">{{ PriceHelper::adminCurrencyPrice($deal->discounted_price) }}</div>
                     
                     <button class="btn btn-outline-success btn-sm btn-block disabled" style="font-size: 11px; border-radius: 20px;">
-                        <i class="fas fa-shopping-bag mr-1"></i> {{ __('Order Now') }}
+                        <i class="fas fa-shopping-bag mr-1"></i> {{ __('View Bundle') }}
                     </button>
                 </div>
 
                 <div class="mt-4 p-3 border rounded bg-white text-left" style="font-size: 12.5px; line-height: 1.6;">
                     <strong class="d-block text-dark mb-1"><i class="fas fa-info-circle text-primary mr-1"></i> {{ __('Store Visibility') }}</strong>
                     <p class="text-muted mb-0">
-                        {{ __('Once saved, this product will immediately show the gold crown badge on the homepage (Theme 1), Catalog, Related Products, Deals, and Product Details page.') }}
+                        {{ __('Once saved, this bundle will display the glowing green border and crown badge on the homepage Flash Deals & Bundle carousel, Deals Catalog, and Bundle Details page.') }}
                     </p>
                 </div>
             </div>
@@ -305,15 +310,6 @@ $(document).ready(function() {
         format: 'yyyy-mm-dd',
         autoclose: true,
         todayHighlight: true
-    });
-
-    // Handle is_type Flash Deal toggle
-    $('#is_type').on('change', function() {
-        if ($(this).val() == 'flash_deal') {
-            $('.show-datepicker').removeClass('d-none');
-        } else {
-            $('.show-datepicker').addClass('d-none');
-        }
     });
 
     // Update Live Preview & Custom Tag visibility

@@ -9,6 +9,9 @@ use App\{
 };
 use App\Models\Currency;
 use App\Models\Review;
+use App\Models\PromotionTag;
+use App\Models\PromotionPlan;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 
@@ -553,6 +556,89 @@ class ItemRepository
         if($request->is_type != 'flash_deal'){
             $input['date'] = null;
         }
+
+        // Highlight Tag & Promotion logic
+        $tagId = $request->input('promotion_tag_id');
+        $customTag = trim($request->input('custom_promotion_tag', ''));
+        $durationMode = $request->input('promotion_duration_mode', 'permanent');
+
+        if ($request->has('remove_promotion') && $request->remove_promotion == 1) {
+            $input['is_promoted'] = 0;
+            $input['promotion_tag'] = null;
+            $input['promotion_tag_id'] = null;
+            $input['promotion_days'] = null;
+            $input['promotion_price'] = null;
+            $input['promotion_starts_at'] = null;
+            $input['promotion_expires_at'] = null;
+        } elseif (!empty($tagId) && $tagId !== 'none') {
+            $tagName = null;
+            $matchedTagId = null;
+
+            if ($tagId === 'custom') {
+                if (!empty($customTag)) {
+                    $tagName = $customTag;
+                }
+            } else {
+                $tagObj = PromotionTag::find($tagId);
+                if ($tagObj) {
+                    $tagName = $tagObj->name;
+                    $matchedTagId = $tagObj->id;
+                }
+            }
+
+            if (!empty($tagName)) {
+                $startsAt = Carbon::now();
+                $expiresAt = null;
+                $days = null;
+
+                if ($durationMode === 'plan') {
+                    $planId = $request->input('promotion_plan_id');
+                    $planObj = PromotionPlan::find($planId);
+                    if ($planObj) {
+                        $days = (int)$planObj->days;
+                        $expiresAt = Carbon::now()->addDays($days);
+                    }
+                } elseif ($durationMode === 'days') {
+                    $days = max(1, (int)$request->input('promotion_custom_days', 30));
+                    $expiresAt = Carbon::now()->addDays($days);
+                } elseif ($durationMode === 'date') {
+                    $customDate = $request->input('promotion_expires_at');
+                    if ($customDate) {
+                        $expiresAt = Carbon::parse($customDate);
+                        $days = max(1, (int)Carbon::now()->diffInDays($expiresAt, false));
+                    }
+                } else {
+                    // Unlimited / Permanent
+                    $days = null;
+                    $expiresAt = null;
+                }
+
+                $input['is_promoted'] = 1;
+                $input['promotion_tag'] = $tagName;
+                $input['promotion_tag_id'] = $matchedTagId;
+                $input['promotion_days'] = $days;
+                $input['promotion_price'] = 0;
+                $input['promotion_starts_at'] = $startsAt;
+                $input['promotion_expires_at'] = $expiresAt;
+            } else {
+                $input['is_promoted'] = 0;
+                $input['promotion_tag'] = null;
+                $input['promotion_tag_id'] = null;
+                $input['promotion_days'] = null;
+                $input['promotion_price'] = null;
+                $input['promotion_starts_at'] = null;
+                $input['promotion_expires_at'] = null;
+            }
+        } elseif ($tagId === 'none' || $tagId === '') {
+            $input['is_promoted'] = 0;
+            $input['promotion_tag'] = null;
+            $input['promotion_tag_id'] = null;
+            $input['promotion_days'] = null;
+            $input['promotion_price'] = null;
+            $input['promotion_starts_at'] = null;
+            $input['promotion_expires_at'] = null;
+        }
+
         $item->update($input);
     }
 

@@ -13,6 +13,9 @@
     </td>
     <td>
         {{ $data->name }}
+        @if($data->isPromotionActive())
+            <br><span class="badge badge-warning text-dark mt-1 font-weight-bold" style="font-size: 10.5px; background: #fef08a; border: 1px solid #facc15;"><i class="fas fa-crown text-warning mr-1"></i>{{ $data->promotion_tag }}</span>
+        @endif
     </td>
     <td>
         {{ PriceHelper::adminCurrencyPrice($data->discount_price) }}
@@ -29,18 +32,13 @@
           </div>
     </td>
     <td>
-      <p class="
-        @if($data->is_type == 'undefine')
-        @else
-            bg-info badge text-white
-        @endif
-      ">
-        @if($data->is_type == 'undefine')
-            {{ __('Not Define') }}
-        @else
-            {{$data->is_type ? ucfirst(str_replace('_',' ',$data->is_type)) : __('undefine')}}
-        @endif
-        </p>
+      @if($data->isPromotionActive())
+        <span class="badge badge-warning text-dark font-weight-bold" style="background:#fef08a; border:1px solid #facc15;"><i class="fas fa-crown text-warning mr-1"></i>{{ $data->promotion_tag }}</span>
+      @elseif($data->is_type && $data->is_type != 'undefine')
+        <span class="badge badge-info text-white">{{ ucfirst(str_replace('_',' ',$data->is_type)) }}</span>
+      @else
+        <span class="badge badge-secondary">{{ __('Not Define') }}</span>
+      @endif
     </td>
     <td>
       {{ucfirst($data->item_type)}}

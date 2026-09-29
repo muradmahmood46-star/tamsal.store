@@ -251,7 +251,10 @@ class Item extends Model
 
     public function isPromotionActive()
     {
-        if ($this->is_promoted == 1 && !empty($this->promotion_tag) && $this->promotion_expires_at) {
+        if ($this->is_promoted == 1 && !empty($this->promotion_tag)) {
+            if (empty($this->promotion_expires_at)) {
+                return true;
+            }
             try {
                 return \Carbon\Carbon::parse($this->promotion_expires_at)->isFuture();
             } catch (\Throwable $e) {

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Deal;
 use App\Models\DealItem;
 use App\Models\Item;
+use App\Models\PromotionTag;
+use App\Models\PromotionPlan;
 use App\Helpers\PriceHelper;
 use App\Helpers\ImageHelper;
 use Carbon\Carbon;
@@ -392,6 +394,119 @@ class DealController extends Controller
         $deal->delete();
 
         return redirect()->route('back.deal.index')->withSuccess(__('Bundle deleted successfully.'));
+    }
+
+    public function highlight(Deal $deal)
+    {
+        PromotionTag::ensureTable();
+        PromotionPlan::ensureTable();
+
+        $tags = PromotionTag::where('status', 1)->orderBy('name', 'asc')->get();
+        $plans = PromotionPlan::where('status', 1)->orderBy('days', 'asc')->get();
+
+        return view('back.deal.highlight', [
+            'deal' => $deal,
+            'tags' => $tags,
+            'plans' => $plans,
+        ]);
+    }
+
+    public function highlight_update(Deal $deal, Request $request)
+    {
+        $tagId = $request->input('promotion_tag_id');
+        $customTag = trim($request->input('custom_promotion_tag', ''));
+        $durationMode = $request->input('promotion_duration_mode', 'permanent');
+
+        if ($request->has('remove_promotion') && $request->remove_promotion == 1) {
+            $deal->update([
+                'is_promoted' => 0,
+                'promotion_tag' => null,
+                'promotion_tag_id' => null,
+                'promotion_days' => null,
+                'promotion_price' => null,
+                'promotion_starts_at' => null,
+                'promotion_expires_at' => null,
+            ]);
+            return redirect()->route('back.deal.index')->withSuccess(__('Bundle Highlight Removed Successfully.'));
+        }
+
+        if (!empty($tagId) && $tagId !== 'none') {
+            $tagName = null;
+            $matchedTagId = null;
+
+            if ($tagId === 'custom') {
+                if (!empty($customTag)) {
+                    $tagName = $customTag;
+                }
+            } else {
+                $tagObj = PromotionTag::find($tagId);
+                if ($tagObj) {
+                    $tagName = $tagObj->name;
+                    $matchedTagId = $tagObj->id;
+                }
+            }
+
+            if (!empty($tagName)) {
+                $startsAt = Carbon::now();
+                $expiresAt = null;
+                $days = null;
+
+                if ($durationMode === 'plan') {
+                    $planId = $request->input('promotion_plan_id');
+                    $planObj = PromotionPlan::find($planId);
+                    if ($planObj) {
+                        $days = (int)$planObj->days;
+                        $expiresAt = Carbon::now()->addDays($days);
+                    }
+                } elseif ($durationMode === 'days') {
+                    $days = max(1, (int)$request->input('promotion_custom_days', 30));
+                    $expiresAt = Carbon::now()->addDays($days);
+                } elseif ($durationMode === 'date') {
+                    $customDate = $request->input('promotion_expires_at');
+                    if ($customDate) {
+                        $expiresAt = Carbon::parse($customDate);
+                        $days = max(1, (int)Carbon::now()->diffInDays($expiresAt, false));
+                    }
+                } else {
+                    $days = null;
+                    $expiresAt = null;
+                }
+
+                $deal->update([
+                    'is_promoted' => 1,
+                    'promotion_tag' => $tagName,
+                    'promotion_tag_id' => $matchedTagId,
+                    'promotion_days' => $days,
+                    'promotion_price' => 0,
+                    'promotion_starts_at' => $startsAt,
+                    'promotion_expires_at' => $expiresAt,
+                ]);
+
+                return redirect()->route('back.deal.index')->withSuccess(__('Bundle Highlight Badge Applied Successfully!'));
+            } else {
+                $deal->update([
+                    'is_promoted' => 0,
+                    'promotion_tag' => null,
+                    'promotion_tag_id' => null,
+                    'promotion_days' => null,
+                    'promotion_price' => null,
+                    'promotion_starts_at' => null,
+                    'promotion_expires_at' => null,
+                ]);
+            }
+        } elseif ($tagId === 'none' || $tagId === '') {
+            $deal->update([
+                'is_promoted' => 0,
+                'promotion_tag' => null,
+                'promotion_tag_id' => null,
+                'promotion_days' => null,
+                'promotion_price' => null,
+                'promotion_starts_at' => null,
+                'promotion_expires_at' => null,
+            ]);
+        }
+
+        return redirect()->route('back.deal.index')->withSuccess(__('Bundle Highlight Updated Successfully.'));
     }
 }
 
