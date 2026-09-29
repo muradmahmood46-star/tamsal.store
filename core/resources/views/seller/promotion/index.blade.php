@@ -10,11 +10,12 @@
         border-color: #86efac !important;
     }
     .promo-thumb-img {
-        width: 48px;
-        height: 48px;
+        width: 42px;
+        height: 42px;
         object-fit: cover;
         border-radius: 6px;
         border: 1px solid #e2e8f0;
+        margin-right: 6px !important;
     }
     .badge-promo-tag {
         background: linear-gradient(135deg, #15803d, #16a34a);
@@ -27,8 +28,31 @@
         top: 20px;
         z-index: 10;
     }
+    .promo-item-name {
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+    }
+    .promo-item-meta {
+        gap: 4px !important;
+        margin-top: 2px !important;
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+        justify-content: flex-start !important;
+    }
     .promo-type-badge {
-        font-size: 10px;
+        font-size: 9.5px !important;
+        padding: 1px 5px !important;
+        margin-left: 0 !important;
+        line-height: 1.15 !important;
+    }
+    .promo-sku-badge {
+        font-size: 9px !important;
+        padding: 1px 4px !important;
+        margin-left: 0 !important;
+        line-height: 1.15 !important;
+    }
+    .promo-price-text {
+        font-size: 11.5px !important;
     }
     @media (max-width: 767.98px) {
         .promo-item-name {
@@ -229,14 +253,14 @@
                                                         <label class="custom-control-label cursor-pointer" for="checkItem{{ $index }}"></label>
                                                     </div>
                                                 </td>
-                                                <td class="align-middle">
+                                                <td class="align-middle pl-2">
                                                     <div class="d-flex align-items-center">
-                                                        <img src="{{ $imgSrc }}" alt="{{ $item->name }}" class="promo-thumb-img mr-2 shadow-sm flex-shrink-0">
+                                                        <img src="{{ $imgSrc }}" alt="{{ $item->name }}" class="promo-thumb-img shadow-sm flex-shrink-0">
                                                         <div class="overflow-hidden">
                                                             <div class="font-weight-bold text-dark text-truncate promo-item-name" style="max-width: 260px;" title="{{ $item->name }}">
                                                                 {{ Str::limit($item->name, 30) }}
                                                             </div>
-                                                            <div class="d-flex align-items-center flex-wrap promo-item-meta" style="gap: 5px;">
+                                                            <div class="d-flex align-items-center flex-wrap promo-item-meta">
                                                                 @if($item->type === 'bundle')
                                                                     <span class="badge badge-info promo-type-badge px-1 py-0">{{ __('Bundle') }}</span>
                                                                 @else
