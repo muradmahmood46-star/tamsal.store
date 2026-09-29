@@ -27,6 +27,42 @@
         top: 20px;
         z-index: 10;
     }
+    .promo-type-badge {
+        font-size: 10px;
+    }
+    @media (max-width: 767.98px) {
+        .promo-item-name {
+            font-size: 12px !important;
+            line-height: 1.25 !important;
+            max-width: 160px !important;
+        }
+        .promo-thumb-img {
+            width: 36px !important;
+            height: 36px !important;
+            margin-right: 5px !important;
+        }
+        .promo-item-meta {
+            gap: 3px !important;
+            margin-top: 1px !important;
+            margin-left: 0 !important;
+            padding-left: 0 !important;
+            justify-content: flex-start !important;
+        }
+        .promo-type-badge {
+            font-size: 8.5px !important;
+            padding: 1px 4px !important;
+            line-height: 1.1 !important;
+            font-weight: 600 !important;
+            margin-left: 0 !important;
+        }
+        .promo-sku-badge {
+            font-size: 8.5px !important;
+            padding: 1px 3px !important;
+        }
+        .promo-price-text {
+            font-size: 10.5px !important;
+        }
+    }
 </style>
 @endsection
 
@@ -163,10 +199,10 @@
                                     <thead class="thead-light">
                                         <tr>
                                             <th style="width: 40px;" class="text-center">#</th>
-                                            <th>{{ __('Item / Details') }}</th>
-                                            <th style="width: 170px;">{{ __('Highlight Tag') }} <span class="text-danger">*</span></th>
-                                            <th style="width: 170px;">{{ __('Duration & Price') }} <span class="text-danger">*</span></th>
-                                            <th style="width: 100px;" class="text-right">{{ __('Cost') }}</th>
+                                            <th style="min-width: 170px;">{{ __('Item / Details') }}</th>
+                                            <th style="min-width: 140px; width: 150px;">{{ __('Highlight Tag') }} <span class="text-danger">*</span></th>
+                                            <th style="min-width: 150px; width: 160px;">{{ __('Duration & Price') }} <span class="text-danger">*</span></th>
+                                            <th style="min-width: 90px; width: 100px;" class="text-right">{{ __('Cost') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -191,19 +227,19 @@
                                                     <div class="d-flex align-items-center">
                                                         <img src="{{ $imgSrc }}" alt="{{ $item->name }}" class="promo-thumb-img mr-2 shadow-sm flex-shrink-0">
                                                         <div class="overflow-hidden">
-                                                            <div class="font-weight-bold text-dark text-truncate" style="max-width: 260px;" title="{{ $item->name }}">
-                                                                {{ $item->name }}
+                                                            <div class="font-weight-bold text-dark text-truncate promo-item-name" style="max-width: 260px;" title="{{ $item->name }}">
+                                                                {{ Str::limit($item->name, 30) }}
                                                             </div>
-                                                            <div class="d-flex align-items-center flex-wrap" style="gap: 5px;">
+                                                            <div class="d-flex align-items-center flex-wrap promo-item-meta" style="gap: 5px;">
                                                                 @if($item->type === 'bundle')
-                                                                    <span class="badge badge-info px-1 py-0" style="font-size: 10px;">{{ __('Bundle Deal') }}</span>
+                                                                    <span class="badge badge-info promo-type-badge px-1 py-0">{{ __('Bundle') }}</span>
                                                                 @else
-                                                                    <span class="badge badge-secondary px-1 py-0" style="font-size: 10px;">{{ __('Product') }}</span>
+                                                                    <span class="badge badge-secondary promo-type-badge px-1 py-0">{{ __('Product') }}</span>
                                                                 @endif
                                                                 @if($item->sku)
-                                                                    <span class="badge badge-light border text-muted px-1 py-0 font-weight-normal" style="font-size: 10px;">SKU: {{ $item->sku }}</span>
+                                                                    <span class="badge badge-light border text-muted promo-sku-badge px-1 py-0 font-weight-normal">SKU: {{ $item->sku }}</span>
                                                                 @endif
-                                                                <span class="text-success font-weight-bold small">{{ PriceHelper::setCurrencyPrice($item->price) }}</span>
+                                                                <span class="text-success font-weight-bold small promo-price-text">{{ PriceHelper::setCurrencyPrice($item->price) }}</span>
                                                             </div>
                                                             @if($item->is_promoted)
                                                                 <div class="mt-1">
