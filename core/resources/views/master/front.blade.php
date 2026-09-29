@@ -713,8 +713,8 @@
                 border-radius: 8px !important;
             }
             .deal-card .card-header {
-                padding: 3px 6px !important;
-                font-size: 10px !important;
+                padding: 3px 5px !important;
+                font-size: 9.5px !important;
                 white-space: nowrap !important;
                 overflow: hidden !important;
                 min-height: 25px !important;
@@ -722,16 +722,18 @@
                 display: flex !important;
                 align-items: center !important;
                 justify-content: space-between !important;
+                gap: 4px !important;
             }
             .deal-card .card-header .deal-countdown {
-                font-size: 10px !important;
+                font-size: 9.5px !important;
                 white-space: nowrap !important;
-                letter-spacing: 0.2px !important;
+                letter-spacing: 0 !important;
             }
             .deal-card .card-header .badge {
-                font-size: 9px !important;
-                padding: 2px 4px !important;
+                font-size: 8.5px !important;
+                padding: 2px 3px !important;
                 white-space: nowrap !important;
+                flex-shrink: 0 !important;
             }
             .deal-card .deal-thumb,
             .deal-card a.deal-thumb {

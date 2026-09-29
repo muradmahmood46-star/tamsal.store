@@ -90,7 +90,7 @@
             timeParts.push((minutes < 10 ? '0' + minutes : minutes) + 'm');
             timeParts.push((seconds < 10 ? '0' + seconds : seconds) + 's');
             
-            var value = timeParts.join(' : ');
+            var value = timeParts.join(' ');
             card.querySelectorAll('.deal-countdown').forEach(function (target) { target.textContent = value; });
         });
     }
