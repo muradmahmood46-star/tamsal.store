@@ -544,8 +544,15 @@
             transition: color 0.2s ease !important;
         }
 
-        .deal-card:hover .deal-title a {
-            color: #16a34a !important;
+        .deal-card .deal-save-badge {
+            font-size: 10.5px !important;
+            color: #15803d !important;
+            background: #dcfce7 !important;
+            border: 1px solid #bbf7d0 !important;
+            padding: 1px 6px !important;
+            border-radius: 4px !important;
+            line-height: 1.2 !important;
+            display: inline-block !important;
         }
 
         .deal-card .btn {
@@ -791,6 +798,13 @@
                 font-size: 9px !important;
                 padding: 2px 4px !important;
                 white-space: nowrap !important;
+            }
+            .deal-card .deal-save-badge {
+                font-size: 9px !important;
+                padding: 1px 4px !important;
+                border-radius: 3px !important;
+                line-height: 1.15 !important;
+                font-weight: 700 !important;
             }
             .deal-card .btn {
                 font-size: 10.5px !important;
