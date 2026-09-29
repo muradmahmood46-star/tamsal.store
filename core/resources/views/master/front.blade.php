@@ -724,6 +724,10 @@
                 justify-content: space-between !important;
                 gap: 4px !important;
             }
+            .deal-card .card-header .icon-clock {
+                margin-right: 5px !important;
+                display: inline-block !important;
+            }
             .deal-card .card-header .deal-countdown {
                 font-size: 9.5px !important;
                 white-space: nowrap !important;
