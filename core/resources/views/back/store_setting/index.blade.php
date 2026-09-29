@@ -143,40 +143,44 @@
                     </p>
 
                     <div class="table-responsive">
-                        <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                        <table class="table table-bordered table-hover" width="100%" cellspacing="0" style="min-width: 620px;">
                             <thead class="thead-light">
                                 <tr>
-                                    <th>{{ __('Method / Bank') }}</th>
-                                    <th>{{ __('Account Name') }}</th>
-                                    <th>{{ __('Account Number') }}</th>
-                                    <th>{{ __('Status') }}</th>
-                                    <th>{{ __('Actions') }}</th>
+                                    <th style="min-width: 150px; white-space: nowrap;">{{ __('Method / Bank') }}</th>
+                                    <th style="min-width: 140px; white-space: nowrap;">{{ __('Account Name') }}</th>
+                                    <th style="min-width: 150px; white-space: nowrap;">{{ __('Account Number') }}</th>
+                                    <th style="min-width: 85px; white-space: nowrap;" class="text-center">{{ __('Status') }}</th>
+                                    <th style="min-width: 90px; white-space: nowrap;" class="text-center">{{ __('Actions') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($accounts as $acc)
                                     <tr>
-                                        <td>
-                                            <strong class="text-primary">{{ $acc->payment_method }}</strong>
+                                        <td style="min-width: 150px;">
+                                            <strong class="text-primary d-block font-weight-bold">{{ $acc->payment_method }}</strong>
                                             @if($acc->note)
-                                                <div class="small text-muted">{{ Str::limit($acc->note, 30) }}</div>
+                                                <div class="small text-muted" style="word-break: break-word;">{{ Str::limit($acc->note, 40) }}</div>
                                             @endif
                                         </td>
-                                        <td>{{ $acc->account_name }}</td>
-                                        <td><code class="font-weight-bold text-dark">{{ $acc->account_number }}</code></td>
-                                        <td>
+                                        <td style="min-width: 140px; word-break: break-word;">
+                                            <span class="font-weight-bold text-dark">{{ $acc->account_name }}</span>
+                                        </td>
+                                        <td style="min-width: 150px;">
+                                            <code class="font-weight-bold text-dark px-2 py-1 bg-light border rounded d-inline-block">{{ $acc->account_number }}</code>
+                                        </td>
+                                        <td class="text-center align-middle" style="min-width: 85px;">
                                             @if($acc->status == 1)
-                                                <span class="badge badge-success">{{ __('Active') }}</span>
+                                                <span class="badge badge-success px-2 py-1">{{ __('Active') }}</span>
                                             @else
-                                                <span class="badge badge-secondary">{{ __('Inactive') }}</span>
+                                                <span class="badge badge-secondary px-2 py-1">{{ __('Inactive') }}</span>
                                             @endif
                                         </td>
-                                        <td>
+                                        <td class="text-center align-middle" style="min-width: 90px;">
                                             <div class="btn-group btn-group-sm">
-                                                <button type="button" class="btn btn-info" onclick='openEditModal({!! json_encode($acc) !!})'>
+                                                <button type="button" class="btn btn-info btn-sm" onclick='openEditModal({!! json_encode($acc) !!})' title="{{ __('Edit') }}">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
-                                                <button type="button" class="btn btn-danger" onclick="confirmDeleteAccount('{{ route('back.store_setting.account.delete', $acc->id) }}')">
+                                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDeleteAccount('{{ route('back.store_setting.account.delete', $acc->id) }}')" title="{{ __('Delete') }}">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </div>
@@ -221,14 +225,14 @@
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
-                                <table class="table table-hover table-striped mb-0">
+                                <table class="table table-hover table-striped mb-0" style="min-width: 480px;">
                                     <thead class="thead-light">
                                         <tr>
-                                            <th>#</th>
-                                            <th>{{ __('Tag Name') }}</th>
-                                            <th class="text-center">{{ __('Badge Preview') }}</th>
-                                            <th class="text-center">{{ __('Status') }}</th>
-                                            <th class="text-center" style="width: 100px;">{{ __('Actions') }}</th>
+                                            <th style="width: 40px;">#</th>
+                                            <th style="min-width: 130px; white-space: nowrap;">{{ __('Tag Name') }}</th>
+                                            <th class="text-center" style="min-width: 130px; white-space: nowrap;">{{ __('Badge Preview') }}</th>
+                                            <th class="text-center" style="min-width: 85px; white-space: nowrap;">{{ __('Status') }}</th>
+                                            <th class="text-center" style="min-width: 90px; width: 90px; white-space: nowrap;">{{ __('Actions') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -241,14 +245,14 @@
                                                         <i class="fas fa-certificate mr-1"></i> {{ $tag->name }}
                                                     </span>
                                                 </td>
-                                                <td class="text-center">
+                                                <td class="text-center align-middle">
                                                     @if($tag->status == 1)
                                                         <span class="badge badge-success">{{ __('Active') }}</span>
                                                     @else
                                                         <span class="badge badge-secondary">{{ __('Inactive') }}</span>
                                                     @endif
                                                 </td>
-                                                <td class="text-center">
+                                                <td class="text-center align-middle">
                                                     <div class="btn-group btn-group-sm">
                                                         <button type="button" class="btn btn-info" onclick='openEditTagModal({!! json_encode($tag) !!})' title="{{ __('Edit') }}">
                                                             <i class="fas fa-edit"></i>
@@ -287,14 +291,14 @@
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
-                                <table class="table table-hover table-striped mb-0">
+                                <table class="table table-hover table-striped mb-0" style="min-width: 480px;">
                                     <thead class="thead-light">
                                         <tr>
-                                            <th>#</th>
-                                            <th>{{ __('Duration (Days)') }}</th>
-                                            <th>{{ __('Price Per Item') }}</th>
-                                            <th class="text-center">{{ __('Status') }}</th>
-                                            <th class="text-center" style="width: 100px;">{{ __('Actions') }}</th>
+                                            <th style="width: 40px;">#</th>
+                                            <th style="min-width: 130px; white-space: nowrap;">{{ __('Duration (Days)') }}</th>
+                                            <th style="min-width: 130px; white-space: nowrap;">{{ __('Price Per Item') }}</th>
+                                            <th class="text-center" style="min-width: 85px; white-space: nowrap;">{{ __('Status') }}</th>
+                                            <th class="text-center" style="min-width: 90px; width: 90px; white-space: nowrap;">{{ __('Actions') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -311,14 +315,14 @@
                                                         {{ PriceHelper::adminCurrency() }} {{ number_format($plan->price, 2) }}
                                                     </strong>
                                                 </td>
-                                                <td class="text-center">
+                                                <td class="text-center align-middle">
                                                     @if($plan->status == 1)
                                                         <span class="badge badge-success">{{ __('Active') }}</span>
                                                     @else
                                                         <span class="badge badge-secondary">{{ __('Inactive') }}</span>
                                                     @endif
                                                 </td>
-                                                <td class="text-center">
+                                                <td class="text-center align-middle">
                                                     <div class="btn-group btn-group-sm">
                                                         <button type="button" class="btn btn-info" onclick='openEditPlanModal({!! json_encode($plan) !!})' title="{{ __('Edit') }}">
                                                             <i class="fas fa-edit"></i>
