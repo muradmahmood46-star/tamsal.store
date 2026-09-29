@@ -624,11 +624,11 @@
             color: #ffffff !important;
             font-size: 9.5px !important;
             font-weight: 700 !important;
-            padding: 2.5px 7.5px !important;
+            padding: 1.5px 9px !important;
             border-radius: 4px !important;
-            line-height: 1.2 !important;
+            line-height: 1.15 !important;
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.22) !important;
-            letter-spacing: 0.2px !important;
+            letter-spacing: 0.3px !important;
             text-transform: capitalize !important;
             pointer-events: none !important;
             display: inline-flex !important;
@@ -650,7 +650,9 @@
             .product-card .product-badge.product-badge-free-delivery,
             .product-badge-free-delivery {
                 font-size: 8px !important;
-                padding: 1.5px 5px !important;
+                padding: 1px 6.5px !important;
+                line-height: 1.1 !important;
+                letter-spacing: 0.25px !important;
                 bottom: 4px !important;
                 left: 4px !important;
                 border-radius: 3px !important;
