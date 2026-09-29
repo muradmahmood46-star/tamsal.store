@@ -42,11 +42,9 @@
                         <div class="col-lg-3 col-md-4 col-sm-6" >
                             <div class="form-group px-0">
                                 <select class="form-control" name="item_type">
-                                    <option value="">{{__('All Product')}}</option>
-                                    <option value="normal" {{request()->input('item_type') == 'normal' ? 'selected' : ''}}>{{__('Physical Product')}}</option>
-                                    <option value="digital" {{request()->input('item_type') == 'digital' ? 'selected' : ''}}>{{__('Digital Product')}}</option>
-                                    <option value="license" {{request()->input('item_type') == 'license' ? 'selected' : ''}}>{{__('Licence Product')}}</option>
-                                    <option value="affiliate" {{request()->input('item_type') == 'affiliate' ? 'selected' : ''}}>{{__('Affiliat Product')}}</option>
+                                    <option value="my_products" {{ request()->input('item_type') == 'my_products' ? 'selected' : '' }}>{{ __('My Products') }}</option>
+                                    <option value="vendor_products" {{ request()->input('item_type') == 'vendor_products' ? 'selected' : '' }}>{{ __('Vendor Products') }}</option>
+                                    <option value="all" {{ (!request()->has('item_type') || request()->input('item_type') == 'all' || request()->input('item_type') == '') ? 'selected' : '' }}>{{ __('All Products') }}</option>
                                 </select>
                             </div>
                         </div>

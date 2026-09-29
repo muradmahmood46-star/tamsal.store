@@ -64,7 +64,15 @@ class ItemController extends Controller
         $orderby = $request->has('orderby') ? ($request->orderby ? $request->orderby : 'desc') : 'desc';
 
         $datas = Item::when($item_type, function ($query, $item_type) {
-                return $query->where('item_type', $item_type);
+                if ($item_type === 'my_products' || $item_type === 'admin') {
+                    return $query->where(function ($q) {
+                        $q->whereNull('vendor_id')->orWhere('vendor_id', 0);
+                    });
+                } elseif ($item_type === 'vendor_products' || $item_type === 'vendor') {
+                    return $query->whereNotNull('vendor_id')->where('vendor_id', '>', 0);
+                } elseif ($item_type !== 'all' && !empty($item_type)) {
+                    return $query->where('item_type', $item_type);
+                }
             })
             ->when($is_type, function ($query, $is_type) {
                 if ($is_type != 'outofstock') {
