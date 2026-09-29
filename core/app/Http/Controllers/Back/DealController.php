@@ -414,60 +414,23 @@ class DealController extends Controller
     public function highlight_update(Deal $deal, Request $request)
     {
         $tagId = $request->input('promotion_tag_id');
-        $customTag = trim($request->input('custom_promotion_tag', ''));
         $durationMode = $request->input('promotion_duration_mode', 'permanent');
-
-        if ($request->has('remove_promotion') && $request->remove_promotion == 1) {
-            $deal->update([
-                'is_promoted' => 0,
-                'promotion_tag' => null,
-                'promotion_tag_id' => null,
-                'promotion_days' => null,
-                'promotion_price' => null,
-                'promotion_starts_at' => null,
-                'promotion_expires_at' => null,
-            ]);
-            return redirect()->route('back.deal.index')->withSuccess(__('Bundle Highlight Removed Successfully.'));
-        }
+        $daysInput = $request->input('promotion_days') ?: $request->input('promotion_custom_days');
 
         if (!empty($tagId) && $tagId !== 'none') {
-            $tagName = null;
-            $matchedTagId = null;
+            $tagObj = PromotionTag::find($tagId);
+            $tagName = $tagObj ? $tagObj->name : null;
 
-            if ($tagId === 'custom') {
-                if (!empty($customTag)) {
-                    $tagName = $customTag;
-                }
-            } else {
-                $tagObj = PromotionTag::find($tagId);
-                if ($tagObj) {
-                    $tagName = $tagObj->name;
-                    $matchedTagId = $tagObj->id;
-                }
-            }
-
-            if (!empty($tagName)) {
+            if ($tagName) {
                 $startsAt = Carbon::now();
                 $expiresAt = null;
                 $days = null;
 
-                if ($durationMode === 'plan') {
-                    $planId = $request->input('promotion_plan_id');
-                    $planObj = PromotionPlan::find($planId);
-                    if ($planObj) {
-                        $days = (int)$planObj->days;
-                        $expiresAt = Carbon::now()->addDays($days);
-                    }
-                } elseif ($durationMode === 'days') {
-                    $days = max(1, (int)$request->input('promotion_custom_days', 30));
+                if ($durationMode === 'days') {
+                    $days = max(1, (int)$daysInput);
                     $expiresAt = Carbon::now()->addDays($days);
-                } elseif ($durationMode === 'date') {
-                    $customDate = $request->input('promotion_expires_at');
-                    if ($customDate) {
-                        $expiresAt = Carbon::parse($customDate);
-                        $days = max(1, (int)Carbon::now()->diffInDays($expiresAt, false));
-                    }
                 } else {
+                    // Permanent / Unlimited
                     $days = null;
                     $expiresAt = null;
                 }
@@ -475,7 +438,7 @@ class DealController extends Controller
                 $deal->update([
                     'is_promoted' => 1,
                     'promotion_tag' => $tagName,
-                    'promotion_tag_id' => $matchedTagId,
+                    'promotion_tag_id' => $tagObj->id,
                     'promotion_days' => $days,
                     'promotion_price' => 0,
                     'promotion_starts_at' => $startsAt,
@@ -494,7 +457,7 @@ class DealController extends Controller
                     'promotion_expires_at' => null,
                 ]);
             }
-        } elseif ($tagId === 'none' || $tagId === '') {
+        } else {
             $deal->update([
                 'is_promoted' => 0,
                 'promotion_tag' => null,
