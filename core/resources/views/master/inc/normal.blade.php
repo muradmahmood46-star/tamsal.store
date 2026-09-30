@@ -15,10 +15,21 @@
     </li>
 
     @php
-        $pendingStoreRequestsCount = \App\Models\StoreRequest::where('status', 'Pending')->count();
-        $pendingUnblockRequestsCount = \App\Models\StoreUnblockRequest::where('is_seen', 0)->where('status', 'Pending')->count();
-        $pendingFineApprovalsCount = \App\Models\FinePayment::where('status', 'pending')->count();
-        $pendingVendorProductsCount = \App\Models\Item::whereNotNull('vendor_id')->where('vendor_id', '!=', 0)->where('approval_status', 'Pending')->count();
+        try {
+            $pendingStoreRequestsCount = \App\Models\StoreRequest::where('status', 'Pending')->count();
+        } catch (\Throwable $e) { $pendingStoreRequestsCount = 0; }
+
+        try {
+            $pendingUnblockRequestsCount = \App\Models\StoreUnblockRequest::where('is_seen', 0)->where('status', 'Pending')->count();
+        } catch (\Throwable $e) { $pendingUnblockRequestsCount = 0; }
+
+        try {
+            $pendingFineApprovalsCount = \App\Models\FinePayment::where('status', 'pending')->count();
+        } catch (\Throwable $e) { $pendingFineApprovalsCount = 0; }
+
+        try {
+            $pendingVendorProductsCount = \App\Models\Item::whereNotNull('vendor_id')->where('vendor_id', '!=', 0)->where('approval_status', 'Pending')->count();
+        } catch (\Throwable $e) { $pendingVendorProductsCount = 0; }
     @endphp
 
     <li class="nav-item {{ request()->is('admin/store-requests*') ? 'active' : '' }}">
@@ -67,22 +78,29 @@
     </li>
 
     @php
-        $pendingDepositRequestsCount = \App\Models\DepositRequest::where('status', 'pending')->count();
-        $customerLiveChatCount = \App\Models\Conversation::where(function($q) {
-            $q->whereNull('vendor_id')->orWhere('vendor_id', 0);
-        })->where('user_id', '>', 0)->where('deleted_by_vendor', 0)->where('vendor_unread_count', '>', 0)->sum('vendor_unread_count');
+        try {
+            $pendingDepositRequestsCount = \App\Models\DepositRequest::where('status', 'pending')->count();
+        } catch (\Throwable $e) { $pendingDepositRequestsCount = 0; }
 
-        $lastSeenBuyerSeller = session('admin_buyer_seller_last_seen', \Illuminate\Support\Facades\Cache::get('admin_buyer_seller_last_seen'));
-        if (request()->is('admin/buyer-seller-chats*')) {
-            $totalBuyerSellerChatsCount = 0;
-        } elseif ($lastSeenBuyerSeller) {
-            $totalBuyerSellerChatsCount = \App\Models\Conversation::whereNotNull('vendor_id')
-                ->where('vendor_id', '>', 0)
-                ->where('last_message_at', '>', $lastSeenBuyerSeller)
-                ->count();
-        } else {
-            $totalBuyerSellerChatsCount = 0;
-        }
+        try {
+            $customerLiveChatCount = \App\Models\Conversation::where(function($q) {
+                $q->whereNull('vendor_id')->orWhere('vendor_id', 0);
+            })->where('user_id', '>', 0)->where('deleted_by_vendor', 0)->where('vendor_unread_count', '>', 0)->sum('vendor_unread_count');
+        } catch (\Throwable $e) { $customerLiveChatCount = 0; }
+
+        try {
+            $lastSeenBuyerSeller = session('admin_buyer_seller_last_seen', \Illuminate\Support\Facades\Cache::get('admin_buyer_seller_last_seen'));
+            if (request()->is('admin/buyer-seller-chats*')) {
+                $totalBuyerSellerChatsCount = 0;
+            } elseif ($lastSeenBuyerSeller) {
+                $totalBuyerSellerChatsCount = \App\Models\Conversation::whereNotNull('vendor_id')
+                    ->where('vendor_id', '>', 0)
+                    ->where('last_message_at', '>', $lastSeenBuyerSeller)
+                    ->count();
+            } else {
+                $totalBuyerSellerChatsCount = 0;
+            }
+        } catch (\Throwable $e) { $totalBuyerSellerChatsCount = 0; }
     @endphp
 
     <li class="nav-item {{ request()->is('admin/deposit-requests*') ? 'active' : '' }}">

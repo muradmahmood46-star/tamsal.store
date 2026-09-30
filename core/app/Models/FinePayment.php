@@ -48,4 +48,29 @@ class FinePayment extends Model
     {
         return $this->hasOne(VendorTransaction::class, 'fine_payment_id');
     }
+
+    public static function ensureTable()
+    {
+        try {
+            if (!\Illuminate\Support\Facades\Schema::hasTable('fine_payments')) {
+                \Illuminate\Support\Facades\Schema::create('fine_payments', function (\Illuminate\Database\Schema\Blueprint $table) {
+                    $table->id();
+                    $table->unsignedBigInteger('store_unblock_request_id')->nullable()->index();
+                    $table->unsignedBigInteger('user_id')->index();
+                    $table->unsignedBigInteger('seller_id')->nullable()->index();
+                    $table->decimal('fine_amount', 12, 2)->default(0.00);
+                    $table->string('payment_method', 255)->nullable();
+                    $table->string('bank_name', 255)->nullable();
+                    $table->string('account_name', 255)->nullable();
+                    $table->string('account_number', 255)->nullable();
+                    $table->string('txn_id', 255)->nullable()->index();
+                    $table->string('screenshot', 255)->nullable();
+                    $table->string('status', 50)->default('pending')->index();
+                    $table->text('admin_note')->nullable();
+                    $table->timestamp('approved_at')->nullable();
+                    $table->timestamps();
+                });
+            }
+        } catch (\Throwable $e) {}
+    }
 }
