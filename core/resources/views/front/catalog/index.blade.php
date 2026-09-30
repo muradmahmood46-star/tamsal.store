@@ -149,12 +149,12 @@
                 /* Mobile View Specifics */
                 @media (max-width: 767.98px) {
                     .store-hero-card-inner {
-                        padding: 12px 14px !important;
+                        padding: 16px 14px !important;
                     }
                     .store-hero-avatar-img,
                     .store-hero-avatar-fallback {
-                        width: 50px !important;
-                        height: 50px !important;
+                        width: 52px !important;
+                        height: 52px !important;
                         font-size: 22px !important;
                         border: 2px solid rgba(255,255,255,0.95) !important;
                     }
@@ -168,7 +168,7 @@
                     }
                     .store-hero-meta {
                         font-size: 12px !important;
-                        margin-top: 3px !important;
+                        margin-top: 4px !important;
                         gap: 8px !important;
                         white-space: nowrap !important;
                         overflow: hidden !important;
@@ -182,7 +182,7 @@
                         margin-left: auto !important;
                         justify-content: flex-end !important;
                         gap: 6px !important;
-                        margin-top: 4px !important;
+                        margin-top: 6px !important;
                     }
                     .store-share-pill {
                         height: 25px !important;
