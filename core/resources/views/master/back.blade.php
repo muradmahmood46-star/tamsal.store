@@ -1181,7 +1181,7 @@
                             <a class="dropdown-toggle profile-pic" data-toggle="dropdown"
                                 href="{{ route('back.dashboard') }}" aria-expanded="false">
                                 <div class="avatar-sm avatar avatar-sm">
-                                    <img src="{{ Auth::guard('admin')->user()->photo ? url('/core/public/storage/images/' . Auth::guard('admin')->user()->photo) : url('/core/public/storage/images/noimage.png') }}"
+                                    <img src="{{ optional(Auth::guard('admin')->user())->photo ? url('/core/public/storage/images/' . Auth::guard('admin')->user()->photo) : url('/core/public/storage/images/noimage.png') }}"
                                         alt="..." class="avatar-img rounded-circle">
                                 </div>
                             </a>
@@ -1189,12 +1189,12 @@
                                 <li>
                                     <div class="user-box">
                                         <div class="avatar-lg"><img
-                                                src="{{ Auth::guard('admin')->user()->photo ? url('/core/public/storage/images/' . Auth::guard('admin')->user()->photo) : url('/core/public/storage/images/noimage.png') }}"
+                                                src="{{ optional(Auth::guard('admin')->user())->photo ? url('/core/public/storage/images/' . Auth::guard('admin')->user()->photo) : url('/core/public/storage/images/noimage.png') }}"
                                                 alt="image profile" class="avatar-img rounded"></div>
 
                                         <div class="u-text">
-                                            <h4>{{ Auth::guard('admin')->user()->name }}</h4>
-                                            <p class="text-muted">{{ Auth::guard('admin')->user()->email }}</p><a
+                                            <h4>{{ optional(Auth::guard('admin')->user())->name }}</h4>
+                                            <p class="text-muted">{{ optional(Auth::guard('admin')->user())->email }}</p><a
                                                 href="{{ route('back.profile') }}"
                                                 class="btn  btn-secondary btn-sm">{{ __('Update Profile') }}</a>
                                         </div>
@@ -1227,21 +1227,21 @@
                     <div class="user">
                         <div class="avatar-sm float-left mr-2">
                             <a href="{{ route('back.profile') }}" title="{{ __('Update Profile Photo') }}">
-                                <img src="{{ Auth::guard('admin')->user()->photo ? url('/core/public/storage/images/' . Auth::guard('admin')->user()->photo) : url('/core/public/storage/images/noimage.png') }}"
+                                <img src="{{ optional(Auth::guard('admin')->user())->photo ? url('/core/public/storage/images/' . Auth::guard('admin')->user()->photo) : url('/core/public/storage/images/noimage.png') }}"
                                     alt="..." class="avatar-img rounded-circle shadow-sm">
                             </a>
                         </div>
                         <div class="info">
                             <a href="{{ route('back.profile') }}" title="{{ __('Update Profile') }}">
                                 <span>
-                                    {{ Auth::guard('admin')->user()->name }}
+                                    {{ optional(Auth::guard('admin')->user())->name }}
                                     <span class="user-level">{{ __('Administrator') }}</span>
                                 </span>
                             </a>
                         </div>
                     </div>
 
-                    @if (Auth::guard('admin')->user()->id == 1)
+                    @if (optional(Auth::guard('admin')->user())->id == 1)
                         @include('master.inc.super')
                     @else
                         @include('master.inc.normal')
