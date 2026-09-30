@@ -828,6 +828,12 @@ class Helper
                 if (\Illuminate\Support\Facades\Schema::hasTable('settings') && \Illuminate\Support\Facades\Schema::hasColumn('settings', 'admin_store_code')) {
                     $settings = \App\Models\Setting::whereNull('admin_store_code')->orWhere('admin_store_code', '')->get();
                     foreach ($settings as $setting) {
+                        $setting->admin_store_code = \App\Models\Seller::generateUniqueStoreCode();
+                        $setting->save();
+                    }
+                }
+            } catch (\Throwable $e) {}
+
             // Ensure related sub-modules
             try { \App\Models\StoreUnblockRequest::ensureTable(); } catch (\Throwable $e) {}
             try { \App\Models\FinePayment::ensureTable(); } catch (\Throwable $e) {}
