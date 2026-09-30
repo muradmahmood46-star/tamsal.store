@@ -530,7 +530,6 @@
                             <span class="switch-body"></span>
                             <span class="switch-text font-weight-bold text-dark ml-2">{{ __('Offer COD (Cash on Delivery)') }}</span>
                         </label>
-                        <small class="text-muted d-block mt-1">{{ __('Turn ON if you want to allow Cash on Delivery for this product.') }}</small>
                     </div>
                     <div class="form-group">
                         <label for="product_from" class="font-weight-bold text-info d-flex flex-wrap align-items-center justify-content-between" style="gap: 6px;">
