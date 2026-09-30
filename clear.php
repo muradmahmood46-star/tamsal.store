@@ -86,6 +86,13 @@ if (!empty($dbname)) {
         $pdo = new PDO("mysql:host={$host};port={$port};dbname={$dbname};charset=utf8", $user, $pass);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         
+        // items.is_cod
+        $stmt = $pdo->query("SHOW COLUMNS FROM `items` LIKE 'is_cod'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("ALTER TABLE `items` ADD COLUMN `is_cod` TINYINT DEFAULT 0 AFTER `estimated_profit`");
+            $dbStatus[] = "✔ Database column `items.is_cod` created successfully!";
+        }
+
         // items.item_variants
         $stmt = $pdo->query("SHOW COLUMNS FROM `items` LIKE 'item_variants'");
         if ($stmt && $stmt->rowCount() == 0) {
@@ -493,6 +500,8 @@ if (!empty($dbname)) {
                     }
                 }
             }
+        } catch (\Throwable $e) {}
+
         // Menu table sync: change 'Blog' to 'Bundles'
         try {
             $menuStmt = $pdo->query("SELECT id, menus FROM menus WHERE id = 1");

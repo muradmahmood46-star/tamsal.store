@@ -139,6 +139,7 @@ class ItemRepository
         $input['approval_status'] = $input['approval_status'] ?? 'Approved';
         $input['stock'] = (isset($input['stock']) && $input['stock'] !== '' && $input['stock'] !== null) ? (int)$input['stock'] : 0;
         $input['estimated_profit'] = (isset($input['estimated_profit']) && $input['estimated_profit'] !== '' && $input['estimated_profit'] !== null) ? (float)$input['estimated_profit'] : 0.00;
+        $input['is_cod'] = !empty($input['is_cod']) ? 1 : 0;
         if (isset($input['product_from'])) {
             $input['product_from'] = ($input['product_from'] !== null && trim($input['product_from']) !== '') ? trim($input['product_from']) : null;
         }
@@ -261,6 +262,7 @@ class ItemRepository
         if (isset($input['estimated_profit'])) {
             $input['estimated_profit'] = ($input['estimated_profit'] !== '' && $input['estimated_profit'] !== null) ? (float)$input['estimated_profit'] : 0.00;
         }
+        $input['is_cod'] = !empty($input['is_cod']) ? 1 : 0;
         if (array_key_exists('product_from', $input)) {
             $input['product_from'] = ($input['product_from'] !== null && trim($input['product_from']) !== '') ? trim($input['product_from']) : null;
         }
@@ -296,8 +298,11 @@ class ItemRepository
                     if (!Schema::hasColumn('items', 'estimated_profit')) {
                         $table->decimal('estimated_profit', 16, 2)->default(0.00)->after('video');
                     }
+                    if (!Schema::hasColumn('items', 'is_cod')) {
+                        $table->tinyInteger('is_cod')->default(0)->after('estimated_profit');
+                    }
                     if (!Schema::hasColumn('items', 'product_from')) {
-                        $table->string('product_from')->nullable()->after('estimated_profit');
+                        $table->string('product_from')->nullable()->after('is_cod');
                     }
                     if (!Schema::hasColumn('items', 'contact_number')) {
                         $table->string('contact_number')->nullable()->after('product_from');

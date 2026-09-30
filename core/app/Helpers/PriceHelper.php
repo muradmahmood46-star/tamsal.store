@@ -444,6 +444,21 @@ class PriceHelper
         return $check_digital;
     }
 
+    public static function isCartCodEligible($cart = null)
+    {
+        $cart = $cart ?: Session::get('cart');
+        if (!empty($cart) && is_array($cart)) {
+            foreach ($cart as $key => $item) {
+                $itemId = explode('-', $key)[0];
+                $product = Item::find($itemId);
+                if ($product && $product->isCodAvailable()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public static function isCartHasVendorProducts($cart = null)
     {
         $cart = $cart ?: Session::get('cart');
@@ -474,8 +489,8 @@ class PriceHelper
             return $fallbackCod;
         }
 
-        // For pure digital products, COD might not be available
-        if (self::CheckDigitalPaymentGateway()) {
+        // For pure digital products or if no item in cart is COD eligible, remove COD
+        if (self::CheckDigitalPaymentGateway() || !self::isCartCodEligible($cart)) {
             return $gateways->where('unique_keyword', '!=', 'cod');
         }
 

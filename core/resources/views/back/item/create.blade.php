@@ -525,6 +525,14 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="switch-primary d-flex align-items-center">
+                            <input type="checkbox" class="switch switch-bootstrap status radio-check" name="is_cod" value="1" {{ old('is_cod', 0) == 1 ? 'checked' : '' }}>
+                            <span class="switch-body"></span>
+                            <span class="switch-text font-weight-bold text-dark ml-2">{{ __('Offer COD (Cash on Delivery)') }}</span>
+                        </label>
+                        <small class="text-muted d-block mt-1">{{ __('Turn ON if you want to allow Cash on Delivery for this product.') }}</small>
+                    </div>
+                    <div class="form-group">
                         <label for="product_from" class="font-weight-bold text-info d-flex flex-wrap align-items-center justify-content-between" style="gap: 6px;">
                             <span><i class="fas fa-truck-loading mr-1"></i> {{ __('Product From') }}</span>
                             <span class="badge badge-secondary text-white" style="font-size: 11px; padding: 4px 8px; border-radius: 4px;">{{ __('Admin Only (Dropshipping)') }}</span>

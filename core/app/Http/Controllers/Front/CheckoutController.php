@@ -413,6 +413,13 @@ class CheckoutController extends Controller
             return redirect()->back();
         }
 
+        if (($input['payment_method'] ?? '') === 'Cash On Delivery') {
+            if (!PriceHelper::isCartCodEligible($cart) || PriceHelper::CheckDigitalPaymentGateway()) {
+                Session::flash('error', __('Cash on Delivery is not available for this order.'));
+                return redirect()->back();
+            }
+        }
+
         if (!empty($input['txn_id'])) {
             $txn_id = trim($input['txn_id']);
             if (PriceHelper::isTransactionIdAlreadyUsed($txn_id)) {
