@@ -16,6 +16,36 @@
 
     @include('alerts.alerts')
 
+    <!-- Admin Store Share Link Card -->
+    <div class="card shadow-sm mb-4 border-0" style="border-radius: 12px; background: linear-gradient(to right, #f8fafc, #ffffff); border-left: 5px solid #0d6efd !important;">
+        <div class="card-body p-3 p-md-4">
+            <div class="d-flex flex-wrap align-items-center justify-content-between">
+                <div class="mb-2 mb-md-0">
+                    <h5 class="font-weight-bold text-dark mb-1">
+                        <i class="fas fa-store text-primary mr-2"></i> {{ __('Admin Official Store Link (Permanent)') }}
+                        <span class="badge badge-light border text-dark font-weight-bold ml-2">{{ __('Code:') }} {{ $setting->getAdminStoreCode() }}</span>
+                    </h5>
+                    <p class="text-muted small mb-0">
+                        {{ __('Shareable direct link for products listed directly by the platform/admin.') }}
+                    </p>
+                </div>
+                <div class="d-flex align-items-center flex-wrap" style="gap: 8px;">
+                    <div class="input-group input-group-sm" style="min-width: 280px; max-width: 420px;">
+                        <input type="text" id="adminStoreLinkInput" class="form-control font-weight-bold bg-white text-dark" value="{{ $setting->getAdminStoreUrl() }}" readonly style="cursor: text;">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary font-weight-bold px-3 shadow-sm" type="button" id="copyAdminStoreBtn" onclick="copyAdminStoreLink()">
+                                <i class="fas fa-copy mr-1" id="adminCopyIcon"></i> <span id="adminCopyBtnText">{{ __('Copy Link') }}</span>
+                            </button>
+                            <a href="{{ $setting->getAdminStoreUrl() }}" target="_blank" class="btn btn-outline-secondary font-weight-bold px-3" title="{{ __('Visit Admin Store') }}">
+                                <i class="fas fa-external-link-alt mr-1"></i> {{ __('Visit') }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <!-- 1. STORE OPENING RATES & FREE TOGGLE -->
         <div class="col-lg-5 mb-4">
@@ -758,6 +788,44 @@
     function confirmDeletePlan(url) {
         $('#deletePlanForm').attr('action', url);
         $('#deletePlanModal').modal('show');
+    }
+
+    function copyAdminStoreLink() {
+        var input = document.getElementById('adminStoreLinkInput');
+        if (!input) return;
+        input.select();
+        input.setSelectionRange(0, 99999);
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(input.value).then(handleCopied).catch(fallbackCopy);
+        } else {
+            fallbackCopy();
+        }
+        function fallbackCopy() {
+            try {
+                document.execCommand('copy');
+                handleCopied();
+            } catch (err) {
+                alert('Failed to copy link.');
+            }
+        }
+        function handleCopied() {
+            var btn = document.getElementById('copyAdminStoreBtn');
+            var icon = document.getElementById('adminCopyIcon');
+            var text = document.getElementById('adminCopyBtnText');
+            if (btn && icon && text) {
+                var originalText = text.innerText;
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-success');
+                icon.className = 'fas fa-check mr-1';
+                text.innerText = 'Copied!';
+                setTimeout(function() {
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-primary');
+                    icon.className = 'fas fa-copy mr-1';
+                    text.innerText = originalText;
+                }, 2500);
+            }
+        }
     }
 </script>
 @endsection

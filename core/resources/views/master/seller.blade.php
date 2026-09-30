@@ -1359,7 +1359,7 @@
                     <ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
                         <li class="nav-item mr-3">
                             <a class="btn btn-sm btn-outline-light py-1 text-white font-weight-bold" title="website"
-                                href="{{ route('front.catalog', ['vendor' => Auth::id()]) }}" target="_blank">
+                                href="{{ Auth::user()->getStoreUrl() }}" target="_blank">
                                 <i class="fas fa-store mr-1"></i> {{ __('View Store') }}
                             </a>
                         </li>

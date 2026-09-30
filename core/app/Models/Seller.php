@@ -8,6 +8,7 @@ class Seller extends Model
 {
     protected $fillable = [
         'user_id',
+        'store_code',
         'shop_name',
         'shop_address',
         'product_types',
@@ -20,6 +21,65 @@ class Seller extends Model
         'balance',
         'status'
     ];
+
+    public static function generateUniqueStoreCode(): string
+    {
+        $chars = '23456789abcdefghjkmnpqrstuvwxyz';
+        $length = 5;
+        $maxAttempts = 100;
+
+        for ($attempt = 0; $attempt < $maxAttempts; $attempt++) {
+            $code = '';
+            for ($i = 0; $i < $length; $i++) {
+                $code .= $chars[random_int(0, strlen($chars) - 1)];
+            }
+
+            if (!preg_match('/[a-z]/', $code) || !preg_match('/[0-9]/', $code)) {
+                continue;
+            }
+
+            $existsInSellers = \App\Models\Seller::where('store_code', $code)->exists();
+            if ($existsInSellers) {
+                continue;
+            }
+
+            $existsInSettings = \App\Models\Setting::where('admin_store_code', $code)->exists();
+            if ($existsInSettings) {
+                continue;
+            }
+
+            return $code;
+        }
+
+        return substr(md5(uniqid((string)mt_rand(), true)), 0, 5);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($seller) {
+            if (empty($seller->store_code)) {
+                $seller->store_code = self::generateUniqueStoreCode();
+            }
+        });
+    }
+
+    public function getStoreCode(): string
+    {
+        if (!empty($this->store_code)) {
+            return (string)$this->store_code;
+        }
+
+        $code = self::generateUniqueStoreCode();
+        $this->store_code = $code;
+        $this->saveQuietly();
+        return $code;
+    }
+
+    public function getStoreUrl(): string
+    {
+        return route('front.catalog', ['vendor' => $this->getStoreCode()]);
+    }
 
     public function user()
     {

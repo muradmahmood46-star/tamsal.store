@@ -349,6 +349,7 @@
     $chatStoreName = $chatEntity ? $chatEntity->store_name : $defaultAdminStoreName;
     $chatEntityName = $chatEntity ? $chatEntity->name : 'Product';
     $chatVendorId = $chatEntity ? ($chatEntity->vendor_id ?: 0) : 0;
+    $chatStoreUrl = $chatEntity ? $chatEntity->getStoreUrl() : ($setting ? $setting->getAdminStoreUrl() : route('front.catalog', ['vendor' => 'admin']));
     
     if ($isDealMode && isset($deal)) {
         $chatEntityPhoto = \Illuminate\Support\Str::startsWith($deal->photo, 'images/')
@@ -430,7 +431,7 @@
 
 <!-- Mobile Sticky Bottom Action Bar (Daraz App Style) -->
 <div class="mobile-daraz-bar">
-    <a href="{{ route('front.catalog') . '?vendor=' . ($chatVendorId ?: 'admin') }}" class="daraz-icon-btn">
+    <a href="{{ $chatStoreUrl }}" class="daraz-icon-btn">
         <i class="fas fa-store text-primary"></i>
         <span>{{ __('Store') }}</span>
     </a>

@@ -105,6 +105,44 @@
             </div>
         </div>
     </form>
+
+    <!-- Permanent Store Share Link Card -->
+    <div class="card shadow-sm mb-4 border-0" style="border-radius: 12px; background: linear-gradient(to right, #f8fafc, #ffffff); border-left: 5px solid #0d6efd !important;">
+        <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-link mr-2"></i> {{ __('My Store Link (Permanent & Shareable)') }}
+            </h6>
+            <span class="badge badge-light border text-dark font-weight-bold px-2 py-1">
+                <i class="fas fa-shield-alt text-success mr-1"></i> {{ __('Code:') }} {{ $seller->getStoreCode() }}
+            </span>
+        </div>
+        <div class="card-body p-4">
+            <p class="text-muted small mb-3">
+                {{ __('This is your permanent direct store link. Share this link on WhatsApp, Facebook, TikTok, Instagram or YouTube to drive customers directly to your shop catalog.') }}
+            </p>
+            <div class="row align-items-center">
+                <div class="col-lg-8 col-md-10">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text bg-light text-primary"><i class="fas fa-store"></i></span>
+                        </div>
+                        <input type="text" id="sellerStoreLinkInput" class="form-control font-weight-bold text-dark bg-white" value="{{ $seller->getStoreUrl() }}" readonly style="cursor: text; letter-spacing: 0.3px;">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary px-3 font-weight-bold shadow-sm" type="button" id="copyStoreLinkBtn" onclick="copySellerStoreLink()">
+                                <i class="fas fa-copy mr-1" id="copyIcon"></i> <span id="copyBtnText">{{ __('Copy Link') }}</span>
+                            </button>
+                            <a href="{{ $seller->getStoreUrl() }}" target="_blank" class="btn btn-outline-secondary px-3 font-weight-bold" title="{{ __('Open Store in New Tab') }}">
+                                <i class="fas fa-external-link-alt mr-1"></i> {{ __('Visit Store') }}
+                            </a>
+                        </div>
+                    </div>
+                    <small class="text-muted mt-2 d-block">
+                        <i class="fas fa-info-circle text-info mr-1"></i> {{ __('This link is permanently bound to your store and cannot be changed.') }}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
 
@@ -118,6 +156,48 @@
                 el.src = e.target.result;
             };
             reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function copySellerStoreLink() {
+        const input = document.getElementById('sellerStoreLinkInput');
+        if (!input) return;
+        
+        input.select();
+        input.setSelectionRange(0, 99999);
+        
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(input.value).then(handleCopied).catch(fallbackCopy);
+        } else {
+            fallbackCopy();
+        }
+
+        function fallbackCopy() {
+            try {
+                document.execCommand('copy');
+                handleCopied();
+            } catch (err) {
+                alert('Failed to copy. Please manually copy the link.');
+            }
+        }
+
+        function handleCopied() {
+            const btn = document.getElementById('copyStoreLinkBtn');
+            const icon = document.getElementById('copyIcon');
+            const text = document.getElementById('copyBtnText');
+            if (btn && icon && text) {
+                const originalText = text.innerText;
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-success');
+                icon.className = 'fas fa-check mr-1';
+                text.innerText = 'Copied!';
+                setTimeout(() => {
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-primary');
+                    icon.className = 'fas fa-copy mr-1';
+                    text.innerText = originalText;
+                }, 2500);
+            }
         }
     }
 </script>

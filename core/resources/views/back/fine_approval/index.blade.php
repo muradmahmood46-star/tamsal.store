@@ -97,10 +97,11 @@
 
                                 $screenshotUrl = $fine->screenshot ? (file_exists(public_path('storage/images/fines/' . $fine->screenshot)) ? asset('core/public/storage/images/fines/' . $fine->screenshot) : url('/core/public/storage/images/fines/' . $fine->screenshot)) : '';
 
+                                $storeUrl = $fine->seller ? $fine->seller->getStoreUrl() : ($fine->user ? $fine->user->getStoreUrl() : ($fine->user_id ? route('front.catalog', ['vendor' => $fine->user_id]) : ''));
                                 $fineData = [
                                     'id' => $fine->id,
                                     'storeName' => $storeName,
-                                    'storeUrl' => route('front.catalog') . '?vendor=' . $fine->user_id,
+                                    'storeUrl' => $storeUrl,
                                     'applicantName' => $applicantName,
                                     'email' => $email,
                                     'phone' => $phone,
@@ -126,10 +127,14 @@
                                 <td class="text-center font-weight-bold text-muted">{{ $fine->id }}</td>
                                 <td>
                                     <div class="font-weight-bold text-dark">
-                                        <a href="{{ route('front.catalog') }}?vendor={{ $fine->user_id }}" target="_blank" class="text-primary text-decoration-none">
-                                            <i class="fas fa-store mr-1"></i> {{ $storeName }}
-                                            <i class="fas fa-external-link-alt ml-1" style="font-size: 9px;"></i>
-                                        </a>
+                                        @if($storeUrl)
+                                            <a href="{{ $storeUrl }}" target="_blank" class="text-primary text-decoration-none">
+                                                <i class="fas fa-store mr-1"></i> {{ $storeName }}
+                                                <i class="fas fa-external-link-alt ml-1" style="font-size: 9px;"></i>
+                                            </a>
+                                        @else
+                                            <span class="text-primary"><i class="fas fa-store mr-1"></i> {{ $storeName }}</span>
+                                        @endif
                                     </div>
                                     <div class="small text-muted font-weight-bold">{{ $applicantName }}</div>
                                     @if($email)

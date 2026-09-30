@@ -152,4 +152,20 @@ class User extends Authenticatable
                     $query->where('status', '=', 1);
                 })->count();
     }
+
+    public function getStoreCode(): string
+    {
+        if ($this->seller) {
+            return $this->seller->getStoreCode();
+        }
+        return (string)$this->id;
+    }
+
+    public function getStoreUrl(): string
+    {
+        if ($this->seller) {
+            return $this->seller->getStoreUrl();
+        }
+        return route('front.catalog', ['vendor' => $this->id]);
+    }
 }

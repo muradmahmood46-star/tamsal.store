@@ -107,6 +107,29 @@
                                                                 <small class="text-muted">{{ __('Recommended: transparent PNG, 160x50px') }}</small>
                                                             </div>
                                                         </div>
+
+                                                        <div class="col-lg-8">
+                                                            <div class="form-group p-3 rounded" style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #0d6efd;">
+                                                                <label class="font-weight-bold text-dark d-flex align-items-center justify-content-between mb-2">
+                                                                    <span><i class="fas fa-link text-primary mr-1"></i> {{ __('Admin Store Link (Permanent)') }}</span>
+                                                                    <span class="badge badge-light border text-dark font-weight-bold">{{ __('Code:') }} {{ $setting->getAdminStoreCode() }}</span>
+                                                                </label>
+                                                                <div class="input-group">
+                                                                    <input type="text" id="adminStoreLinkInput" class="form-control font-weight-bold bg-white text-dark" value="{{ $setting->getAdminStoreUrl() }}" readonly style="cursor: text;">
+                                                                    <div class="input-group-append">
+                                                                        <button class="btn btn-primary font-weight-bold px-3 shadow-sm" type="button" id="copyAdminStoreBtn" onclick="copyAdminStoreLink()">
+                                                                            <i class="fas fa-copy mr-1" id="adminCopyIcon"></i> <span id="adminCopyBtnText">{{ __('Copy Link') }}</span>
+                                                                        </button>
+                                                                        <a href="{{ $setting->getAdminStoreUrl() }}" target="_blank" class="btn btn-outline-secondary font-weight-bold px-3" title="{{ __('Visit Admin Store') }}">
+                                                                            <i class="fas fa-external-link-alt mr-1"></i> {{ __('Visit Store') }}
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                                <small class="text-muted d-block mt-2">
+                                                                    <i class="fas fa-info-circle text-info mr-1"></i> {{ __('Shareable direct link for products listed directly by the platform/admin. Permanent and unchangeable.') }}
+                                                                </small>
+                                                            </div>
+                                                        </div>
                                                         <div class="col-lg-8">
                                                             <div class="form-group">
                                                                 <label for="home_page_title">{{ __('Home Page Title') }}
@@ -1100,5 +1123,43 @@
                 theme: "monokai"
             });
         });
+
+        function copyAdminStoreLink() {
+            var input = document.getElementById('adminStoreLinkInput');
+            if (!input) return;
+            input.select();
+            input.setSelectionRange(0, 99999);
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(input.value).then(handleCopied).catch(fallbackCopy);
+            } else {
+                fallbackCopy();
+            }
+            function fallbackCopy() {
+                try {
+                    document.execCommand('copy');
+                    handleCopied();
+                } catch (err) {
+                    alert('Failed to copy link.');
+                }
+            }
+            function handleCopied() {
+                var btn = document.getElementById('copyAdminStoreBtn');
+                var icon = document.getElementById('adminCopyIcon');
+                var text = document.getElementById('adminCopyBtnText');
+                if (btn && icon && text) {
+                    var originalText = text.innerText;
+                    btn.classList.remove('btn-primary');
+                    btn.classList.add('btn-success');
+                    icon.className = 'fas fa-check mr-1';
+                    text.innerText = 'Copied!';
+                    setTimeout(function() {
+                        btn.classList.remove('btn-success');
+                        btn.classList.add('btn-primary');
+                        icon.className = 'fas fa-copy mr-1';
+                        text.innerText = originalText;
+                    }, 2500);
+                }
+            }
+        }
     </script>
 @endsection

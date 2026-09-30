@@ -64,7 +64,72 @@ class CatalogController extends Controller
         $new = $request->has('quick_filter') ?  ( !empty($request->quick_filter == 'new') ? 1 : null ) : null;
         $brand = $request->has('brand') ?  ( !empty($request->brand) ? Brand::whereSlug($request->brand)->firstOrFail() : null ) : null;
         $search = $request->has('search') ?  ( !empty($request->search) ? $request->search : null ) : null;
-        $vendor = $request->has('vendor') ? ( !empty($request->vendor) ? $request->vendor : null ) : null;
+        $vendorParam = $request->has('vendor') ? ( !empty($request->vendor) ? trim((string)$request->vendor) : null ) : null;
+        $vendor = null;
+        $vendorStore = null;
+
+        if ($vendorParam !== null) {
+            $adminStoreCode = $setting ? $setting->getAdminStoreCode() : null;
+
+            if ($vendorParam === 'admin' || $vendorParam === '0' || ($adminStoreCode && strtolower($vendorParam) === strtolower($adminStoreCode))) {
+                $vendor = 'admin';
+                $vendorStore = (object)[
+                    'is_admin' => true,
+                    'vendor_id' => 0,
+                    'store_code' => $adminStoreCode,
+                    'store_url' => $setting ? $setting->getAdminStoreUrl() : route('front.catalog', ['vendor' => 'admin']),
+                    'name' => ($setting->brand_name ?? 'Official Store'),
+                    'logo_url' => ($setting->brand_logo ? url('/core/public/storage/images/' . $setting->brand_logo) : null),
+                    'banner_url' => null,
+                    'type' => __('Official Store'),
+                    'address' => $setting->footer_address ?? null,
+                    'details' => __('Official Store on :name. Genuine products with platform guarantee.', ['name' => ($setting->brand_name ?? 'Official Store')]),
+                    'products_count' => Item::where('status', 1)->where(function($q) {
+                        $q->whereNull('vendor_id')->orWhere('vendor_id', 0);
+                    })->count(),
+                ];
+            } else {
+                $seller = \App\Models\Seller::where('store_code', $vendorParam)->first();
+                $vendorUser = null;
+                if ($seller) {
+                    $vendorUser = \App\Models\User::find($seller->user_id);
+                } elseif (is_numeric($vendorParam)) {
+                    $vendorUser = \App\Models\User::find($vendorParam);
+                    if ($vendorUser) {
+                        $seller = \App\Models\Seller::where('user_id', $vendorUser->id)->first();
+                    }
+                }
+
+                if ($vendorUser) {
+                    $vendor = $vendorUser->id;
+                    $logoUrl = null;
+                    if ($seller && !empty($seller->shop_logo)) {
+                        $logoUrl = asset('core/public/storage/images/stores/' . $seller->shop_logo);
+                    } elseif (!empty($vendorUser->photo)) {
+                        $logoUrl = asset('core/public/storage/images/' . $vendorUser->photo);
+                    }
+
+                    $bannerUrl = null;
+                    if ($seller && !empty($seller->shop_banner)) {
+                        $bannerUrl = asset('core/public/storage/images/stores/' . $seller->shop_banner);
+                    }
+
+                    $vendorStore = (object)[
+                        'is_admin' => false,
+                        'vendor_id' => $vendorUser->id,
+                        'store_code' => $seller ? $seller->getStoreCode() : (string)$vendorUser->id,
+                        'store_url' => $seller ? $seller->getStoreUrl() : route('front.catalog', ['vendor' => $vendorUser->id]),
+                        'name' => $seller && !empty($seller->shop_name) ? $seller->shop_name : ($vendorUser->first_name . '\'s Store'),
+                        'logo_url' => $logoUrl,
+                        'banner_url' => $bannerUrl,
+                        'type' => __('Verified Store'),
+                        'address' => $seller->shop_address ?? null,
+                        'details' => $seller->shop_details ?? null,
+                        'products_count' => Item::where('status', 1)->where('vendor_id', $vendorUser->id)->count(),
+                    ];
+                }
+            }
+        }
 
         $selected_categories = [];
         $category = null;
@@ -290,53 +355,6 @@ class CatalogController extends Controller
         }
 
 
-        $vendorStore = null;
-        if ($vendor !== null) {
-            if ($vendor == 'admin' || $vendor == '0') {
-                $vendorStore = (object)[
-                    'is_admin' => true,
-                    'vendor_id' => 0,
-                    'name' => ($setting->brand_name ?? 'Official Store'),
-                    'logo_url' => ($setting->brand_logo ? url('/core/public/storage/images/' . $setting->brand_logo) : null),
-                    'banner_url' => null,
-                    'type' => __('Official Store'),
-                    'address' => $setting->footer_address ?? null,
-                    'details' => __('Official Store on :name. Genuine products with platform guarantee.', ['name' => ($setting->brand_name ?? 'Official Store')]),
-                    'products_count' => Item::where('status', 1)->where(function($q) {
-                        $q->whereNull('vendor_id')->orWhere('vendor_id', 0);
-                    })->count(),
-                ];
-            } else {
-                $vendorUser = \App\Models\User::find($vendor);
-                if ($vendorUser) {
-                    $seller = \App\Models\Seller::where('user_id', $vendorUser->id)->first();
-                    $logoUrl = null;
-                    if ($seller && !empty($seller->shop_logo)) {
-                        $logoUrl = asset('core/public/storage/images/stores/' . $seller->shop_logo);
-                    } elseif (!empty($vendorUser->photo)) {
-                        $logoUrl = asset('core/public/storage/images/' . $vendorUser->photo);
-                    }
-
-                    $bannerUrl = null;
-                    if ($seller && !empty($seller->shop_banner)) {
-                        $bannerUrl = asset('core/public/storage/images/stores/' . $seller->shop_banner);
-                    }
-
-                    $vendorStore = (object)[
-                        'is_admin' => false,
-                        'vendor_id' => $vendorUser->id,
-                        'name' => $seller && !empty($seller->shop_name) ? $seller->shop_name : ($vendorUser->first_name . '\'s Store'),
-                        'logo_url' => $logoUrl,
-                        'banner_url' => $bannerUrl,
-                        'type' => __('Verified Store'),
-                        'address' => $seller->shop_address ?? null,
-                        'details' => $seller->shop_details ?? null,
-                        'products_count' => Item::where('status', 1)->where('vendor_id', $vendorUser->id)->count(),
-                    ];
-                }
-            }
-        }
-
         $deals = collect();
         if (!empty($search)) {
             $dealSearchWords = array_values(array_filter(explode(' ', preg_replace('/[^\p{L}\p{N}\-_]+/u', ' ', $search)), function($w) {
@@ -370,6 +388,22 @@ class CatalogController extends Controller
                     END) DESC, id DESC
                 ")
                 ->get();
+        } elseif ($vendorStore !== null) {
+            if ($vendorStore->is_admin) {
+                $deals = Deal::with(['dealItems.item'])
+                    ->active()
+                    ->where(function($q) {
+                        $q->whereNull('vendor_id')->orWhere('vendor_id', 0);
+                    })
+                    ->orderBy('id', 'desc')
+                    ->get();
+            } else {
+                $deals = Deal::with(['dealItems.item'])
+                    ->active()
+                    ->where('vendor_id', $vendorStore->vendor_id)
+                    ->orderBy('id', 'desc')
+                    ->get();
+            }
         }
 
         if($request->ajax()) $blade = 'front.catalog.catalog';

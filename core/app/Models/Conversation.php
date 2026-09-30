@@ -88,8 +88,16 @@ class Conversation extends Model
     public function getStoreUrlAttribute()
     {
         if ($this->vendor_id && $this->vendor_id > 0) {
-            return route('front.catalog') . '?vendor=' . $this->vendor_id;
+            if ($this->seller && $this->seller->id) {
+                return $this->seller->getStoreUrl();
+            }
+            $seller = \App\Models\Seller::where('user_id', $this->vendor_id)->first();
+            if ($seller) {
+                return $seller->getStoreUrl();
+            }
+            return route('front.catalog', ['vendor' => $this->vendor_id]);
         }
-        return route('front.catalog') . '?vendor=admin';
+        $setting = \App\Models\Setting::first();
+        return $setting ? $setting->getAdminStoreUrl() : route('front.catalog', ['vendor' => 'admin']);
     }
 }

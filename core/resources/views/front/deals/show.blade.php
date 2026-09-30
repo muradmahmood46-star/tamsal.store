@@ -224,7 +224,7 @@
                     <button type="button" class="btn btn-outline-success btn-sm px-3 py-2 font-weight-bold shadow-sm" onclick="openWhatsAppChat()" style="border-radius: 8px;">
                         <i class="fab fa-whatsapp mr-1"></i> {{ __('Chat') }}
                     </button>
-                    <a href="{{ route('front.catalog') . '?vendor=' . ($vendorId ?: 'admin') }}" class="btn btn-primary btn-sm px-4 py-2 font-weight-bold shadow-sm" style="border-radius: 8px;">
+                    <a href="{{ $deal->getStoreUrl() }}" class="btn btn-primary btn-sm px-4 py-2 font-weight-bold shadow-sm" style="border-radius: 8px;">
                         <i class="fas fa-store-alt mr-1"></i> {{ __('Visit Store') }}
                     </a>
                 </div>

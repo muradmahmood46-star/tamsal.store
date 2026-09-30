@@ -199,6 +199,13 @@ if (!empty($dbname)) {
             $dbStatus[] = "✔ Database column `settings.whatsapp_template_canceled` created successfully!";
         }
 
+        // settings.admin_store_code
+        $stmt = $pdo->query("SHOW COLUMNS FROM `settings` LIKE 'admin_store_code'");
+        if ($stmt && $stmt->rowCount() == 0) {
+            $pdo->exec("ALTER TABLE `settings` ADD COLUMN `admin_store_code` VARCHAR(32) NULL UNIQUE AFTER `brand_name`");
+            $dbStatus[] = "✔ Database column `settings.admin_store_code` created successfully!";
+        }
+
         // deals table check and creation
         $stmt = $pdo->query("SHOW TABLES LIKE 'deals'");
         if ($stmt && $stmt->rowCount() == 0) {
@@ -346,7 +353,69 @@ if (!empty($dbname)) {
                 $pdo->exec("ALTER TABLE `sellers` ADD COLUMN `status` TINYINT NOT NULL DEFAULT 1 AFTER `balance`");
                 $dbStatus[] = "✔ Database column `sellers.status` created successfully!";
             }
+            $stmt = $pdo->query("SHOW COLUMNS FROM `sellers` LIKE 'store_code'");
+            if ($stmt && $stmt->rowCount() == 0) {
+                $pdo->exec("ALTER TABLE `sellers` ADD COLUMN `store_code` VARCHAR(32) NULL UNIQUE AFTER `user_id`");
+                $dbStatus[] = "✔ Database column `sellers.store_code` created successfully!";
+            }
         }
+
+        // Auto-generate store_code for existing sellers and settings
+        try {
+            $chars = '23456789abcdefghjkmnpqrstuvwxyz';
+            $sellersWithoutCode = $pdo->query("SELECT id FROM `sellers` WHERE `store_code` IS NULL OR `store_code` = ''")->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($sellersWithoutCode as $swc) {
+                $codeFound = false;
+                for ($attempt = 0; $attempt < 100; $attempt++) {
+                    $c = '';
+                    for ($i = 0; $i < 5; $i++) {
+                        $c .= $chars[random_int(0, strlen($chars) - 1)];
+                    }
+                    if (!preg_match('/[a-z]/', $c) || !preg_match('/[0-9]/', $c)) continue;
+                    $chk = $pdo->prepare("SELECT id FROM `sellers` WHERE `store_code` = ?");
+                    $chk->execute([$c]);
+                    if ($chk->rowCount() > 0) continue;
+                    $chkSet = $pdo->prepare("SELECT id FROM `settings` WHERE `admin_store_code` = ?");
+                    $chkSet->execute([$c]);
+                    if ($chkSet->rowCount() > 0) continue;
+
+                    $pdo->prepare("UPDATE `sellers` SET `store_code` = ? WHERE `id` = ?")->execute([$c, $swc['id']]);
+                    $codeFound = true;
+                    break;
+                }
+                if (!$codeFound) {
+                    $fallback = substr(md5(uniqid((string)mt_rand(), true)), 0, 5);
+                    $pdo->prepare("UPDATE `sellers` SET `store_code` = ? WHERE `id` = ?")->execute([$fallback, $swc['id']]);
+                }
+            }
+            if (!empty($sellersWithoutCode)) {
+                $dbStatus[] = "✔ Generated unique permanent store links for " . count($sellersWithoutCode) . " sellers!";
+            }
+
+            // Auto-generate admin_store_code for settings
+            $settingsWithoutCode = $pdo->query("SELECT id FROM `settings` WHERE `admin_store_code` IS NULL OR `admin_store_code` = ''")->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($settingsWithoutCode as $stc) {
+                for ($attempt = 0; $attempt < 100; $attempt++) {
+                    $c = '';
+                    for ($i = 0; $i < 5; $i++) {
+                        $c .= $chars[random_int(0, strlen($chars) - 1)];
+                    }
+                    if (!preg_match('/[a-z]/', $c) || !preg_match('/[0-9]/', $c)) continue;
+                    $chk = $pdo->prepare("SELECT id FROM `sellers` WHERE `store_code` = ?");
+                    $chk->execute([$c]);
+                    if ($chk->rowCount() > 0) continue;
+                    $chkSet = $pdo->prepare("SELECT id FROM `settings` WHERE `admin_store_code` = ?");
+                    $chkSet->execute([$c]);
+                    if ($chkSet->rowCount() > 0) continue;
+
+                    $pdo->prepare("UPDATE `settings` SET `admin_store_code` = ? WHERE `id` = ?")->execute([$c, $stc['id']]);
+                    break;
+                }
+            }
+            if (!empty($settingsWithoutCode)) {
+                $dbStatus[] = "✔ Generated unique permanent store link for Admin store!";
+            }
+        } catch (\Throwable $e) {}
 
         // store_requests table check and creation
         $stmt = $pdo->query("SHOW TABLES LIKE 'store_requests'");

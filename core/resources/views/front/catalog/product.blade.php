@@ -438,7 +438,7 @@
                                     @endif
                                     <div class="col-sm-6 mb-1">
                                         <span class="text-muted font-weight-500"><i class="fas fa-store text-primary mr-1"></i> {{ __('Sold By') }}:</span>
-                                        <a class="font-weight-600 text-primary ml-1" href="{{ route('front.catalog') . '?vendor=' . ($item->vendor_id ?: 'admin') }}">
+                                        <a class="font-weight-600 text-primary ml-1" href="{{ $item->getStoreUrl() }}">
                                             {{ $item->store_name }}
                                         </a>
                                     </div>
@@ -710,7 +710,7 @@
                                     @endif
                                 </div>
                                 <div class="mt-3">
-                                    <a href="{{ route('front.catalog') . '?vendor=' . ($item->vendor_id ?: 'admin') }}" class="btn btn-outline-primary btn-sm">
+                                    <a href="{{ $item->getStoreUrl() }}" class="btn btn-outline-primary btn-sm">
                                         <i class="fas fa-store mr-1"></i> {{ __('View More from') }} {{ $item->store_name }}
                                     </a>
                                 </div>
@@ -755,7 +755,7 @@
                                 </div>
                             </div>
                             <div>
-                                <a href="{{ route('front.catalog') . '?vendor=' . ($item->vendor_id ?: 'admin') }}" class="btn btn-primary btn-sm px-4 py-2 shadow-sm" style="border-radius: 8px; font-weight: 600;">
+                                <a href="{{ $item->getStoreUrl() }}" class="btn btn-primary btn-sm px-4 py-2 shadow-sm" style="border-radius: 8px; font-weight: 600;">
                                     <i class="fas fa-store-alt mr-1"></i> {{ __('Visit Store') }}
                                 </a>
                             </div>

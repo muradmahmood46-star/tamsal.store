@@ -139,9 +139,25 @@ class Setting extends Model
         "vendor_free_orders",
         "vendor_min_balance",
         "vendor_commission_percent",
+        "admin_store_code",
     ];
 
     public $timestamps = false;
 
+    public function getAdminStoreCode(): string
+    {
+        if (!empty($this->admin_store_code)) {
+            return (string)$this->admin_store_code;
+        }
 
+        $code = Seller::generateUniqueStoreCode();
+        $this->admin_store_code = $code;
+        $this->saveQuietly();
+        return $code;
+    }
+
+    public function getAdminStoreUrl(): string
+    {
+        return route('front.catalog', ['vendor' => $this->getAdminStoreCode()]);
+    }
 }

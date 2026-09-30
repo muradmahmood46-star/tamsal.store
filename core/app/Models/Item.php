@@ -276,4 +276,36 @@ class Item extends Model
     {
         return $this->isPromotionActive() ? $this->promotion_tag : null;
     }
+
+    public function getStoreUrl(): string
+    {
+        if ($this->vendor_id && (int)$this->vendor_id > 0) {
+            if ($this->seller && $this->seller->id) {
+                return $this->seller->getStoreUrl();
+            }
+            $seller = \App\Models\Seller::where('user_id', $this->vendor_id)->first();
+            if ($seller) {
+                return $seller->getStoreUrl();
+            }
+            return route('front.catalog', ['vendor' => $this->vendor_id]);
+        }
+        $setting = \App\Models\Setting::first();
+        return $setting ? $setting->getAdminStoreUrl() : route('front.catalog', ['vendor' => 'admin']);
+    }
+
+    public function getStoreCode(): string
+    {
+        if ($this->vendor_id && (int)$this->vendor_id > 0) {
+            if ($this->seller && $this->seller->id) {
+                return $this->seller->getStoreCode();
+            }
+            $seller = \App\Models\Seller::where('user_id', $this->vendor_id)->first();
+            if ($seller) {
+                return $seller->getStoreCode();
+            }
+            return (string)$this->vendor_id;
+        }
+        $setting = \App\Models\Setting::first();
+        return $setting ? $setting->getAdminStoreCode() : 'admin';
+    }
 }

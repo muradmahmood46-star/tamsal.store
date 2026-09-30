@@ -82,9 +82,17 @@
                                 </div>
                             </div>
 
-                            {{-- Actions --}}
-                            <div>
-                                <a href="{{ route('front.catalog') }}" class="btn btn-light btn-sm font-weight-bold shadow-sm" style="border-radius: 8px; font-size: 12.5px; padding: 8px 16px; color: #0d6efd;">
+                            {{-- Actions & Share Link --}}
+                            <div class="d-flex flex-wrap align-items-center mt-3 mt-lg-0" style="gap: 10px;">
+                                <div class="input-group input-group-sm shadow-sm" style="max-width: 320px; min-width: 230px;">
+                                    <input type="text" id="frontStoreShareLink" class="form-control form-control-sm bg-white text-dark font-weight-bold" value="{{ $vendorStore->store_url ?? route('front.catalog', ['vendor' => $vendorStore->store_code ?? ($vendorStore->vendor_id ?: 'admin')]) }}" readonly style="font-size: 12px; border-radius: 8px 0 0 8px; cursor: text;">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-warning btn-sm font-weight-bold text-dark px-3" type="button" id="copyFrontStoreBtn" onclick="copyFrontStoreLink()" style="border-radius: 0 8px 8px 0; font-size: 12px;">
+                                            <i class="fas fa-copy mr-1" id="frontCopyIcon"></i> <span id="frontCopyText">{{ __('Copy Link') }}</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <a href="{{ route('front.catalog') }}" class="btn btn-light btn-sm font-weight-bold shadow-sm" style="border-radius: 8px; font-size: 12.5px; padding: 7px 16px; color: #0d6efd;">
                                     <i class="fas fa-th-large mr-1"></i> {{ __('View All Products') }}
                                 </a>
                             </div>
@@ -379,6 +387,45 @@
     // Init on first page load
     window._infiniteInit();
 })();
+
+function copyFrontStoreLink() {
+    var input = document.getElementById('frontStoreShareLink');
+    if (!input) return;
+    input.select();
+    input.setSelectionRange(0, 99999);
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(input.value).then(handleCopied).catch(fallbackCopy);
+    } else {
+        fallbackCopy();
+    }
+    function fallbackCopy() {
+        try {
+            document.execCommand('copy');
+            handleCopied();
+        } catch (err) {
+            alert('Failed to copy link.');
+        }
+    }
+    function handleCopied() {
+        var btn = document.getElementById('copyFrontStoreBtn');
+        var icon = document.getElementById('frontCopyIcon');
+        var text = document.getElementById('frontCopyText');
+        if (btn && icon && text) {
+            var originalText = text.innerText;
+            btn.classList.remove('btn-warning');
+            btn.classList.add('btn-success', 'text-white');
+            btn.classList.remove('text-dark');
+            icon.className = 'fas fa-check mr-1';
+            text.innerText = 'Copied!';
+            setTimeout(function() {
+                btn.classList.remove('btn-success', 'text-white');
+                btn.classList.add('btn-warning', 'text-dark');
+                icon.className = 'fas fa-copy mr-1';
+                text.innerText = originalText;
+            }, 2500);
+        }
+    }
+}
 </script>
 @endsection
 

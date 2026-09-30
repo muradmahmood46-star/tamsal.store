@@ -108,10 +108,11 @@
                                     }
                                 }
 
+                                $storeUrl = $store ? $store->getStoreUrl() : ($deposit->user ? $deposit->user->getStoreUrl() : '');
                                 $depositData = [
                                     'id' => $deposit->id,
                                     'storeName' => $storeName,
-                                    'storeUrl' => $deposit->user_id ? route('front.catalog') . '?vendor=' . $deposit->user_id : '',
+                                    'storeUrl' => $storeUrl,
                                     'applicantName' => $applicantName,
                                     'email' => $email,
                                     'phone' => $phone,
@@ -135,8 +136,8 @@
                                 <td class="text-center font-weight-bold text-muted">{{ $deposit->id }}</td>
                                 <td>
                                     <div class="font-weight-bold text-dark">
-                                        @if($deposit->user_id)
-                                            <a href="{{ route('front.catalog') }}?vendor={{ $deposit->user_id }}" target="_blank" class="text-primary text-decoration-none">
+                                        @if($storeUrl)
+                                            <a href="{{ $storeUrl }}" target="_blank" class="text-primary text-decoration-none">
                                                 <i class="fas fa-store mr-1"></i> {{ $storeName }}
                                                 <i class="fas fa-external-link-alt ml-1" style="font-size: 8.5px;"></i>
                                             </a>
