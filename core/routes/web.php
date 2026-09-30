@@ -28,6 +28,32 @@ Route::group(['middleware' => ['adminlocalize', 'demo']], function () {
         }
         return "Server Cache (OPcache, Views, Config, Routes, Database Tables & Artisan) Cleared Successfully. You can go back now.";
     });
+
+    Route::get('/debug-store-settings', function() {
+        try {
+            \App\Helpers\Helper::ensureStoreTables();
+            \App\Models\ReceivingAccount::ensureTable();
+            \App\Models\PromotionTag::ensureTable();
+            \App\Models\PromotionPlan::ensureTable();
+            \App\Models\ItemPromotion::ensureTable();
+            \App\Models\StoreUnblockRequest::ensureTable();
+            \App\Models\FinePayment::ensureTable();
+
+            $setting = \App\Models\Setting::first();
+            $accounts = \App\Models\ReceivingAccount::latest()->get();
+            $promotionTags = \App\Models\PromotionTag::latest()->get();
+            $promotionPlans = \App\Models\PromotionPlan::orderBy('days', 'asc')->get();
+
+            return view('back.store_setting.index', compact('setting', 'accounts', 'promotionTags', 'promotionPlans'))->render();
+        } catch (\Throwable $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => explode("\n", $e->getTraceAsString())
+            ], 200);
+        }
+    });
     
     Route::prefix('admin')->group(function () { 
         //------------ AUTH ------------
