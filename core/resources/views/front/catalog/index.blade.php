@@ -84,16 +84,15 @@
 
                             {{-- Actions & Share Link --}}
                             <div class="d-flex flex-wrap align-items-center mt-3 mt-lg-0" style="gap: 10px;">
-                                <div class="input-group input-group-sm shadow-sm" style="max-width: 320px; min-width: 230px;">
-                                    <input type="text" id="frontStoreShareLink" class="form-control form-control-sm bg-white text-dark font-weight-bold" value="{{ $vendorStore->store_url ?? route('front.catalog', ['vendor' => $vendorStore->store_code ?? ($vendorStore->vendor_id ?: 'admin')]) }}" readonly style="font-size: 12px; border-radius: 8px 0 0 8px; cursor: text;">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-warning btn-sm font-weight-bold text-dark px-3" type="button" id="copyFrontStoreBtn" onclick="copyFrontStoreLink()" style="border-radius: 0 8px 8px 0; font-size: 12px;">
-                                            <i class="fas fa-copy mr-1" id="frontCopyIcon"></i> <span id="frontCopyText">{{ __('Copy Link') }}</span>
-                                        </button>
-                                    </div>
+                                <div class="store-share-pill shadow-sm" style="display: inline-flex; align-items: center; background: #ffffff; border-radius: 30px; padding: 3px 4px 3px 12px; border: 1px solid rgba(255,255,255,0.7); max-width: 100%; box-sizing: border-box;">
+                                    <i class="fas fa-link mr-1" style="color: #0d6efd; font-size: 13px; flex-shrink: 0;"></i>
+                                    <input type="text" id="frontStoreShareLink" value="{{ $vendorStore->store_url ?? route('front.catalog', ['vendor' => $vendorStore->store_code ?? ($vendorStore->vendor_id ?: 'admin')]) }}" readonly style="border: none !important; outline: none !important; box-shadow: none !important; background: transparent !important; color: #1e293b !important; font-size: 12.5px !important; font-weight: 600 !important; padding: 4px 8px !important; margin: 0 !important; width: 235px; max-width: calc(100vw - 230px); height: 32px !important; line-height: 32px !important; cursor: text; font-family: inherit;">
+                                    <button type="button" class="btn btn-primary btn-sm font-weight-bold" id="copyFrontStoreBtn" onclick="copyFrontStoreLink()" style="border-radius: 20px; font-size: 11.5px; padding: 5px 14px; white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; height: 32px; box-shadow: 0 2px 6px rgba(13,110,253,0.25); border: none;">
+                                        <i class="fas fa-copy" id="frontCopyIcon" style="font-size: 11px;"></i> <span id="frontCopyText">{{ __('Copy Link') }}</span>
+                                    </button>
                                 </div>
-                                <a href="{{ route('front.catalog') }}" class="btn btn-light btn-sm font-weight-bold shadow-sm" style="border-radius: 8px; font-size: 12.5px; padding: 7px 16px; color: #0d6efd;">
-                                    <i class="fas fa-th-large mr-1"></i> {{ __('View All Products') }}
+                                <a href="{{ route('front.catalog') }}" class="btn btn-light btn-sm font-weight-bold shadow-sm d-inline-flex align-items-center" style="border-radius: 20px; font-size: 12px; height: 38px; padding: 0 16px; color: #0d6efd; white-space: nowrap; border: 1px solid rgba(255,255,255,0.5);">
+                                    <i class="fas fa-th-large mr-1.5" style="font-size: 12px;"></i> {{ __('View All Products') }}
                                 </a>
                             </div>
                         </div>
@@ -412,15 +411,14 @@ function copyFrontStoreLink() {
         var text = document.getElementById('frontCopyText');
         if (btn && icon && text) {
             var originalText = text.innerText;
-            btn.classList.remove('btn-warning');
-            btn.classList.add('btn-success', 'text-white');
-            btn.classList.remove('text-dark');
-            icon.className = 'fas fa-check mr-1';
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-success');
+            if (icon) icon.className = 'fas fa-check';
             text.innerText = 'Copied!';
             setTimeout(function() {
-                btn.classList.remove('btn-success', 'text-white');
-                btn.classList.add('btn-warning', 'text-dark');
-                icon.className = 'fas fa-copy mr-1';
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-primary');
+                if (icon) icon.className = 'fas fa-copy';
                 text.innerText = originalText;
             }, 2500);
         }
