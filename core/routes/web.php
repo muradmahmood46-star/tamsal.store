@@ -54,6 +54,11 @@ Route::group(['middleware' => ['adminlocalize', 'demo']], function () {
             \App\Models\StoreUnblockRequest::ensureTable();
             \App\Models\FinePayment::ensureTable();
 
+            $admin = \App\Models\Admin::first();
+            if ($admin) {
+                \Illuminate\Support\Facades\Auth::guard('admin')->setUser($admin);
+            }
+
             $setting = \App\Models\Setting::first();
             $accounts = \App\Models\ReceivingAccount::latest()->get();
             $promotionTags = \App\Models\PromotionTag::latest()->get();
