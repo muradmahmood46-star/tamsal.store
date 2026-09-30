@@ -146,12 +146,12 @@ class Setting extends Model
 
     public function getAdminStoreCode(): string
     {
-        if (!empty($this->admin_store_code)) {
-            return (string)$this->admin_store_code;
-        }
-
         try {
-            if (\Illuminate\Support\Facades\Schema::hasColumn('settings', 'admin_store_code')) {
+            if (!empty($this->admin_store_code)) {
+                return (string)$this->admin_store_code;
+            }
+
+            if (\Illuminate\Support\Facades\Schema::hasTable('settings') && \Illuminate\Support\Facades\Schema::hasColumn('settings', 'admin_store_code')) {
                 $code = Seller::generateUniqueStoreCode();
                 $this->admin_store_code = $code;
                 $this->save();
@@ -164,6 +164,10 @@ class Setting extends Model
 
     public function getAdminStoreUrl(): string
     {
-        return url('/c/' . $this->getAdminStoreCode());
+        try {
+            return url('/c/' . $this->getAdminStoreCode());
+        } catch (\Throwable $e) {
+            return url('/c/admin');
+        }
     }
 }

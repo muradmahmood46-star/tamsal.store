@@ -38,15 +38,23 @@ class Seller extends Model
                 continue;
             }
 
-            $existsInSellers = \App\Models\Seller::where('store_code', $code)->exists();
-            if ($existsInSellers) {
-                continue;
-            }
+            try {
+                if (\Illuminate\Support\Facades\Schema::hasTable('sellers') && \Illuminate\Support\Facades\Schema::hasColumn('sellers', 'store_code')) {
+                    $existsInSellers = \App\Models\Seller::where('store_code', $code)->exists();
+                    if ($existsInSellers) {
+                        continue;
+                    }
+                }
+            } catch (\Throwable $e) {}
 
-            $existsInSettings = \App\Models\Setting::where('admin_store_code', $code)->exists();
-            if ($existsInSettings) {
-                continue;
-            }
+            try {
+                if (\Illuminate\Support\Facades\Schema::hasTable('settings') && \Illuminate\Support\Facades\Schema::hasColumn('settings', 'admin_store_code')) {
+                    $existsInSettings = \App\Models\Setting::where('admin_store_code', $code)->exists();
+                    if ($existsInSettings) {
+                        continue;
+                    }
+                }
+            } catch (\Throwable $e) {}
 
             return $code;
         }

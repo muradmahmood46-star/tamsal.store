@@ -619,6 +619,7 @@ class Helper
                 \Illuminate\Support\Facades\Schema::create('sellers', function ($table) {
                     $table->id();
                     $table->unsignedBigInteger('user_id')->default(0)->index();
+                    $table->string('store_code', 32)->nullable()->index();
                     $table->string('shop_name')->nullable();
                     $table->text('shop_address')->nullable();
                     $table->string('product_types')->nullable();
@@ -634,19 +635,25 @@ class Helper
                 });
             } else {
                 if (!\Illuminate\Support\Facades\Schema::hasColumn('sellers', 'balance')) {
-                    \Illuminate\Support\Facades\Schema::table('sellers', function ($table) {
-                        $table->decimal('balance', 12, 2)->default(0.00)->after('shop_details');
-                    });
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('sellers', function ($table) {
+                            $table->decimal('balance', 12, 2)->default(0.00);
+                        });
+                    } catch (\Throwable $e) {}
                 }
                 if (!\Illuminate\Support\Facades\Schema::hasColumn('sellers', 'status')) {
-                    \Illuminate\Support\Facades\Schema::table('sellers', function ($table) {
-                        $table->tinyInteger('status')->default(1)->after('balance')->index();
-                    });
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('sellers', function ($table) {
+                            $table->tinyInteger('status')->default(1)->index();
+                        });
+                    } catch (\Throwable $e) {}
                 }
                 if (!\Illuminate\Support\Facades\Schema::hasColumn('sellers', 'store_code')) {
-                    \Illuminate\Support\Facades\Schema::table('sellers', function ($table) {
-                        $table->string('store_code', 32)->nullable()->unique()->after('user_id');
-                    });
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('sellers', function ($table) {
+                            $table->string('store_code', 32)->nullable()->index();
+                        });
+                    } catch (\Throwable $e) {}
                 }
             }
 
@@ -718,72 +725,114 @@ class Helper
             // 6. Check columns on existing core tables
             if (\Illuminate\Support\Facades\Schema::hasTable('users')) {
                 if (!\Illuminate\Support\Facades\Schema::hasColumn('users', 'is_seller')) {
-                    \Illuminate\Support\Facades\Schema::table('users', function ($table) {
-                        $table->tinyInteger('is_seller')->default(0)->after('email_verify')->index();
-                    });
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('users', function ($table) {
+                            $table->tinyInteger('is_seller')->default(0)->index();
+                        });
+                    } catch (\Throwable $e) {}
                 }
                 if (!\Illuminate\Support\Facades\Schema::hasColumn('users', 'is_seller_blocked')) {
-                    \Illuminate\Support\Facades\Schema::table('users', function ($table) {
-                        $table->tinyInteger('is_seller_blocked')->default(0)->after('is_seller')->index();
-                    });
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('users', function ($table) {
+                            $table->tinyInteger('is_seller_blocked')->default(0)->index();
+                        });
+                    } catch (\Throwable $e) {}
                 }
             }
 
             if (\Illuminate\Support\Facades\Schema::hasTable('items')) {
                 if (!\Illuminate\Support\Facades\Schema::hasColumn('items', 'vendor_id')) {
-                    \Illuminate\Support\Facades\Schema::table('items', function ($table) {
-                        $table->unsignedBigInteger('vendor_id')->default(0)->after('tax_id')->index();
-                    });
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('items', function ($table) {
+                            $table->unsignedBigInteger('vendor_id')->default(0)->index();
+                        });
+                    } catch (\Throwable $e) {}
                 }
                 if (!\Illuminate\Support\Facades\Schema::hasColumn('items', 'is_hidden_by_block')) {
-                    \Illuminate\Support\Facades\Schema::table('items', function ($table) {
-                        $table->tinyInteger('is_hidden_by_block')->default(0)->after('status')->index();
-                    });
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('items', function ($table) {
+                            $table->tinyInteger('is_hidden_by_block')->default(0)->index();
+                        });
+                    } catch (\Throwable $e) {}
                 }
             }
 
             if (\Illuminate\Support\Facades\Schema::hasTable('orders')) {
                 if (!\Illuminate\Support\Facades\Schema::hasColumn('orders', 'vendor_id')) {
-                    \Illuminate\Support\Facades\Schema::table('orders', function ($table) {
-                        $table->unsignedBigInteger('vendor_id')->default(0)->after('user_id')->index();
-                    });
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('orders', function ($table) {
+                            $table->unsignedBigInteger('vendor_id')->default(0)->index();
+                        });
+                    } catch (\Throwable $e) {}
                 }
             }
 
             if (\Illuminate\Support\Facades\Schema::hasTable('settings')) {
                 if (!\Illuminate\Support\Facades\Schema::hasColumn('settings', 'store_opening_fee')) {
-                    \Illuminate\Support\Facades\Schema::table('settings', function ($table) {
-                        $table->decimal('store_opening_fee', 12, 2)->default(0.00);
-                        $table->tinyInteger('is_store_opening_free')->default(1);
-                        $table->integer('vendor_free_orders')->default(5);
-                        $table->decimal('vendor_min_balance', 12, 2)->default(500.00);
-                        $table->decimal('vendor_commission_percent', 5, 2)->default(5.00);
-                    });
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('settings', function ($table) {
+                            $table->decimal('store_opening_fee', 12, 2)->default(0.00);
+                        });
+                    } catch (\Throwable $e) {}
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('settings', 'is_store_opening_free')) {
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('settings', function ($table) {
+                            $table->tinyInteger('is_store_opening_free')->default(1);
+                        });
+                    } catch (\Throwable $e) {}
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('settings', 'vendor_free_orders')) {
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('settings', function ($table) {
+                            $table->integer('vendor_free_orders')->default(5);
+                        });
+                    } catch (\Throwable $e) {}
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('settings', 'vendor_min_balance')) {
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('settings', function ($table) {
+                            $table->decimal('vendor_min_balance', 12, 2)->default(500.00);
+                        });
+                    } catch (\Throwable $e) {}
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('settings', 'vendor_commission_percent')) {
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('settings', function ($table) {
+                            $table->decimal('vendor_commission_percent', 5, 2)->default(5.00);
+                        });
+                    } catch (\Throwable $e) {}
                 }
                 if (!\Illuminate\Support\Facades\Schema::hasColumn('settings', 'admin_store_code')) {
-                    \Illuminate\Support\Facades\Schema::table('settings', function ($table) {
-                        $table->string('admin_store_code', 32)->nullable()->unique()->after('brand_name');
-                    });
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('settings', function ($table) {
+                            $table->string('admin_store_code', 32)->nullable();
+                        });
+                    } catch (\Throwable $e) {}
                 }
             }
 
             // Auto-generate missing store codes for existing sellers
-            if (\Illuminate\Support\Facades\Schema::hasTable('sellers') && \Illuminate\Support\Facades\Schema::hasColumn('sellers', 'store_code')) {
-                $sellers = \App\Models\Seller::whereNull('store_code')->orWhere('store_code', '')->get();
-                foreach ($sellers as $seller) {
-                    $seller->store_code = \App\Models\Seller::generateUniqueStoreCode();
-                    $seller->save();
+            try {
+                if (\Illuminate\Support\Facades\Schema::hasTable('sellers') && \Illuminate\Support\Facades\Schema::hasColumn('sellers', 'store_code')) {
+                    $sellers = \App\Models\Seller::whereNull('store_code')->orWhere('store_code', '')->get();
+                    foreach ($sellers as $seller) {
+                        $seller->store_code = \App\Models\Seller::generateUniqueStoreCode();
+                        $seller->save();
+                    }
                 }
-            }
+            } catch (\Throwable $e) {}
 
             // Auto-generate missing admin store code
-            if (\Illuminate\Support\Facades\Schema::hasTable('settings') && \Illuminate\Support\Facades\Schema::hasColumn('settings', 'admin_store_code')) {
-                $settings = \App\Models\Setting::whereNull('admin_store_code')->orWhere('admin_store_code', '')->get();
-                foreach ($settings as $setting) {
-                    $setting->admin_store_code = \App\Models\Seller::generateUniqueStoreCode();
-                    $setting->save();
+            try {
+                if (\Illuminate\Support\Facades\Schema::hasTable('settings') && \Illuminate\Support\Facades\Schema::hasColumn('settings', 'admin_store_code')) {
+                    $settings = \App\Models\Setting::whereNull('admin_store_code')->orWhere('admin_store_code', '')->get();
+                    foreach ($settings as $setting) {
+                        $setting->admin_store_code = \App\Models\Seller::generateUniqueStoreCode();
+                        $setting->save();
+                    }
                 }
-            }
+            } catch (\Throwable $e) {}
         } catch (\Throwable $e) {}
     }
 }
