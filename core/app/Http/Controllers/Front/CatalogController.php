@@ -71,12 +71,12 @@ class CatalogController extends Controller
         if ($vendorParam !== null) {
             $adminStoreCode = $setting ? $setting->getAdminStoreCode() : null;
 
-            if ($vendorParam === 'admin' || $vendorParam === '0' || ($adminStoreCode && strtolower($vendorParam) === strtolower($adminStoreCode))) {
+            if ($vendorParam === 'admin' || $vendorParam === '0' || ($adminStoreCode && strcasecmp($vendorParam, $adminStoreCode) === 0)) {
                 $vendor = 'admin';
                 $vendorStore = (object)[
                     'is_admin' => true,
                     'vendor_id' => 0,
-                    'store_code' => $adminStoreCode,
+                    'store_code' => $adminStoreCode ?: 'admin',
                     'store_url' => $setting ? $setting->getAdminStoreUrl() : route('front.catalog', ['vendor' => 'admin']),
                     'name' => ($setting->brand_name ?? 'Official Store'),
                     'logo_url' => ($setting->brand_logo ? url('/core/public/storage/images/' . $setting->brand_logo) : null),
@@ -97,6 +97,11 @@ class CatalogController extends Controller
                     $vendorUser = \App\Models\User::find($vendorParam);
                     if ($vendorUser) {
                         $seller = \App\Models\Seller::where('user_id', $vendorUser->id)->first();
+                    } else {
+                        $seller = \App\Models\Seller::find($vendorParam);
+                        if ($seller) {
+                            $vendorUser = \App\Models\User::find($seller->user_id);
+                        }
                     }
                 }
 
@@ -114,12 +119,16 @@ class CatalogController extends Controller
                         $bannerUrl = asset('core/public/storage/images/stores/' . $seller->shop_banner);
                     }
 
+                    $storeName = ($seller && !empty($seller->shop_name))
+                        ? $seller->shop_name
+                        : (trim(($vendorUser->first_name ?? '') . ' ' . ($vendorUser->last_name ?? '')) ? trim(($vendorUser->first_name ?? '') . ' ' . ($vendorUser->last_name ?? '')) . "'s Store" : 'Verified Store');
+
                     $vendorStore = (object)[
                         'is_admin' => false,
                         'vendor_id' => $vendorUser->id,
                         'store_code' => $seller ? $seller->getStoreCode() : (string)$vendorUser->id,
                         'store_url' => $seller ? $seller->getStoreUrl() : route('front.catalog', ['vendor' => $vendorUser->id]),
-                        'name' => $seller && !empty($seller->shop_name) ? $seller->shop_name : ($vendorUser->first_name . '\'s Store'),
+                        'name' => $storeName,
                         'logo_url' => $logoUrl,
                         'banner_url' => $bannerUrl,
                         'type' => __('Verified Store'),
@@ -389,24 +398,30 @@ class CatalogController extends Controller
                 ")
                 ->get();
         } elseif ($vendorStore !== null) {
-            if ($vendorStore->is_admin) {
-                $deals = Deal::with(['dealItems.item'])
-                    ->active()
-                    ->where(function($q) {
-                        $q->whereNull('vendor_id')->orWhere('vendor_id', 0);
-                    })
-                    ->orderBy('id', 'desc')
-                    ->get();
-            } else {
-                $deals = Deal::with(['dealItems.item'])
-                    ->active()
-                    ->where('vendor_id', $vendorStore->vendor_id)
-                    ->orderBy('id', 'desc')
-                    ->get();
+            try {
+                if ($vendorStore->is_admin) {
+                    $deals = Deal::with(['dealItems.item'])
+                        ->active()
+                        ->where(function($q) {
+                            $q->whereNull('vendor_id')->orWhere('vendor_id', 0);
+                        })
+                        ->orderBy('id', 'desc')
+                        ->get();
+                } else {
+                    $deals = Deal::with(['dealItems.item'])
+                        ->active()
+                        ->where('vendor_id', $vendorStore->vendor_id)
+                        ->orderBy('id', 'desc')
+                        ->get();
+                }
+            } catch (\Throwable $e) {
+                $deals = collect();
             }
         }
 
         if($request->ajax()) $blade = 'front.catalog.catalog';
+
+        $buyerCatLimit = $setting ? ($setting->buyer_category_limit ?? 50) : 50;
 
         return view($blade,[
             'attrubutes' => $attrubutes,
@@ -427,7 +442,7 @@ class CatalogController extends Controller
             'brands' => Brand::withCount('items')->whereStatus(1)->get(),
             'categories' => Category::whereStatus(1)->orderby('serial','asc')->withCount(['items' => function($query) {
                 $query->where('status',1);
-            }])->take(Setting::first()->buyer_category_limit ?? 50)->get(),
+            }])->take($buyerCatLimit)->get(),
         ]);
 	}
 
