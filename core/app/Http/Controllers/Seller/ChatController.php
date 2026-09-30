@@ -73,7 +73,7 @@ class ChatController extends Controller
     {
         $request->validate([
             'conversation_id' => 'required|integer',
-            'message' => 'required|string|max:1500',
+            'message' => 'required|string|max:10000',
         ]);
 
         $user = Auth::user();

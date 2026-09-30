@@ -60,7 +60,7 @@ class AdminMessageController extends Controller
     public function send(Request $request)
     {
         $request->validate([
-            'message' => 'required|string|max:2000',
+            'message' => 'required|string|max:10000',
         ]);
 
         $vendorId = Auth::id();

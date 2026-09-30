@@ -196,7 +196,7 @@ class StoreController extends Controller
     public function sendMessage(Request $request, $id)
     {
         $request->validate([
-            'message' => 'required|string|max:2000'
+            'message' => 'required|string|max:10000'
         ]);
 
         $seller = Seller::findOrFail($id);
