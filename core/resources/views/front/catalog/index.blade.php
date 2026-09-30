@@ -46,7 +46,7 @@
                         <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between" style="gap: 8px;">
                             
                             {{-- Left: Store Logo & Details --}}
-                            <div class="d-flex align-items-center flex-grow-1 min-w-0" style="gap: 12px;">
+                            <div class="d-flex align-items-center flex-grow-1 min-w-0" style="gap: 12px; width: 100%; max-width: 100%;">
                                 {{-- Store Logo / Avatar --}}
                                 <div class="store-hero-avatar flex-shrink-0">
                                     @if(!empty($vendorStore->logo_url))
@@ -59,7 +59,7 @@
                                 </div>
 
                                 {{-- Store Text Info --}}
-                                <div class="store-hero-info text-white min-w-0" style="line-height: 1.3;">
+                                <div class="store-hero-info text-white flex-grow-1 min-w-0" style="line-height: 1.3; overflow: hidden;">
                                     <div class="d-flex align-items-center flex-wrap" style="gap: 6px;">
                                         <h3 class="store-hero-name mb-0 text-white font-weight-bold" style="font-size: 18px; letter-spacing: -0.2px; line-height: 1.2;">
                                             {{ $vendorStore->name }}
@@ -69,23 +69,23 @@
                                         </span>
                                     </div>
 
-                                    <div class="d-flex flex-wrap align-items-center text-white-50 mt-1" style="gap: 10px; font-size: 12px;">
-                                        <span><i class="fas fa-boxes text-warning mr-1"></i> <strong class="text-white">{{ $vendorStore->products_count }}</strong> {{ __('Products') }}</span>
+                                    <div class="d-flex align-items-center text-white-50 mt-1" style="gap: 8px; font-size: 12px; white-space: nowrap; overflow: hidden; min-width: 0;">
+                                        <span class="flex-shrink-0"><i class="fas fa-boxes text-warning mr-1"></i> <strong class="text-white">{{ $vendorStore->products_count }}</strong> {{ __('Products') }}</span>
                                         @if(!empty($vendorStore->address))
-                                            <span class="text-white-50" style="opacity: 0.95;"><i class="fas fa-map-marker-alt text-danger mr-1"></i> {{ Str::limit($vendorStore->address, 50) }}</span>
+                                            <span class="text-white-50 text-truncate" style="opacity: 0.95; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;" title="{{ $vendorStore->address }}"><i class="fas fa-map-marker-alt text-danger mr-1"></i> {{ $vendorStore->address }}</span>
                                         @endif
                                     </div>
 
                                     @if(!empty($vendorStore->details))
-                                        <p class="text-white-50 small mb-0 mt-1 d-none d-md-block" style="max-width: 600px; line-height: 1.3; opacity: 0.9; font-size: 11.5px;">
+                                        <p class="text-white-50 small mb-0 mt-1 d-none d-md-block text-truncate" style="max-width: 600px; line-height: 1.3; opacity: 0.9; font-size: 11.5px;">
                                             {{ Str::limit($vendorStore->details, 110) }}
                                         </p>
                                     @endif
                                 </div>
                             </div>
 
-                            {{-- Right / Bottom on mobile: Share Link & View All --}}
-                            <div class="store-hero-actions d-flex align-items-center flex-wrap" style="gap: 6px; width: auto;">
+                            {{-- Right / Bottom on mobile: Share Link & View All (Shifted Right) --}}
+                            <div class="store-hero-actions d-flex align-items-center justify-content-end flex-wrap ml-auto" style="gap: 6px; width: auto; margin-left: auto;">
                                 <div class="store-share-pill shadow-sm" style="display: inline-flex; align-items: center; background: #ffffff; border-radius: 16px; padding: 1px 2px 1px 8px; border: 1px solid rgba(255,255,255,0.75); box-sizing: border-box; height: 25px;">
                                     <i class="fas fa-link mr-1" style="color: #0d6efd; font-size: 10px; flex-shrink: 0;"></i>
                                     <input type="text" id="frontStoreShareLink" value="{{ $vendorStore->store_url ?? url('/c/' . ($vendorStore->store_code ?? ($vendorStore->vendor_id ?: 'admin'))) }}" readonly style="border: none !important; outline: none !important; box-shadow: none !important; background: transparent !important; color: #1e293b !important; font-size: 11px !important; font-weight: 600 !important; padding: 0 4px !important; margin: 0 !important; width: 170px; height: 21px !important; line-height: 21px !important; cursor: text; font-family: inherit;">
