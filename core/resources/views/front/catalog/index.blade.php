@@ -39,37 +39,218 @@
   <!-- Page Content-->
   <div class="container padding-bottom-3x mb-1">
         @if(isset($vendorStore) && $vendorStore)
-            <!-- Store Hero Header Banner (Compact & Modern) -->
+            <!-- Store Hero Header Banner (Responsive: Spacious on PC, Compact on Mobile) -->
+            <style>
+                .store-hero-card {
+                    border-radius: 14px;
+                    background: {{ !empty($vendorStore->banner_url) ? 'url(' . $vendorStore->banner_url . ') center/cover no-repeat' : 'linear-gradient(135deg, #0d6efd 0%, #063970 100%)' }};
+                    position: relative;
+                }
+                .store-hero-card-inner {
+                    background: {{ !empty($vendorStore->banner_url) ? 'rgba(15, 23, 42, 0.82)' : 'transparent' }};
+                    padding: 24px 28px;
+                }
+                .store-hero-avatar-img,
+                .store-hero-avatar-fallback {
+                    width: 76px;
+                    height: 76px;
+                    font-size: 32px;
+                    border: 3px solid rgba(255,255,255,0.95) !important;
+                }
+                .store-hero-name {
+                    font-size: 22px;
+                    letter-spacing: -0.2px;
+                    line-height: 1.2;
+                }
+                .store-hero-badge {
+                    font-size: 12px;
+                    padding: 3px 8px;
+                    border-radius: 6px;
+                }
+                .store-hero-meta {
+                    font-size: 13.5px;
+                    margin-top: 6px;
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                }
+                .store-hero-details {
+                    display: block;
+                    max-width: 650px;
+                    line-height: 1.4;
+                    opacity: 0.9;
+                    font-size: 12.5px;
+                    margin-top: 6px;
+                }
+                .store-hero-actions {
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-end;
+                    flex-wrap: wrap;
+                    gap: 10px;
+                }
+                .store-share-pill {
+                    display: inline-flex;
+                    align-items: center;
+                    background: #ffffff;
+                    border-radius: 20px;
+                    padding: 2px 3px 2px 12px;
+                    border: 1px solid rgba(255,255,255,0.75);
+                    box-sizing: border-box;
+                    height: 38px;
+                }
+                .store-share-pill .fa-link {
+                    color: #0d6efd;
+                    font-size: 13px;
+                    margin-right: 6px;
+                    flex-shrink: 0;
+                }
+                .store-share-input {
+                    border: none !important;
+                    outline: none !important;
+                    box-shadow: none !important;
+                    background: transparent !important;
+                    color: #1e293b !important;
+                    font-size: 12.5px !important;
+                    font-weight: 600 !important;
+                    padding: 0 6px !important;
+                    margin: 0 !important;
+                    width: 250px !important;
+                    height: 32px !important;
+                    line-height: 32px !important;
+                    cursor: text;
+                    font-family: inherit;
+                }
+                .store-copy-btn {
+                    border-radius: 16px !important;
+                    font-size: 12px !important;
+                    padding: 0 12px !important;
+                    white-space: nowrap;
+                    flex-shrink: 0;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 4px;
+                    height: 30px !important;
+                    box-shadow: 0 1px 3px rgba(13,110,253,0.25);
+                    border: none;
+                }
+                .store-all-btn {
+                    border-radius: 20px !important;
+                    font-size: 13px !important;
+                    height: 38px !important;
+                    padding: 0 16px !important;
+                    color: #0d6efd !important;
+                    white-space: nowrap;
+                    border: 1px solid rgba(255,255,255,0.5) !important;
+                    display: inline-flex;
+                    align-items: center;
+                }
+
+                /* Mobile View Specifics */
+                @media (max-width: 767.98px) {
+                    .store-hero-card-inner {
+                        padding: 12px 14px !important;
+                    }
+                    .store-hero-avatar-img,
+                    .store-hero-avatar-fallback {
+                        width: 50px !important;
+                        height: 50px !important;
+                        font-size: 22px !important;
+                        border: 2px solid rgba(255,255,255,0.95) !important;
+                    }
+                    .store-hero-name {
+                        font-size: 18px !important;
+                    }
+                    .store-hero-badge {
+                        font-size: 10.5px !important;
+                        padding: 2px 6px !important;
+                        border-radius: 4px !important;
+                    }
+                    .store-hero-meta {
+                        font-size: 12px !important;
+                        margin-top: 3px !important;
+                        gap: 8px !important;
+                        white-space: nowrap !important;
+                        overflow: hidden !important;
+                        min-width: 0 !important;
+                    }
+                    .store-hero-details {
+                        display: none !important;
+                    }
+                    .store-hero-actions {
+                        width: auto !important;
+                        margin-left: auto !important;
+                        justify-content: flex-end !important;
+                        gap: 6px !important;
+                        margin-top: 4px !important;
+                    }
+                    .store-share-pill {
+                        height: 25px !important;
+                        padding: 1px 2px 1px 8px !important;
+                        border-radius: 16px !important;
+                    }
+                    .store-share-pill .fa-link {
+                        font-size: 10px !important;
+                        margin-right: 4px !important;
+                    }
+                    .store-share-input {
+                        width: 170px !important;
+                        font-size: 11px !important;
+                        height: 21px !important;
+                        line-height: 21px !important;
+                        padding: 0 4px !important;
+                    }
+                    .store-copy-btn {
+                        height: 21px !important;
+                        padding: 0 8px !important;
+                        font-size: 9.5px !important;
+                        border-radius: 12px !important;
+                        gap: 3px !important;
+                    }
+                    .store-copy-btn i {
+                        font-size: 9px !important;
+                    }
+                    .store-all-btn {
+                        height: 25px !important;
+                        padding: 0 10px !important;
+                        font-size: 10px !important;
+                        border-radius: 14px !important;
+                    }
+                    .store-all-btn i {
+                        font-size: 9.5px !important;
+                    }
+                }
+            </style>
             <div class="store-hero-banner mb-3">
-                <div class="card border-0 shadow-sm overflow-hidden" style="border-radius: 12px; background: {{ !empty($vendorStore->banner_url) ? 'url(' . $vendorStore->banner_url . ') center/cover no-repeat' : 'linear-gradient(135deg, #0d6efd 0%, #063970 100%)' }}; position: relative;">
-                    <div style="background: {{ !empty($vendorStore->banner_url) ? 'rgba(15, 23, 42, 0.82)' : 'transparent' }}; padding: 12px 14px;">
-                        <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between" style="gap: 8px;">
+                <div class="card border-0 shadow-sm overflow-hidden store-hero-card">
+                    <div class="store-hero-card-inner">
+                        <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between" style="gap: 12px;">
                             
                             {{-- Left: Store Logo & Details --}}
-                            <div class="d-flex align-items-center flex-grow-1 min-w-0" style="gap: 12px; width: 100%; max-width: 100%;">
+                            <div class="d-flex align-items-center flex-grow-1 min-w-0" style="gap: 14px; width: 100%; max-width: 100%;">
                                 {{-- Store Logo / Avatar --}}
                                 <div class="store-hero-avatar flex-shrink-0">
                                     @if(!empty($vendorStore->logo_url))
-                                        <img src="{{ $vendorStore->logo_url }}" alt="{{ $vendorStore->name }}" class="rounded-circle border bg-white shadow-sm" style="width: 50px; height: 50px; object-fit: cover; border: 2px solid rgba(255,255,255,0.95) !important;">
+                                        <img src="{{ $vendorStore->logo_url }}" alt="{{ $vendorStore->name }}" class="rounded-circle border bg-white shadow-sm store-hero-avatar-img" style="object-fit: cover;">
                                     @else
-                                        <div class="rounded-circle d-flex align-items-center justify-content-center text-primary bg-white shadow-sm" style="width: 50px; height: 50px; font-size: 22px; border: 2px solid rgba(255,255,255,0.95);">
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center text-primary bg-white shadow-sm store-hero-avatar-fallback">
                                             <i class="fas fa-store"></i>
                                         </div>
                                     @endif
                                 </div>
 
                                 {{-- Store Text Info --}}
-                                <div class="store-hero-info text-white flex-grow-1 min-w-0" style="line-height: 1.3; overflow: hidden;">
-                                    <div class="d-flex align-items-center flex-wrap" style="gap: 6px;">
-                                        <h3 class="store-hero-name mb-0 text-white font-weight-bold" style="font-size: 18px; letter-spacing: -0.2px; line-height: 1.2;">
+                                <div class="store-hero-info text-white flex-grow-1 min-w-0" style="overflow: hidden;">
+                                    <div class="d-flex align-items-center flex-wrap" style="gap: 8px;">
+                                        <h3 class="store-hero-name mb-0 text-white font-weight-bold">
                                             {{ $vendorStore->name }}
                                         </h3>
-                                        <span class="badge {{ $vendorStore->is_admin ? 'badge-warning text-dark' : 'badge-success text-white' }} font-weight-bold" style="font-size: 10.5px; padding: 2px 6px; border-radius: 4px;">
+                                        <span class="badge {{ $vendorStore->is_admin ? 'badge-warning text-dark' : 'badge-success text-white' }} font-weight-bold store-hero-badge">
                                             <i class="fas fa-check-circle mr-1"></i> {{ $vendorStore->type }}
                                         </span>
                                     </div>
 
-                                    <div class="d-flex align-items-center text-white-50 mt-1" style="gap: 8px; font-size: 12px; white-space: nowrap; overflow: hidden; min-width: 0;">
+                                    <div class="store-hero-meta text-white-50">
                                         <span class="flex-shrink-0"><i class="fas fa-boxes text-warning mr-1"></i> <strong class="text-white">{{ $vendorStore->products_count }}</strong> {{ __('Products') }}</span>
                                         @if(!empty($vendorStore->address))
                                             <span class="text-white-50 text-truncate" style="opacity: 0.95; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;" title="{{ $vendorStore->address }}"><i class="fas fa-map-marker-alt text-danger mr-1"></i> {{ $vendorStore->address }}</span>
@@ -77,24 +258,24 @@
                                     </div>
 
                                     @if(!empty($vendorStore->details))
-                                        <p class="text-white-50 small mb-0 mt-1 d-none d-md-block text-truncate" style="max-width: 600px; line-height: 1.3; opacity: 0.9; font-size: 11.5px;">
+                                        <p class="text-white-50 small mb-0 store-hero-details text-truncate">
                                             {{ Str::limit($vendorStore->details, 110) }}
                                         </p>
                                     @endif
                                 </div>
                             </div>
 
-                            {{-- Right / Bottom on mobile: Share Link & View All (Shifted Right) --}}
-                            <div class="store-hero-actions d-flex align-items-center justify-content-end flex-wrap ml-auto" style="gap: 6px; width: auto; margin-left: auto;">
-                                <div class="store-share-pill shadow-sm" style="display: inline-flex; align-items: center; background: #ffffff; border-radius: 16px; padding: 1px 2px 1px 8px; border: 1px solid rgba(255,255,255,0.75); box-sizing: border-box; height: 25px;">
-                                    <i class="fas fa-link mr-1" style="color: #0d6efd; font-size: 10px; flex-shrink: 0;"></i>
-                                    <input type="text" id="frontStoreShareLink" value="{{ $vendorStore->store_url ?? url('/c/' . ($vendorStore->store_code ?? ($vendorStore->vendor_id ?: 'admin'))) }}" readonly style="border: none !important; outline: none !important; box-shadow: none !important; background: transparent !important; color: #1e293b !important; font-size: 11px !important; font-weight: 600 !important; padding: 0 4px !important; margin: 0 !important; width: 170px; height: 21px !important; line-height: 21px !important; cursor: text; font-family: inherit;">
-                                    <button type="button" class="btn btn-primary btn-sm font-weight-bold" id="copyFrontStoreBtn" onclick="copyFrontStoreLink()" style="border-radius: 12px; font-size: 9.5px; padding: 0 8px; white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 3px; height: 21px; box-shadow: 0 1px 3px rgba(13,110,253,0.2); border: none;">
-                                        <i class="fas fa-copy" id="frontCopyIcon" style="font-size: 9px;"></i> <span id="frontCopyText">{{ __('Copy') }}</span>
+                            {{-- Right: Share Link & View All --}}
+                            <div class="store-hero-actions">
+                                <div class="store-share-pill shadow-sm">
+                                    <i class="fas fa-link"></i>
+                                    <input type="text" id="frontStoreShareLink" class="store-share-input" value="{{ $vendorStore->store_url ?? url('/c/' . ($vendorStore->store_code ?? ($vendorStore->vendor_id ?: 'admin'))) }}" readonly>
+                                    <button type="button" class="btn btn-primary btn-sm font-weight-bold store-copy-btn" id="copyFrontStoreBtn" onclick="copyFrontStoreLink()">
+                                        <i class="fas fa-copy" id="frontCopyIcon"></i> <span id="frontCopyText">{{ __('Copy') }}</span>
                                     </button>
                                 </div>
-                                <a href="{{ route('front.catalog') }}" class="btn btn-light btn-sm font-weight-bold shadow-sm d-inline-flex align-items-center" style="border-radius: 14px; font-size: 10px; height: 25px; padding: 0 10px; color: #0d6efd; white-space: nowrap; border: 1px solid rgba(255,255,255,0.5);">
-                                    <i class="fas fa-th-large mr-1" style="font-size: 9.5px;"></i> {{ __('All Products') }}
+                                <a href="{{ route('front.catalog') }}" class="btn btn-light btn-sm font-weight-bold shadow-sm store-all-btn">
+                                    <i class="fas fa-th-large mr-1"></i> {{ __('All Products') }}
                                 </a>
                             </div>
 
