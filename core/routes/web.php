@@ -13,6 +13,7 @@ Route::group(['middleware' => ['adminlocalize', 'demo']], function () {
         if(function_exists('opcache_reset')) { @opcache_reset(); }
         try {
             \App\Helpers\Helper::ensureDealsTable();
+            \App\Helpers\Helper::ensureStoreTables();
             \Illuminate\Support\Facades\Artisan::call('optimize:clear');
             \Illuminate\Support\Facades\Artisan::call('view:clear');
             \Illuminate\Support\Facades\Artisan::call('cache:clear');

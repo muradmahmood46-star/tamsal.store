@@ -150,10 +150,16 @@ class Setting extends Model
             return (string)$this->admin_store_code;
         }
 
-        $code = Seller::generateUniqueStoreCode();
-        $this->admin_store_code = $code;
-        $this->saveQuietly();
-        return $code;
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasColumn('settings', 'admin_store_code')) {
+                $code = Seller::generateUniqueStoreCode();
+                $this->admin_store_code = $code;
+                $this->save();
+                return $code;
+            }
+        } catch (\Throwable $e) {}
+
+        return 'admin';
     }
 
     public function getAdminStoreUrl(): string

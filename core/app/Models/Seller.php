@@ -70,10 +70,16 @@ class Seller extends Model
             return (string)$this->store_code;
         }
 
-        $code = self::generateUniqueStoreCode();
-        $this->store_code = $code;
-        $this->saveQuietly();
-        return $code;
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasColumn('sellers', 'store_code')) {
+                $code = self::generateUniqueStoreCode();
+                $this->store_code = $code;
+                $this->save();
+                return $code;
+            }
+        } catch (\Throwable $e) {}
+
+        return (string)($this->user_id ?: $this->id);
     }
 
     public function getStoreUrl(): string

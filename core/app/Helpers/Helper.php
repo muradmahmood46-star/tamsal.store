@@ -643,6 +643,11 @@ class Helper
                         $table->tinyInteger('status')->default(1)->after('balance')->index();
                     });
                 }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('sellers', 'store_code')) {
+                    \Illuminate\Support\Facades\Schema::table('sellers', function ($table) {
+                        $table->string('store_code', 32)->nullable()->unique()->after('user_id');
+                    });
+                }
             }
 
             // 2. Store Requests table
@@ -754,6 +759,29 @@ class Helper
                         $table->decimal('vendor_min_balance', 12, 2)->default(500.00);
                         $table->decimal('vendor_commission_percent', 5, 2)->default(5.00);
                     });
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('settings', 'admin_store_code')) {
+                    \Illuminate\Support\Facades\Schema::table('settings', function ($table) {
+                        $table->string('admin_store_code', 32)->nullable()->unique()->after('brand_name');
+                    });
+                }
+            }
+
+            // Auto-generate missing store codes for existing sellers
+            if (\Illuminate\Support\Facades\Schema::hasTable('sellers') && \Illuminate\Support\Facades\Schema::hasColumn('sellers', 'store_code')) {
+                $sellers = \App\Models\Seller::whereNull('store_code')->orWhere('store_code', '')->get();
+                foreach ($sellers as $seller) {
+                    $seller->store_code = \App\Models\Seller::generateUniqueStoreCode();
+                    $seller->save();
+                }
+            }
+
+            // Auto-generate missing admin store code
+            if (\Illuminate\Support\Facades\Schema::hasTable('settings') && \Illuminate\Support\Facades\Schema::hasColumn('settings', 'admin_store_code')) {
+                $settings = \App\Models\Setting::whereNull('admin_store_code')->orWhere('admin_store_code', '')->get();
+                foreach ($settings as $setting) {
+                    $setting->admin_store_code = \App\Models\Seller::generateUniqueStoreCode();
+                    $setting->save();
                 }
             }
         } catch (\Throwable $e) {}
