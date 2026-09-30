@@ -505,7 +505,7 @@
                                 <div style="font-size: 11px; font-weight: 700; color: #a5b4fc; margin-bottom: 2px;">
                                     <i class="fas fa-shield-alt mr-1"></i> {{ __('Administration / Moderator') }}
                                 </div>
-                                <div>{{ $msg->message }}</div>
+                                <div style="white-space: pre-wrap; word-break: break-word; line-height: 1.55; text-align: left;">{!! \App\Helpers\Helper::formatChatMessage($msg->message) !!}</div>
                                 <div class="bubble-meta">
                                     <span>{{ $msg->created_at ? $msg->created_at->format('h:i A') : '' }}</span>
                                 </div>
@@ -515,7 +515,7 @@
                                 <div style="font-size: 11px; font-weight: 700; color: #0d6efd; margin-bottom: 2px;">
                                     <i class="fas fa-user mr-1"></i> {{ $activeBuyer }} (Customer)
                                 </div>
-                                <div>{{ $msg->message }}</div>
+                                <div style="white-space: pre-wrap; word-break: break-word; line-height: 1.55;">{!! \App\Helpers\Helper::formatChatMessage($msg->message) !!}</div>
                                 <div class="bubble-meta">
                                     <span>{{ $msg->created_at ? $msg->created_at->format('h:i A') : '' }}</span>
                                 </div>
@@ -525,7 +525,7 @@
                                 <div style="font-size: 11px; font-weight: 700; color: #008069; margin-bottom: 2px;">
                                     <i class="fas fa-store mr-1"></i> {{ $activeStore }} ({{ $activeBuyer }})
                                 </div>
-                                <div>{{ $msg->message }}</div>
+                                <div style="white-space: pre-wrap; word-break: break-word; line-height: 1.55;">{!! \App\Helpers\Helper::formatChatMessage($msg->message) !!}</div>
                                 <div class="bubble-meta">
                                     <span>{{ $msg->created_at ? $msg->created_at->format('h:i A') : '' }}</span>
                                 </div>
@@ -600,6 +600,43 @@
         .catch(e => console.error('Poll error', e));
     }
 
+    function formatChatMessage(text) {
+        if (!text) return '';
+
+        // Step 1: Escape basic HTML entities to prevent XSS
+        let escaped = text
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+
+        // Step 2: Markdown bold (**text** or __text__)
+        escaped = escaped.replace(/\*\*(.+?)\*\*/gs, '<strong>$1</strong>');
+        escaped = escaped.replace(/__(.+?)__/gs, '<strong>$1</strong>');
+
+        // Step 3: Markdown single asterisk *bold* and _italic_
+        escaped = escaped.replace(/(^|\s)\*([^\s\*].*?[^\s\*]|[^\s\*])\*($|\s|[,\.\?!:;])/gs, '$1<strong>$2</strong>$3');
+        escaped = escaped.replace(/(^|\s)_([^\s_].*?[^\s_]|[^\s_])_($|\s|[,\.\?!:;])/gs, '$1<em>$2</em>$3');
+
+        // Step 4: Strikethrough (~~text~~ or ~text~)
+        escaped = escaped.replace(/~~(.+?)~~/gs, '<del>$1</del>');
+        escaped = escaped.replace(/(^|\s)~([^\s~].*?[^\s~]|[^\s~])~($|\s|[,\.\?!:;])/gs, '$1<del>$2</del>$3');
+
+        // Step 5: Inline code (`text`)
+        escaped = escaped.replace(/`(.+?)`/gs, '<code style="background: rgba(0,0,0,0.06); padding: 1px 4px; border-radius: 3px; font-family: monospace;">$1</code>');
+
+        // Step 6: Safe standard formatting tags
+        escaped = escaped.replace(/&lt;(\/?)(b|strong|i|em|u|del|s|mark|code)&gt;/gi, '<$1$2>');
+        escaped = escaped.replace(/&lt;font color=(&quot;|'|)([a-zA-Z0-9#]+)\1&gt;(.*?)&lt;\/font&gt;/gi, '<font color="$2">$3</font>');
+
+        // Step 7: Auto linkify URLs
+        const urlPattern = /(?<!href="|">)(https?:\/\/[^\s<]+)/gi;
+        escaped = escaped.replace(urlPattern, '<a href="$1" target="_blank" rel="noopener noreferrer" style="color: #2563eb; text-decoration: underline; word-break: break-all;">$1</a>');
+
+        return escaped;
+    }
+
     function renderAdminMessages(messages) {
         const c = document.getElementById('admin_messages_container');
         if (!c) return;
@@ -614,7 +651,7 @@
                         <div style="font-size: 11px; font-weight: 700; color: #a5b4fc; margin-bottom: 2px;">
                             <i class="fas fa-shield-alt mr-1"></i> {{ __('Administration / Moderator') }}
                         </div>
-                        <div>${escapeHtml(msg.message)}</div>
+                        <div style="white-space: pre-wrap; word-break: break-word; line-height: 1.55; text-align: left;">${formatChatMessage(msg.message)}</div>
                         <div class="bubble-meta">
                             <span>${msg.time}</span>
                         </div>
@@ -626,7 +663,7 @@
                         <div style="font-size: 11px; font-weight: 700; color: #0d6efd; margin-bottom: 2px;">
                             <i class="fas fa-user mr-1"></i> ${escapeHtml(buyerName)} (Customer)
                         </div>
-                        <div>${escapeHtml(msg.message)}</div>
+                        <div style="white-space: pre-wrap; word-break: break-word; line-height: 1.55;">${formatChatMessage(msg.message)}</div>
                         <div class="bubble-meta">
                             <span>${msg.time}</span>
                         </div>
@@ -638,7 +675,7 @@
                         <div style="font-size: 11px; font-weight: 700; color: #008069; margin-bottom: 2px;">
                             <i class="fas fa-store mr-1"></i> ${escapeHtml(storeName)} (${escapeHtml(buyerName)})
                         </div>
-                        <div>${escapeHtml(msg.message)}</div>
+                        <div style="white-space: pre-wrap; word-break: break-word; line-height: 1.55;">${formatChatMessage(msg.message)}</div>
                         <div class="bubble-meta">
                             <span>${msg.time}</span>
                         </div>
@@ -664,7 +701,7 @@
                 <div style="font-size: 11px; font-weight: 700; color: #a5b4fc; margin-bottom: 2px;">
                     <i class="fas fa-shield-alt mr-1"></i> {{ __('Administration / Moderator') }}
                 </div>
-                <div>${escapeHtml(text)}</div>
+                <div style="white-space: pre-wrap; word-break: break-word; line-height: 1.55; text-align: left;">${formatChatMessage(text)}</div>
                 <div class="bubble-meta">
                     <span>${now}</span>
                 </div>

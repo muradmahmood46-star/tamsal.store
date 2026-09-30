@@ -396,12 +396,24 @@
                                                         </div>
                                                         <div class="card-body p-3 bg-white">
                                                             <!-- History of messages -->
-                                                            <div id="modalChatHistory{{ $seller->id }}" class="p-2 mb-3 bg-light border rounded" style="max-height: 170px; overflow-y: auto; font-size: 12.5px; display: none;"></div>
+                                                            <div id="modalChatHistory{{ $seller->id }}" class="p-2 mb-3 bg-light border rounded" style="max-height: 200px; overflow-y: auto; font-size: 13px; display: none;"></div>
 
-                                                            <div class="input-group">
-                                                                <input type="text" id="modalStoreMessageInput{{ $seller->id }}" class="form-control" placeholder="{{ __('Type a direct message to :store (e.g. Regarding product policy, order updates, congratulations, etc.)...', ['store' => $seller->shop_name]) }}" onkeypress="handleStoreMsgKey(event, {{ $seller->id }})">
-                                                                <div class="input-group-append">
-                                                                    <button type="button" class="btn btn-primary font-weight-bold" id="modalSendStoreMsgBtn{{ $seller->id }}" onclick="sendDirectStoreMessage({{ $seller->id }})">
+                                                            <!-- Formatting Tools -->
+                                                            <div class="d-flex align-items-center mb-1 flex-wrap" style="gap: 5px;">
+                                                                <button type="button" class="btn btn-light btn-xs border px-2 py-0" style="font-size: 12px; border-radius: 4px;" onclick="insertMsgFormat('modalStoreMessageInput{{ $seller->id }}', '**', '**')" title="{{ __('Bold (**text**)') }}"><b>B</b></button>
+                                                                <button type="button" class="btn btn-light btn-xs border px-2 py-0 font-italic" style="font-size: 12px; border-radius: 4px;" onclick="insertMsgFormat('modalStoreMessageInput{{ $seller->id }}', '_', '_')" title="{{ __('Italic (_text_)') }}"><i>I</i></button>
+                                                                <button type="button" class="btn btn-light btn-xs border px-2 py-0" style="font-size: 12px; border-radius: 4px;" onclick="insertMsgFormat('modalStoreMessageInput{{ $seller->id }}', '<u>', '</u>')" title="{{ __('Underline (<u>text</u>)') }}"><u>U</u></button>
+                                                                <button type="button" class="btn btn-light btn-xs border px-2 py-0" style="font-size: 12px; border-radius: 4px;" onclick="insertMsgFormat('modalStoreMessageInput{{ $seller->id }}', '\n• ', '')" title="{{ __('Bullet Point') }}"><i class="fas fa-list-ul"></i></button>
+                                                                <small class="text-muted ml-auto" style="font-size: 11px;">
+                                                                    <i class="fas fa-info-circle mr-1"></i>{{ __('Line gaps & formatting are preserved') }}
+                                                                </small>
+                                                            </div>
+
+                                                            <div class="d-flex flex-column">
+                                                                <textarea id="modalStoreMessageInput{{ $seller->id }}" class="form-control" rows="2" placeholder="{{ __('Type direct message to :store (supports line gaps, **bold**, bullet points)...', ['store' => $seller->shop_name]) }}" style="font-size: 13px; line-height: 1.5; border-radius: 6px; resize: none; min-height: 48px; max-height: 140px;" onkeydown="handleStoreMsgKey(event, {{ $seller->id }})" oninput="autoExpandTextarea(this)"></textarea>
+                                                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                                                    <small class="text-muted" style="font-size: 11px;">{{ __('Press Shift+Enter for new line gap') }}</small>
+                                                                    <button type="button" class="btn btn-primary font-weight-bold px-3 py-1 btn-sm" id="modalSendStoreMsgBtn{{ $seller->id }}" onclick="sendDirectStoreMessage({{ $seller->id }})">
                                                                         <i class="fas fa-paper-plane mr-1"></i> {{ __('Send Message') }}
                                                                     </button>
                                                                 </div>
@@ -464,6 +476,64 @@
         });
     });
 
+    function autoExpandTextarea(el) {
+        if (!el) return;
+        el.style.height = 'auto';
+        el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+    }
+
+    function insertMsgFormat(elemId, prefix, suffix) {
+        const el = document.getElementById(elemId);
+        if (!el) return;
+        const start = el.selectionStart || 0;
+        const end = el.selectionEnd || 0;
+        const text = el.value;
+        const selected = text.substring(start, end);
+        const replacement = prefix + (selected || '') + (suffix || '');
+        el.value = text.substring(0, start) + replacement + text.substring(end);
+        el.focus();
+        const newPos = selected ? start + replacement.length : start + prefix.length;
+        el.setSelectionRange(newPos, newPos);
+        autoExpandTextarea(el);
+    }
+
+    function formatChatMessage(text) {
+        if (!text) return '';
+
+        // Step 1: Escape basic HTML entities to prevent XSS
+        let escaped = text
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+
+        // Step 2: Markdown bold (**text** or __text__)
+        escaped = escaped.replace(/\*\*(.+?)\*\*/gs, '<strong>$1</strong>');
+        escaped = escaped.replace(/__(.+?)__/gs, '<strong>$1</strong>');
+
+        // Step 3: Markdown single asterisk *bold* and _italic_
+        escaped = escaped.replace(/(^|\s)\*([^\s\*].*?[^\s\*]|[^\s\*])\*($|\s|[,\.\?!:;])/gs, '$1<strong>$2</strong>$3');
+        escaped = escaped.replace(/(^|\s)_([^\s_].*?[^\s_]|[^\s_])_($|\s|[,\.\?!:;])/gs, '$1<em>$2</em>$3');
+
+        // Step 4: Strikethrough (~~text~~ or ~text~)
+        escaped = escaped.replace(/~~(.+?)~~/gs, '<del>$1</del>');
+        escaped = escaped.replace(/(^|\s)~([^\s~].*?[^\s~]|[^\s~])~($|\s|[,\.\?!:;])/gs, '$1<del>$2</del>$3');
+
+        // Step 5: Inline code (`text`)
+        escaped = escaped.replace(/`(.+?)`/gs, '<code style="background: rgba(0,0,0,0.06); padding: 1px 4px; border-radius: 3px; font-family: monospace;">$1</code>');
+
+        // Step 6: Safe standard formatting tags
+        escaped = escaped.replace(/&lt;(\/?)(b|strong|i|em|u|del|s|mark|code)&gt;/gi, '<$1$2>');
+        escaped = escaped.replace(/&lt;font color=(&quot;|'|)([a-zA-Z0-9#]+)\1&gt;(.*?)&lt;\/font&gt;/gi, '<font color="$2">$3</font>');
+
+        // Step 7: Auto linkify URLs
+        const urlPattern = /(?<!href="|">)(https?:\/\/[^\s<]+)/gi;
+        escaped = escaped.replace(urlPattern, '<a href="$1" target="_blank" rel="noopener noreferrer" style="color: #2563eb; text-decoration: underline; word-break: break-all;">$1</a>');
+
+        return escaped;
+    }
+
     function loadStoreMessages(id) {
         const historyBox = $('#modalChatHistory' + id);
         historyBox.html('<div class="text-center text-muted small py-2"><i class="fas fa-spinner fa-spin mr-1"></i> {{ __("Loading message history...") }}</div>').show();
@@ -483,7 +553,7 @@
                                 <i class="fas ${isAdmin ? 'fa-user-shield' : 'fa-store'} mr-1"></i>
                                 ${isAdmin ? '{{ __("Admin") }}' : '{{ __("Vendor") }}'} • <span class="text-muted font-weight-normal">${m.time} (${m.date})</span>
                             </div>
-                            <div class="text-dark mt-1" style="font-size: 12.5px;">${escapeHtml(m.message)}</div>
+                            <div class="text-dark mt-1" style="font-size: 13px; white-space: pre-wrap; word-break: break-word; line-height: 1.55; font-family: inherit; text-align: left;">${formatChatMessage(m.message)}</div>
                         </div>
                     `;
                 });
@@ -520,6 +590,7 @@
             btn.prop('disabled', false).html('<i class="fas fa-paper-plane mr-1"></i> {{ __("Send Message") }}');
             if (res.success) {
                 input.val('');
+                input.css('height', 'auto');
                 $('#modalMsgSuccessAlert' + id).removeClass('d-none').text(res.message);
                 setTimeout(() => {
                     $('#modalMsgSuccessAlert' + id).addClass('d-none');
@@ -536,15 +607,10 @@
     }
 
     function handleStoreMsgKey(e, id) {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             sendDirectStoreMessage(id);
         }
-    }
-
-    function escapeHtml(t) {
-        const m = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-        return t.replace(/[&<>"']/g, function(k) { return m[k]; });
     }
 </script>
 @endsection

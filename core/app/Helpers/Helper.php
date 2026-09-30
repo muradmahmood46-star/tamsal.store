@@ -44,6 +44,44 @@ class Helper
 
         return $html;
     }
+
+    /**
+     * Safely format chat messages with preserved spacing, line breaks, bold, italics, links and safe formatting tags.
+     */
+    public static function formatChatMessage($text)
+    {
+        if (empty($text)) {
+            return '';
+        }
+
+        // Step 1: Escape HTML entities to prevent XSS attacks
+        $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+
+        // Step 2: Convert markdown bold (**text** or __text__)
+        $text = preg_replace('/\*\*(.+?)\*\*/s', '<strong>$1</strong>', $text);
+        $text = preg_replace('/__(.+?)__/s', '<strong>$1</strong>', $text);
+
+        // Step 3: Convert markdown single asterisk *bold* or _italic_
+        $text = preg_replace('/(^|\s)\*([^\s\*].*?[^\s\*]|[^\s\*])\*($|\s|[,\.\?!:;])/s', '$1<strong>$2</strong>$3', $text);
+        $text = preg_replace('/(^|\s)_([^\s_].*?[^\s_]|[^\s_])_($|\s|[,\.\?!:;])/s', '$1<em>$2</em>$3', $text);
+
+        // Step 4: Strikethrough (~~text~~ or ~text~)
+        $text = preg_replace('/~~(.+?)~~/s', '<del>$1</del>', $text);
+        $text = preg_replace('/(^|\s)~([^\s~].*?[^\s~]|[^\s~])~($|\s|[,\.\?!:;])/s', '$1<del>$2</del>$3', $text);
+
+        // Step 5: Inline code (`text`)
+        $text = preg_replace('/`(.+?)`/s', '<code style="background: rgba(0,0,0,0.06); padding: 1px 4px; border-radius: 3px; font-family: monospace;">$1</code>', $text);
+
+        // Step 6: Allow safe standard formatting tags if entered (b, strong, i, em, u, del, s, mark, code)
+        $text = preg_replace('/&lt;(\/?)(b|strong|i|em|u|del|s|mark|code)&gt;/i', '<$1$2>', $text);
+        $text = preg_replace('/&lt;font color=(&quot;|\'|)([a-zA-Z0-9#]+)\1&gt;(.*?)&lt;\/font&gt;/i', '<font color="$2">$3</font>', $text);
+
+        // Step 7: Auto-linkify plain URLs
+        $urlPattern = '/(?<!href="|">)(https?:\/\/[^\s<]+)/i';
+        $text = preg_replace($urlPattern, '<a href="$1" target="_blank" rel="noopener noreferrer" style="color: #2563eb; text-decoration: underline; word-break: break-all;">$1</a>', $text);
+
+        return $text;
+    }
     
     public static function getHref($link){
           

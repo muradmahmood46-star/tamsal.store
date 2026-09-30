@@ -303,8 +303,18 @@
                             <i class="fas fa-paper-plane text-info mr-2"></i> {{ __('Send Reply / Action Message to Vendor:') }}
                         </div>
                         <div class="card-body p-3 bg-white">
+                            <!-- Formatting Tools -->
+                            <div class="d-flex align-items-center mb-1 flex-wrap" style="gap: 5px;">
+                                <button type="button" class="btn btn-light btn-xs border px-2 py-0" style="font-size: 12px; border-radius: 4px;" onclick="insertMsgFormat('m_reply_input', '**', '**')" title="{{ __('Bold (**text**)') }}"><b>B</b></button>
+                                <button type="button" class="btn btn-light btn-xs border px-2 py-0 font-italic" style="font-size: 12px; border-radius: 4px;" onclick="insertMsgFormat('m_reply_input', '_', '_')" title="{{ __('Italic (_text_)') }}"><i>I</i></button>
+                                <button type="button" class="btn btn-light btn-xs border px-2 py-0" style="font-size: 12px; border-radius: 4px;" onclick="insertMsgFormat('m_reply_input', '<u>', '</u>')" title="{{ __('Underline (<u>text</u>)') }}"><u>U</u></button>
+                                <button type="button" class="btn btn-light btn-xs border px-2 py-0" style="font-size: 12px; border-radius: 4px;" onclick="insertMsgFormat('m_reply_input', '\n• ', '')" title="{{ __('Bullet Point') }}"><i class="fas fa-list-ul"></i></button>
+                                <small class="text-muted ml-auto" style="font-size: 11px;">
+                                    <i class="fas fa-info-circle mr-1"></i>{{ __('Line gaps & formatting are preserved') }}
+                                </small>
+                            </div>
                             <div class="form-group mb-2">
-                                <textarea name="reply" id="m_reply_input" class="form-control" rows="3" placeholder="{{ __('Type your official reply, block reason, or instructions to the store owner here...') }}"></textarea>
+                                <textarea name="reply" id="m_reply_input" class="form-control" rows="3" placeholder="{{ __('Type your official reply, block reason, or instructions to the store owner here (supports line gaps, **bold**)...') }}" style="font-size: 13.5px; line-height: 1.5;"></textarea>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
                                 <div>
@@ -473,7 +483,7 @@
             container.innerHTML = `
                 <div class="bubble-vendor">
                     <div style="font-size: 11px; font-weight: 700; color: #0d6efd; margin-bottom: 2px;">${escapeHtml(req.full_name || 'Store Owner')} (Appeal)</div>
-                    <div style="white-space: pre-wrap;">${escapeHtml(req.message || '')}</div>
+                    <div style="white-space: pre-wrap; word-break: break-word; line-height: 1.55;">${formatChatMessage(req.message || '')}</div>
                     <div class="bubble-meta">
                         <span>${req.created_at}</span>
                     </div>
@@ -483,7 +493,7 @@
                 container.insertAdjacentHTML('beforeend', `
                     <div class="bubble-admin">
                         <div style="font-size: 11px; font-weight: 700; color: #166534; margin-bottom: 2px;">{{ __('Platform Admin Support') }}</div>
-                        <div style="white-space: pre-wrap;">${escapeHtml(req.admin_reply)}</div>
+                        <div style="white-space: pre-wrap; word-break: break-word; line-height: 1.55;">${formatChatMessage(req.admin_reply)}</div>
                         <div class="bubble-meta">
                             <span>${req.admin_replied_at || ''}</span>
                             <span style="color: #53bdeb; margin-left: 3px; font-weight: bold;">✓✓</span>
@@ -504,7 +514,7 @@
                 html += `
                     <div class="${bubbleClass}">
                         ${senderTag}
-                        <div style="white-space: pre-wrap;">${escapeHtml(msg.message)}</div>
+                        <div style="white-space: pre-wrap; word-break: break-word; line-height: 1.55;">${formatChatMessage(msg.message)}</div>
                         <div class="bubble-meta">
                             <span>${msg.date} ${msg.time}</span>
                             ${ticks}
@@ -661,6 +671,57 @@
             document.getElementById('modal_reblock_reason').value = reason;
             form.submit();
         }
+    }
+
+    function insertMsgFormat(elemId, prefix, suffix) {
+        const el = document.getElementById(elemId);
+        if (!el) return;
+        const start = el.selectionStart || 0;
+        const end = el.selectionEnd || 0;
+        const text = el.value;
+        const selected = text.substring(start, end);
+        const replacement = prefix + (selected || '') + (suffix || '');
+        el.value = text.substring(0, start) + replacement + text.substring(end);
+        el.focus();
+        const newPos = selected ? start + replacement.length : start + prefix.length;
+        el.setSelectionRange(newPos, newPos);
+    }
+
+    function formatChatMessage(text) {
+        if (!text) return '';
+
+        // Step 1: Escape basic HTML entities to prevent XSS
+        let escaped = text
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+
+        // Step 2: Markdown bold (**text** or __text__)
+        escaped = escaped.replace(/\*\*(.+?)\*\*/gs, '<strong>$1</strong>');
+        escaped = escaped.replace(/__(.+?)__/gs, '<strong>$1</strong>');
+
+        // Step 3: Markdown single asterisk *bold* and _italic_
+        escaped = escaped.replace(/(^|\s)\*([^\s\*].*?[^\s\*]|[^\s\*])\*($|\s|[,\.\?!:;])/gs, '$1<strong>$2</strong>$3');
+        escaped = escaped.replace(/(^|\s)_([^\s_].*?[^\s_]|[^\s_])_($|\s|[,\.\?!:;])/gs, '$1<em>$2</em>$3');
+
+        // Step 4: Strikethrough (~~text~~ or ~text~)
+        escaped = escaped.replace(/~~(.+?)~~/gs, '<del>$1</del>');
+        escaped = escaped.replace(/(^|\s)~([^\s~].*?[^\s~]|[^\s~])~($|\s|[,\.\?!:;])/gs, '$1<del>$2</del>$3');
+
+        // Step 5: Inline code (`text`)
+        escaped = escaped.replace(/`(.+?)`/gs, '<code style="background: rgba(0,0,0,0.06); padding: 1px 4px; border-radius: 3px; font-family: monospace;">$1</code>');
+
+        // Step 6: Safe standard formatting tags
+        escaped = escaped.replace(/&lt;(\/?)(b|strong|i|em|u|del|s|mark|code)&gt;/gi, '<$1$2>');
+        escaped = escaped.replace(/&lt;font color=(&quot;|'|)([a-zA-Z0-9#]+)\1&gt;(.*?)&lt;\/font&gt;/gi, '<font color="$2">$3</font>');
+
+        // Step 7: Auto linkify URLs
+        const urlPattern = /(?<!href="|">)(https?:\/\/[^\s<]+)/gi;
+        escaped = escaped.replace(urlPattern, '<a href="$1" target="_blank" rel="noopener noreferrer" style="color: #2563eb; text-decoration: underline; word-break: break-all;">$1</a>');
+
+        return escaped;
     }
 
     function escapeHtml(t) {

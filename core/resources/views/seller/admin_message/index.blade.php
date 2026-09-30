@@ -79,6 +79,26 @@
             word-wrap: break-word;
             box-shadow: 0 1px 2px rgba(0,0,0,0.12);
         }
+        .msg-bubble-content {
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.55;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        .msg-bubble-content strong,
+        .msg-bubble-content b {
+            font-weight: 700;
+        }
+        .msg-bubble-content em,
+        .msg-bubble-content i {
+            font-style: italic;
+        }
+        .msg-bubble-content a {
+            color: #2563eb;
+            text-decoration: underline;
+            word-break: break-all;
+        }
         .msg-bubble-admin {
             align-self: flex-start;
             background: #ffffff;
@@ -103,23 +123,54 @@
             gap: 4px;
         }
         .admin-msg-footer {
-            padding: 12px 20px;
+            padding: 10px 18px;
             background: #f0f2f5;
             border-top: 1px solid #e2e8f0;
             display: flex;
-            align-items: center;
-            gap: 10px;
+            flex-direction: column;
+            gap: 6px;
             flex-shrink: 0;
+        }
+        .admin-msg-tools {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .admin-msg-tool-btn {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            line-height: 1.3;
+            transition: all 0.15s;
+        }
+        .admin-msg-tool-btn:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+        .admin-msg-input-wrap {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
         }
         .admin-msg-input {
             flex-grow: 1;
             background: #ffffff;
             border: 1px solid #cbd5e1;
-            border-radius: 24px;
-            padding: 10px 20px;
+            border-radius: 12px;
+            padding: 9px 15px;
             font-size: 14px;
             outline: none;
             transition: border 0.2s;
+            resize: none;
+            min-height: 42px;
+            max-height: 140px;
+            line-height: 1.45;
+            overflow-y: auto;
+            font-family: inherit;
         }
         .admin-msg-input:focus {
             border-color: #008069;
@@ -129,8 +180,8 @@
             color: #ffffff;
             border: none;
             border-radius: 50%;
-            width: 44px;
-            height: 44px;
+            width: 42px;
+            height: 42px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -139,6 +190,7 @@
             transition: all 0.2s;
             flex-shrink: 0;
             box-shadow: 0 2px 6px rgba(0, 128, 105, 0.4);
+            margin-bottom: 1px;
         }
         .admin-msg-send-btn:hover {
             background: #006b57;
@@ -180,6 +232,10 @@
                 padding: 8px 12px 6px 12px !important;
             }
 
+            .msg-bubble-content {
+                font-size: 13.5px !important;
+            }
+
             .admin-msg-footer {
                 padding: 8px 10px !important;
                 position: sticky !important;
@@ -189,14 +245,14 @@
 
             .admin-msg-input {
                 font-size: 13.5px !important;
-                padding: 8px 14px !important;
-                height: 40px !important;
+                padding: 8px 12px !important;
+                min-height: 38px !important;
             }
 
             .admin-msg-send-btn {
-                width: 40px !important;
-                height: 40px !important;
-                font-size: 15px !important;
+                width: 38px !important;
+                height: 38px !important;
+                font-size: 14px !important;
             }
         }
     </style>
@@ -236,7 +292,7 @@
                         <i class="fas {{ $isMe ? 'fa-store' : 'fa-user-shield' }} mr-1"></i>
                         {{ $isMe ? __('You (Store Owner)') : __('Administration & Support') }}
                     </div>
-                    <div>{{ $msg->message }}</div>
+                    <div class="msg-bubble-content">{!! \App\Helpers\Helper::formatChatMessage($msg->message) !!}</div>
                     <div class="msg-bubble-meta">
                         <span>{{ $msg->created_at ? $msg->created_at->format('h:i A') : '' }}</span>
                         @if($isMe)
@@ -259,10 +315,21 @@
 
         <!-- Input Footer -->
         <div class="admin-msg-footer">
-            <input type="text" id="seller_admin_input" class="admin-msg-input" placeholder="{{ __('Type your message or reply to Administration & Support...') }}" onkeypress="handleSellerAdminInputKey(event)">
-            <button type="button" class="admin-msg-send-btn" id="seller_admin_send_btn" onclick="sendSellerAdminMessage()">
-                <i class="fas fa-paper-plane"></i>
-            </button>
+            <div class="admin-msg-tools">
+                <button type="button" class="admin-msg-tool-btn font-weight-bold" onclick="insertMsgFormat('seller_admin_input', '**', '**')" title="{{ __('Bold (**text**)') }}"><b>B</b></button>
+                <button type="button" class="admin-msg-tool-btn font-italic" onclick="insertMsgFormat('seller_admin_input', '_', '_')" title="{{ __('Italic (_text_)') }}"><i>I</i></button>
+                <button type="button" class="admin-msg-tool-btn" onclick="insertMsgFormat('seller_admin_input', '<u>', '</u>')" title="{{ __('Underline (<u>text</u>)') }}"><u>U</u></button>
+                <button type="button" class="admin-msg-tool-btn" onclick="insertMsgFormat('seller_admin_input', '\n• ', '')" title="{{ __('Bullet point') }}"><i class="fas fa-list-ul"></i></button>
+                <small class="text-muted ml-auto d-none d-sm-inline" style="font-size: 11px;">
+                    <i class="fas fa-info-circle mr-1"></i>{{ __('Line gaps and bold formatting are preserved') }}
+                </small>
+            </div>
+            <div class="admin-msg-input-wrap">
+                <textarea id="seller_admin_input" class="admin-msg-input" rows="1" placeholder="{{ __('Type your message or reply to Administration (Shift+Enter for new line gap)...') }}" onkeydown="handleSellerAdminInputKey(event)" oninput="autoExpandTextarea(this)"></textarea>
+                <button type="button" class="admin-msg-send-btn" id="seller_admin_send_btn" onclick="sendSellerAdminMessage()" title="{{ __('Send Message') }}">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -280,6 +347,64 @@
     }
 
     scrollToBottom();
+
+    function autoExpandTextarea(el) {
+        if (!el) return;
+        el.style.height = 'auto';
+        el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+    }
+
+    function insertMsgFormat(elemId, prefix, suffix) {
+        const el = document.getElementById(elemId);
+        if (!el) return;
+        const start = el.selectionStart || 0;
+        const end = el.selectionEnd || 0;
+        const text = el.value;
+        const selected = text.substring(start, end);
+        const replacement = prefix + (selected || '') + (suffix || '');
+        el.value = text.substring(0, start) + replacement + text.substring(end);
+        el.focus();
+        const newPos = selected ? start + replacement.length : start + prefix.length;
+        el.setSelectionRange(newPos, newPos);
+        autoExpandTextarea(el);
+    }
+
+    function formatChatMessage(text) {
+        if (!text) return '';
+
+        // Step 1: Escape basic HTML entities to prevent XSS
+        let escaped = text
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+
+        // Step 2: Markdown bold (**text** or __text__)
+        escaped = escaped.replace(/\*\*(.+?)\*\*/gs, '<strong>$1</strong>');
+        escaped = escaped.replace(/__(.+?)__/gs, '<strong>$1</strong>');
+
+        // Step 3: Markdown single asterisk *bold* and _italic_
+        escaped = escaped.replace(/(^|\s)\*([^\s\*].*?[^\s\*]|[^\s\*])\*($|\s|[,\.\?!:;])/gs, '$1<strong>$2</strong>$3');
+        escaped = escaped.replace(/(^|\s)_([^\s_].*?[^\s_]|[^\s_])_($|\s|[,\.\?!:;])/gs, '$1<em>$2</em>$3');
+
+        // Step 4: Strikethrough (~~text~~ or ~text~)
+        escaped = escaped.replace(/~~(.+?)~~/gs, '<del>$1</del>');
+        escaped = escaped.replace(/(^|\s)~([^\s~].*?[^\s~]|[^\s~])~($|\s|[,\.\?!:;])/gs, '$1<del>$2</del>$3');
+
+        // Step 5: Inline code (`text`)
+        escaped = escaped.replace(/`(.+?)`/gs, '<code style="background: rgba(0,0,0,0.06); padding: 1px 4px; border-radius: 3px; font-family: monospace;">$1</code>');
+
+        // Step 6: Safe standard formatting tags
+        escaped = escaped.replace(/&lt;(\/?)(b|strong|i|em|u|del|s|mark|code)&gt;/gi, '<$1$2>');
+        escaped = escaped.replace(/&lt;font color=(&quot;|'|)([a-zA-Z0-9#]+)\1&gt;(.*?)&lt;\/font&gt;/gi, '<font color="$2">$3</font>');
+
+        // Step 7: Auto linkify URLs
+        const urlPattern = /(?<!href="|">)(https?:\/\/[^\s<]+)/gi;
+        escaped = escaped.replace(urlPattern, '<a href="$1" target="_blank" rel="noopener noreferrer" style="color: #2563eb; text-decoration: underline; word-break: break-all;">$1</a>');
+
+        return escaped;
+    }
 
     function fetchMessages() {
         fetch(sellerAdminFetchUrl, {
@@ -324,7 +449,7 @@
             html += `
                 <div class="msg-bubble ${bubbleClass}">
                     ${senderTag}
-                    <div>${escapeHtml(msg.message)}</div>
+                    <div class="msg-bubble-content">${formatChatMessage(msg.message)}</div>
                     <div class="msg-bubble-meta">
                         <span>${msg.time}</span>
                         ${ticks}
@@ -343,12 +468,13 @@
         if (!text) return;
 
         input.value = '';
+        input.style.height = 'auto';
 
         const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const tempBubble = `
             <div class="msg-bubble msg-bubble-seller" style="opacity: 0.85;">
                 <div style="font-size: 11px; font-weight: 700; color: #008069; margin-bottom: 3px;"><i class="fas fa-store mr-1"></i> {{ __('You (Store Owner)') }}</div>
-                <div>${escapeHtml(text)}</div>
+                <div class="msg-bubble-content">${formatChatMessage(text)}</div>
                 <div class="msg-bubble-meta">
                     <span>${now}</span>
                     <span style="color: #53bdeb; font-weight: bold;">✓✓</span>
@@ -377,15 +503,10 @@
     }
 
     function handleSellerAdminInputKey(e) {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             sendSellerAdminMessage();
         }
-    }
-
-    function escapeHtml(t) {
-        const m = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-        return t.replace(/[&<>"']/g, function(k) { return m[k]; });
     }
 
     // Auto poll every 4 seconds
