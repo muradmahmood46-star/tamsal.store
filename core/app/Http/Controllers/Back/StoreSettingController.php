@@ -21,11 +21,36 @@ class StoreSettingController extends Controller
 
     public function index()
     {
-        ItemPromotion::ensureTable();
+        try {
+            Helper::ensureStoreTables();
+            ReceivingAccount::ensureTable();
+            PromotionTag::ensureTable();
+            PromotionPlan::ensureTable();
+            ItemPromotion::ensureTable();
+        } catch (\Throwable $e) {}
+
         $setting = Setting::first();
-        $accounts = ReceivingAccount::latest()->get();
-        $promotionTags = PromotionTag::latest()->get();
-        $promotionPlans = PromotionPlan::orderBy('days', 'asc')->get();
+        if (!$setting) {
+            $setting = new Setting();
+        }
+
+        try {
+            $accounts = ReceivingAccount::latest()->get();
+        } catch (\Throwable $e) {
+            $accounts = collect();
+        }
+
+        try {
+            $promotionTags = PromotionTag::latest()->get();
+        } catch (\Throwable $e) {
+            $promotionTags = collect();
+        }
+
+        try {
+            $promotionPlans = PromotionPlan::orderBy('days', 'asc')->get();
+        } catch (\Throwable $e) {
+            $promotionPlans = collect();
+        }
 
         return view('back.store_setting.index', compact('setting', 'accounts', 'promotionTags', 'promotionPlans'));
     }
@@ -56,6 +81,7 @@ class StoreSettingController extends Controller
 
     public function storeAccount(Request $request)
     {
+        ReceivingAccount::ensureTable();
         $request->validate([
             'payment_method' => 'required|string|max:255',
             'account_name' => 'required|string|max:255',
@@ -71,6 +97,7 @@ class StoreSettingController extends Controller
 
     public function updateAccount(Request $request, $id)
     {
+        ReceivingAccount::ensureTable();
         $request->validate([
             'payment_method' => 'required|string|max:255',
             'account_name' => 'required|string|max:255',
@@ -99,6 +126,7 @@ class StoreSettingController extends Controller
 
     public function storeTag(Request $request)
     {
+        PromotionTag::ensureTable();
         $request->validate([
             'name' => 'required|string|max:100|unique:promotion_tags,name',
             'status' => 'required|in:0,1',
@@ -117,6 +145,7 @@ class StoreSettingController extends Controller
 
     public function updateTag(Request $request, $id)
     {
+        PromotionTag::ensureTable();
         $request->validate([
             'name' => 'required|string|max:100|unique:promotion_tags,name,' . $id,
             'status' => 'required|in:0,1',
@@ -141,6 +170,7 @@ class StoreSettingController extends Controller
 
     public function storePlan(Request $request)
     {
+        PromotionPlan::ensureTable();
         $request->validate([
             'days' => 'required|integer|min:1|unique:promotion_plans,days',
             'price' => 'required|numeric|min:0',
