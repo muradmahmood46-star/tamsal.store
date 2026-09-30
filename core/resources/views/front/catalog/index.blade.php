@@ -86,15 +86,15 @@
 
                             {{-- Right / Bottom on mobile: Share Link & View All --}}
                             <div class="store-hero-actions d-flex align-items-center flex-wrap" style="gap: 6px; width: auto;">
-                                <div class="store-share-pill shadow-sm" style="display: inline-flex; align-items: center; background: #ffffff; border-radius: 20px; padding: 1px 2px 1px 8px; border: 1px solid rgba(255,255,255,0.7); box-sizing: border-box; height: 28px;">
-                                    <i class="fas fa-link mr-1" style="color: #0d6efd; font-size: 10.5px; flex-shrink: 0;"></i>
-                                    <input type="text" id="frontStoreShareLink" value="{{ $vendorStore->store_url ?? url('/c/' . ($vendorStore->store_code ?? ($vendorStore->vendor_id ?: 'admin'))) }}" readonly style="border: none !important; outline: none !important; box-shadow: none !important; background: transparent !important; color: #1e293b !important; font-size: 11px !important; font-weight: 600 !important; padding: 0 4px !important; margin: 0 !important; width: 135px; height: 24px !important; line-height: 24px !important; cursor: text; font-family: inherit;">
-                                    <button type="button" class="btn btn-primary btn-sm font-weight-bold" id="copyFrontStoreBtn" onclick="copyFrontStoreLink()" style="border-radius: 14px; font-size: 10px; padding: 2px 8px; white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 3px; height: 24px; box-shadow: 0 1px 3px rgba(13,110,253,0.2); border: none;">
-                                        <i class="fas fa-copy" id="frontCopyIcon" style="font-size: 9.5px;"></i> <span id="frontCopyText">{{ __('Copy') }}</span>
+                                <div class="store-share-pill shadow-sm" style="display: inline-flex; align-items: center; background: #ffffff; border-radius: 16px; padding: 1px 2px 1px 8px; border: 1px solid rgba(255,255,255,0.75); box-sizing: border-box; height: 25px;">
+                                    <i class="fas fa-link mr-1" style="color: #0d6efd; font-size: 10px; flex-shrink: 0;"></i>
+                                    <input type="text" id="frontStoreShareLink" value="{{ $vendorStore->store_url ?? url('/c/' . ($vendorStore->store_code ?? ($vendorStore->vendor_id ?: 'admin'))) }}" readonly style="border: none !important; outline: none !important; box-shadow: none !important; background: transparent !important; color: #1e293b !important; font-size: 11px !important; font-weight: 600 !important; padding: 0 4px !important; margin: 0 !important; width: 170px; height: 21px !important; line-height: 21px !important; cursor: text; font-family: inherit;">
+                                    <button type="button" class="btn btn-primary btn-sm font-weight-bold" id="copyFrontStoreBtn" onclick="copyFrontStoreLink()" style="border-radius: 12px; font-size: 9.5px; padding: 0 8px; white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 3px; height: 21px; box-shadow: 0 1px 3px rgba(13,110,253,0.2); border: none;">
+                                        <i class="fas fa-copy" id="frontCopyIcon" style="font-size: 9px;"></i> <span id="frontCopyText">{{ __('Copy') }}</span>
                                     </button>
                                 </div>
-                                <a href="{{ route('front.catalog') }}" class="btn btn-light btn-sm font-weight-bold shadow-sm d-inline-flex align-items-center" style="border-radius: 14px; font-size: 10.5px; height: 28px; padding: 0 10px; color: #0d6efd; white-space: nowrap; border: 1px solid rgba(255,255,255,0.5);">
-                                    <i class="fas fa-th-large mr-1" style="font-size: 10px;"></i> {{ __('All Products') }}
+                                <a href="{{ route('front.catalog') }}" class="btn btn-light btn-sm font-weight-bold shadow-sm d-inline-flex align-items-center" style="border-radius: 14px; font-size: 10px; height: 25px; padding: 0 10px; color: #0d6efd; white-space: nowrap; border: 1px solid rgba(255,255,255,0.5);">
+                                    <i class="fas fa-th-large mr-1" style="font-size: 9.5px;"></i> {{ __('All Products') }}
                                 </a>
                             </div>
 
