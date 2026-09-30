@@ -843,6 +843,22 @@ class Helper
             try { \App\Models\ItemPromotion::ensureTable(); } catch (\Throwable $e) {}
         } catch (\Throwable $e) {}
     }
+
+    public static function getAdminStoreCode(): string
+    {
+        try {
+            $setting = \App\Models\Setting::first();
+            if ($setting) {
+                return $setting->getAdminStoreCode();
+            }
+        } catch (\Throwable $e) {}
+        return 'admin';
+    }
+
+    public static function getAdminStoreUrl(): string
+    {
+        return url('/c/' . self::getAdminStoreCode());
+    }
 }
 
 
