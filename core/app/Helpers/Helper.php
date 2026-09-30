@@ -100,8 +100,8 @@ class Helper
         else if ($link["type"] == 'brand') {
             $href = route('front.brand');
         } 
-        else if ($link["type"] == 'blog') {
-            $href = route('front.blog');
+        else if ($link["type"] == 'bundles' || $link["type"] == 'bundle' || $link["type"] == 'deals' || $link["type"] == 'blog') {
+            $href = route('front.bundles');
         }
         else if ($link["type"] == 'faq') {
             $href = route('front.faq');
@@ -574,6 +574,35 @@ class Helper
                     \Illuminate\Support\Facades\Schema::table('conversations', function ($table) {
                         $table->unsignedBigInteger('deal_id')->nullable()->default(null)->after('item_id')->index();
                     });
+                }
+            }
+
+            // Ensure Menu has 'Bundles' instead of 'Blog'
+            if (\Illuminate\Support\Facades\Schema::hasTable('menus')) {
+                $menu = \App\Models\Menu::first();
+                if ($menu && !empty($menu->menus)) {
+                    $menuArray = json_decode($menu->menus, true);
+                    if (is_array($menuArray)) {
+                        $changed = false;
+                        $migrateItem = function(&$items) use (&$migrateItem, &$changed) {
+                            foreach ($items as &$it) {
+                                if (isset($it['type']) && ($it['type'] === 'blog' || strtolower($it['text'] ?? '') === 'blog')) {
+                                    $it['type'] = 'bundles';
+                                    $it['text'] = 'Bundles';
+                                    $it['href'] = '';
+                                    $changed = true;
+                                }
+                                if (isset($it['children']) && is_array($it['children'])) {
+                                    $migrateItem($it['children']);
+                                }
+                            }
+                        };
+                        $migrateItem($menuArray);
+                        if ($changed) {
+                            $menu->menus = json_encode($menuArray);
+                            $menu->save();
+                        }
+                    }
                 }
             }
         } catch (\Throwable $e) {}

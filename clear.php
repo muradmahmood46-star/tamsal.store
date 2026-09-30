@@ -493,6 +493,34 @@ if (!empty($dbname)) {
                     }
                 }
             }
+        // Menu table sync: change 'Blog' to 'Bundles'
+        try {
+            $menuStmt = $pdo->query("SELECT id, menus FROM menus WHERE id = 1");
+            if ($menuStmt && $mRow = $menuStmt->fetch(PDO::FETCH_ASSOC)) {
+                $mJson = json_decode($mRow['menus'] ?? '', true);
+                if (is_array($mJson)) {
+                    $mChanged = false;
+                    $mWalk = function(&$items) use (&$mWalk, &$mChanged) {
+                        foreach ($items as &$it) {
+                            if (isset($it['type']) && ($it['type'] === 'blog' || strtolower($it['text'] ?? '') === 'blog')) {
+                                $it['type'] = 'bundles';
+                                $it['text'] = 'Bundles';
+                                $it['href'] = '';
+                                $mChanged = true;
+                            }
+                            if (isset($it['children']) && is_array($it['children'])) {
+                                $mWalk($it['children']);
+                            }
+                        }
+                    };
+                    $mWalk($mJson);
+                    if ($mChanged) {
+                        $upStmt = $pdo->prepare("UPDATE menus SET menus = :menus WHERE id = 1");
+                        $upStmt->execute([':menus' => json_encode($mJson)]);
+                        $dbStatus[] = "✔ Menu updated: 'Blog' changed to 'Bundles' linking to bundle deals!";
+                    }
+                }
+            }
         } catch (\Throwable $e) {}
 
         if (empty($dbStatus)) {

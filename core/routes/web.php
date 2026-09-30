@@ -643,6 +643,10 @@ Route::group(['middleware' => 'maintainance'], function () {
 
         //------------ CART ------------
         Route::get('/cart', 'Front\CartController@index')->name('front.cart');
+        //------------ BUNDLES & FLASH DEALS ------------
+        Route::get('/bundles', 'Front\DealController@index')->name('front.bundles');
+        Route::get('/bundles/{slug}', 'Front\DealController@show');
+        Route::post('/bundles/{slug}/add-to-cart', 'Front\DealController@addToCart');
         Route::get('/f', 'Front\DealController@index')->name('front.deal.index');
         Route::get('/f/{slug}', 'Front\DealController@show')->name('front.deal.details');
         Route::post('/f/{slug}/add-to-cart', 'Front\DealController@addToCart')->name('front.deal.add_to_cart');

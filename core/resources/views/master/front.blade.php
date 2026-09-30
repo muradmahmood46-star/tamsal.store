@@ -1574,9 +1574,9 @@ body_theme4 @endif
 
                                                 @if ($setting->is_blog == 1)
                                                     <li
-                                                        class="{{ request()->routeIs('front.blog*') ? 'active' : '' }}">
-                                                        <a href="{{ route('front.blog') }}"><i
-                                                                class="icon-chevron-right"></i>{{ __('Blog') }}</a>
+                                                        class="{{ request()->routeIs('front.bundles*') || request()->routeIs('front.deal*') || request()->is('bundles*') || request()->is('f*') || request()->is('flash-deals*') || request()->routeIs('front.blog*') ? 'active' : '' }}">
+                                                        <a href="{{ route('front.bundles') }}"><i
+                                                                class="icon-chevron-right"></i>{{ __('Bundles') }}</a>
                                                     </li>
                                                 @endif
                                                 <li class="t-h-dropdown">

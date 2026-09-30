@@ -98,6 +98,10 @@
                                 <a data-text="{{__('Shop')}}" data-type="shop" class="addToMenus btn btn-info btn-sm float-right" href=""><i class="fas fa-plus"></i></a>
                             </li>
 
+                            <li class="list-group-item">{{__('Bundles')}}
+                                <a data-text="{{__('Bundles')}}" data-type="bundles" class="addToMenus btn btn-info btn-sm float-right" href=""><i class="fas fa-plus"></i></a>
+                            </li>
+
                             <li class="list-group-item">{{__('Campaign')}}
                                 <a data-text="{{__('Campaign')}}" data-type="campaign" class="addToMenus btn btn-info btn-sm float-right" href=""><i class="fas fa-plus"></i></a>
                             </li>
