@@ -39,62 +39,65 @@
   <!-- Page Content-->
   <div class="container padding-bottom-3x mb-1">
         @if(isset($vendorStore) && $vendorStore)
-            <!-- Store Hero Header Banner -->
-            <div class="store-hero-banner mb-4">
-                <div class="card border-0 shadow-sm overflow-hidden" style="border-radius: 14px; background: {{ !empty($vendorStore->banner_url) ? 'url(' . $vendorStore->banner_url . ') center/cover no-repeat' : 'linear-gradient(135deg, #0d6efd 0%, #063970 100%)' }}; position: relative;">
-                    <div style="background: {{ !empty($vendorStore->banner_url) ? 'rgba(15, 23, 42, 0.78)' : 'transparent' }}; padding: 24px 24px;">
-                        <div class="d-flex flex-wrap align-items-center justify-content-between">
-                            <div class="d-flex align-items-center flex-wrap mb-3 mb-md-0">
+            <!-- Store Hero Header Banner (Compact & Modern) -->
+            <div class="store-hero-banner mb-3">
+                <div class="card border-0 shadow-sm overflow-hidden" style="border-radius: 12px; background: {{ !empty($vendorStore->banner_url) ? 'url(' . $vendorStore->banner_url . ') center/cover no-repeat' : 'linear-gradient(135deg, #0d6efd 0%, #063970 100%)' }}; position: relative;">
+                    <div style="background: {{ !empty($vendorStore->banner_url) ? 'rgba(15, 23, 42, 0.82)' : 'transparent' }}; padding: 12px 14px;">
+                        <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between" style="gap: 8px;">
+                            
+                            {{-- Left: Store Logo & Details --}}
+                            <div class="d-flex align-items-center flex-grow-1 min-w-0" style="gap: 10px;">
                                 {{-- Store Logo / Avatar --}}
-                                <div class="store-logo-box mr-3 mr-md-4 mb-2 mb-sm-0" style="margin-right: 20px;">
+                                <div class="store-hero-avatar flex-shrink-0">
                                     @if(!empty($vendorStore->logo_url))
-                                        <img src="{{ $vendorStore->logo_url }}" alt="{{ $vendorStore->name }}" class="rounded-circle border bg-white p-1 shadow" style="width: 80px; height: 80px; object-fit: cover; border: 3px solid rgba(255,255,255,0.9) !important;">
+                                        <img src="{{ $vendorStore->logo_url }}" alt="{{ $vendorStore->name }}" class="rounded-circle border bg-white shadow-sm" style="width: 48px; height: 48px; object-fit: cover; border: 2px solid rgba(255,255,255,0.9) !important;">
                                     @else
-                                        <div class="rounded-circle d-flex align-items-center justify-content-center text-primary bg-white shadow" style="width: 80px; height: 80px; font-size: 32px; border: 3px solid rgba(255,255,255,0.9);">
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center text-primary bg-white shadow-sm" style="width: 48px; height: 48px; font-size: 20px; border: 2px solid rgba(255,255,255,0.9);">
                                             <i class="fas fa-store"></i>
                                         </div>
                                     @endif
                                 </div>
 
-                                {{-- Store Details --}}
-                                <div class="text-white">
-                                    <div class="d-flex align-items-center flex-wrap mb-1" style="gap: 8px;">
-                                        <h3 class="mb-0 text-white font-weight-bold" style="font-size: 22px; letter-spacing: -0.2px;">
+                                {{-- Store Text Info --}}
+                                <div class="store-hero-info text-white min-w-0" style="line-height: 1.25;">
+                                    <div class="d-flex align-items-center flex-wrap" style="gap: 5px;">
+                                        <h3 class="store-hero-name mb-0 text-white font-weight-bold" style="font-size: 16px; letter-spacing: -0.2px; line-height: 1.2;">
                                             {{ $vendorStore->name }}
                                         </h3>
-                                        <span class="badge {{ $vendorStore->is_admin ? 'badge-warning text-dark' : 'badge-success text-white' }} py-1 px-2 font-weight-bold" style="font-size: 11.5px; border-radius: 6px;">
+                                        <span class="badge {{ $vendorStore->is_admin ? 'badge-warning text-dark' : 'badge-success text-white' }} font-weight-bold" style="font-size: 9.5px; padding: 2px 5px; border-radius: 4px;">
                                             <i class="fas fa-check-circle mr-1"></i> {{ $vendorStore->type }}
                                         </span>
                                     </div>
 
-                                    <div class="d-flex flex-wrap align-items-center text-white-50 small mt-1" style="gap: 15px; font-size: 12.5px;">
-                                        <span><i class="fas fa-boxes text-warning mr-1"></i> <strong class="text-white">{{ $vendorStore->products_count }}</strong> {{ __('Products in this Store') }}</span>
+                                    <div class="d-flex flex-wrap align-items-center text-white-50 mt-1" style="gap: 8px; font-size: 11px;">
+                                        <span><i class="fas fa-boxes text-warning mr-1"></i> <strong class="text-white">{{ $vendorStore->products_count }}</strong> {{ __('Products') }}</span>
                                         @if(!empty($vendorStore->address))
-                                            <span><i class="fas fa-map-marker-alt text-danger mr-1"></i> {{ $vendorStore->address }}</span>
+                                            <span class="d-none d-sm-inline"><i class="fas fa-map-marker-alt text-danger mr-1"></i> {{ Str::limit($vendorStore->address, 30) }}</span>
                                         @endif
                                     </div>
 
                                     @if(!empty($vendorStore->details))
-                                        <p class="text-white-50 small mb-0 mt-2" style="max-width: 680px; line-height: 1.4; opacity: 0.95;">
-                                            {{ Str::limit($vendorStore->details, 150) }}
+                                        <p class="text-white-50 small mb-0 mt-1 d-none d-md-block" style="max-width: 600px; line-height: 1.3; opacity: 0.9; font-size: 11px;">
+                                            {{ Str::limit($vendorStore->details, 110) }}
                                         </p>
                                     @endif
                                 </div>
                             </div>
 
-                            {{-- Actions & Share Link --}}
-                            <div class="d-flex flex-wrap align-items-center mt-3 mt-lg-0" style="gap: 10px;">
-                                <div class="store-share-pill shadow-sm" style="display: inline-flex; align-items: center; background: #ffffff; border-radius: 30px; padding: 3px 4px 3px 12px; border: 1px solid rgba(255,255,255,0.7); max-width: 100%; box-sizing: border-box;">
-                                    <i class="fas fa-link mr-1" style="color: #0d6efd; font-size: 13px; flex-shrink: 0;"></i>
-                                    <input type="text" id="frontStoreShareLink" value="{{ $vendorStore->store_url ?? url('/c/' . ($vendorStore->store_code ?? ($vendorStore->vendor_id ?: 'admin'))) }}" readonly style="border: none !important; outline: none !important; box-shadow: none !important; background: transparent !important; color: #1e293b !important; font-size: 12.5px !important; font-weight: 600 !important; padding: 4px 8px !important; margin: 0 !important; width: 235px; max-width: calc(100vw - 230px); height: 32px !important; line-height: 32px !important; cursor: text; font-family: inherit;">
-                                    <button type="button" class="btn btn-primary btn-sm font-weight-bold" id="copyFrontStoreBtn" onclick="copyFrontStoreLink()" style="border-radius: 20px; font-size: 11.5px; padding: 5px 14px; white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; height: 32px; box-shadow: 0 2px 6px rgba(13,110,253,0.25); border: none;">
-                                        <i class="fas fa-copy" id="frontCopyIcon" style="font-size: 11px;"></i> <span id="frontCopyText">{{ __('Copy Link') }}</span>
+                            {{-- Right / Bottom on mobile: Share Link & View All --}}
+                            <div class="store-hero-actions d-flex align-items-center flex-wrap" style="gap: 6px; width: auto;">
+                                <div class="store-share-pill shadow-sm" style="display: inline-flex; align-items: center; background: #ffffff; border-radius: 30px; padding: 2px 3px 2px 10px; border: 1px solid rgba(255,255,255,0.7); box-sizing: border-box; height: 32px;">
+                                    <i class="fas fa-link mr-1" style="color: #0d6efd; font-size: 11px; flex-shrink: 0;"></i>
+                                    <input type="text" id="frontStoreShareLink" value="{{ $vendorStore->store_url ?? url('/c/' . ($vendorStore->store_code ?? ($vendorStore->vendor_id ?: 'admin'))) }}" readonly style="border: none !important; outline: none !important; box-shadow: none !important; background: transparent !important; color: #1e293b !important; font-size: 11.5px !important; font-weight: 600 !important; padding: 2px 4px !important; margin: 0 !important; width: 145px; height: 26px !important; line-height: 26px !important; cursor: text; font-family: inherit;">
+                                    <button type="button" class="btn btn-primary btn-sm font-weight-bold" id="copyFrontStoreBtn" onclick="copyFrontStoreLink()" style="border-radius: 20px; font-size: 10.5px; padding: 3px 10px; white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px; height: 26px; box-shadow: 0 2px 4px rgba(13,110,253,0.2); border: none;">
+                                        <i class="fas fa-copy" id="frontCopyIcon" style="font-size: 10px;"></i> <span id="frontCopyText">{{ __('Copy') }}</span>
                                     </button>
                                 </div>
-                                <a href="{{ route('front.catalog') }}" class="btn btn-light btn-sm font-weight-bold shadow-sm d-inline-flex align-items-center" style="border-radius: 20px; font-size: 12px; height: 38px; padding: 0 16px; color: #0d6efd; white-space: nowrap; border: 1px solid rgba(255,255,255,0.5);">
-                                    <i class="fas fa-th-large mr-1.5" style="font-size: 12px;"></i> {{ __('View All Products') }}
+                                <a href="{{ route('front.catalog') }}" class="btn btn-light btn-sm font-weight-bold shadow-sm d-inline-flex align-items-center" style="border-radius: 20px; font-size: 11px; height: 32px; padding: 0 12px; color: #0d6efd; white-space: nowrap; border: 1px solid rgba(255,255,255,0.5);">
+                                    <i class="fas fa-th-large mr-1" style="font-size: 11px;"></i> {{ __('All Products') }}
                                 </a>
                             </div>
+
                         </div>
                     </div>
                 </div>
