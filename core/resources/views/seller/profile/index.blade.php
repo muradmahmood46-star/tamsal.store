@@ -117,9 +117,6 @@
             </span>
         </div>
         <div class="card-body p-4">
-            <p class="text-muted small mb-3">
-                {{ __('This is your permanent direct store link. Share this link on WhatsApp, Facebook, TikTok, Instagram or YouTube to drive customers directly to your shop catalog.') }}
-            </p>
             <div class="row align-items-center">
                 <div class="col-lg-8 col-md-10">
                     <div class="input-group">
