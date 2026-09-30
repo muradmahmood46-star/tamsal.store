@@ -84,7 +84,7 @@ class Seller extends Model
 
     public function getStoreUrl(): string
     {
-        return url('/c?vendor=' . $this->getStoreCode());
+        return url('/c/' . $this->getStoreCode());
     }
 
     public function user()

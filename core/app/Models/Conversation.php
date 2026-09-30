@@ -95,9 +95,9 @@ class Conversation extends Model
             if ($seller) {
                 return $seller->getStoreUrl();
             }
-            return url('/c?vendor=' . $this->vendor_id);
+            return url('/c/' . $this->vendor_id);
         }
         $setting = \App\Models\Setting::first();
-        return $setting ? $setting->getAdminStoreUrl() : url('/c?vendor=admin');
+        return $setting ? $setting->getAdminStoreUrl() : url('/c/admin');
     }
 }

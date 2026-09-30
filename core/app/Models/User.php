@@ -166,6 +166,6 @@ class User extends Authenticatable
         if ($this->seller) {
             return $this->seller->getStoreUrl();
         }
-        return url('/c?vendor=' . $this->id);
+        return url('/c/' . $this->id);
     }
 }
