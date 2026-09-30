@@ -29,7 +29,12 @@ class AppServiceProvider extends ServiceProvider
             static $global_popup = null;
 
             if ($setting === null) {
-                $setting = DB::table('settings')->find(1);
+                try {
+                    $setting = \App\Models\Setting::first();
+                } catch (\Throwable $e) {}
+                if (!$setting) {
+                    $setting = DB::table('settings')->find(1);
+                }
                 $extra_settings = DB::table('extra_settings')->find(1);
                 $menus = DB::table('menus')->find(1);
                 $default_language = DB::table('languages')->where('is_default', 1)->first();

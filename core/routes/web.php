@@ -20,10 +20,14 @@ Route::group(['middleware' => ['adminlocalize', 'demo']], function () {
             \Illuminate\Support\Facades\Artisan::call('config:clear');
             \Illuminate\Support\Facades\Artisan::call('route:clear');
         } catch (\Throwable $e) {}
+
         $viewPath = storage_path('framework/views');
-        if (file_exists($viewPath)) {
-            foreach (glob($viewPath . '/*.php') as $file) {
-                @unlink($file);
+        if (is_dir($viewPath)) {
+            $files = glob($viewPath . '/*');
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    @unlink($file);
+                }
             }
         }
         return "Server Cache (OPcache, Views, Config, Routes, Database Tables & Artisan) Cleared Successfully. You can go back now.";
@@ -31,6 +35,17 @@ Route::group(['middleware' => ['adminlocalize', 'demo']], function () {
 
     Route::get('/debug-store-settings', function() {
         try {
+            if(function_exists('opcache_reset')) { @opcache_reset(); }
+            $viewPath = storage_path('framework/views');
+            if (is_dir($viewPath)) {
+                $files = glob($viewPath . '/*');
+                foreach ($files as $file) {
+                    if (is_file($file)) {
+                        @unlink($file);
+                    }
+                }
+            }
+
             \App\Helpers\Helper::ensureStoreTables();
             \App\Models\ReceivingAccount::ensureTable();
             \App\Models\PromotionTag::ensureTable();
