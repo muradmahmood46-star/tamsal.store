@@ -164,6 +164,6 @@ class Setting extends Model
 
     public function getAdminStoreUrl(): string
     {
-        return route('front.catalog', ['vendor' => $this->getAdminStoreCode()]);
+        return url('/c?vendor=' . $this->getAdminStoreCode());
     }
 }

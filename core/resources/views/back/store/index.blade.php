@@ -425,7 +425,7 @@
                                                 <div class="modal-footer bg-light py-2 px-4 justify-content-between">
                                                     <div>
                                                         @if($seller->user_id)
-                                                            <a href="{{ route('front.catalog', ['vendor' => $seller->user_id]) }}" target="_blank" class="btn btn-outline-primary btn-sm font-weight-bold">
+                                                            <a href="{{ $seller->getStoreUrl() }}" target="_blank" class="btn btn-outline-primary btn-sm font-weight-bold">
                                                                 <i class="fas fa-external-link-alt mr-1"></i> {{ __('Public Storefront') }}
                                                             </a>
                                                         @endif

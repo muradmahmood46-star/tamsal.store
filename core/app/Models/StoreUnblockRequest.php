@@ -73,10 +73,10 @@ class StoreUnblockRequest extends Model
             if ($seller) {
                 return $seller->getStoreUrl();
             }
-            return route('front.catalog', ['vendor' => $this->user_id]);
+            return url('/c?vendor=' . $this->user_id);
         }
         $setting = \App\Models\Setting::first();
-        return $setting ? $setting->getAdminStoreUrl() : route('front.catalog', ['vendor' => 'admin']);
+        return $setting ? $setting->getAdminStoreUrl() : url('/c?vendor=admin');
     }
 
     public function getFullNameAttribute()

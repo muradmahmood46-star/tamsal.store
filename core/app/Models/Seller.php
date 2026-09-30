@@ -84,7 +84,7 @@ class Seller extends Model
 
     public function getStoreUrl(): string
     {
-        return route('front.catalog', ['vendor' => $this->getStoreCode()]);
+        return url('/c?vendor=' . $this->getStoreCode());
     }
 
     public function user()

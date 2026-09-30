@@ -64,7 +64,7 @@ class CatalogController extends Controller
         $new = $request->has('quick_filter') ?  ( !empty($request->quick_filter == 'new') ? 1 : null ) : null;
         $brand = $request->has('brand') ?  ( !empty($request->brand) ? Brand::whereSlug($request->brand)->firstOrFail() : null ) : null;
         $search = $request->has('search') ?  ( !empty($request->search) ? $request->search : null ) : null;
-        $vendorParam = $request->has('vendor') ? ( !empty($request->vendor) ? trim((string)$request->vendor) : null ) : null;
+        $vendorParam = $request->has('vendor') ? ( !empty($request->vendor) ? trim((string)$request->vendor) : null ) : ( $request->has('v') ? ( !empty($request->v) ? trim((string)$request->v) : null ) : null );
         $vendor = null;
         $vendorStore = null;
 
@@ -576,6 +576,12 @@ class CatalogController extends Controller
         }
 
         return view('includes.search_suggest', compact('items', 'deals', 'search'));
+    }
+
+    public function storePath($vendor, Request $request)
+    {
+        $request->merge(['vendor' => $vendor]);
+        return $this->index($request);
     }
 
 }

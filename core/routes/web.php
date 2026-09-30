@@ -667,7 +667,9 @@ Route::group(['middleware' => 'maintainance'], function () {
         Route::post('/shipping/submit', 'Front\CartController@shippingStore')->name('front.shipping.submit');
         Route::post('/shipping/charge/get', 'Front\CartController@shippingCharge')->name('front.shipping.charge');
 
-        //------------ CATALOG ------------
+        //------------ CATALOG & SHORT STORE LINKS ------------
+        Route::get('/c', 'Front\CatalogController@index')->name('front.c');
+        Route::get('/c/{vendor}', 'Front\CatalogController@storePath')->name('front.c.store');
         Route::get('/catalog', 'Front\CatalogController@index')->name('front.catalog');
         Route::get('/search/suggest', 'Front\CatalogController@suggestSearch')->name('front.search.suggest');
         Route::get('/catalog/view/{type}', 'Front\CatalogController@viewType')->name('front.catalog.view');
