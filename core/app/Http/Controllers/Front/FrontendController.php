@@ -523,26 +523,25 @@ class FrontendController extends Controller
         $setting = Setting::first();
 
         $request->validate([
-            'g-recaptcha-response' => $setting->recaptcha == 1 ? 'required|captcha' : '',
-            'first_name' => 'required|max:50',
-            'last_name' => 'required|max:50',
-            'email' => 'required|email|max:50',
+            'g-recaptcha-response' => ($setting && $setting->recaptcha == 1) ? 'required|captcha' : '',
+            'first_name' => 'required|max:100',
+            'last_name' => 'nullable|max:100',
+            'email' => 'required|email|max:100',
             'phone' => 'required|max:50',
-            'message' => 'required|max:250',
+            'message' => 'required|max:5000',
             'honeypot'   => 'max:0',
         ]);
         
         $input = $request->all();
 
-
-
-       
-        $name  = $input['first_name'] . ' ' . $input['last_name'];
-        $subject = "Email From " . $name;
-        $to = $setting->contact_email;
-        $phone = $request->phone;
-        $from = $request->email;
-        $msg = "Name: " . $name . "<br/>Email: " . $from . "<br/>Phone: " . $phone . "<br/>Message: " . $request->message;
+        $firstName = trim($input['first_name'] ?? '');
+        $lastName = trim($input['last_name'] ?? '');
+        $name = trim($firstName . ' ' . $lastName);
+        $subject = "Contact Inquiry From " . $name;
+        $to = $setting ? $setting->contact_email : '';
+        $phone = trim($request->phone);
+        $from = trim($request->email);
+        $msg = "Name: " . $name . "<br/>Email: " . $from . "<br/>Phone: " . $phone . "<br/>Message: " . nl2br(e($request->message));
 
         $emailData = [
             'to' => $to,
@@ -550,19 +549,36 @@ class FrontendController extends Controller
             'body' => $msg,
         ];
 
-        
+        try {
+            if ($setting && $to) {
+                if ($setting->is_queue_enabled == 1) {
+                    dispatch(new EmailSendJob($emailData));
+                } else {
+                    $email = new EmailHelper();
+                    $email->sendCustomMail($emailData);
+                }
+            }
+        } catch (\Throwable $e) {}
 
-        $setting = Setting::first();
-        if ($setting->is_queue_enabled == 1) {
-            dispatch(new EmailSendJob($emailData));
-        } else {
-            $email = new EmailHelper();
-             $email->sendCustomMail($emailData);
+        // WhatsApp redirect to 0334 8128646 (923348128646)
+        $waText = "👋 *Contact Inquiry - TAMSAL Store*\n\n" .
+                  "👤 *Name:* " . $name . "\n" .
+                  "📧 *Email:* " . $from . "\n" .
+                  "📱 *Phone:* " . $phone . "\n\n" .
+                  "💬 *Message:*\n" . $request->message;
+
+        $waUrl = "https://api.whatsapp.com/send?phone=923348128646&text=" . urlencode($waText);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'whatsapp_url' => $waUrl,
+                'message' => __('Redirecting to WhatsApp...')
+            ]);
         }
 
-
-        Session::flash('success', __('Thank you for contacting with us, we will get back to you shortly.'));
-        return redirect()->back();
+        Session::flash('success', __('Thank you for contacting us! Redirecting to WhatsApp...'));
+        return redirect()->away($waUrl);
     }
 
     // -------------------------------- REVIEW ----------------------------------------
