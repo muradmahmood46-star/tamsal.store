@@ -98,6 +98,7 @@ Route::group(['middleware' => ['adminlocalize', 'demo']], function () {
         Route::get('stores', 'Back\StoreController@index')->name('back.stores.index');
         Route::get('stores/login-as/{id}', 'Back\StoreController@loginAs')->name('back.stores.loginAs');
         Route::post('stores/status/{id}/{status}', 'Back\StoreController@status')->name('back.stores.status');
+        Route::post('stores/fine/{id}', 'Back\StoreController@imposeFine')->name('back.stores.fine');
         Route::delete('stores/delete/{id}', 'Back\StoreController@destroy')->name('back.stores.destroy');
         Route::post('stores/send-message/{id}', 'Back\StoreController@sendMessage')->name('back.stores.send_message');
         Route::get('stores/messages/{id}', 'Back\StoreController@fetchMessages')->name('back.stores.messages');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Back;
 
 use App\Helpers\Helper;
+use App\Helpers\PriceHelper;
 use App\Http\Controllers\Controller;
 use App\Models\ChatMessage;
 use App\Models\Conversation;
@@ -10,6 +11,7 @@ use App\Models\Item;
 use App\Models\Order;
 use App\Models\Seller;
 use App\Models\StoreRequest;
+use App\Models\StoreUnblockRequest;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -32,7 +34,7 @@ class StoreController extends Controller
         $status = $request->status;
         $search = $request->search;
 
-        $query = Seller::with('user')->latest();
+        $query = Seller::with(['user', 'unblockRequest'])->latest();
 
         if ($status !== null && $status !== '') {
             $query->where('status', (int)$status);
@@ -145,6 +147,13 @@ class StoreController extends Controller
             $user = User::find($seller->user_id);
             if ($user) {
                 $user->is_seller_blocked = ($status == 1) ? 0 : 1;
+                if ($status == 1) {
+                    $user->chat_blocked = 0;
+                    $user->chat_warnings_count = 0;
+                    $user->chat_blocked_reason = null;
+                } elseif ($request->has('reason') && !empty($request->reason)) {
+                    $user->chat_blocked_reason = trim($request->reason);
+                }
                 $user->save();
 
                 // If blocking, hide items; if unblocking, restore items
@@ -154,18 +163,158 @@ class StoreController extends Controller
                         'is_hidden_by_block' => 1
                     ]);
                     StoreRequest::where('user_id', $user->id)->update(['seller_status' => 'Blocked']);
+
+                    // Create or update unblock request record as Pending
+                    StoreUnblockRequest::updateOrCreate(
+                        ['user_id' => $user->id],
+                        [
+                            'seller_id' => $seller->id,
+                            'store_name' => $seller->shop_name,
+                            'first_name' => $user->first_name,
+                            'last_name' => $user->last_name,
+                            'email' => $seller->shop_email ?: $user->email,
+                            'phone' => $seller->shop_phone ?: $user->phone,
+                            'status' => 'Pending',
+                            'admin_id' => Auth::guard('admin')->id() ?: 0,
+                            'admin_reply' => $request->reason ? trim($request->reason) : __('Store blocked by Administration.'),
+                            'admin_replied_at' => Carbon::now(),
+                        ]
+                    );
                 } else {
                     Item::where('vendor_id', $user->id)->where('is_hidden_by_block', 1)->update([
                         'status' => 1,
                         'is_hidden_by_block' => 0
                     ]);
                     StoreRequest::where('user_id', $user->id)->update(['seller_status' => 'Active']);
+
+                    // Mark unblock request as Unblocked
+                    StoreUnblockRequest::where('user_id', $user->id)->update([
+                        'status' => 'Unblocked',
+                        'unblocked_at' => Carbon::now(),
+                        'admin_id' => Auth::guard('admin')->id() ?: 0,
+                    ]);
                 }
             }
         }
 
-        $msg = ($status == 1) ? __('Store activated successfully.') : __('Store blocked successfully.');
+        $msg = ($status == 1) ? __('Store activated & unblocked successfully.') : __('Store blocked successfully.');
         return redirect()->back()->withSuccess($msg);
+    }
+
+    /**
+     * Impose fine and/or block store directly from All Stores / View modal.
+     */
+    public function imposeFine(Request $request, $id)
+    {
+        $request->validate([
+            'fine_amount' => 'required|numeric|min:1',
+            'reason' => 'nullable|string|max:2000',
+        ]);
+
+        $seller = Seller::findOrFail($id);
+        $user = $seller->user ?: User::find($seller->user_id);
+
+        if (!$user && $seller->shop_email) {
+            $user = User::where('email', $seller->shop_email)->first();
+            if ($user) {
+                $seller->user_id = $user->id;
+                $seller->save();
+            }
+        }
+
+        if (!$user) {
+            return redirect()->back()->withErrors(__('Associated user account for this store could not be found.'));
+        }
+
+        $fineAmount = (float) $request->fine_amount;
+        $reason = trim($request->reason ?: '');
+        $adminId = Auth::guard('admin')->id() ?: 0;
+        $curr = PriceHelper::adminCurrency();
+
+        // 1. Block the store
+        $seller->status = 0;
+        $seller->save();
+
+        $user->is_seller_blocked = 1;
+        if (!empty($reason)) {
+            $user->chat_blocked_reason = $reason;
+        }
+        $user->save();
+
+        // Hide active products
+        Item::where('vendor_id', $user->id)
+            ->where('status', 1)
+            ->update([
+                'status' => 0,
+                'is_hidden_by_block' => 1
+            ]);
+
+        StoreRequest::where('user_id', $user->id)->update(['seller_status' => 'Blocked']);
+
+        // 2. Create or update StoreUnblockRequest with fine
+        $unblockReq = StoreUnblockRequest::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'seller_id' => $seller->id,
+                'store_name' => $seller->shop_name,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'email' => $seller->shop_email ?: $user->email,
+                'phone' => $seller->shop_phone ?: $user->phone,
+                'fine_amount' => $fineAmount,
+                'fine_status' => 'pending',
+                'fine_imposed_at' => Carbon::now(),
+                'status' => 'Pending Fine',
+                'admin_id' => $adminId,
+                'admin_reply' => $reason ?: __('Fine imposed by Administration.'),
+                'admin_replied_at' => Carbon::now(),
+                'is_seen' => 1,
+                'admin_seen_at' => Carbon::now(),
+            ]
+        );
+
+        // 3. Post official notice to direct vendor line/chat
+        $conversation = Conversation::firstOrCreate([
+            'user_id' => 0,
+            'vendor_id' => $user->id,
+            'item_id' => null,
+        ], [
+            'last_message' => __('Fine Imposed by Administration'),
+            'last_message_at' => Carbon::now(),
+            'user_unread_count' => 0,
+            'vendor_unread_count' => 0,
+            'deleted_by_user' => 0,
+            'deleted_by_vendor' => 0,
+        ]);
+
+        $noticeMsg = "To unblock your store \":store\", a fine of {$curr} " . number_format($fineAmount, 2) . " has been imposed by Administration. Please pay the fine through your seller dashboard to restore your store and products.";
+        $noticeMsg = str_replace(':store', $seller->shop_name, $noticeMsg);
+        if (!empty($reason)) {
+            $noticeMsg .= "\n\n" . __('Reason / Note: ') . $reason;
+        }
+
+        ChatMessage::create([
+            'conversation_id' => $conversation->id,
+            'sender_type' => 'admin',
+            'sender_id' => $adminId,
+            'message' => $noticeMsg,
+            'is_read' => 0,
+            'deleted_by_user' => 0,
+            'deleted_by_vendor' => 0,
+        ]);
+
+        $conversation->update([
+            'last_message' => "Fine Imposed: {$curr} " . number_format($fineAmount, 2),
+            'last_message_at' => Carbon::now(),
+            'vendor_unread_count' => $conversation->vendor_unread_count + 1,
+            'deleted_by_vendor' => 0,
+        ]);
+
+        return redirect()->back()->withSuccess(__('Store ":store" has been blocked and a fine of :curr :amount imposed successfully! Notice sent to vendor.', [
+            'store' => $seller->shop_name,
+            'curr' => $curr,
+            'amount' => number_format($fineAmount, 2)
+        ]));
     }
 
     /**

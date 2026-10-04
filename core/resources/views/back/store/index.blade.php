@@ -406,21 +406,29 @@
                                             <i class="fas fa-sign-in-alt mr-1"></i> {{ __('Login') }}
                                         </a>
 
-                                        <!-- Toggle Status (Block/Unblock) -->
+                                        <!-- Toggle Status & Impose Fine Buttons -->
                                         @if($seller->status == 1)
-                                            <form action="{{ route('back.stores.status', ['id' => $seller->id, 'status' => 0]) }}" method="POST" class="d-inline" onsubmit="return confirm('Block this store? Products will be hidden.');">
-                                                @csrf
-                                                <button type="submit" class="btn btn-outline-danger btn-sm" title="{{ __('Block Store') }}">
-                                                    <i class="fas fa-ban"></i>
-                                                </button>
-                                            </form>
+                                            <button type="button" 
+                                                    class="btn btn-outline-danger btn-sm font-weight-bold" 
+                                                    data-toggle="modal" 
+                                                    data-target="#blockOrFineModal{{ $seller->id }}" 
+                                                    title="{{ __('Block Store or Impose Fine') }}">
+                                                <i class="fas fa-ban"></i>
+                                            </button>
                                         @else
                                             <form action="{{ route('back.stores.status', ['id' => $seller->id, 'status' => 1]) }}" method="POST" class="d-inline" onsubmit="return confirm('Activate and unblock this store?');">
                                                 @csrf
-                                                <button type="submit" class="btn btn-outline-success btn-sm" title="{{ __('Activate Store') }}">
+                                                <button type="submit" class="btn btn-outline-success btn-sm font-weight-bold" title="{{ __('Activate Store') }}">
                                                     <i class="fas fa-check"></i>
                                                 </button>
                                             </form>
+                                            <button type="button" 
+                                                    class="btn btn-outline-warning btn-sm font-weight-bold" 
+                                                    data-toggle="modal" 
+                                                    data-target="#blockOrFineModal{{ $seller->id }}" 
+                                                    title="{{ __('Impose / Edit Fine') }}">
+                                                <i class="fas fa-coins"></i>
+                                            </button>
                                         @endif
 
                                         <!-- Delete Store -->
@@ -546,6 +554,16 @@
                                                                             </span>
                                                                         </div>
                                                                     </div>
+                                                                    @if($seller->unblockRequest && $seller->unblockRequest->fine_amount > 0)
+                                                                        <div class="store-info-row">
+                                                                            <div class="store-info-label">{{ __('Fine Status') }}:</div>
+                                                                            <div class="store-info-value">
+                                                                                <span class="badge badge-warning font-weight-bold" style="font-size: 11px; padding: 3px 6px;">
+                                                                                    <i class="fas fa-gavel mr-1"></i> {{ PriceHelper::adminCurrency() }} {{ number_format($seller->unblockRequest->fine_amount, 2) }} ({{ ucfirst($seller->unblockRequest->fine_status ?: 'pending') }})
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                    @endif
                                                                     <div class="store-info-row">
                                                                         <div class="store-info-label">{{ __('Total Products') }}:</div>
                                                                         <div class="store-info-value font-weight-bold text-dark">{{ $seller->total_products_count ?? 0 }}</div>
@@ -612,11 +630,141 @@
                                                             </a>
                                                         @endif
                                                     </div>
-                                                    <div class="d-flex align-items-center">
-                                                        <a href="{{ route('back.stores.loginAs', $seller->id) }}" target="_blank" class="btn btn-success btn-sm font-weight-bold mr-2" onclick="return confirm('Open vendor panel and login as {{ addslashes($seller->shop_name) }}?');">
+                                                    <div class="d-flex align-items-center flex-wrap" style="gap: 4px;">
+                                                        <a href="{{ route('back.stores.loginAs', $seller->id) }}" target="_blank" class="btn btn-success btn-sm font-weight-bold mr-1" onclick="return confirm('Open vendor panel and login as {{ addslashes($seller->shop_name) }}?');">
                                                             <i class="fas fa-sign-in-alt mr-1"></i> {{ __('Login as Store') }}
                                                         </a>
+                                                        @if($seller->status == 1)
+                                                            <button type="button" class="btn btn-danger btn-sm font-weight-bold mr-1" data-toggle="modal" data-target="#blockOrFineModal{{ $seller->id }}">
+                                                                <i class="fas fa-ban mr-1"></i> {{ __('Block / Fine') }}
+                                                            </button>
+                                                        @else
+                                                            <form action="{{ route('back.stores.status', ['id' => $seller->id, 'status' => 1]) }}" method="POST" class="d-inline mr-1" onsubmit="return confirm('Activate and unblock this store?');">
+                                                                @csrf
+                                                                <button type="submit" class="btn btn-success btn-sm font-weight-bold">
+                                                                    <i class="fas fa-check mr-1"></i> {{ __('Activate') }}
+                                                                </button>
+                                                            </form>
+                                                            <button type="button" class="btn btn-warning btn-sm font-weight-bold text-dark mr-1" data-toggle="modal" data-target="#blockOrFineModal{{ $seller->id }}">
+                                                                <i class="fas fa-coins mr-1"></i> {{ __('Impose / Edit Fine') }}
+                                                            </button>
+                                                        @endif
                                                         <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">{{ __('Close') }}</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Block & Impose Fine Modal -->
+                                    <div class="modal fade" id="blockOrFineModal{{ $seller->id }}" tabindex="-1" role="dialog" aria-labelledby="blockOrFineModalLabel{{ $seller->id }}" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered text-left" role="document" style="max-width: 520px;">
+                                            <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
+                                                <div class="modal-header bg-dark text-white py-3 px-4">
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="fas fa-shield-alt fa-lg text-warning mr-2"></i>
+                                                        <div>
+                                                            <h5 class="modal-title font-weight-bold text-white mb-0" id="blockOrFineModalLabel{{ $seller->id }}">
+                                                                {{ __('Block / Fine Store') }}
+                                                            </h5>
+                                                            <small class="text-white-50">{{ $seller->shop_name }} &bull; #{{ $seller->id }}</small>
+                                                        </div>
+                                                    </div>
+                                                    <button type="button" class="close text-white opacity-1" data-dismiss="modal" aria-label="Close" style="opacity: 0.9;">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body p-4">
+                                                    <!-- Store Overview Banner -->
+                                                    <div class="d-flex align-items-center p-2 mb-3 bg-light rounded border">
+                                                        <img src="{{ $seller->logoUrl() }}" alt="Logo" class="rounded-circle mr-3 border bg-white shadow-sm" style="width: 44px; height: 44px; object-fit: cover; flex-shrink: 0;">
+                                                        <div class="overflow-hidden">
+                                                            <div class="font-weight-bold text-dark text-truncate" style="font-size: 14px;">{{ $seller->shop_name }}</div>
+                                                            <small class="text-muted d-block text-truncate">
+                                                                {{ __('Owner') }}: {{ $owner ? ($owner->first_name . ' ' . $owner->last_name) : 'N/A' }} &bull;
+                                                                @if($seller->status == 1)
+                                                                    <span class="badge badge-success">{{ __('Active') }}</span>
+                                                                @else
+                                                                    <span class="badge badge-danger">{{ __('Blocked') }}</span>
+                                                                @endif
+                                                            </small>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Option Tabs -->
+                                                    <ul class="nav nav-pills nav-fill mb-3 bg-light p-1 rounded" role="tablist">
+                                                        <li class="nav-item">
+                                                            <a class="nav-link active font-weight-bold py-2" id="tab-fine-{{ $seller->id }}" data-toggle="pill" href="#pane-fine-{{ $seller->id }}" role="tab" style="font-size: 13px;">
+                                                                <i class="fas fa-gavel text-warning mr-1"></i> {{ __('Block & Impose Fine') }}
+                                                            </a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a class="nav-link font-weight-bold py-2" id="tab-block-{{ $seller->id }}" data-toggle="pill" href="#pane-block-{{ $seller->id }}" role="tab" style="font-size: 13px;">
+                                                                <i class="fas fa-ban text-danger mr-1"></i> {{ __('Block Store Only') }}
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+
+                                                    <div class="tab-content">
+                                                        <!-- Option 1: Block & Impose Fine -->
+                                                        <div class="tab-pane fade show active" id="pane-fine-{{ $seller->id }}" role="tabpanel">
+                                                            <form action="{{ route('back.stores.fine', $seller->id) }}" method="POST">
+                                                                @csrf
+                                                                <div class="alert alert-warning py-2 px-3 small mb-3" style="font-size: 12px; line-height: 1.4;">
+                                                                    <i class="fas fa-info-circle mr-1"></i> {{ __('Store will be blocked and products hidden. The vendor must pay the specified fine to request unblocking.') }}
+                                                                </div>
+
+                                                                <div class="form-group mb-3">
+                                                                    <label class="font-weight-bold text-dark mb-1" style="font-size: 13px;">
+                                                                        {{ __('Fine Amount') }} ({{ PriceHelper::adminCurrency() }}) <span class="text-danger">*</span>
+                                                                    </label>
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-prepend">
+                                                                            <span class="input-group-text font-weight-bold bg-warning text-dark border-0">{{ PriceHelper::adminCurrency() }}</span>
+                                                                        </div>
+                                                                        <input type="number" step="0.01" min="1" name="fine_amount" class="form-control form-control-lg font-weight-bold text-danger" placeholder="{{ __('Enter amount (e.g. 1000)') }}" value="{{ ($seller->unblockRequest && $seller->unblockRequest->fine_amount > 0) ? $seller->unblockRequest->fine_amount : '' }}" required>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="form-group mb-3">
+                                                                    <label class="font-weight-bold text-dark mb-1" style="font-size: 13px;">
+                                                                        {{ __('Reason / Violation Note (Optional)') }}
+                                                                    </label>
+                                                                    <textarea name="reason" rows="2" class="form-control" placeholder="{{ __('e.g. Delayed orders dispatch, policy violation...') }}" style="font-size: 12.5px;">{{ $seller->unblockRequest ? $seller->unblockRequest->admin_reply : '' }}</textarea>
+                                                                </div>
+
+                                                                <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+                                                                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">{{ __('Cancel') }}</button>
+                                                                    <button type="submit" class="btn btn-warning font-weight-bold text-dark px-3 py-2 shadow-sm">
+                                                                        <i class="fas fa-check-circle mr-1"></i> {{ __('Done / Impose Fine') }}
+                                                                    </button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+
+                                                        <!-- Option 2: Block Store Only -->
+                                                        <div class="tab-pane fade" id="pane-block-{{ $seller->id }}" role="tabpanel">
+                                                            <form action="{{ route('back.stores.status', ['id' => $seller->id, 'status' => 0]) }}" method="POST">
+                                                                @csrf
+                                                                <div class="alert alert-danger py-2 px-3 small mb-3" style="font-size: 12px; line-height: 1.4;">
+                                                                    <i class="fas fa-exclamation-triangle mr-1"></i> {{ __('This will block the store and hide its products from the marketplace without requiring any penalty fine.') }}
+                                                                </div>
+
+                                                                <div class="form-group mb-3">
+                                                                    <label class="font-weight-bold text-dark mb-1" style="font-size: 13px;">
+                                                                        {{ __('Block Reason (Optional)') }}
+                                                                    </label>
+                                                                    <textarea name="reason" rows="2" class="form-control" placeholder="{{ __('e.g. Temporary suspension under review...') }}" style="font-size: 12.5px;"></textarea>
+                                                                </div>
+
+                                                                <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+                                                                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">{{ __('Cancel') }}</button>
+                                                                    <button type="submit" class="btn btn-danger font-weight-bold px-3 py-2 shadow-sm" onclick="return confirm('Are you sure you want to block this store?');">
+                                                                        <i class="fas fa-ban mr-1"></i> {{ __('Block Store Only') }}
+                                                                    </button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

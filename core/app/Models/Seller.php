@@ -145,4 +145,9 @@ class Seller extends Model
         }
         return null;
     }
+
+    public function unblockRequest()
+    {
+        return $this->hasOne(\App\Models\StoreUnblockRequest::class, 'user_id', 'user_id')->latestOfMany();
+    }
 }

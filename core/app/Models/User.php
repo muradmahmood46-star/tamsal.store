@@ -168,4 +168,9 @@ class User extends Authenticatable
         }
         return url('/c/' . $this->id);
     }
+
+    public function storeUnblockRequest()
+    {
+        return $this->hasOne(\App\Models\StoreUnblockRequest::class, 'user_id')->latestOfMany();
+    }
 }
