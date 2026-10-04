@@ -422,12 +422,7 @@
                                 <!-- Locked Fine Amount -->
                                 <div class="col-md-6 form-group mb-3">
                                     <label class="font-weight-bold text-dark">{{ __('Fine Amount Required (Fixed)') }} <span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text font-weight-bold bg-white text-dark">{{ PriceHelper::adminCurrency() }}</span>
-                                        </div>
-                                        <input type="text" class="form-control font-weight-bold bg-light text-danger" value="{{ number_format($unblockRequest->fine_amount, 2) }}" readonly style="font-size: 16px; font-weight: 700;">
-                                    </div>
+                                    <input type="text" class="form-control font-weight-bold bg-light text-danger" value="{{ PriceHelper::adminCurrency() }} {{ number_format($unblockRequest->fine_amount, 2) }}" readonly style="font-size: 16px; font-weight: 700; border-left: 4px solid #f59e0b;">
                                     <small class="text-muted">{{ __('This amount is fixed by Administration.') }}</small>
                                 </div>
 
@@ -695,12 +690,7 @@
                         <!-- Locked Fine Amount (Vendor cannot modify) -->
                         <div class="col-md-6 form-group mb-3">
                             <label class="font-weight-bold text-dark">{{ __('Fine Amount Imposed (Fixed)') }} <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text font-weight-bold bg-white text-dark">{{ PriceHelper::adminCurrency() }}</span>
-                                </div>
-                                <input type="text" class="form-control font-weight-bold bg-light text-danger" value="{{ number_format($unblockRequest->fine_amount, 2) }}" readonly style="font-size: 16px; font-weight: 700;">
-                            </div>
+                            <input type="text" class="form-control font-weight-bold bg-light text-danger" value="{{ PriceHelper::adminCurrency() }} {{ number_format($unblockRequest->fine_amount, 2) }}" readonly style="font-size: 16px; font-weight: 700; border-left: 4px solid #f59e0b;">
                             <small class="text-muted">{{ __('This amount is fixed by Administration and cannot be altered.') }}</small>
                         </div>
 
