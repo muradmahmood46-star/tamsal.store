@@ -30,6 +30,63 @@
         from { opacity: 0; transform: translateY(5px); }
         to { opacity: 1; transform: translateY(0); }
     }
+
+    .fine-payment-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    .btn-submit-fine {
+        font-size: 15px;
+        border-radius: 8px;
+        padding: 12px 24px;
+        white-space: normal;
+        word-break: break-word;
+        max-width: 100%;
+        text-align: center;
+    }
+
+    @media (max-width: 767.98px) {
+        .card-body.p-4, .card-body.p-md-5 {
+            padding: 16px 12px !important;
+        }
+        .fine-payment-actions {
+            flex-direction: column-reverse !important;
+            align-items: stretch !important;
+            gap: 10px !important;
+        }
+        .fine-payment-actions .btn,
+        .btn-submit-fine {
+            width: 100% !important;
+            font-size: 14px !important;
+            padding: 11px 12px !important;
+            text-align: center !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        .account-card-single .d-sm-flex {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 8px;
+        }
+        .account-card-single .text-sm-right {
+            text-align: left !important;
+            width: 100% !important;
+        }
+        .account-card-single .text-sm-right > div {
+            width: 100% !important;
+            justify-content: space-between !important;
+        }
+        #payFineInlineCard .card-header {
+            padding: 12px 14px !important;
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 6px !important;
+        }
+    }
 </style>
 @endsection
 
@@ -250,7 +307,7 @@
                                     <div class="flex-shrink-0">
                                         <form action="{{ route('seller.fine.pay_wallet') }}" method="POST" onsubmit="return confirm('{{ __('Are you sure you want to deduct :curr :fine from your wallet balance to instantly unblock your store?', ['curr' => PriceHelper::adminCurrency(), 'fine' => number_format($fineReqAmt, 2)]) }}');">
                                             @csrf
-                                            <button type="submit" class="btn btn-success font-weight-bold px-4 py-3 shadow text-white" style="font-size: 15px; border-radius: 8px;">
+                                            <button type="submit" class="btn btn-success font-weight-bold shadow text-white btn-submit-fine" style="border-radius: 8px;">
                                                 <i class="fas fa-bolt mr-1 text-warning"></i> {{ __('Confirm & Pay :curr :fine from Balance', ['curr' => PriceHelper::adminCurrency(), 'fine' => number_format($fineReqAmt, 2)]) }}
                                             </button>
                                         </form>
@@ -460,11 +517,11 @@
                                 <img id="inlineProofPreview" src="" class="img-fluid rounded shadow-sm" style="max-height: 180px; object-fit: contain;">
                             </div>
 
-                            <div class="mt-4 pt-3 border-top d-flex justify-content-between align-items-center">
-                                <button type="reset" class="btn btn-outline-secondary font-weight-bold">
+                            <div class="fine-payment-actions mt-4 pt-3 border-top">
+                                <button type="reset" class="btn btn-outline-secondary font-weight-bold py-2 px-3">
                                     <i class="fas fa-undo mr-1"></i> {{ __('Reset') }}
                                 </button>
-                                <button type="submit" class="btn btn-warning text-dark font-weight-bold px-5 py-3 shadow" style="font-size: 16px; border-radius: 8px;">
+                                <button type="submit" class="btn btn-warning text-dark font-weight-bold shadow-sm btn-submit-fine">
                                     <i class="fas fa-paper-plane mr-2"></i> {{ __('Submit Fine Payment Proof') }}
                                 </button>
                             </div>
@@ -711,11 +768,11 @@
                     </div>
                 </div>
 
-                <div class="modal-footer bg-white py-3 d-flex justify-content-between">
-                    <button type="button" class="btn btn-secondary font-weight-bold" data-dismiss="modal" data-bs-dismiss="modal" onclick="closePayFineModal()">
+                <div class="modal-footer bg-white py-3 d-flex flex-column flex-sm-row justify-content-between" style="gap: 8px;">
+                    <button type="button" class="btn btn-secondary font-weight-bold order-2 order-sm-1 w-100 w-sm-auto" data-dismiss="modal" data-bs-dismiss="modal" onclick="closePayFineModal()">
                         {{ __('Cancel') }}
                     </button>
-                    <button type="submit" class="btn btn-warning text-dark font-weight-bold px-4 py-2 shadow-sm">
+                    <button type="submit" class="btn btn-warning text-dark font-weight-bold shadow-sm order-1 order-sm-2 w-100 w-sm-auto btn-submit-fine">
                         <i class="fas fa-paper-plane mr-1"></i> {{ __('Submit Fine Payment Proof') }}
                     </button>
                 </div>
