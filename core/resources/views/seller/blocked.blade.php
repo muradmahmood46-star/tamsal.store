@@ -549,10 +549,7 @@
                                 <img id="inlineProofPreview" src="" class="img-fluid rounded shadow-sm" style="max-height: 180px; object-fit: contain;">
                             </div>
 
-                            <div class="fine-payment-actions mt-4 pt-3 border-top">
-                                <button type="reset" class="btn btn-outline-secondary font-weight-bold py-2 px-3">
-                                    <i class="fas fa-undo mr-1"></i> {{ __('Reset') }}
-                                </button>
+                            <div class="mt-4 pt-3 border-top text-right">
                                 <button type="submit" class="btn btn-warning text-dark font-weight-bold shadow-sm btn-submit-fine">
                                     <i class="fas fa-paper-plane mr-2"></i> {{ __('Submit Fine Payment Proof') }}
                                 </button>
