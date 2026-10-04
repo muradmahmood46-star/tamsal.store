@@ -48,6 +48,21 @@
         text-align: center;
     }
 
+    .btn-submit-appeal {
+        font-size: 15px;
+        border-radius: 8px;
+        white-space: normal;
+        word-break: break-word;
+        text-align: center;
+    }
+    .appeal-form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
     @media (max-width: 767.98px) {
         .card-body.p-4, .card-body.p-md-5 {
             padding: 16px 12px !important;
@@ -58,7 +73,8 @@
             gap: 10px !important;
         }
         .fine-payment-actions .btn,
-        .btn-submit-fine {
+        .btn-submit-fine,
+        .btn-submit-appeal {
             width: 100% !important;
             font-size: 14px !important;
             padding: 11px 12px !important;
@@ -66,6 +82,22 @@
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
+        }
+        .appeal-form-actions {
+            flex-direction: column !important;
+            gap: 10px !important;
+        }
+        .appeal-form-actions > div {
+            width: 100% !important;
+            display: flex !important;
+            gap: 8px !important;
+        }
+        .appeal-form-actions > div .btn {
+            flex: 1 1 0 !important;
+            text-align: center !important;
+            padding: 8px 10px !important;
+            font-size: 12px !important;
+            white-space: nowrap !important;
         }
         .account-card-single .d-sm-flex {
             flex-direction: column !important;
@@ -614,13 +646,13 @@
                             <small class="text-muted">{{ __('Please provide any context or request details regarding unblocking your store.') }}</small>
                         </div>
 
-                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
-                            <button type="submit" class="btn btn-primary font-weight-bold px-4 py-2">
+                        <div class="appeal-form-actions mt-4 pt-3 border-top">
+                            <button type="submit" class="btn btn-primary font-weight-bold shadow-sm btn-submit-appeal">
                                 <i class="fas fa-paper-plane mr-2"></i> {{ __('Send Unblock Request / Message') }}
                             </button>
 
-                            <div class="mt-2 mt-sm-0">
-                                <a href="{{ route('user.dashboard') }}" class="btn btn-outline-secondary btn-sm mr-1">
+                            <div>
+                                <a href="{{ route('user.dashboard') }}" class="btn btn-outline-secondary btn-sm">
                                     <i class="fas fa-user mr-1"></i> {{ __('Customer Dashboard') }}
                                 </a>
                                 <a href="{{ route('user.logout') }}" class="btn btn-outline-danger btn-sm">
