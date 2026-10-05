@@ -121,7 +121,9 @@ class ItemRepository
         } else {
             $input['sku'] = strtoupper($rawSku);
         }
-        $input['slug'] = \Illuminate\Support\Str::slug($input['sku']);
+        $rawSlug = !empty($input['slug']) ? $input['slug'] : (!empty($input['name']) ? $input['name'] : $input['sku']);
+        $generatedSlug = \Illuminate\Support\Str::slug($rawSlug);
+        $input['slug'] = !empty($generatedSlug) ? $generatedSlug : \Illuminate\Support\Str::slug($input['sku']);
 
         $input['is_type'] = 'undefine';
         $input['advance_payment_type'] = !empty($input['advance_payment_type']) ? $input['advance_payment_type'] : 'percentage';
@@ -277,7 +279,9 @@ class ItemRepository
         } else {
             $input['sku'] = strtoupper($rawSku);
         }
-        $input['slug'] = \Illuminate\Support\Str::slug($input['sku']);
+        $rawSlug = !empty($input['slug']) ? $input['slug'] : (!empty($input['name']) ? $input['name'] : (!empty($item->slug) ? $item->slug : $input['sku']));
+        $generatedSlug = \Illuminate\Support\Str::slug($rawSlug);
+        $input['slug'] = !empty($generatedSlug) ? $generatedSlug : \Illuminate\Support\Str::slug($input['sku']);
 
         $item->update($input);
         

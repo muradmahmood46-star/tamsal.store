@@ -4,6 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use App\Models\Item;
 
 class ItemRequest extends FormRequest
 {
@@ -15,6 +17,55 @@ class ItemRequest extends FormRequest
     public function authorize()
     {
         return true;
+    }
+
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation()
+    {
+        $rawSlug = !empty($this->slug) ? $this->slug : $this->name;
+        $slug = Str::slug($rawSlug);
+        if (empty($slug)) {
+            $slug = 'product-' . time() . '-' . Str::random(4);
+        }
+
+        // Resolve item ID if this is an update request
+        $itemId = null;
+        if ($this->item) {
+            if (is_object($this->item) && isset($this->item->id)) {
+                $itemId = $this->item->id;
+            } elseif (is_numeric($this->item)) {
+                $itemId = $this->item;
+            }
+        }
+        if (!$itemId && $this->route('item')) {
+            $routeItem = $this->route('item');
+            if (is_object($routeItem) && isset($routeItem->id)) {
+                $itemId = $routeItem->id;
+            } elseif (is_numeric($routeItem)) {
+                $itemId = $routeItem;
+            }
+        }
+        if (!$itemId && $this->route('id')) {
+            $routeId = $this->route('id');
+            if (is_numeric($routeId)) {
+                $itemId = $routeId;
+            }
+        }
+
+        // Auto make slug unique if taken by another item so vendor/admin is never blocked
+        $existsQuery = Item::where('slug', $slug);
+        if ($itemId) {
+            $existsQuery->where('id', '!=', $itemId);
+        }
+        if ($existsQuery->exists()) {
+            $slug = $slug . '-' . time() . '-' . Str::random(3);
+        }
+
+        $this->merge([
+            'slug' => strtolower($slug),
+        ]);
     }
 
     /**
@@ -74,7 +125,7 @@ class ItemRequest extends FormRequest
         return [
             'name'            => 'required|max:255',
             'sku'             => ['nullable', 'min:6', 'regex:/^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9_-]+$/'],
-            'slug'            => ['nullable', 'unique:items,slug' . $id, 'regex:/^[a-zA-Z0-9-]+$/'],
+            'slug'            => ['nullable', 'string', 'max:255', 'unique:items,slug' . $id, 'regex:/^[a-zA-Z0-9-]+$/'],
             'category_id'     => 'required',
             'details'         => 'required',
             'link'            => $check_link,
@@ -99,7 +150,6 @@ class ItemRequest extends FormRequest
      */
     public function messages()
     {
-
         return [
             'name.required'            =>  __('Name field is required.'),
             'sku.min'                  =>  __('SKU / Product ID must be at least 6 characters.'),
@@ -109,6 +159,7 @@ class ItemRequest extends FormRequest
             'brand_id.required'        =>  __('Brand field is required.'),
             'slug.required'            =>  __('Slug field is required.'),
             'slug.unique'              =>  __('This slug or SKU has already been taken.'),
+            'slug.regex'               =>  __('Slug format is invalid. Please use only letters, numbers, and dashes.'),
             'details.required'         =>  __('Description field is required.'),
             'sort_details.required'    =>  __('Sort Description field is required.'),
             'discount_price.required'  =>  __('Current Price field is required.'),
@@ -117,5 +168,4 @@ class ItemRequest extends FormRequest
             'photo.mimes'              =>  __('Please upload a valid image file.')
         ];
     }
-
 }

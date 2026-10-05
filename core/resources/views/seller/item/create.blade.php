@@ -32,8 +32,8 @@
                             <input type="text" name="name" id="name" class="form-control item-name" placeholder="{{ __('e.g. Cotton Casual Shirt') }}" value="{{ old('name') }}" required>
                         </div>
                         <div class="form-group mb-0">
-                            <label for="slug" class="font-weight-bold">{{ __('Slug') }} <span class="text-danger">*</span></label>
-                            <input type="text" name="slug" id="slug" class="form-control" placeholder="{{ __('cotton-casual-shirt') }}" value="{{ old('slug') }}" required>
+                            <label for="slug" class="font-weight-bold">{{ __('Slug') }} <small class="text-muted">({{ __('Optional - Auto generated') }})</small></label>
+                            <input type="text" name="slug" id="slug" class="form-control" placeholder="{{ __('cotton-casual-shirt') }}" value="{{ old('slug') }}">
                         </div>
                     </div>
                 </div>
@@ -517,10 +517,16 @@
     }
 
     // Auto slug generator
-    $('#name').on('keyup', function() {
+    $('#name').on('keyup change input paste', function() {
         var val = $(this).val();
         var slug = val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
         $('#slug').val(slug);
+    });
+
+    $('#slug').on('input change blur', function() {
+        var val = $(this).val();
+        var slug = val.toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/(^-|-$)/g, '');
+        $(this).val(slug);
     });
 
     function loadSubcategories(catId) {

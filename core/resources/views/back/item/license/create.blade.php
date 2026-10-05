@@ -37,7 +37,7 @@
                             value="{{ old('name') }}" >
                     </div>
                     <div class="form-group">
-                        <label for="slug">{{ __('Slug') }} *</label>
+                        <label for="slug">{{ __('Slug') }} <small class="text-muted">({{ __('Optional - Auto generated') }})</small></label>
                         <input type="text" name="slug" class="form-control"
                             id="slug" placeholder="{{ __('Enter Slug') }}"
                             value="{{ old('slug') }}" >

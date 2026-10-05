@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 
 class FcategoryRequest extends FormRequest
 {
@@ -17,22 +18,37 @@ class FcategoryRequest extends FormRequest
     }
 
     /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation()
+    {
+        $rawSlug = $this->slug ?: $this->name;
+        $slug = Str::slug($rawSlug);
+        if (empty($slug)) {
+            $slug = 'fcategory-' . time();
+        }
+
+        $this->merge([
+            'slug' => strtolower($slug),
+        ]);
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
      */
     public function rules()
     {
-        
         $id = $this->fcategory ? ',' . $this->fcategory->id : '';
         $required = $this->category ? '' : 'required';
 
         return [
-            'slug'  => [$required,'unique:fcategories,slug'. $id,'regex:/^[a-zA-Z0-9-]+$/'],
-            'text'  => ['required'],
-            'name'  => 'required|max:255',
-            'meta_keywords'  => 'max:255',
-            'meta_descriptions'  => 'max:255',
+            'slug'              => [$required, 'unique:fcategories,slug' . $id, 'regex:/^[a-zA-Z0-9-]+$/'],
+            'text'              => ['required'],
+            'name'              => 'required|max:255',
+            'meta_keywords'     => 'nullable|max:255',
+            'meta_descriptions' => 'nullable|max:255',
         ];
     }
 

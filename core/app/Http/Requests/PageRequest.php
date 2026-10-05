@@ -4,9 +4,9 @@ namespace App\Http\Requests;
 
 use Illuminate\{
     Validation\Rule,
-    Foundation\Http\FormRequest
+    Foundation\Http\FormRequest,
+    Support\Str
 };
-
 
 class PageRequest extends FormRequest
 {
@@ -21,21 +21,35 @@ class PageRequest extends FormRequest
     }
 
     /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation()
+    {
+        $rawSlug = $this->slug ?: $this->title;
+        $slug = Str::slug($rawSlug);
+        if (empty($slug)) {
+            $slug = 'page-' . time();
+        }
+
+        $this->merge([
+            'slug' => strtolower($slug),
+        ]);
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
      */
     public function rules()
     {
-
         $mains = ['shop','contact','blog','cart','checkout'];
-
         $id = $this->page ? ',' . $this->page->id : '';
 
         return  [
-            'title'  => 'required|max:255',
-            'slug' => 'required|max:255|regex:/^[a-zA-Z0-9-]+$/', Rule::notIn($mains) , 'unique:pages,slug' . $id,
-            'details'  => 'required',
+            'title'   => 'required|max:255',
+            'slug'    => ['required', 'max:255', 'regex:/^[a-zA-Z0-9-]+$/', Rule::notIn($mains), 'unique:pages,slug' . $id],
+            'details' => 'required',
         ];
     }
 
@@ -49,9 +63,8 @@ class PageRequest extends FormRequest
         return [
             'slug.required' => __('Slug field is required.'),
             'slug.unique'   => __('This slug has already been taken.'),
-            'slug.not_in'    => __('You can not use this slug.')
+            'slug.not_in'   => __('You can not use this slug.'),
+            'slug.regex'    => __('Slug Must Not Have Any Special Characters.')
         ];
     }
-
-
 }
