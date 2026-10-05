@@ -59,6 +59,9 @@
         <a data-toggle="collapse" href="#order">
             <i class="fab fa-first-order"></i>
             <p>{{ __('Manage Orders') }} </p>
+            @if($sellerPendingOrdersCount > 0)
+                <span class="badge badge-danger badge-counter" style="position: absolute; right: 35px; top: 12px; font-size: 11px; padding: 2px 6px; border-radius: 10px; font-weight: bold;">{{ $sellerPendingOrdersCount }}</span>
+            @endif
             <span class="caret"></span>
         </a>
         <div class="collapse {{ request()->is('seller/orders*') || request()->is('seller/order*') ? 'show' : '' }}" id="order">
@@ -69,10 +72,10 @@
                     </a>
                 </li>
                 <li class="{{ request()->input('type') == 'Pending' ? 'active' : '' }}">
-                    <a class="sub-link" href="{{ route('seller.order.index') . '?type=' . 'Pending' }}">
+                    <a class="sub-link d-flex justify-content-between align-items-center" href="{{ route('seller.order.index') . '?type=' . 'Pending' }}">
                         <span class="sub-item">{{ __('New Orders') }}</span>
                         @if($sellerPendingOrdersCount > 0)
-                            <span class="badge badge-warning text-dark ml-2" style="font-size: 11px; padding: 2px 7px; border-radius: 10px;">{{ $sellerPendingOrdersCount }}</span>
+                            <span class="badge badge-danger" style="font-size: 11px; padding: 2px 7px; border-radius: 10px; margin-right: 15px; font-weight: bold;">{{ $sellerPendingOrdersCount }}</span>
                         @endif
                     </a>
                 </li>
