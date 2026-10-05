@@ -99,26 +99,38 @@
 
                         <div class="form-group mb-2">
                             <label class="switch-primary">
-                                <input type="checkbox" class="switch switch-bootstrap status radio-check" name="is_specification" value="1" checked>
+                                <input type="checkbox" class="switch switch-bootstrap status radio-check" name="is_specification" value="1" {{ old('is_specification', 1) == 1 ? 'checked' : '' }}>
                                 <span class="switch-body"></span>
                                 <span class="switch-text font-weight-bold text-dark">{{ __('Enable Specifications Table') }}</span>
                             </label>
                         </div>
 
                         <div id="specifications-section">
+                            @php
+                                $oldSpecNames = old('specification_name', ['']);
+                                $oldSpecDescs = old('specification_description', ['']);
+                            @endphp
+                            @foreach($oldSpecNames as $k => $specName)
                             <div class="d-flex mb-2">
                                 <div class="flex-grow-1 mr-2">
-                                    <input type="text" class="form-control form-control-sm" name="specification_name[]" placeholder="{{ __('Specification Name (e.g. Material, Warranty, Weight)') }}" value="">
+                                    <input type="text" class="form-control form-control-sm" name="specification_name[]" placeholder="{{ __('Specification Name (e.g. Material, Warranty, Weight)') }}" value="{{ $specName }}">
                                 </div>
                                 <div class="flex-grow-1 mr-2">
-                                    <input type="text" class="form-control form-control-sm" name="specification_description[]" placeholder="{{ __('Specification Description (e.g. 100% Pure Cotton, 1 Year)') }}" value="">
+                                    <input type="text" class="form-control form-control-sm" name="specification_description[]" placeholder="{{ __('Specification Description (e.g. 100% Pure Cotton, 1 Year)') }}" value="{{ $oldSpecDescs[$k] ?? '' }}">
                                 </div>
                                 <div class="flex-btn">
+                                    @if($loop->first)
                                     <button type="button" class="btn btn-success btn-sm add-specification" data-text="{{ __('Specification Name') }}" data-text1="{{ __('Specification Description') }}">
                                         <i class="fa fa-plus"></i>
                                     </button>
+                                    @else
+                                    <button type="button" class="btn btn-danger btn-sm remove-specification">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                    @endif
                                 </div>
                             </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -131,14 +143,14 @@
                     <div class="card-body">
                         <div class="form-group mb-3">
                             <label class="switch-primary">
-                                <input type="checkbox" class="switch switch-bootstrap status radio-check" id="is_variant_toggle" name="is_variant" value="1" onchange="toggleVariantSection(this)">
+                                <input type="checkbox" class="switch switch-bootstrap status radio-check" id="is_variant_toggle" name="is_variant" value="1" {{ old('is_variant') == 1 ? 'checked' : '' }} onchange="toggleVariantSection(this)">
                                 <span class="switch-body"></span>
                                 <span class="switch-text font-weight-bold text-dark">{{ __('Enable Size & Color Variants for this product') }}</span>
                             </label>
                             <p class="text-muted mb-0 small">{{ __('Enable this if this product has multiple colors or sizes with individual stock quantities (e.g. Black - M - 5 pcs, Black - L - 3 pcs).') }}</p>
                         </div>
 
-                        <div id="variants_section_wrapper" style="display: none;">
+                        <div id="variants_section_wrapper" style="{{ old('is_variant') == 1 ? 'display: block;' : 'display: none;' }}">
                             {{-- Quick Combination Generator --}}
                             <div class="p-3 mb-3 border rounded shadow-sm" style="background-color: #f8fafc; border: 1px dashed #0284c7 !important;">
                                 <h6 class="font-weight-bold text-primary mb-3"><i class="fas fa-magic text-warning mr-1"></i> {{ __('Quick Combinations Generator') }}</h6>
@@ -199,14 +211,14 @@
                     <div class="card-body">
                         <div class="form-group mb-3">
                             <label class="switch-primary">
-                                <input type="checkbox" class="switch switch-bootstrap status radio-check" id="is_custom_rating_toggle" name="is_custom_rating" value="1" onchange="toggleRatingSection(this)">
+                                <input type="checkbox" class="switch switch-bootstrap status radio-check" id="is_custom_rating_toggle" name="is_custom_rating" value="1" {{ old('is_custom_rating') == 1 ? 'checked' : '' }} onchange="toggleRatingSection(this)">
                                 <span class="switch-body"></span>
                                 <span class="switch-text font-weight-bold text-dark" style="font-size: 14.5px;">{{ __('Enable Custom / Demo Rating for this product') }}</span>
                             </label>
                             <p class="text-muted mb-0" style="font-size: 13px;">{{ __('Enable this to set custom star rating and review count for this product. Great for newly launched products and marketing initial trust.') }}</p>
                         </div>
 
-                        <div id="custom_rating_wrapper" style="display: none;">
+                        <div id="custom_rating_wrapper" style="{{ old('is_custom_rating') == 1 ? 'display: block;' : 'display: none;' }}">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="font-weight-bold text-dark mb-1">{{ __('Star Rating (1.0 to 5.0)') }}</label>
@@ -214,7 +226,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text bg-warning text-dark"><i class="fas fa-star"></i></span>
                                         </div>
-                                        <input type="number" step="0.1" min="1" max="5" id="custom_rating_input" name="custom_rating" class="form-control" value="5.0" placeholder="e.g. 4.8">
+                                        <input type="number" step="0.1" min="1" max="5" id="custom_rating_input" name="custom_rating" class="form-control" value="{{ old('custom_rating', '5.0') }}" placeholder="e.g. 4.8">
                                     </div>
                                     <div class="mt-2">
                                         <span class="small font-weight-bold text-muted mr-1">{{ __('Quick Presets:') }}</span>
@@ -231,7 +243,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text bg-info text-white"><i class="fas fa-comments"></i></span>
                                         </div>
-                                        <input type="number" min="0" id="custom_rating_count_input" name="custom_rating_count" class="form-control" value="25" placeholder="e.g. 48">
+                                        <input type="number" min="0" id="custom_rating_count_input" name="custom_rating_count" class="form-control" value="{{ old('custom_rating_count', 25) }}" placeholder="e.g. 48">
                                     </div>
                                     <div class="mt-2">
                                         <span class="small font-weight-bold text-muted mr-1">{{ __('Quick Presets:') }}</span>
@@ -271,21 +283,21 @@
                     <div class="card-body">
                         <div class="form-group mb-3">
                             <label class="switch-primary">
-                                <input type="checkbox" class="switch switch-bootstrap status radio-check" id="is_returnable_toggle" name="is_returnable" value="1" onchange="toggleReturnPolicySection(this)">
+                                <input type="checkbox" class="switch switch-bootstrap status radio-check" id="is_returnable_toggle" name="is_returnable" value="1" {{ old('is_returnable') == 1 ? 'checked' : '' }} onchange="toggleReturnPolicySection(this)">
                                 <span class="switch-body"></span>
                                 <span class="switch-text font-weight-bold text-dark" style="font-size: 14.5px;">{{ __('Enable Return Policy for this product') }}</span>
                             </label>
                             <p class="text-muted mb-0" style="font-size: 13px;">{{ __('Enable this if you offer easy return / replacement guarantee for this product.') }}</p>
                         </div>
 
-                        <div id="return_policy_wrapper" style="display: none;">
+                        <div id="return_policy_wrapper" style="{{ old('is_returnable') == 1 ? 'display: block;' : 'display: none;' }}">
                             <div class="form-group mb-0">
                                 <label class="font-weight-bold text-dark mb-1">{{ __('Return Window (Number of Days)') }} *</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text bg-primary text-white"><i class="fas fa-calendar-alt"></i></span>
                                     </div>
-                                    <input type="number" min="1" max="365" id="return_days_input" name="return_days" class="form-control" value="14" placeholder="e.g. 14">
+                                    <input type="number" min="1" max="365" id="return_days_input" name="return_days" class="form-control" value="{{ old('return_days', 14) }}" placeholder="e.g. 14">
                                     <div class="input-group-append">
                                         <span class="input-group-text font-weight-bold">{{ __('Days Easy Return') }}</span>
                                     </div>
@@ -364,15 +376,15 @@
                             <label class="font-weight-bold">{{ __('Delivery Fees') }}</label>
                             <div class="mb-2">
                                 <div class="custom-control custom-radio mb-2">
-                                    <input type="radio" id="delivery_type_amount" name="is_free_delivery" class="custom-control-input" value="0" checked onchange="document.getElementById('delivery_fee_input_group').style.display = 'flex';">
+                                    <input type="radio" id="delivery_type_amount" name="is_free_delivery" class="custom-control-input" value="0" {{ old('is_free_delivery', '0') == '0' ? 'checked' : '' }} onchange="document.getElementById('delivery_fee_input_group').style.display = 'flex';">
                                     <label class="custom-control-label font-weight-bold" style="white-space: normal; line-height: 1.4;" for="delivery_type_amount">{{ __('Delivery Charges (PKR)') }}</label>
                                 </div>
                                 <div class="custom-control custom-radio">
-                                    <input type="radio" id="delivery_type_free" name="is_free_delivery" class="custom-control-input" value="1" onchange="document.getElementById('delivery_fee_input_group').style.display = 'none';">
+                                    <input type="radio" id="delivery_type_free" name="is_free_delivery" class="custom-control-input" value="1" {{ old('is_free_delivery') == '1' ? 'checked' : '' }} onchange="document.getElementById('delivery_fee_input_group').style.display = 'none';">
                                     <label class="custom-control-label text-success font-weight-bold" style="white-space: normal; line-height: 1.4;" for="delivery_type_free">{{ __('Free Delivery') }}</label>
                                 </div>
                             </div>
-                            <div class="input-group mb-0" id="delivery_fee_input_group">
+                            <div class="input-group mb-0" id="delivery_fee_input_group" style="{{ old('is_free_delivery') == '1' ? 'display: none;' : 'display: flex;' }}">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">{{ PriceHelper::adminCurrency() }}</span>
                                 </div>
@@ -529,7 +541,33 @@
         $(this).val(slug);
     });
 
-    function loadSubcategories(catId) {
+    // Specifications Dynamic Add/Remove
+    $(document).on('click', '.add-specification', function() {
+        var text = $(this).data('text') || '{{ __("Specification Name") }}';
+        var text1 = $(this).data('text1') || '{{ __("Specification Description") }}';
+        var html = `
+            <div class="d-flex mb-2">
+                <div class="flex-grow-1 mr-2">
+                    <input type="text" class="form-control form-control-sm" name="specification_name[]" placeholder="${text} (e.g. Material, Warranty, Weight)" value="">
+                </div>
+                <div class="flex-grow-1 mr-2">
+                    <input type="text" class="form-control form-control-sm" name="specification_description[]" placeholder="${text1} (e.g. 100% Pure Cotton, 1 Year)" value="">
+                </div>
+                <div class="flex-btn">
+                    <button type="button" class="btn btn-danger btn-sm remove-specification">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        $('#specifications-section').append(html);
+    });
+
+    $(document).on('click', '.remove-specification', function() {
+        $(this).closest('.d-flex').remove();
+    });
+
+    function loadSubcategories(catId, selectedSubId = null, selectedChildId = null) {
         if (!catId) {
             $('#subcategory_id').html('<option value="">-- Select Subcategory --</option>');
             $('#childcategory_id').html('<option value="">-- Select Childcategory --</option>');
@@ -544,16 +582,22 @@
                 var html = '<option value="">-- Select Subcategory --</option>';
                 if (response.data && response.data.length > 0) {
                     response.data.forEach(function(item) {
-                        html += '<option value="' + item.id + '">' + item.name + '</option>';
+                        var sel = (selectedSubId && selectedSubId == item.id) ? 'selected' : '';
+                        html += '<option value="' + item.id + '" ' + sel + '>' + item.name + '</option>';
                     });
                 }
                 $('#subcategory_id').html(html);
-                $('#childcategory_id').html('<option value="">-- Select Childcategory --</option>');
+
+                if (selectedSubId) {
+                    loadChildCategories(selectedSubId, selectedChildId);
+                } else {
+                    $('#childcategory_id').html('<option value="">-- Select Childcategory --</option>');
+                }
             }
         });
     }
 
-    function loadChildCategories(subId) {
+    function loadChildCategories(subId, selectedChildId = null) {
         if (!subId) {
             $('#childcategory_id').html('<option value="">-- Select Childcategory --</option>');
             return;
@@ -567,7 +611,8 @@
                 var html = '<option value="">-- Select Childcategory --</option>';
                 if (response.data && response.data.length > 0) {
                     response.data.forEach(function(item) {
-                        html += '<option value="' + item.id + '">' + item.name + '</option>';
+                        var sel = (selectedChildId && selectedChildId == item.id) ? 'selected' : '';
+                        html += '<option value="' + item.id + '" ' + sel + '>' + item.name + '</option>';
                     });
                 }
                 $('#childcategory_id').html(html);
@@ -758,5 +803,46 @@
         `;
         $('#demo_reviews_container').append(html);
     }
+
+    $(document).ready(function() {
+        // Restore category / subcategory / childcategory on validation error
+        var oldCatId = "{{ old('category_id') }}";
+        var oldSubId = "{{ old('subcategory_id') }}";
+        var oldChildId = "{{ old('childcategory_id') }}";
+
+        if (oldCatId) {
+            loadSubcategories(oldCatId, oldSubId, oldChildId);
+        }
+
+        // Restore Variants if submitted
+        @if(old('variant_color'))
+            var oldColors = @json(old('variant_color'));
+            var oldSizes = @json(old('variant_size'));
+            var oldStocks = @json(old('variant_stock'));
+            var oldPrices = @json(old('variant_price'));
+
+            if (oldColors && oldColors.length > 0) {
+                $('#variants_tbody').empty();
+                for (var i = 0; i < oldColors.length; i++) {
+                    addSingleVariantRow(oldColors[i] || '', (oldSizes && oldSizes[i]) || '', (oldStocks && oldStocks[i]) || 0, (oldPrices && oldPrices[i]) || 0);
+                }
+            }
+        @endif
+
+        // Restore Demo Reviews if submitted
+        @if(old('demo_reviewer_name'))
+            var oldReviewers = @json(old('demo_reviewer_name'));
+            var oldRatings = @json(old('demo_rating'));
+            var oldSubjects = @json(old('demo_subject'));
+            var oldReviews = @json(old('demo_review'));
+
+            if (oldReviewers && oldReviewers.length > 0) {
+                $('#demo_reviews_container').empty();
+                for (var j = 0; j < oldReviewers.length; j++) {
+                    addDemoReviewRow(oldReviewers[j] || '', (oldRatings && oldRatings[j]) || 5, (oldSubjects && oldSubjects[j]) || '', (oldReviews && oldReviews[j]) || '');
+                }
+            }
+        @endif
+    });
 </script>
 @endsection

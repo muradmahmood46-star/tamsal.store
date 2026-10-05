@@ -90,25 +90,25 @@
                     <div class="form-group">
                         <label for="file_type">{{ __('Select Type') }} *</label>
                         <select class="form-control" id="file_type" name="file_type">
-                            <option value="file">{{__('File')}}</option>
-                            <option value="link">{{__('Link')}}</option>
+                            <option value="file" {{ old('file_type', 'file') == 'file' ? 'selected' : '' }}>{{__('File')}}</option>
+                            <option value="link" {{ old('file_type') == 'link' ? 'selected' : '' }}>{{__('Link')}}</option>
                         </select>
                     </div>
 
-                    <div class="form-group view_file ">
+                    <div class="form-group view_file {{ old('file_type') == 'link' ? 'd-none' : '' }}">
                         <label for="file">{{ __('File') }}
                             *</label>
                         <div class="input-group mb-1">
-                            <input type="file" required class="form-control" id="file" name="file">
+                            <input type="file" {{ old('file_type') == 'link' ? '' : 'required' }} class="form-control" id="file" name="file">
                         </div>
                         <p class="text-warning">{{__('File type must be zip')}}</p>
                     </div>
 
-                    <div class="form-group d-none view_link">
+                    <div class="form-group {{ old('file_type') == 'link' ? '' : 'd-none' }} view_link">
                         <label for="link">{{ __('Link') }}
                             *</label>
                         <div class="input-group mb-3">
-                            <input type="text" id="link" name="link" class="form-control" placeholder="{{__('Enter Link')}}">
+                            <input type="text" id="link" name="link" class="form-control" placeholder="{{__('Enter Link')}}" value="{{ old('link') }}">
                         </div>
                     </div>
                 </div>
@@ -141,37 +141,45 @@
                         <input type="text" name="tags" class="tags"
                             id="tags"
                             placeholder="{{ __('Tags') }}"
-                            value="">
+                            value="{{ old('tags') }}">
                     </div>
                     <div class="form-group">
                         <label class="switch-primary">
-                            <input type="checkbox" class="switch switch-bootstrap status radio-check" name="is_specification" value="1" checked>
+                            <input type="checkbox" class="switch switch-bootstrap status radio-check" name="is_specification" value="1" {{ old('is_specification', 1) == 1 ? 'checked' : '' }}>
                             <span class="switch-body"></span>
                             <span class="switch-text">{{ __('Specifications') }}</span>
                         </label>
                     </div>
                     <div id="specifications-section">
-                        <div class="d-flex">
-
-                            <div class="flex-grow-1">
-                                <div class="form-group">
+                        @php
+                            $oldSpecNames = old('specification_name', ['']);
+                            $oldSpecDescs = old('specification_description', ['']);
+                        @endphp
+                        @foreach($oldSpecNames as $k => $specName)
+                        <div class="d-flex mb-2">
+                            <div class="flex-grow-1 mr-2">
+                                <div class="form-group mb-0">
                                     <input type="text" class="form-control"
                                         name="specification_name[]"
-                                        placeholder="{{ __('Specification Name') }}" value="">
-                                    </div>
+                                        placeholder="{{ __('Specification Name') }}" value="{{ $specName }}">
+                                </div>
                             </div>
-                            <div class="flex-grow-1">
-                                <div class="form-group">
+                            <div class="flex-grow-1 mr-2">
+                                <div class="form-group mb-0">
                                     <input type="text" class="form-control"
                                         name="specification_description[]"
-                                        placeholder="{{ __('Specification description') }}" value="">
-                                    </div>
+                                        placeholder="{{ __('Specification description') }}" value="{{ $oldSpecDescs[$k] ?? '' }}">
+                                </div>
                             </div>
                             <div class="flex-btn">
+                                @if($loop->first)
                                 <button type="button" class="btn btn-success add-specification" data-text="{{ __('Specification Name') }}" data-text1="{{ __('Specification Description') }}"> <i class="fa fa-plus"></i> </button>
+                                @else
+                                <button type="button" class="btn btn-danger remove-specification"> <i class="fa fa-trash"></i> </button>
+                                @endif
                             </div>
                         </div>
-
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -183,7 +191,7 @@
                         <input type="text" name="meta_keywords" class="tags"
                             id="meta_keywords"
                             placeholder="{{ __('Enter Meta Keywords') }}"
-                            value="">
+                            value="{{ old('meta_keywords') }}">
                     </div>
 
                     <div class="form-group">
@@ -247,9 +255,9 @@
                     <div class="form-group">
                         <label for="category_id">{{ __('Select Category') }} *</label>
                         <select name="category_id" id="category_id" data-href="{{route('back.get.subcategory')}}" class="form-control" >
-                            <option value="" selected>{{__('Select One')}}</option>
+                            <option value="">{{__('Select One')}}</option>
                             @foreach(DB::table('categories')->whereStatus(1)->get() as $cat)
-                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                            <option value="{{ $cat->id }}" {{ old('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -271,9 +279,9 @@
                     <div class="form-group">
                         <label for="brand_id">{{ __('Select Brand') }} </label>
                         <select name="brand_id" id="brand_id" class="form-control" >
-                            <option value="" selected>{{__('Select Brand')}}</option>
+                            <option value="">{{__('Select Brand')}}</option>
                             @foreach(DB::table('brands')->whereStatus(1)->where(function($q){ $q->whereNull('vendor_id')->orWhere('vendor_id', 0); })->get() as $brand)
-                            <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                            <option value="{{ $brand->id }}" {{ old('brand_id') == $brand->id ? 'selected' : '' }}>{{ $brand->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -287,7 +295,7 @@
                         <select name="tax_id" id="tax_id" class="form-control">
                             <option value="">{{__('Select One')}}</option>
                             @foreach(DB::table('taxes')->whereStatus(1)->get() as $tax)
-                            <option value="{{ $tax->id }}">{{ $tax->name }}</option>
+                            <option value="{{ $tax->id }}" {{ old('tax_id') == $tax->id ? 'selected' : '' }}>{{ $tax->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -349,12 +357,9 @@
     </div>
 </form>
 
-
-
 </div>
 
 @endsection
-
 
 @section('scripts')
     <script>
@@ -371,6 +376,107 @@
                 $('.view_file input').prop('required',false);
                 $('.view_link input').prop('required',true);
             }
-        })
+        });
+
+        // Auto slug generator
+        $(document).on('keyup change input', '#name, .item-name', function () {
+            var val = $(this).val();
+            var slug = val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            $('#slug').val(slug);
+        });
+
+        // Subcategory & Childcategory dynamic loading
+        function loadSubcategories(catId, selectedSubId = null, selectedChildId = null) {
+            if (!catId) {
+                $('#subcategory_id').html('<option value="">{{ __("Select One") }}</option>');
+                $('#childcategory_id').html('<option value="">{{ __("Select One") }}</option>');
+                return;
+            }
+
+            $.ajax({
+                url: "{{ route('back.get.subcategory') }}",
+                type: "GET",
+                data: { category_id: catId },
+                success: function(response) {
+                    var html = '<option value="">{{ __("Select One") }}</option>';
+                    if (response.data && response.data.length > 0) {
+                        response.data.forEach(function(item) {
+                            var sel = (selectedSubId && selectedSubId == item.id) ? 'selected' : '';
+                            html += '<option value="' + item.id + '" ' + sel + '>' + item.name + '</option>';
+                        });
+                    }
+                    $('#subcategory_id').html(html);
+
+                    if (selectedSubId) {
+                        loadChildCategories(selectedSubId, selectedChildId);
+                    } else {
+                        $('#childcategory_id').html('<option value="">{{ __("Select One") }}</option>');
+                    }
+                }
+            });
+        }
+
+        function loadChildCategories(subId, selectedChildId = null) {
+            if (!subId) {
+                $('#childcategory_id').html('<option value="">{{ __("Select One") }}</option>');
+                return;
+            }
+
+            $.ajax({
+                url: "{{ route('back.get.childcategory') }}",
+                type: "GET",
+                data: { subcategory_id: subId },
+                success: function(response) {
+                    var html = '<option value="">{{ __("Select One") }}</option>';
+                    if (response.data && response.data.length > 0) {
+                        response.data.forEach(function(item) {
+                            var sel = (selectedChildId && selectedChildId == item.id) ? 'selected' : '';
+                            html += '<option value="' + item.id + '" ' + sel + '>' + item.name + '</option>';
+                        });
+                    }
+                    $('#childcategory_id').html(html);
+                }
+            });
+        }
+
+        // Specifications Add/Remove handlers
+        $(document).on('click', '.add-specification', function() {
+            var text = $(this).data('text') || 'Specification Name';
+            var text1 = $(this).data('text1') || 'Specification Description';
+            var html = `
+                <div class="d-flex mb-2">
+                    <div class="flex-grow-1 mr-2">
+                        <div class="form-group mb-0">
+                            <input type="text" class="form-control" name="specification_name[]" placeholder="${text}">
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 mr-2">
+                        <div class="form-group mb-0">
+                            <input type="text" class="form-control" name="specification_description[]" placeholder="${text1}">
+                        </div>
+                    </div>
+                    <div class="flex-btn">
+                        <button type="button" class="btn btn-danger remove-specification">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            $('#specifications-section').append(html);
+        });
+
+        $(document).on('click', '.remove-specification, .remove-spcification', function() {
+            $(this).closest('.d-flex').remove();
+        });
+
+        $(document).ready(function() {
+            var oldCatId = "{{ old('category_id') }}";
+            var oldSubId = "{{ old('subcategory_id') }}";
+            var oldChildId = "{{ old('childcategory_id') }}";
+
+            if (oldCatId) {
+                loadSubcategories(oldCatId, oldSubId, oldChildId);
+            }
+        });
     </script>
 @endsection

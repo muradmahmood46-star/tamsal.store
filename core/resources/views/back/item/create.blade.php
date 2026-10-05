@@ -115,37 +115,45 @@
                         <input type="text" name="tags" class="tags"
                             id="tags"
                             placeholder="{{ __('Tags') }}"
-                            value="">
+                            value="{{ old('tags') }}">
                     </div>
                     <div class="form-group">
                         <label class="switch-primary">
-                            <input type="checkbox" class="switch switch-bootstrap status radio-check" name="is_specification" value="1" checked>
+                            <input type="checkbox" class="switch switch-bootstrap status radio-check" name="is_specification" value="1" {{ old('is_specification', 1) == 1 ? 'checked' : '' }}>
                             <span class="switch-body"></span>
                             <span class="switch-text">{{ __('Specifications') }}</span>
                         </label>
                     </div>
                     <div id="specifications-section">
-                        <div class="d-flex">
-
-                            <div class="flex-grow-1">
-                                <div class="form-group">
+                        @php
+                            $oldSpecNames = old('specification_name', ['']);
+                            $oldSpecDescs = old('specification_description', ['']);
+                        @endphp
+                        @foreach($oldSpecNames as $k => $specName)
+                        <div class="d-flex mb-2">
+                            <div class="flex-grow-1 mr-2">
+                                <div class="form-group mb-0">
                                     <input type="text" class="form-control"
                                         name="specification_name[]"
-                                        placeholder="{{ __('Specification Name') }}" value="">
-                                    </div>
+                                        placeholder="{{ __('Specification Name') }}" value="{{ $specName }}">
+                                </div>
                             </div>
-                            <div class="flex-grow-1">
-                                <div class="form-group">
+                            <div class="flex-grow-1 mr-2">
+                                <div class="form-group mb-0">
                                     <input type="text" class="form-control"
                                         name="specification_description[]"
-                                        placeholder="{{ __('Specification description') }}" value="">
-                                    </div>
+                                        placeholder="{{ __('Specification description') }}" value="{{ $oldSpecDescs[$k] ?? '' }}">
+                                </div>
                             </div>
                             <div class="flex-btn">
+                                @if($loop->first)
                                 <button type="button" class="btn btn-success add-specification" data-text="{{ __('Specification Name') }}" data-text1="{{ __('Specification Description') }}"> <i class="fa fa-plus"></i> </button>
+                                @else
+                                <button type="button" class="btn btn-danger remove-specification"> <i class="fa fa-trash"></i> </button>
+                                @endif
                             </div>
                         </div>
-
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -157,14 +165,14 @@
                 <div class="card-body">
                     <div class="form-group mb-3">
                         <label class="switch-primary">
-                            <input type="checkbox" class="switch switch-bootstrap status radio-check" id="is_variant_toggle" name="is_variant" value="1" onchange="toggleVariantSection(this)">
+                            <input type="checkbox" class="switch switch-bootstrap status radio-check" id="is_variant_toggle" name="is_variant" value="1" {{ old('is_variant') == 1 ? 'checked' : '' }} onchange="toggleVariantSection(this)">
                             <span class="switch-body"></span>
                             <span class="switch-text font-weight-bold text-dark">{{ __('Enable Size & Color Variants for this product') }}</span>
                         </label>
                         <p class="text-muted mb-0 small">{{ __('Enable this if this product has multiple colors or sizes with individual stock quantities (e.g. Black - M - 5 pcs, Black - L - 3 pcs).') }}</p>
                     </div>
 
-                    <div id="variants_section_wrapper" style="display: none;">
+                    <div id="variants_section_wrapper" style="{{ old('is_variant') == 1 ? 'display: block;' : 'display: none;' }}">
                         {{-- Quick Combination Generator --}}
                         <div class="p-3 mb-3 border rounded shadow-sm" style="background-color: #f8fafc; border: 1px dashed #0284c7 !important;">
                             <h6 class="font-weight-bold text-primary mb-3"><i class="fas fa-magic text-warning mr-1"></i> {{ __('Quick Combinations Generator') }}</h6>
@@ -226,14 +234,14 @@
                 <div class="card-body">
                     <div class="form-group mb-3">
                         <label class="switch-primary">
-                            <input type="checkbox" class="switch switch-bootstrap status radio-check" id="is_custom_rating_toggle" name="is_custom_rating" value="1" onchange="toggleRatingSection(this)">
+                            <input type="checkbox" class="switch switch-bootstrap status radio-check" id="is_custom_rating_toggle" name="is_custom_rating" value="1" {{ old('is_custom_rating') == 1 ? 'checked' : '' }} onchange="toggleRatingSection(this)">
                             <span class="switch-body"></span>
                             <span class="switch-text font-weight-bold text-dark" style="font-size: 14.5px;">{{ __('Enable Custom / Demo Rating for this product') }}</span>
                         </label>
                         <p class="text-muted mb-0" style="font-size: 13px;">{{ __('Enable this to set custom star rating and review count for this product. Great for newly launched products and marketing initial trust.') }}</p>
                     </div>
 
-                    <div id="custom_rating_wrapper" style="display: none;">
+                    <div id="custom_rating_wrapper" style="{{ old('is_custom_rating') == 1 ? 'display: block;' : 'display: none;' }}">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="font-weight-bold text-dark mb-1">{{ __('Star Rating (1.0 to 5.0)') }}</label>
@@ -241,7 +249,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text bg-warning text-dark"><i class="fas fa-star"></i></span>
                                     </div>
-                                    <input type="number" step="0.1" min="1" max="5" id="custom_rating_input" name="custom_rating" class="form-control" value="5.0" placeholder="e.g. 4.8">
+                                    <input type="number" step="0.1" min="1" max="5" id="custom_rating_input" name="custom_rating" class="form-control" value="{{ old('custom_rating', '5.0') }}" placeholder="e.g. 4.8">
                                 </div>
                                 <div class="mt-2">
                                     <span class="small font-weight-bold text-muted mr-1">{{ __('Quick Presets:') }}</span>
@@ -258,7 +266,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text bg-info text-white"><i class="fas fa-comments"></i></span>
                                     </div>
-                                    <input type="number" min="0" id="custom_rating_count_input" name="custom_rating_count" class="form-control" value="25" placeholder="e.g. 48">
+                                    <input type="number" min="0" id="custom_rating_count_input" name="custom_rating_count" class="form-control" value="{{ old('custom_rating_count', 25) }}" placeholder="e.g. 48">
                                 </div>
                                 <div class="mt-2">
                                     <span class="small font-weight-bold text-muted mr-1">{{ __('Quick Presets:') }}</span>
@@ -298,21 +306,21 @@
                 <div class="card-body">
                     <div class="form-group mb-3">
                         <label class="switch-primary">
-                            <input type="checkbox" class="switch switch-bootstrap status radio-check" id="is_returnable_toggle" name="is_returnable" value="1" onchange="toggleReturnPolicySection(this)">
+                            <input type="checkbox" class="switch switch-bootstrap status radio-check" id="is_returnable_toggle" name="is_returnable" value="1" {{ old('is_returnable') == 1 ? 'checked' : '' }} onchange="toggleReturnPolicySection(this)">
                             <span class="switch-body"></span>
                             <span class="switch-text font-weight-bold text-dark" style="font-size: 14.5px;">{{ __('Enable Return Policy for this product') }}</span>
                         </label>
                         <p class="text-muted mb-0" style="font-size: 13px;">{{ __('Enable this if you offer easy return / replacement guarantee for this product.') }}</p>
                     </div>
 
-                    <div id="return_policy_wrapper" style="display: none;">
+                    <div id="return_policy_wrapper" style="{{ old('is_returnable') == 1 ? 'display: block;' : 'display: none;' }}">
                         <div class="form-group mb-0">
                             <label class="font-weight-bold text-dark mb-1">{{ __('Return Window (Number of Days)') }} *</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text bg-primary text-white"><i class="fas fa-calendar-alt"></i></span>
                                 </div>
-                                <input type="number" min="1" max="365" id="return_days_input" name="return_days" class="form-control" value="14" placeholder="e.g. 14">
+                                <input type="number" min="1" max="365" id="return_days_input" name="return_days" class="form-control" value="{{ old('return_days', 14) }}" placeholder="e.g. 14">
                                 <div class="input-group-append">
                                     <span class="input-group-text font-weight-bold">{{ __('Days Easy Return') }}</span>
                                 </div>
@@ -339,7 +347,7 @@
                         <input type="text" name="meta_keywords" class="tags"
                             id="meta_keywords"
                             placeholder="{{ __('Enter Meta Keywords') }}"
-                            value="">
+                            value="{{ old('meta_keywords') }}">
                     </div>
 
                     <div class="form-group">
@@ -401,19 +409,19 @@
                         <label>{{ __('Advance Payment Offer Less') }}</label>
                         <div class="mb-2">
                             <div class="custom-control custom-radio mb-2">
-                                <input type="radio" id="adv_type_percentage" name="advance_payment_type" class="custom-control-input" value="percentage" checked onchange="document.getElementById('adv_payment_suffix').innerText = '%'">
+                                <input type="radio" id="adv_type_percentage" name="advance_payment_type" class="custom-control-input" value="percentage" {{ old('advance_payment_type', 'percentage') == 'percentage' ? 'checked' : '' }} onchange="document.getElementById('adv_payment_suffix').innerText = '%'">
                                 <label class="custom-control-label" style="white-space: normal; line-height: 1.4;" for="adv_type_percentage">{{ __('Percentage (%)') }}</label>
                             </div>
                             <div class="custom-control custom-radio">
-                                <input type="radio" id="adv_type_fixed" name="advance_payment_type" class="custom-control-input" value="fixed" onchange="document.getElementById('adv_payment_suffix').innerText = '{{ PriceHelper::adminCurrency() }}'">
+                                <input type="radio" id="adv_type_fixed" name="advance_payment_type" class="custom-control-input" value="fixed" {{ old('advance_payment_type') == 'fixed' ? 'checked' : '' }} onchange="document.getElementById('adv_payment_suffix').innerText = '{{ PriceHelper::adminCurrency() }}'">
                                 <label class="custom-control-label" style="white-space: normal; line-height: 1.4;" for="adv_type_fixed">{{ __('Fixed Price (PKR)') }}</label>
                             </div>
                         </div>
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
-                                <span class="input-group-text" id="adv_payment_suffix">%</span>
+                                <span class="input-group-text" id="adv_payment_suffix">{{ old('advance_payment_type') == 'fixed' ? PriceHelper::adminCurrency() : '%' }}</span>
                             </div>
-                            <input type="number" id="advance_payment_amount" name="advance_payment_amount" class="form-control" placeholder="{{ __('Enter amount e.g. 100, 200, 300') }}" min="0" step="0.1">
+                            <input type="number" id="advance_payment_amount" name="advance_payment_amount" class="form-control" placeholder="{{ __('Enter amount e.g. 100, 200, 300') }}" min="0" step="0.1" value="{{ old('advance_payment_amount') }}">
                         </div>
                     </div>
 
@@ -422,19 +430,19 @@
                         <label class="font-weight-bold">{{ __('Delivery Fees') }}</label>
                         <div class="mb-2">
                             <div class="custom-control custom-radio mb-2">
-                                <input type="radio" id="delivery_type_amount" name="is_free_delivery" class="custom-control-input" value="0" checked onchange="document.getElementById('delivery_fee_input_group').style.display = 'flex';">
+                                <input type="radio" id="delivery_type_amount" name="is_free_delivery" class="custom-control-input" value="0" {{ old('is_free_delivery', '0') == '0' ? 'checked' : '' }} onchange="document.getElementById('delivery_fee_input_group').style.display = 'flex';">
                                 <label class="custom-control-label" style="white-space: normal; line-height: 1.4;" for="delivery_type_amount">{{ __('Delivery Charges (PKR)') }}</label>
                             </div>
                             <div class="custom-control custom-radio">
-                                <input type="radio" id="delivery_type_free" name="is_free_delivery" class="custom-control-input" value="1" onchange="document.getElementById('delivery_fee_input_group').style.display = 'none';">
+                                <input type="radio" id="delivery_type_free" name="is_free_delivery" class="custom-control-input" value="1" {{ old('is_free_delivery') == '1' ? 'checked' : '' }} onchange="document.getElementById('delivery_fee_input_group').style.display = 'none';">
                                 <label class="custom-control-label text-success font-weight-bold" style="white-space: normal; line-height: 1.4;" for="delivery_type_free">{{ __('Free Delivery') }}</label>
                             </div>
                         </div>
-                        <div class="input-group mb-2" id="delivery_fee_input_group">
+                        <div class="input-group mb-2" id="delivery_fee_input_group" style="{{ old('is_free_delivery') == '1' ? 'display: none;' : 'display: flex;' }}">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ PriceHelper::adminCurrency() }}</span>
                             </div>
-                            <input type="number" id="delivery_fee" name="delivery_fee" class="form-control" placeholder="{{ __('Enter delivery fee e.g. 150, 200, 300') }}" min="0" step="1" value="0">
+                            <input type="number" id="delivery_fee" name="delivery_fee" class="form-control" placeholder="{{ __('Enter delivery fee e.g. 150, 200, 300') }}" min="0" step="1" value="{{ old('delivery_fee', 0) }}">
                         </div>
                     </div>
 
@@ -446,9 +454,9 @@
                     <div class="form-group">
                         <label for="category_id">{{ __('Select Category') }} *</label>
                         <select name="category_id" id="category_id" data-href="{{route('back.get.subcategory')}}" class="form-control" >
-                            <option value="" selected>{{__('Select One')}}</option>
+                            <option value="">{{__('Select One')}}</option>
                             @foreach(DB::table('categories')->whereStatus(1)->get() as $cat)
-                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                            <option value="{{ $cat->id }}" {{ old('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -470,9 +478,9 @@
                     <div class="form-group">
                         <label for="brand_id">{{ __('Select Brand') }} </label>
                         <select name="brand_id" id="brand_id" class="form-control" >
-                            <option value="" selected>{{__('Select Brand')}}</option>
+                            <option value="">{{__('Select Brand')}}</option>
                             @foreach(DB::table('brands')->whereStatus(1)->where(function($q){ $q->whereNull('vendor_id')->orWhere('vendor_id', 0); })->get() as $brand)
-                            <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                            <option value="{{ $brand->id }}" {{ old('brand_id') == $brand->id ? 'selected' : '' }}>{{ $brand->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -486,7 +494,7 @@
                         <div class="input-group mb-3">
                             <input type="number" id="stock"
                                 name="stock" class="form-control"
-                                placeholder="{{ __('Total in stock') }}" value="{{ old('stock') }}" >
+                                placeholder="{{ __('Total in stock') }}" value="{{ old('stock', 10) }}" >
                         </div>
                     </div>
                     <div class="form-group">
@@ -494,7 +502,7 @@
                         <select name="tax_id" id="tax_id" class="form-control">
                             <option value="">{{__('Select One')}}</option>
                             @foreach(DB::table('taxes')->whereStatus(1)->get() as $tax)
-                            <option value="{{ $tax->id }}">{{ $tax->name }}</option>
+                            <option value="{{ $tax->id }}" {{ old('tax_id') == $tax->id ? 'selected' : '' }}>{{ $tax->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -747,6 +755,131 @@
         var val = $(this).val();
         var slug = val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
         $('#slug').val(slug);
+    });
+
+    // Subcategory & Childcategory dynamic loading
+    function loadSubcategories(catId, selectedSubId = null, selectedChildId = null) {
+        if (!catId) {
+            $('#subcategory_id').html('<option value="">{{ __("Select One") }}</option>');
+            $('#childcategory_id').html('<option value="">{{ __("Select One") }}</option>');
+            return;
+        }
+
+        $.ajax({
+            url: "{{ route('back.get.subcategory') }}",
+            type: "GET",
+            data: { category_id: catId },
+            success: function(response) {
+                var html = '<option value="">{{ __("Select One") }}</option>';
+                if (response.data && response.data.length > 0) {
+                    response.data.forEach(function(item) {
+                        var sel = (selectedSubId && selectedSubId == item.id) ? 'selected' : '';
+                        html += '<option value="' + item.id + '" ' + sel + '>' + item.name + '</option>';
+                    });
+                }
+                $('#subcategory_id').html(html);
+
+                if (selectedSubId) {
+                    loadChildCategories(selectedSubId, selectedChildId);
+                } else {
+                    $('#childcategory_id').html('<option value="">{{ __("Select One") }}</option>');
+                }
+            }
+        });
+    }
+
+    function loadChildCategories(subId, selectedChildId = null) {
+        if (!subId) {
+            $('#childcategory_id').html('<option value="">{{ __("Select One") }}</option>');
+            return;
+        }
+
+        $.ajax({
+            url: "{{ route('back.get.childcategory') }}",
+            type: "GET",
+            data: { subcategory_id: subId },
+            success: function(response) {
+                var html = '<option value="">{{ __("Select One") }}</option>';
+                if (response.data && response.data.length > 0) {
+                    response.data.forEach(function(item) {
+                        var sel = (selectedChildId && selectedChildId == item.id) ? 'selected' : '';
+                        html += '<option value="' + item.id + '" ' + sel + '>' + item.name + '</option>';
+                    });
+                }
+                $('#childcategory_id').html(html);
+            }
+        });
+    }
+
+    // Specifications Add/Remove handlers
+    $(document).on('click', '.add-specification', function() {
+        var text = $(this).data('text') || 'Specification Name';
+        var text1 = $(this).data('text1') || 'Specification Description';
+        var html = `
+            <div class="d-flex mb-2">
+                <div class="flex-grow-1 mr-2">
+                    <div class="form-group mb-0">
+                        <input type="text" class="form-control" name="specification_name[]" placeholder="${text}">
+                    </div>
+                </div>
+                <div class="flex-grow-1 mr-2">
+                    <div class="form-group mb-0">
+                        <input type="text" class="form-control" name="specification_description[]" placeholder="${text1}">
+                    </div>
+                </div>
+                <div class="flex-btn">
+                    <button type="button" class="btn btn-danger remove-specification">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        $('#specifications-section').append(html);
+    });
+
+    $(document).on('click', '.remove-specification, .remove-spcification', function() {
+        $(this).closest('.d-flex').remove();
+    });
+
+    $(document).ready(function() {
+        // Restore category / subcategory / childcategory on validation error
+        var oldCatId = "{{ old('category_id') }}";
+        var oldSubId = "{{ old('subcategory_id') }}";
+        var oldChildId = "{{ old('childcategory_id') }}";
+
+        if (oldCatId) {
+            loadSubcategories(oldCatId, oldSubId, oldChildId);
+        }
+
+        // Restore Variants if submitted
+        @if(old('variant_color'))
+            var oldColors = @json(old('variant_color'));
+            var oldSizes = @json(old('variant_size'));
+            var oldStocks = @json(old('variant_stock'));
+            var oldPrices = @json(old('variant_price'));
+
+            if (oldColors && oldColors.length > 0) {
+                $('#variants_tbody').empty();
+                for (var i = 0; i < oldColors.length; i++) {
+                    addSingleVariantRow(oldColors[i] || '', (oldSizes && oldSizes[i]) || '', (oldStocks && oldStocks[i]) || 0, (oldPrices && oldPrices[i]) || 0);
+                }
+            }
+        @endif
+
+        // Restore Demo Reviews if submitted
+        @if(old('demo_reviewer_name'))
+            var oldReviewers = @json(old('demo_reviewer_name'));
+            var oldRatings = @json(old('demo_rating'));
+            var oldSubjects = @json(old('demo_subject'));
+            var oldReviews = @json(old('demo_review'));
+
+            if (oldReviewers && oldReviewers.length > 0) {
+                $('#demo_reviews_container').empty();
+                for (var j = 0; j < oldReviewers.length; j++) {
+                    addDemoReviewRow(oldReviewers[j] || '', (oldRatings && oldRatings[j]) || 5, (oldSubjects && oldSubjects[j]) || '', (oldReviews && oldReviews[j]) || '');
+                }
+            }
+        @endif
     });
 </script>
 
