@@ -164,7 +164,7 @@
             <!-- TAB 1: Smart Text / Structured Input -->
             <div class="tab-pane fade show active tab-content-box" id="tab-hhc-text" role="tabpanel" aria-labelledby="hhc-tab">
                 <div class="row">
-                    <div class="col-lg-8">
+                    <div class="col-12">
                         
                         <!-- 1. Product Name / Title -->
                         <div class="form-group mb-3">
@@ -248,21 +248,6 @@
                                 <span id="parse_btn_spinner" class="spinner-border spinner-border-sm mr-1 d-none" role="status"></span>
                                 <span id="parse_btn_text"><i class="fas fa-magic mr-1"></i> {{ __('⚡ Parse & Auto-Fill Product Details (Auto SEO Tags & Meta)') }}</span>
                             </button>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-4 mt-3 mt-lg-0">
-                        <div class="guide-step-card h-100">
-                            <h6 class="font-weight-bold text-dark mb-2"><i class="fas fa-lightbulb text-warning mr-1"></i> {{ __('Fast SEO Auto-Features:') }}</h6>
-                            <ul class="pl-3 mb-2 text-secondary" style="line-height: 1.6;">
-                                <li><b>{{ __('Auto Product Tags') }}:</b> {{ __('System extracts high-intent buyer tags automatically.') }}</li>
-                                <li><b>{{ __('Auto Meta Keywords') }}:</b> {{ __('Generates Google/Meta ranking keywords.') }}</li>
-                                <li><b>{{ __('Auto Meta Description') }}:</b> {{ __('Creates SEO-ready search snippet under 160 chars.') }}</li>
-                                <li><b>{{ __('Auto Main Category') }}:</b> {{ __('Matches best store category in 1 click.') }}</li>
-                            </ul>
-                            <div class="text-success small font-weight-bold mt-2">
-                                <i class="fas fa-check-circle mr-1"></i> {{ __('Cash on Delivery (COD) is auto-enabled!') }}
-                            </div>
                         </div>
                     </div>
                 </div>
