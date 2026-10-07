@@ -145,6 +145,11 @@
                         <span class="sub-item">{{ __('Brands') }}</span>
                     </a>
                 </li>
+                <li class="{{ request()->is('admin/product/importer*') ? 'active' : '' }}">
+                    <a class="sub-link" href="{{ route('back.product.importer') }}">
+                        <span class="sub-item text-warning font-weight-bold"><i class="fas fa-magic mr-1"></i> {{ __('1-Click Importer') }}</span>
+                    </a>
+                </li>
                 <li>
                     <a class="sub-link" href="{{ route('back.item.add') }}">
                         <span class="sub-item">{{ __('Add Product') }}</span>

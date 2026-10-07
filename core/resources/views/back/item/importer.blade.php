@@ -1,0 +1,520 @@
+@extends('master.back')
+
+@section('styles')
+<style>
+    .importer-hero {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        border-radius: 12px;
+        color: #fff;
+        padding: 25px 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 15px rgba(30, 60, 114, 0.2);
+    }
+    .image-picker-card {
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 6px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        position: relative;
+        background: #fff;
+    }
+    .image-picker-card:hover {
+        border-color: #3b82f6;
+        transform: translateY(-2px);
+    }
+    .image-picker-card.selected-main {
+        border-color: #10b981;
+        background: #ecfdf5;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+    }
+    .image-picker-card .main-badge {
+        display: none;
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        background: #10b981;
+        color: #fff;
+        font-size: 10px;
+        font-weight: bold;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+    .image-picker-card.selected-main .main-badge {
+        display: block;
+    }
+    .image-picker-img {
+        width: 100%;
+        height: 110px;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+    .gallery-checkbox-wrap {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+    }
+</style>
+@endsection
+
+@section('content')
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-sm-flex align-items-center justify-content-between">
+                <h3 class="mb-0 bc-title"><b><i class="fas fa-magic text-warning mr-2"></i>{{ __('1-Click Smart Product Importer') }}</b></h3>
+                <div>
+                    <a class="btn btn-outline-primary btn-sm mr-2" href="{{ route('back.item.create') }}"><i class="fas fa-plus"></i> {{ __('Manual Create Product') }}</a>
+                    <a class="btn btn-secondary btn-sm" href="{{ route('back.item.index') }}"><i class="fas fa-chevron-left"></i> {{ __('Back to Products') }}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @include('alerts.alerts')
+
+    <!-- Importer Fetch Bar -->
+    <div class="importer-hero">
+        <div class="row align-items-center">
+            <div class="col-lg-8 mb-3 mb-lg-0">
+                <h4 class="font-weight-bold mb-1"><i class="fas fa-bolt text-warning mr-1"></i> {{ __('Paste any Product Link & Import in 1-Click') }}</h4>
+                <p class="mb-0 text-white-50" style="font-size: 14px;">
+                    {{ __('Works with HHC Dropshipping, Daraz, Shopify Stores, AliExpress, and any e-commerce website. Title, Images & Description will be auto-downloaded.') }}
+                </p>
+            </div>
+            <div class="col-lg-4 text-lg-right">
+                <span class="badge badge-light text-dark font-weight-bold py-2 px-3" style="font-size: 13px;">
+                    <i class="fas fa-shield-alt text-success mr-1"></i> {{ __('100% Safe & Live Preview') }}
+                </span>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <div class="input-group input-group-lg shadow-sm">
+                <div class="input-group-prepend">
+                    <span class="input-group-text bg-white border-0 text-primary"><i class="fas fa-link fa-lg"></i></span>
+                </div>
+                <input type="url" id="scrape_url_input" class="form-control border-0" placeholder="{{ __('Paste product link here (e.g. https://hhcdropshipping.com/product/... or Daraz link)') }}" style="font-size: 15px;">
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-warning font-weight-bold px-4" id="fetch_btn" onclick="fetchProductData()">
+                        <span id="fetch_btn_spinner" class="spinner-border spinner-border-sm mr-1 d-none" role="status"></span>
+                        <span id="fetch_btn_text"><i class="fas fa-cloud-download-alt mr-1"></i> {{ __('Fetch Product Details') }}</span>
+                    </button>
+                </div>
+            </div>
+            <small class="d-block mt-2 text-white-50">
+                <i class="fas fa-info-circle mr-1"></i> {{ __('Tip: Copy the link from your browser address bar and paste here, then click Fetch.') }}
+            </small>
+        </div>
+    </div>
+
+    <!-- Alert Box for AJAX errors -->
+    <div id="fetch_error_alert" class="alert alert-danger d-none shadow-sm" role="alert">
+        <i class="fas fa-exclamation-triangle mr-1"></i> <span id="fetch_error_msg"></span>
+    </div>
+
+    <!-- Product Preview & Publishing Form (Initially Hidden until Fetched) -->
+    <div id="product_preview_container" style="display: none;">
+        <form action="{{ route('back.product.importer.store') }}" method="POST" enctype="multipart/form-data" id="importer_publish_form">
+            @csrf
+            <input type="hidden" name="main_image_url" id="selected_main_image_url" value="">
+            <input type="hidden" name="is_button" id="is_button_val" value="0">
+
+            <div class="row">
+                <!-- Left Column -->
+                <div class="col-lg-8">
+                    <!-- Title & Source Card -->
+                    <div class="card">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-heading text-primary mr-2"></i>{{ __('Product Title & Identity') }}</h5>
+                            <span class="badge badge-success font-weight-bold" id="auto_matched_badge">{{ __('Auto-Matched') }}</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="imp_name" class="font-weight-bold">{{ __('Product Title / Name') }} *</label>
+                                <input type="text" name="name" id="imp_name" class="form-control form-control-lg font-weight-bold" placeholder="{{ __('Enter Product Name') }}" required>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="imp_sku" class="font-weight-bold">{{ __('SKU / Product Code') }} *</label>
+                                        <input type="text" name="sku" id="imp_sku" class="form-control text-uppercase" value="{{ \App\Repositories\Back\ItemRepository::generateAutoSku() }}" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="imp_product_from" class="font-weight-bold text-info"><i class="fas fa-truck-loading mr-1"></i>{{ __('Product From (Supplier)') }}</label>
+                                        <input type="text" name="product_from" id="imp_product_from" class="form-control" value="HHC Dropshipping" placeholder="e.g. HHC Dropshipping">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Images Selection Card -->
+                    <div class="card">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-images text-primary mr-2"></i>{{ __('Images Extracted') }}</h5>
+                            <small class="text-muted">{{ __('Click an image to set as Featured/Main image') }}</small>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted small mb-2">
+                                <span class="badge badge-success mr-1">{{ __('Green border') }} = {{ __('Main Featured Photo') }}</span>
+                                <span class="badge badge-secondary mr-1">{{ __('Checked') }} = {{ __('Gallery Photos (Auto-downloaded)') }}</span>
+                            </p>
+                            <div class="row" id="images_grid_container">
+                                {{-- Dynamically populated image cards --}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description Card -->
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-align-left text-primary mr-2"></i>{{ __('Descriptions & Details') }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="imp_sort_details" class="font-weight-bold">{{ __('Short Description') }} *</label>
+                                <textarea name="sort_details" id="imp_sort_details" class="form-control" rows="3" placeholder="{{ __('Short summary...') }}" required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="imp_details" class="font-weight-bold">{{ __('Full Description & Specifications') }} *</label>
+                                <textarea name="details" id="imp_details" class="form-control" rows="7" placeholder="{{ __('Enter Full details...') }}" required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="imp_tags" class="font-weight-bold">{{ __('Tags (comma separated)') }}</label>
+                                <input type="text" name="tags" id="imp_tags" class="form-control tags" placeholder="e.g. fashion, trending, gadget">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column (Settings & Pricing) -->
+                <div class="col-lg-4">
+                    <!-- Action Buttons -->
+                    <div class="card shadow-sm border-primary">
+                        <div class="card-body text-center p-3">
+                            <button type="submit" class="btn btn-success btn-block btn-lg font-weight-bold mb-2 shadow-sm" onclick="document.getElementById('is_button_val').value = '0';">
+                                <i class="fas fa-rocket mr-1"></i> {{ __('Publish Product to Website') }}
+                            </button>
+                            <button type="submit" class="btn btn-info btn-block font-weight-bold" onclick="document.getElementById('is_button_val').value = '1';">
+                                <i class="fas fa-edit mr-1"></i> {{ __('Save & Open Full Editor') }}
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Pricing & Profit Calculator -->
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-tags text-success mr-2"></i>{{ __('Pricing & Profit Margin') }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group mb-2">
+                                <label class="font-weight-bold text-muted small">{{ __('Supplier Cost / Wholesale Price') }}</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text bg-light">{{ $curr->sign ?? 'PKR' }}</span>
+                                    </div>
+                                    <input type="number" id="imp_cost_price" class="form-control bg-light" placeholder="0" oninput="calculateProfit()">
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="imp_discount_price" class="font-weight-bold text-primary">{{ __('Your Selling Price (On Website)') }} *</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text bg-primary text-white font-weight-bold">{{ $curr->sign ?? 'PKR' }}</span>
+                                    </div>
+                                    <input type="number" step="1" name="discount_price" id="imp_discount_price" class="form-control form-control-lg font-weight-bold text-primary" placeholder="e.g. 999" required oninput="calculateProfit()">
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="imp_previous_price" class="font-weight-bold text-muted small">{{ __('Previous / Strike Price (Optional)') }}</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">{{ $curr->sign ?? 'PKR' }}</span>
+                                    </div>
+                                    <input type="number" step="1" name="previous_price" id="imp_previous_price" class="form-control" placeholder="e.g. 1499">
+                                </div>
+                            </div>
+
+                            <!-- Net Profit Display -->
+                            <div class="p-3 bg-light rounded border border-success text-center">
+                                <span class="small font-weight-bold text-muted d-block">{{ __('Estimated Profit per Unit') }}</span>
+                                <h4 class="font-weight-bold text-success mb-0" id="estimated_profit_display">Rs 0</h4>
+                                <input type="hidden" name="estimated_profit" id="imp_estimated_profit" value="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category & Subcategory Card -->
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-sitemap text-primary mr-2"></i>{{ __('Categories Selection') }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="imp_category_id" class="font-weight-bold">{{ __('Main Category') }} * <small class="text-success">({{ __('Auto-Selected') }})</small></label>
+                                <select name="category_id" id="imp_category_id" data-href="{{ route('back.get.subcategory') }}" class="form-control font-weight-bold" required onchange="loadSubcategories(this.value)">
+                                    <option value="">{{ __('Select One') }}</option>
+                                    @foreach($categories as $cat)
+                                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="imp_subcategory_id" class="font-weight-bold">{{ __('Sub Category') }} <small class="text-muted">({{ __('Optional - Select manually') }})</small></label>
+                                <select name="subcategory_id" id="imp_subcategory_id" data-href="{{ route('back.get.childcategory') }}" class="form-control" onchange="loadChildCategories(this.value)">
+                                    <option value="">{{ __('Select One') }}</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="imp_childcategory_id" class="font-weight-bold">{{ __('Child Category') }} <small class="text-muted">({{ __('Optional') }})</small></label>
+                                <select name="childcategory_id" id="imp_childcategory_id" class="form-control">
+                                    <option value="">{{ __('Select One') }}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cash on Delivery & Order Settings -->
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-cog text-primary mr-2"></i>{{ __('Order & Delivery Settings') }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- COD Toggle (Checked by default) -->
+                            <div class="form-group mb-3">
+                                <label class="switch-primary d-flex align-items-center">
+                                    <input type="checkbox" class="switch switch-bootstrap status radio-check" name="is_cod" value="1" checked>
+                                    <span class="switch-body"></span>
+                                    <span class="switch-text font-weight-bold text-dark ml-2">{{ __('Offer Cash on Delivery (COD)') }}</span>
+                                </label>
+                                <small class="text-muted">{{ __('Enabled by default for Pakistan orders.') }}</small>
+                            </div>
+
+                            <!-- Stock -->
+                            <div class="form-group mb-3">
+                                <label class="font-weight-bold">{{ __('Total Stock Quantity') }}</label>
+                                <input type="number" name="stock" class="form-control" value="20" min="1">
+                            </div>
+
+                            <!-- Easy Return -->
+                            <div class="form-group mb-0">
+                                <label class="switch-primary d-flex align-items-center">
+                                    <input type="checkbox" class="switch switch-bootstrap status radio-check" name="is_returnable" value="1" checked>
+                                    <span class="switch-body"></span>
+                                    <span class="switch-text font-weight-bold text-dark ml-2">{{ __('14 Days Easy Return Guarantee') }}</span>
+                                </label>
+                                <input type="hidden" name="return_days" value="14">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<script>
+    function fetchProductData() {
+        var urlInput = document.getElementById('scrape_url_input').value.trim();
+        var fetchBtn = document.getElementById('fetch_btn');
+        var spinner = document.getElementById('fetch_btn_spinner');
+        var btnText = document.getElementById('fetch_btn_text');
+        var errorAlert = document.getElementById('fetch_error_alert');
+        var errorMsg = document.getElementById('fetch_error_msg');
+        var previewContainer = document.getElementById('product_preview_container');
+
+        if (!urlInput) {
+            alert('{{ __("Please paste a product URL first!") }}');
+            return;
+        }
+
+        // Show loading state
+        fetchBtn.disabled = true;
+        spinner.classList.remove('d-none');
+        btnText.innerText = '{{ __("Fetching & Extracting...") }}';
+        errorAlert.classList.add('d-none');
+
+        $.ajax({
+            url: "{{ route('back.product.importer.fetch') }}",
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                url: urlInput
+            },
+            success: function(response) {
+                fetchBtn.disabled = false;
+                spinner.classList.add('d-none');
+                btnText.innerHTML = '<i class="fas fa-cloud-download-alt mr-1"></i> {{ __("Fetch Product Details") }}';
+
+                if (response.success && response.data) {
+                    populatePreviewForm(response.data);
+                    previewContainer.style.display = 'block';
+                    // Scroll smoothly down to preview
+                    $('html, body').animate({
+                        scrollTop: $("#product_preview_container").offset().top - 40
+                    }, 500);
+                } else {
+                    errorMsg.innerText = response.message || '{{ __("Unable to fetch product. Please check the link.") }}';
+                    errorAlert.classList.remove('d-none');
+                }
+            },
+            error: function(xhr) {
+                fetchBtn.disabled = false;
+                spinner.classList.add('d-none');
+                btnText.innerHTML = '<i class="fas fa-cloud-download-alt mr-1"></i> {{ __("Fetch Product Details") }}';
+
+                var message = '{{ __("Failed to fetch product. Please make sure the link is accessible.") }}';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
+                errorMsg.innerText = message;
+                errorAlert.classList.remove('d-none');
+            }
+        });
+    }
+
+    function populatePreviewForm(data) {
+        // Name & Identity
+        $('#imp_name').val(data.name || '');
+        $('#imp_sort_details').val(data.sort_details || '');
+        $('#imp_details').val(data.details || '');
+        $('#imp_product_from').val(data.product_from || 'HHC Dropshipping');
+
+        // Price calculations
+        var rawPrice = parseFloat(data.raw_price) || 0;
+        if (rawPrice > 0) {
+            $('#imp_cost_price').val(rawPrice);
+            // Default markup: Cost + Rs. 600
+            var suggestedSell = Math.round(rawPrice + 600);
+            $('#imp_discount_price').val(suggestedSell);
+            $('#imp_previous_price').val(Math.round(suggestedSell * 1.35));
+        } else {
+            $('#imp_cost_price').val('');
+            $('#imp_discount_price').val('');
+            $('#imp_previous_price').val('');
+        }
+        calculateProfit();
+
+        // Auto-select Matched Category
+        if (data.category_id) {
+            $('#imp_category_id').val(data.category_id);
+            loadSubcategories(data.category_id);
+        }
+
+        // Populate Images Grid
+        var grid = document.getElementById('images_grid_container');
+        grid.innerHTML = '';
+
+        if (data.images && data.images.length > 0) {
+            $('#selected_main_image_url').val(data.images[0]);
+
+            data.images.forEach(function(imgUrl, idx) {
+                var isMain = (idx === 0);
+                var col = document.createElement('div');
+                col.className = 'col-6 col-md-4 col-lg-3 mb-3';
+                col.innerHTML = `
+                    <div class="image-picker-card ${isMain ? 'selected-main' : ''}" onclick="selectMainImage(this, '${escapeHtml(imgUrl)}')">
+                        <span class="main-badge"><i class="fas fa-star"></i> Main</span>
+                        <div class="gallery-checkbox-wrap" onclick="event.stopPropagation();">
+                            <input type="checkbox" name="gallery_urls[]" value="${escapeHtml(imgUrl)}" ${isMain ? '' : 'checked'} title="{{ __('Include in Gallery') }}">
+                        </div>
+                        <img src="${escapeHtml(imgUrl)}" class="image-picker-img" alt="Product Image">
+                    </div>
+                `;
+                grid.appendChild(col);
+            });
+        } else {
+            grid.innerHTML = '<div class="col-12 text-muted text-center py-3">{{ __("No images found from URL. You can upload photo manually in editor.") }}</div>';
+        }
+    }
+
+    function selectMainImage(cardEl, imgUrl) {
+        document.querySelectorAll('.image-picker-card').forEach(function(el) {
+            el.classList.remove('selected-main');
+        });
+        cardEl.classList.add('selected-main');
+        document.getElementById('selected_main_image_url').value = imgUrl;
+    }
+
+    function calculateProfit() {
+        var cost = parseFloat($('#imp_cost_price').val()) || 0;
+        var sell = parseFloat($('#imp_discount_price').val()) || 0;
+        var profit = 0;
+
+        if (sell > 0) {
+            profit = cost > 0 ? (sell - cost) : sell;
+        }
+
+        $('#imp_estimated_profit').val(profit);
+        $('#estimated_profit_display').text('Rs ' + Math.round(profit).toLocaleString());
+    }
+
+    function loadSubcategories(catId, selectedSubId = null) {
+        if (!catId) {
+            $('#imp_subcategory_id').html('<option value="">{{ __("Select One") }}</option>');
+            $('#imp_childcategory_id').html('<option value="">{{ __("Select One") }}</option>');
+            return;
+        }
+
+        $.ajax({
+            url: "{{ route('back.get.subcategory') }}",
+            type: "GET",
+            data: { category_id: catId },
+            success: function(response) {
+                var html = '<option value="">{{ __("Select One") }}</option>';
+                if (response.data && response.data.length > 0) {
+                    response.data.forEach(function(item) {
+                        var sel = (selectedSubId && selectedSubId == item.id) ? 'selected' : '';
+                        html += '<option value="' + item.id + '" ' + sel + '>' + item.name + '</option>';
+                    });
+                }
+                $('#imp_subcategory_id').html(html);
+                $('#imp_childcategory_id').html('<option value="">{{ __("Select One") }}</option>');
+            }
+        });
+    }
+
+    function loadChildCategories(subId, selectedChildId = null) {
+        if (!subId) {
+            $('#imp_childcategory_id').html('<option value="">{{ __("Select One") }}</option>');
+            return;
+        }
+
+        $.ajax({
+            url: "{{ route('back.get.childcategory') }}",
+            type: "GET",
+            data: { subcategory_id: subId },
+            success: function(response) {
+                var html = '<option value="">{{ __("Select One") }}</option>';
+                if (response.data && response.data.length > 0) {
+                    response.data.forEach(function(item) {
+                        var sel = (selectedChildId && selectedChildId == item.id) ? 'selected' : '';
+                        html += '<option value="' + item.id + '" ' + sel + '>' + item.name + '</option>';
+                    });
+                }
+                $('#imp_childcategory_id').html(html);
+            }
+        });
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+</script>
+@endsection

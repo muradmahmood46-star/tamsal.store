@@ -50,6 +50,24 @@
 </div>
 @else
     <div class="row">
+        <div class="col-12 mb-3">
+            <a href="{{ route('back.product.importer') }}" class="card card-stats card-round product-type-card shadow-sm" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: #fff; border: none;">
+                <div class="card-body py-4">
+                    <div class="product-type-content">
+                        <div class="d-inline-block">
+                            <div class="icon-big text-center text-warning px-3" style="font-size: 38px;">
+                                <i class="fas fa-magic"></i>
+                            </div>
+                        </div>
+                        <div class="d-block mt-2 w-100 text-center">
+                            <h2 class="card-title text-center text-white mb-1"><b>⚡ {{ __('1-Click Smart URL Product Importer') }}</b></h2>
+                            <p class="mb-0 text-white-50" style="font-size: 14px;">{{ __('Paste product link from HHC Dropshipping, Daraz, Shopify, etc. to auto-fetch Title, Images & Details!') }}</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
         <div class="col-sm-6 col-md-6">
             <a href="{{route('back.item.create')}}" class="card card-stats card-round product-type-card">
                 <div class="card-body">
@@ -61,7 +79,7 @@
                         </div>
                         <div class="d-block mt-3 w-100 text-center">
                             <div class="numbers text-center">
-                                <h2 class="card-title text-center"><b>{{__('Add Physical Product')}}</b></h2>
+                                <h2 class="card-title text-center"><b>{{__('Add Physical Product (Manual)')}}</b></h2>
                             </div>
                         </div>
                     </div>

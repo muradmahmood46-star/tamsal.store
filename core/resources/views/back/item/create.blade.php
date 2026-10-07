@@ -9,7 +9,10 @@
     <div class="card-body">
         <div class="d-sm-flex align-items-center justify-content-between">
             <h3 class="mb-0 bc-title"><b>{{ __('Create Product') }}</b> </h3>
-            <a class="btn btn-primary   btn-sm" href="{{route('back.item.index')}}"><i class="fas fa-chevron-left"></i> {{ __('Back') }}</a>
+            <div>
+                <a class="btn btn-warning btn-sm font-weight-bold mr-2 text-dark" href="{{ route('back.product.importer') }}"><i class="fas fa-magic mr-1"></i> {{ __('⚡ 1-Click URL Importer') }}</a>
+                <a class="btn btn-primary btn-sm" href="{{route('back.item.index')}}"><i class="fas fa-chevron-left"></i> {{ __('Back') }}</a>
+            </div>
         </div>
     </div>
 </div>

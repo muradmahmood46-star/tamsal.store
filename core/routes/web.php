@@ -185,6 +185,11 @@ Route::group(['middleware' => ['adminlocalize', 'demo']], function () {
             Route::resource('affiliate', 'Back\AffiliateController', ['as' => 'back']);
             // ----------- AFFILIATE PRODUCT -----------//
 
+            // --------- 1-CLICK PRODUCT IMPORTER -----------//
+            Route::get('/product/importer', 'Back\ProductImporterController@index')->name('back.product.importer');
+            Route::post('/product/importer/fetch', 'Back\ProductImporterController@fetch')->name('back.product.importer.fetch');
+            Route::post('/product/importer/store', 'Back\ProductImporterController@store')->name('back.product.importer.store');
+
 
 
             Route::prefix('{item}')->group(function () {
