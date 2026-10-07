@@ -294,9 +294,25 @@ class ProductImporterController extends Controller
 
         $item->status = 1;
         $item->vendor_id = null; // Admin In-House Product
-        $item->is_specification = 0;
+
+        // Specifications
+        if ($request->has('is_specification') && $request->is_specification == 1) {
+            $item->is_specification = 1;
+            $item->specification_name = json_encode($request->specification_name ?? []);
+            $item->specification_description = json_encode($request->specification_description ?? []);
+        } else {
+            $item->is_specification = 0;
+            $item->specification_name = null;
+            $item->specification_description = null;
+        }
 
         $item->save();
+
+        // Handle Variants, Demo Reviews & Rating, and Return Policy via ItemRepository
+        $itemRepo = new ItemRepository();
+        $itemRepo->handleVariants($item, $request);
+        $itemRepo->handleRatingManagement($item, $request);
+        $itemRepo->handleReturnPolicy($item, $request);
 
         // 5. Download & attach gallery images (from URLs)
         if ($request->has('gallery_urls') && is_array($request->gallery_urls)) {
