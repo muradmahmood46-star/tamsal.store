@@ -188,6 +188,7 @@ Route::group(['middleware' => ['adminlocalize', 'demo']], function () {
             // --------- 1-CLICK PRODUCT IMPORTER -----------//
             Route::get('/product/importer', 'Back\ProductImporterController@index')->name('back.product.importer');
             Route::post('/product/importer/fetch', 'Back\ProductImporterController@fetch')->name('back.product.importer.fetch');
+            Route::post('/product/importer/parse-text', 'Back\ProductImporterController@parseText')->name('back.product.importer.parse_text');
             Route::post('/product/importer/store', 'Back\ProductImporterController@store')->name('back.product.importer.store');
 
 

@@ -4,11 +4,38 @@
 <style>
     .importer-hero {
         background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-        border-radius: 12px;
+        border-radius: 14px;
         color: #fff;
-        padding: 25px 20px;
+        padding: 24px;
         margin-bottom: 25px;
-        box-shadow: 0 4px 15px rgba(30, 60, 114, 0.2);
+        box-shadow: 0 8px 25px rgba(30, 60, 114, 0.2);
+    }
+    .importer-nav-tabs {
+        border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    }
+    .importer-nav-tabs .nav-link {
+        color: rgba(255, 255, 255, 0.85);
+        font-weight: 600;
+        font-size: 15px;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px 8px 0 0;
+        transition: all 0.2s ease-in-out;
+    }
+    .importer-nav-tabs .nav-link:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.1);
+    }
+    .importer-nav-tabs .nav-link.active {
+        color: #1e3c72;
+        background: #fff;
+        font-weight: 700;
+    }
+    .tab-content-box {
+        background: #fff;
+        border-radius: 0 10px 10px 10px;
+        padding: 22px;
+        color: #333;
     }
     .image-picker-card {
         border: 2px solid #e2e8f0;
@@ -36,17 +63,18 @@
         left: 6px;
         background: #10b981;
         color: #fff;
-        font-size: 10px;
+        font-size: 11px;
         font-weight: bold;
-        padding: 2px 6px;
+        padding: 2px 7px;
         border-radius: 4px;
+        z-index: 2;
     }
     .image-picker-card.selected-main .main-badge {
         display: block;
     }
     .image-picker-img {
         width: 100%;
-        height: 110px;
+        height: 115px;
         object-fit: cover;
         border-radius: 6px;
     }
@@ -54,6 +82,14 @@
         position: absolute;
         top: 6px;
         right: 6px;
+        z-index: 2;
+    }
+    .guide-step-card {
+        background: #f8fafc;
+        border: 1px dashed #cbd5e1;
+        border-radius: 8px;
+        padding: 12px 15px;
+        font-size: 13px;
     }
 </style>
 @endsection
@@ -76,38 +112,105 @@
 
     @include('alerts.alerts')
 
-    <!-- Importer Fetch Bar -->
+    <!-- Importer Hero & Dual Tabs -->
     <div class="importer-hero">
-        <div class="row align-items-center">
-            <div class="col-lg-8 mb-3 mb-lg-0">
-                <h4 class="font-weight-bold mb-1"><i class="fas fa-bolt text-warning mr-1"></i> {{ __('Paste any Product Link & Import in 1-Click') }}</h4>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h4 class="font-weight-bold mb-1"><i class="fas fa-bolt text-warning mr-1"></i> {{ __('Smart Product Auto-Importer') }}</h4>
                 <p class="mb-0 text-white-50" style="font-size: 14px;">
-                    {{ __('Works with HHC Dropshipping, Daraz, Shopify Stores, AliExpress, and any e-commerce website. Title, Images & Description will be auto-downloaded.') }}
+                    {{ __('List dropshipping & wholesale products directly on your store in seconds without manual typing.') }}
                 </p>
             </div>
-            <div class="col-lg-4 text-lg-right">
-                <span class="badge badge-light text-dark font-weight-bold py-2 px-3" style="font-size: 13px;">
-                    <i class="fas fa-shield-alt text-success mr-1"></i> {{ __('100% Safe & Live Preview') }}
-                </span>
-            </div>
+            <span class="badge badge-light text-dark font-weight-bold py-2 px-3 d-none d-md-inline-block" style="font-size: 13px;">
+                <i class="fas fa-shield-alt text-success mr-1"></i> {{ __('100% Safe Preview Before Publish') }}
+            </span>
         </div>
 
-        <div class="mt-4">
-            <div class="input-group input-group-lg shadow-sm">
-                <div class="input-group-prepend">
-                    <span class="input-group-text bg-white border-0 text-primary"><i class="fas fa-link fa-lg"></i></span>
-                </div>
-                <input type="url" id="scrape_url_input" class="form-control border-0" placeholder="{{ __('Paste product link here (e.g. https://hhcdropshipping.com/product/... or Daraz link)') }}" style="font-size: 15px;">
-                <div class="input-group-append">
-                    <button type="button" class="btn btn-warning font-weight-bold px-4" id="fetch_btn" onclick="fetchProductData()">
-                        <span id="fetch_btn_spinner" class="spinner-border spinner-border-sm mr-1 d-none" role="status"></span>
-                        <span id="fetch_btn_text"><i class="fas fa-cloud-download-alt mr-1"></i> {{ __('Fetch Product Details') }}</span>
-                    </button>
+        <!-- Navigation Tabs -->
+        <ul class="nav importer-nav-tabs" id="importerTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="hhc-tab" data-toggle="tab" href="#tab-hhc-text" role="tab" aria-controls="tab-hhc-text" aria-selected="true">
+                    <i class="fas fa-clipboard-check text-warning mr-1"></i> {{ __('Smart Text / HHC Copy-Paste (Recommended for HHC)') }}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="url-tab" data-toggle="tab" href="#tab-web-url" role="tab" aria-controls="tab-web-url" aria-selected="false">
+                    <i class="fas fa-link text-info mr-1"></i> {{ __('Import via Web URL (Daraz, Shopify, AliExpress)') }}
+                </a>
+            </li>
+        </ul>
+
+        <!-- Tab Contents -->
+        <div class="tab-content shadow-sm" id="importerTabContent">
+            
+            <!-- TAB 1: Smart Text / HHC Copy-Paste -->
+            <div class="tab-pane fade show active tab-content-box" id="tab-hhc-text" role="tabpanel" aria-labelledby="hhc-tab">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold text-dark mb-1">
+                                <i class="fas fa-paste text-primary mr-1"></i> {{ __('Paste Product Text / Details from HHC Dropshipping:') }}
+                            </label>
+                            <textarea id="raw_text_input" class="form-control" rows="5" placeholder="{{ __('Example:&#10;Karseell Hair Mask For Damaged Hair - 300ml&#10;Rs 330 x 1&#10;Product ID : 3767460&#10;Description: Deep repair collagen treatment for damaged hair...') }}"></textarea>
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle text-info"></i> {{ __('Simply copy all text from the HHC product screen and paste it here. Title, SKU, Cost Price & Description will be extracted automatically.') }}
+                            </small>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold text-dark mb-1">
+                                <i class="fas fa-image text-success mr-1"></i> {{ __('Image Link(s) / Photo URLs (Optional):') }}
+                            </label>
+                            <input type="text" id="image_urls_input" class="form-control" placeholder="{{ __('Paste image URL(s) or Right click product photo on HHC -> "Copy Image Address" -> paste here') }}">
+                            <small class="text-muted">
+                                {{ __('Multiple image URLs can be separated by commas or spaces. You can also upload photos from your computer below.') }}
+                            </small>
+                        </div>
+
+                        <button type="button" class="btn btn-primary btn-lg font-weight-bold px-4 shadow-sm" id="parse_text_btn" onclick="parseProductText()">
+                            <span id="parse_btn_spinner" class="spinner-border spinner-border-sm mr-1 d-none" role="status"></span>
+                            <span id="parse_btn_text"><i class="fas fa-magic mr-1"></i> {{ __('Parse & Auto-Fill Product Details') }}</span>
+                        </button>
+                    </div>
+
+                    <div class="col-lg-4 mt-3 mt-lg-0">
+                        <div class="guide-step-card h-100">
+                            <h6 class="font-weight-bold text-dark mb-2"><i class="fas fa-lightbulb text-warning mr-1"></i> {{ __('HHC Fast 3-Step Guide:') }}</h6>
+                            <ol class="pl-3 mb-2 text-secondary" style="line-height: 1.6;">
+                                <li><b>{{ __('Copy Text') }}:</b> {{ __('Open the product on HHC and copy the title, price and description.') }}</li>
+                                <li><b>{{ __('Copy Image') }}:</b> {{ __('Right-click the photo on HHC and click "Copy image address".') }}</li>
+                                <li><b>{{ __('Auto-Fill & Publish') }}:</b> {{ __('Click Parse button, set your selling price, and click Publish!') }}</li>
+                            </ol>
+                            <div class="text-success small font-weight-bold">
+                                <i class="fas fa-check-circle mr-1"></i> {{ __('Cash on Delivery (COD) is auto-enabled!') }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <small class="d-block mt-2 text-white-50">
-                <i class="fas fa-info-circle mr-1"></i> {{ __('Tip: Copy the link from your browser address bar and paste here, then click Fetch.') }}
-            </small>
+
+            <!-- TAB 2: Direct Web URL -->
+            <div class="tab-pane fade tab-content-box" id="tab-web-url" role="tabpanel" aria-labelledby="url-tab">
+                <label class="font-weight-bold text-dark mb-1">
+                    <i class="fas fa-globe text-primary mr-1"></i> {{ __('Product Page URL:') }}
+                </label>
+                <div class="input-group input-group-lg">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text bg-light border-right-0 text-primary"><i class="fas fa-link"></i></span>
+                    </div>
+                    <input type="url" id="scrape_url_input" class="form-control" placeholder="{{ __('Paste link from Daraz, AliExpress, Shopify stores, etc.') }}">
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-warning font-weight-bold px-4" id="fetch_btn" onclick="fetchProductData()">
+                            <span id="fetch_btn_spinner" class="spinner-border spinner-border-sm mr-1 d-none" role="status"></span>
+                            <span id="fetch_btn_text"><i class="fas fa-cloud-download-alt mr-1"></i> {{ __('Fetch from Link') }}</span>
+                        </button>
+                    </div>
+                </div>
+                <small class="text-muted d-block mt-2">
+                    <i class="fas fa-info-circle text-info"></i> {{ __('For member/login protected pages (like HHC dashboard), use the "Smart Text Copy-Paste" tab above.') }}
+                </small>
+            </div>
+
         </div>
     </div>
 
@@ -116,7 +219,7 @@
         <i class="fas fa-exclamation-triangle mr-1"></i> <span id="fetch_error_msg"></span>
     </div>
 
-    <!-- Product Preview & Publishing Form (Initially Hidden until Fetched) -->
+    <!-- Product Preview & Publishing Form (Initially Hidden until Fetched/Parsed) -->
     <div id="product_preview_container" style="display: none;">
         <form action="{{ route('back.product.importer.store') }}" method="POST" enctype="multipart/form-data" id="importer_publish_form">
             @csrf
@@ -127,26 +230,26 @@
                 <!-- Left Column -->
                 <div class="col-lg-8">
                     <!-- Title & Source Card -->
-                    <div class="card">
+                    <div class="card mb-4 shadow-sm">
                         <div class="card-header bg-light d-flex justify-content-between align-items-center">
                             <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-heading text-primary mr-2"></i>{{ __('Product Title & Identity') }}</h5>
-                            <span class="badge badge-success font-weight-bold" id="auto_matched_badge">{{ __('Auto-Matched') }}</span>
+                            <span class="badge badge-success font-weight-bold px-2 py-1" id="auto_matched_badge">{{ __('Auto-Extracted') }}</span>
                         </div>
                         <div class="card-body">
-                            <div class="form-group">
-                                <label for="imp_name" class="font-weight-bold">{{ __('Product Title / Name') }} *</label>
+                            <div class="form-group mb-3">
+                                <label for="imp_name" class="font-weight-bold text-dark">{{ __('Product Title / Name') }} *</label>
                                 <input type="text" name="name" id="imp_name" class="form-control form-control-lg font-weight-bold" placeholder="{{ __('Enter Product Name') }}" required>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="imp_sku" class="font-weight-bold">{{ __('SKU / Product Code') }} *</label>
-                                        <input type="text" name="sku" id="imp_sku" class="form-control text-uppercase" value="{{ \App\Repositories\Back\ItemRepository::generateAutoSku() }}" required>
+                                    <div class="form-group mb-0">
+                                        <label for="imp_sku" class="font-weight-bold text-dark">{{ __('SKU / Product Code') }} *</label>
+                                        <input type="text" name="sku" id="imp_sku" class="form-control text-uppercase font-weight-bold" value="{{ \App\Repositories\Back\ItemRepository::generateAutoSku() }}" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="form-group">
+                                    <div class="form-group mb-0">
                                         <label for="imp_product_from" class="font-weight-bold text-info"><i class="fas fa-truck-loading mr-1"></i>{{ __('Product From (Supplier)') }}</label>
                                         <input type="text" name="product_from" id="imp_product_from" class="form-control" value="HHC Dropshipping" placeholder="e.g. HHC Dropshipping">
                                     </div>
@@ -155,41 +258,58 @@
                         </div>
                     </div>
 
-                    <!-- Images Selection Card -->
-                    <div class="card">
+                    <!-- Images Selection & Upload Card -->
+                    <div class="card mb-4 shadow-sm">
                         <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-images text-primary mr-2"></i>{{ __('Images Extracted') }}</h5>
-                            <small class="text-muted">{{ __('Click an image to set as Featured/Main image') }}</small>
+                            <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-images text-primary mr-2"></i>{{ __('Product Photos & Gallery') }}</h5>
+                            <small class="text-muted">{{ __('Click an image to set as Main Featured photo') }}</small>
                         </div>
                         <div class="card-body">
                             <p class="text-muted small mb-2">
                                 <span class="badge badge-success mr-1">{{ __('Green border') }} = {{ __('Main Featured Photo') }}</span>
-                                <span class="badge badge-secondary mr-1">{{ __('Checked') }} = {{ __('Gallery Photos (Auto-downloaded)') }}</span>
+                                <span class="badge badge-secondary mr-1">{{ __('Checked') }} = {{ __('Gallery Photos') }}</span>
                             </p>
+                            
+                            <!-- Extracted Images Grid -->
                             <div class="row" id="images_grid_container">
                                 {{-- Dynamically populated image cards --}}
+                            </div>
+
+                            <!-- Manual Upload Fallback -->
+                            <div class="border-top pt-3 mt-3">
+                                <h6 class="font-weight-bold text-dark mb-2"><i class="fas fa-upload text-muted mr-1"></i> {{ __('Or Upload Images Directly from Computer:') }}</h6>
+                                <div class="row">
+                                    <div class="col-md-6 mb-2 mb-md-0">
+                                        <label class="small font-weight-bold text-muted">{{ __('Upload Main Featured Photo:') }}</label>
+                                        <input type="file" name="photo" class="form-control-file" accept="image/*">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="small font-weight-bold text-muted">{{ __('Upload Extra Gallery Photos:') }}</label>
+                                        <input type="file" name="galleries[]" multiple class="form-control-file" accept="image/*">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Description Card -->
-                    <div class="card">
+                    <div class="card mb-4 shadow-sm">
                         <div class="card-header bg-light">
                             <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-align-left text-primary mr-2"></i>{{ __('Descriptions & Details') }}</h5>
                         </div>
                         <div class="card-body">
-                            <div class="form-group">
-                                <label for="imp_sort_details" class="font-weight-bold">{{ __('Short Description') }} *</label>
-                                <textarea name="sort_details" id="imp_sort_details" class="form-control" rows="3" placeholder="{{ __('Short summary...') }}" required></textarea>
+                            <div class="form-group mb-3">
+                                <label for="imp_sort_details" class="font-weight-bold text-dark">{{ __('Short Description') }} *</label>
+                                <textarea name="sort_details" id="imp_sort_details" class="form-control" rows="3" placeholder="{{ __('Short summary for quick view...') }}" required></textarea>
                             </div>
 
-                            <div class="form-group">
-                                <label for="imp_details" class="font-weight-bold">{{ __('Full Description & Specifications') }} *</label>
-                                <textarea name="details" id="imp_details" class="form-control" rows="7" placeholder="{{ __('Enter Full details...') }}" required></textarea>
+                            <div class="form-group mb-3">
+                                <label for="imp_details" class="font-weight-bold text-dark">{{ __('Full Description & Specifications') }} *</label>
+                                <textarea name="details" id="imp_details" class="form-control" rows="8" placeholder="{{ __('Enter full product description...') }}" required></textarea>
                             </div>
 
-                            <div class="form-group">
-                                <label for="imp_tags" class="font-weight-bold">{{ __('Tags (comma separated)') }}</label>
+                            <div class="form-group mb-0">
+                                <label for="imp_tags" class="font-weight-bold text-dark">{{ __('Tags (comma separated)') }}</label>
                                 <input type="text" name="tags" id="imp_tags" class="form-control tags" placeholder="e.g. fashion, trending, gadget">
                             </div>
                         </div>
@@ -198,20 +318,23 @@
 
                 <!-- Right Column (Settings & Pricing) -->
                 <div class="col-lg-4">
-                    <!-- Action Buttons -->
-                    <div class="card shadow-sm border-primary">
+                    <!-- Action Buttons Card -->
+                    <div class="card mb-4 shadow-sm border-primary">
                         <div class="card-body text-center p-3">
                             <button type="submit" class="btn btn-success btn-block btn-lg font-weight-bold mb-2 shadow-sm" onclick="document.getElementById('is_button_val').value = '0';">
                                 <i class="fas fa-rocket mr-1"></i> {{ __('Publish Product to Website') }}
                             </button>
-                            <button type="submit" class="btn btn-info btn-block font-weight-bold" onclick="document.getElementById('is_button_val').value = '1';">
+                            <button type="submit" class="btn btn-outline-info btn-block font-weight-bold" onclick="document.getElementById('is_button_val').value = '1';">
                                 <i class="fas fa-edit mr-1"></i> {{ __('Save & Open Full Editor') }}
                             </button>
+                            <small class="text-muted d-block mt-2">
+                                <i class="fas fa-check text-success mr-1"></i> {{ __('Orders will directly appear in Admin Panel') }}
+                            </small>
                         </div>
                     </div>
 
                     <!-- Pricing & Profit Calculator -->
-                    <div class="card">
+                    <div class="card mb-4 shadow-sm">
                         <div class="card-header bg-light">
                             <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-tags text-success mr-2"></i>{{ __('Pricing & Profit Margin') }}</h5>
                         </div>
@@ -220,9 +343,9 @@
                                 <label class="font-weight-bold text-muted small">{{ __('Supplier Cost / Wholesale Price') }}</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text bg-light">{{ $curr->sign ?? 'PKR' }}</span>
+                                        <span class="input-group-text bg-light font-weight-bold">{{ $curr->sign ?? 'PKR' }}</span>
                                     </div>
-                                    <input type="number" id="imp_cost_price" class="form-control bg-light" placeholder="0" oninput="calculateProfit()">
+                                    <input type="number" id="imp_cost_price" class="form-control bg-light font-weight-bold" placeholder="0" oninput="calculateProfit()">
                                 </div>
                             </div>
 
@@ -256,13 +379,13 @@
                     </div>
 
                     <!-- Category & Subcategory Card -->
-                    <div class="card">
+                    <div class="card mb-4 shadow-sm">
                         <div class="card-header bg-light">
                             <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-sitemap text-primary mr-2"></i>{{ __('Categories Selection') }}</h5>
                         </div>
                         <div class="card-body">
-                            <div class="form-group">
-                                <label for="imp_category_id" class="font-weight-bold">{{ __('Main Category') }} * <small class="text-success">({{ __('Auto-Selected') }})</small></label>
+                            <div class="form-group mb-3">
+                                <label for="imp_category_id" class="font-weight-bold text-dark">{{ __('Main Category') }} * <small class="text-success font-weight-bold">({{ __('Auto-Selected') }})</small></label>
                                 <select name="category_id" id="imp_category_id" data-href="{{ route('back.get.subcategory') }}" class="form-control font-weight-bold" required onchange="loadSubcategories(this.value)">
                                     <option value="">{{ __('Select One') }}</option>
                                     @foreach($categories as $cat)
@@ -271,15 +394,15 @@
                                 </select>
                             </div>
 
-                            <div class="form-group">
-                                <label for="imp_subcategory_id" class="font-weight-bold">{{ __('Sub Category') }} <small class="text-muted">({{ __('Optional - Select manually') }})</small></label>
+                            <div class="form-group mb-3">
+                                <label for="imp_subcategory_id" class="font-weight-bold text-dark">{{ __('Sub Category') }} <small class="text-muted">({{ __('Optional - Select manually') }})</small></label>
                                 <select name="subcategory_id" id="imp_subcategory_id" data-href="{{ route('back.get.childcategory') }}" class="form-control" onchange="loadChildCategories(this.value)">
                                     <option value="">{{ __('Select One') }}</option>
                                 </select>
                             </div>
 
-                            <div class="form-group">
-                                <label for="imp_childcategory_id" class="font-weight-bold">{{ __('Child Category') }} <small class="text-muted">({{ __('Optional') }})</small></label>
+                            <div class="form-group mb-0">
+                                <label for="imp_childcategory_id" class="font-weight-bold text-dark">{{ __('Child Category') }} <small class="text-muted">({{ __('Optional') }})</small></label>
                                 <select name="childcategory_id" id="imp_childcategory_id" class="form-control">
                                     <option value="">{{ __('Select One') }}</option>
                                 </select>
@@ -288,7 +411,7 @@
                     </div>
 
                     <!-- Cash on Delivery & Order Settings -->
-                    <div class="card">
+                    <div class="card mb-4 shadow-sm">
                         <div class="card-header bg-light">
                             <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-cog text-primary mr-2"></i>{{ __('Order & Delivery Settings') }}</h5>
                         </div>
@@ -305,8 +428,8 @@
 
                             <!-- Stock -->
                             <div class="form-group mb-3">
-                                <label class="font-weight-bold">{{ __('Total Stock Quantity') }}</label>
-                                <input type="number" name="stock" class="form-control" value="20" min="1">
+                                <label class="font-weight-bold text-dark">{{ __('Total Stock Quantity') }}</label>
+                                <input type="number" name="stock" id="imp_stock" class="form-control" value="20" min="1">
                             </div>
 
                             <!-- Easy Return -->
@@ -329,6 +452,67 @@
 </div>
 
 <script>
+    // Tab 1: Parse Smart Text / HHC Copy-Paste
+    function parseProductText() {
+        var rawText = document.getElementById('raw_text_input').value.trim();
+        var imageUrls = document.getElementById('image_urls_input').value.trim();
+        var parseBtn = document.getElementById('parse_text_btn');
+        var spinner = document.getElementById('parse_btn_spinner');
+        var btnText = document.getElementById('parse_btn_text');
+        var errorAlert = document.getElementById('fetch_error_alert');
+        var errorMsg = document.getElementById('fetch_error_msg');
+        var previewContainer = document.getElementById('product_preview_container');
+
+        if (!rawText) {
+            alert('{{ __("Please paste product text from HHC or supplier first!") }}');
+            return;
+        }
+
+        parseBtn.disabled = true;
+        spinner.classList.remove('d-none');
+        btnText.innerText = '{{ __("Parsing details...") }}';
+        errorAlert.classList.add('d-none');
+
+        $.ajax({
+            url: "{{ route('back.product.importer.parse_text') }}",
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                raw_text: rawText,
+                image_urls: imageUrls
+            },
+            success: function(response) {
+                parseBtn.disabled = false;
+                spinner.classList.add('d-none');
+                btnText.innerHTML = '<i class="fas fa-magic mr-1"></i> {{ __("Parse & Auto-Fill Product Details") }}';
+
+                if (response.success && response.data) {
+                    populatePreviewForm(response.data);
+                    previewContainer.style.display = 'block';
+                    $('html, body').animate({
+                        scrollTop: $("#product_preview_container").offset().top - 40
+                    }, 500);
+                } else {
+                    errorMsg.innerText = response.message || '{{ __("Unable to parse text.") }}';
+                    errorAlert.classList.remove('d-none');
+                }
+            },
+            error: function(xhr) {
+                parseBtn.disabled = false;
+                spinner.classList.add('d-none');
+                btnText.innerHTML = '<i class="fas fa-magic mr-1"></i> {{ __("Parse & Auto-Fill Product Details") }}';
+
+                var message = '{{ __("Failed to parse text. Please ensure you copied text properly.") }}';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
+                errorMsg.innerText = message;
+                errorAlert.classList.remove('d-none');
+            }
+        });
+    }
+
+    // Tab 2: Fetch via URL
     function fetchProductData() {
         var urlInput = document.getElementById('scrape_url_input').value.trim();
         var fetchBtn = document.getElementById('fetch_btn');
@@ -359,12 +543,11 @@
             success: function(response) {
                 fetchBtn.disabled = false;
                 spinner.classList.add('d-none');
-                btnText.innerHTML = '<i class="fas fa-cloud-download-alt mr-1"></i> {{ __("Fetch Product Details") }}';
+                btnText.innerHTML = '<i class="fas fa-cloud-download-alt mr-1"></i> {{ __("Fetch from Link") }}';
 
                 if (response.success && response.data) {
                     populatePreviewForm(response.data);
                     previewContainer.style.display = 'block';
-                    // Scroll smoothly down to preview
                     $('html, body').animate({
                         scrollTop: $("#product_preview_container").offset().top - 40
                     }, 500);
@@ -376,7 +559,7 @@
             error: function(xhr) {
                 fetchBtn.disabled = false;
                 spinner.classList.add('d-none');
-                btnText.innerHTML = '<i class="fas fa-cloud-download-alt mr-1"></i> {{ __("Fetch Product Details") }}';
+                btnText.innerHTML = '<i class="fas fa-cloud-download-alt mr-1"></i> {{ __("Fetch from Link") }}';
 
                 var message = '{{ __("Failed to fetch product. Please make sure the link is accessible.") }}';
                 if (xhr.responseJSON && xhr.responseJSON.message) {
@@ -384,6 +567,10 @@
                 }
                 errorMsg.innerText = message;
                 errorAlert.classList.remove('d-none');
+
+                if (xhr.responseJSON && xhr.responseJSON.is_hhc_member) {
+                    $('#hhc-tab').tab('show');
+                }
             }
         });
     }
@@ -391,15 +578,19 @@
     function populatePreviewForm(data) {
         // Name & Identity
         $('#imp_name').val(data.name || '');
+        $('#imp_sku').val(data.sku || '{{ \App\Repositories\Back\ItemRepository::generateAutoSku() }}');
         $('#imp_sort_details').val(data.sort_details || '');
         $('#imp_details').val(data.details || '');
         $('#imp_product_from').val(data.product_from || 'HHC Dropshipping');
+        if (data.stock) {
+            $('#imp_stock').val(data.stock);
+        }
 
         // Price calculations
         var rawPrice = parseFloat(data.raw_price) || 0;
         if (rawPrice > 0) {
             $('#imp_cost_price').val(rawPrice);
-            // Default markup: Cost + Rs. 600
+            // Default markup: Cost + Rs. 600 or 2x
             var suggestedSell = Math.round(rawPrice + 600);
             $('#imp_discount_price').val(suggestedSell);
             $('#imp_previous_price').val(Math.round(suggestedSell * 1.35));
@@ -429,17 +620,17 @@
                 col.className = 'col-6 col-md-4 col-lg-3 mb-3';
                 col.innerHTML = `
                     <div class="image-picker-card ${isMain ? 'selected-main' : ''}" onclick="selectMainImage(this, '${escapeHtml(imgUrl)}')">
-                        <span class="main-badge"><i class="fas fa-star"></i> Main</span>
+                        <span class="main-badge"><i class="fas fa-star mr-1"></i> Main</span>
                         <div class="gallery-checkbox-wrap" onclick="event.stopPropagation();">
                             <input type="checkbox" name="gallery_urls[]" value="${escapeHtml(imgUrl)}" ${isMain ? '' : 'checked'} title="{{ __('Include in Gallery') }}">
                         </div>
-                        <img src="${escapeHtml(imgUrl)}" class="image-picker-img" alt="Product Image">
+                        <img src="${escapeHtml(imgUrl)}" class="image-picker-img" alt="Product Image" onerror="this.onerror=null; this.src='{{ asset('assets/images/placeholder.png') }}';">
                     </div>
                 `;
                 grid.appendChild(col);
             });
         } else {
-            grid.innerHTML = '<div class="col-12 text-muted text-center py-3">{{ __("No images found from URL. You can upload photo manually in editor.") }}</div>';
+            grid.innerHTML = '<div class="col-12 text-muted text-center py-3"><i class="fas fa-image mr-1"></i> {{ __("No images found in text. You can paste image link above or upload photo files below.") }}</div>';
         }
     }
 

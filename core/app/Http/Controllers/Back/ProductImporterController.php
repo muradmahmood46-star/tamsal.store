@@ -35,6 +35,31 @@ class ProductImporterController extends Controller
     }
 
     /**
+     * Smart Parser for Raw Pasted Text / HHC Copy-Paste.
+     */
+    public function parseText(Request $request)
+    {
+        $request->validate([
+            'raw_text' => 'required|string|min:5',
+        ]);
+
+        $rawText = trim($request->raw_text);
+        $imageUrlsInput = trim($request->input('image_urls', ''));
+
+        $data = $this->extractDataFromText($rawText, $imageUrlsInput);
+
+        // Auto-match best category
+        $categories = Category::where('status', 1)->get();
+        $matchedCategoryId = $this->matchCategory($data['name'] . ' ' . ($data['category_hint'] ?? ''), $categories);
+        $data['category_id'] = $matchedCategoryId;
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+        ]);
+    }
+
+    /**
      * Fetch product details and images from given URL.
      */
     public function fetch(Request $request)
@@ -45,13 +70,22 @@ class ProductImporterController extends Controller
 
         $url = trim($request->url);
 
+        // Check if user pasted a login-protected member URL
+        if (stripos($url, 'member.hhcdropshipping.com') !== false) {
+            return response()->json([
+                'success' => false,
+                'is_hhc_member' => true,
+                'message' => __('Yeh HHC Member Portal ka login wala link hai jo private hota hai. Neeche "Smart Text / HHC Copy-Paste" tab par click karein aur HHC page ka text wahan paste karein.')
+            ], 422);
+        }
+
         try {
             $productData = $this->scrapeUrl($url);
 
-            if (empty($productData['name'])) {
+            if (empty($productData['name']) || stripos($productData['name'], 'login') !== false) {
                 return response()->json([
                     'success' => false,
-                    'message' => __('Could not automatically extract product title. Please check the URL or enter details manually.')
+                    'message' => __('Could not automatically extract product title. This page might require login. Please use the "Smart Text Copy-Paste" tab.')
                 ], 422);
             }
 
@@ -174,7 +208,7 @@ class ProductImporterController extends Controller
 
         $item->save();
 
-        // 5. Download & attach gallery images
+        // 5. Download & attach gallery images (from URLs)
         if ($request->has('gallery_urls') && is_array($request->gallery_urls)) {
             foreach ($request->gallery_urls as $gUrl) {
                 if (!empty($gUrl) && $gUrl !== $request->main_image_url) {
@@ -189,12 +223,143 @@ class ProductImporterController extends Controller
             }
         }
 
+        // 6. Attach uploaded gallery files
+        if ($request->hasFile('galleries')) {
+            foreach ($request->file('galleries') as $gFile) {
+                $gName = \App\Helpers\ImageHelper::handleUploadedImage($gFile, 'images');
+                if ($gName) {
+                    Gallery::create([
+                        'item_id' => $item->id,
+                        'photo' => $gName,
+                    ]);
+                }
+            }
+        }
+
         // Check if user clicked "Save & Edit"
         if ($request->input('is_button') == 1) {
             return redirect()->route('back.item.edit', $item->id)->withSuccess(__('Product Imported & Created Successfully! You can now fine-tune details.'));
         }
 
         return redirect()->route('back.item.index')->withSuccess(__('Product Imported & Published Successfully!'));
+    }
+
+    /**
+     * Smart Text Extraction for HHC & Supplier Copy-Pastes.
+     */
+    private function extractDataFromText($text, $imageUrlsInput = '')
+    {
+        $lines = preg_split('/\r\n|\r|\n/', $text);
+        $lines = array_values(array_filter(array_map('trim', $lines)));
+
+        $title = '';
+        $price = '';
+        $sku = '';
+        $stock = 20;
+        $categoryHint = '';
+        $description = '';
+        $images = [];
+
+        // 1. Find Title (check explicit 'Product Title: ...' first or pick top descriptive line)
+        if (preg_match('/(?:Product\s*(?:Title|Name)|Item\s*Name|Title|Name)\s*[:=]\s*([^\r\n]+)/i', $text, $m)) {
+            $candidate = trim(strip_tags($m[1]));
+            if (strlen($candidate) > 3) {
+                $title = $candidate;
+            }
+        }
+
+        if (empty($title)) {
+            $noisePattern = '/^(?:login|dashboard|billing|shipment|courier|rider|clear cart|payment|advance|cash on delivery|confirm|business profiles|total|sub total|weight|rs\b|pkr\b|price|https?:\/\/|product info|description|stock|quantity|reviews|categories|contact|pickup|cutoff|aaj\s+nahi)/i';
+            foreach ($lines as $line) {
+                $trimmed = trim($line);
+                if (strlen($trimmed) >= 4 && strlen($trimmed) <= 250 && !preg_match($noisePattern, $trimmed) && preg_match('/[a-zA-Z]/', $trimmed)) {
+                    $title = $trimmed;
+                    break;
+                }
+            }
+        }
+
+        // 2. Find Price (e.g. Rs 330, PKR 330, 330 x 1, Price: Rs. 330)
+        if (preg_match('/(?:Price|Cost|Wholesale)\s*[:=]?\s*(?:rs\.?|pkr)?\s*([0-9,]+(?:\.[0-9]+)?)/i', $text, $m)) {
+            $price = floatval(str_replace(',', '', $m[1]));
+        } elseif (preg_match('/(?:rs\.?|pkr)\s*([0-9,]+(?:\.[0-9]+)?)/i', $text, $m)) {
+            $price = floatval(str_replace(',', '', $m[1]));
+        } elseif (preg_match('/([0-9,]+(?:\.[0-9]+)?)\s*x\s*[0-9]+/i', $text, $m)) {
+            $price = floatval(str_replace(',', '', $m[1]));
+        }
+
+        // 3. Find Product ID / SKU
+        if (preg_match('/(?:Product\s*ID|SKU|Item\s*Code|ID)\s*[:=]?\s*([0-9a-zA-Z_-]+)/i', $text, $m)) {
+            $cleanId = trim($m[1]);
+            $sku = (stripos($cleanId, 'TS') === 0) ? $cleanId : ('TS' . $cleanId);
+        } else {
+            $sku = ItemRepository::generateAutoSku();
+        }
+
+        // 4. Find Stock Quantity
+        if (preg_match('/(?:Quantity|Stock|Available|Qty)\s*[:=]?\s*([0-9]+)/i', $text, $m)) {
+            $stock = intval($m[1]);
+        }
+
+        // 5. Find Category Hint
+        if (preg_match('/(?:Categories|Category)\s*[:=]?\s*(.*?)(?:\n|Description|Stock|Q & A|$)/is', $text, $m)) {
+            $categoryHint = trim(strip_tags($m[1]));
+        }
+
+        // 6. Find Description
+        if (preg_match('/(?:Description|Details|Specifications|Product Details|Overview)\s*[:=]?\s*([\s\S]*?)(?:Q & A|Product Reviews|Stock Status|Customer Reviews|Related Products|Stock\b|$)/i', $text, $m)) {
+            $descCandidate = trim($m[1]);
+            // Remove common header words
+            $descCandidate = preg_replace('/^(?:Q & A|Stock|Product Reviews|Description)\s*/i', '', $descCandidate);
+            if (strlen($descCandidate) > 5) {
+                $description = $descCandidate;
+            }
+        }
+
+        if (empty($description)) {
+            // Fallback: collect lines after title or general lines
+            $descLines = [];
+            $foundTitle = false;
+            foreach ($lines as $line) {
+                if ($line === $title) {
+                    $foundTitle = true;
+                    continue;
+                }
+                if ($foundTitle && strlen($line) > 5 && !preg_match('/^(?:rs|pkr|price|sub total|total|weight|cutoff|pickup)/i', $line)) {
+                    $descLines[] = $line;
+                }
+            }
+            if (!empty($descLines)) {
+                $description = implode("\n", array_slice($descLines, 0, 10));
+            } else {
+                $description = $title;
+            }
+        }
+
+        // 7. Extract Image URLs from text or direct input
+        $combinedText = $text . "\n" . $imageUrlsInput;
+        if (preg_match_all('/https?:\/\/[^\s"\'<>]+\.(?:jpe?g|png|webp|avif)(?:\?[^\s"\'<>]*)?/i', $combinedText, $imgMatches)) {
+            $images = array_values(array_unique($imgMatches[0]));
+        }
+
+        // Also check CDN image patterns without standard extension
+        if (empty($images)) {
+            if (preg_match_all('/https?:\/\/[^\s"\'<>]*(?:cloudinary|amazonaws|hhcdropshipping|cdn)[^\s"\'<>]+/i', $combinedText, $cdnMatches)) {
+                $images = array_values(array_unique($cdnMatches[0]));
+            }
+        }
+
+        return [
+            'name' => $title,
+            'details' => $description,
+            'sort_details' => Str::limit(strip_tags($description), 220),
+            'raw_price' => $price ?: null,
+            'sku' => $sku,
+            'stock' => $stock > 0 ? $stock : 20,
+            'category_hint' => $categoryHint,
+            'images' => array_slice($images, 0, 8),
+            'product_from' => 'HHC Dropshipping',
+        ];
     }
 
     /**
@@ -309,11 +474,10 @@ class ProductImporterController extends Controller
         }
         if (empty($title) && preg_match('/<title[^>]*>(.*?)<\/title>/is', $html, $m)) {
             $title = trim(strip_tags($m[1]));
-            // Clean up store names from title
             $title = preg_replace('/(\s*[-|–]\s*.*)$/', '', $title);
         }
 
-        // 4. Extract price from meta / regex if not found
+        // 4. Extract price
         if (empty($price)) {
             if (preg_match('/<meta[^>]*property=[\'"](?:og:price:amount|product:price:amount)[\'"][^>]*content=[\'"](.*?)[\'"]/i', $html, $m)) {
                 $price = preg_replace('/[^0-9.]/', '', $m[1]);
@@ -323,7 +487,6 @@ class ProductImporterController extends Controller
         // 5. Scrape additional product images from DOM
         if (preg_match_all('/<img[^>]*(?:data-src|data-zoom|data-large|src)=[\'"]([^\'"]+\.(?:jpe?g|png|webp|avif)[^\'"]*)[\'"]/i', $html, $domImgs)) {
             foreach ($domImgs[1] as $domImg) {
-                // Ignore small icons, avatars, badges
                 if (stripos($domImg, 'logo') === false && stripos($domImg, 'icon') === false && stripos($domImg, 'avatar') === false && stripos($domImg, 'banner') === false) {
                     $images[] = $this->resolveAbsoluteUrl($domImg, $effectiveUrl);
                 }
@@ -333,7 +496,6 @@ class ProductImporterController extends Controller
         // Deduplicate & clean images list
         $images = array_values(array_unique(array_filter($images)));
 
-        // Clean description
         if (empty($description)) {
             $description = $title;
         }
