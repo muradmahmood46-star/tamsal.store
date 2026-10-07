@@ -57,17 +57,18 @@ class ItemRepository
             $input['thumbnail'] = $images_name[1];
         }
 
-        $curr = Currency::where('is_default',1)->first();
-        $input['discount_price'] = $request->discount_price / $curr->value;
-        $input['previous_price'] = $request->previous_price / $curr->value;
+        $curr = Currency::where('is_default', 1)->first();
+        $currValue = ($curr && is_numeric($curr->value) && (float)$curr->value > 0) ? (float)$curr->value : 1.0;
+        $input['discount_price'] = (isset($request->discount_price) && is_numeric($request->discount_price)) ? ((float)$request->discount_price / $currValue) : 0.00;
+        $input['previous_price'] = (isset($request->previous_price) && is_numeric($request->previous_price)) ? ((float)$request->previous_price / $currValue) : 0.00;
 
         if($request->has('meta_keywords')){
             $input['meta_keywords'] = self::sanitizeKeywords($request->meta_keywords);
         }
 
         if($request->has('is_social')){
-            $input['social_icons'] = json_encode($input['social_icons']);
-            $input['social_links'] = json_encode($input['social_links']);
+            $input['social_icons'] = json_encode($input['social_icons'] ?? []);
+            $input['social_links'] = json_encode($input['social_links'] ?? []);
         }else{
             $input['is_social']    = 0;
             $input['social_icons'] = null;
@@ -79,8 +80,8 @@ class ItemRepository
         }
 
         if($request->has('is_specification')){
-            $input['specification_name'] = json_encode($input['specification_name']);
-            $input['specification_description'] = json_encode($input['specification_description']);
+            $input['specification_name'] = json_encode($input['specification_name'] ?? []);
+            $input['specification_description'] = json_encode($input['specification_description'] ?? []);
         }else{
             $input['is_specification']    = 0;
             $input['specification_name'] = null;
@@ -88,8 +89,8 @@ class ItemRepository
         }
 
         if($request->has('license_name') && $request->has('license_key')){
-            $input['license_name'] = json_encode($input['license_name']);
-            $input['license_key'] = json_encode($input['license_key']);
+            $input['license_name'] = json_encode($input['license_name'] ?? []);
+            $input['license_key'] = json_encode($input['license_key'] ?? []);
         }else{
             $input['license_name'] = null;
             $input['license_key'] = null;
@@ -125,7 +126,14 @@ class ItemRepository
         $generatedSlug = \Illuminate\Support\Str::slug($rawSlug);
         $input['slug'] = !empty($generatedSlug) ? $generatedSlug : \Illuminate\Support\Str::slug($input['sku']);
 
+        $input['category_id'] = (int)($request->category_id ?? 0);
+        $input['subcategory_id'] = !empty($request->subcategory_id) ? (int)$request->subcategory_id : null;
+        $input['childcategory_id'] = !empty($request->childcategory_id) ? (int)$request->childcategory_id : null;
+        $input['brand_id'] = !empty($request->brand_id) ? (int)$request->brand_id : null;
+        $input['tax_id'] = !empty($request->tax_id) ? (int)$request->tax_id : 0;
+
         $input['is_type'] = 'undefine';
+        $input['date'] = date('d-m-y');
         $input['advance_payment_type'] = !empty($input['advance_payment_type']) ? $input['advance_payment_type'] : 'percentage';
         $input['advance_payment_amount'] = (isset($input['advance_payment_amount']) && $input['advance_payment_amount'] !== '' && $input['advance_payment_amount'] !== null) ? (float)$input['advance_payment_amount'] : 0.00;
         $input['is_free_delivery'] = !empty($input['is_free_delivery']) ? 1 : 0;
@@ -148,8 +156,14 @@ class ItemRepository
         if (isset($input['contact_number'])) {
             $input['contact_number'] = ($input['contact_number'] !== null && trim($input['contact_number']) !== '') ? trim($input['contact_number']) : null;
         }
-        if (isset($input['supplier_url'])) {
-            $input['supplier_url'] = ($input['supplier_url'] !== null && trim($input['supplier_url']) !== '') ? trim($input['supplier_url']) : null;
+        if ($request->filled('supplier_url')) {
+            $sUrl = trim($request->supplier_url);
+            if (!preg_match('~^(?:f|ht)tps?://~i', $sUrl)) {
+                $sUrl = 'https://' . $sUrl;
+            }
+            $input['supplier_url'] = $sUrl;
+        } else {
+            $input['supplier_url'] = null;
         }
 
         $item = Item::create($input);
@@ -191,13 +205,14 @@ class ItemRepository
             $input['meta_keywords'] = self::sanitizeKeywords($request->meta_keywords);
         }
 
-        $curr = Currency::where('is_default',1)->first();
-        $input['discount_price'] = $request->discount_price / $curr->value;
-        $input['previous_price'] = $request->previous_price / $curr->value;
+        $curr = Currency::where('is_default', 1)->first();
+        $currValue = ($curr && is_numeric($curr->value) && (float)$curr->value > 0) ? (float)$curr->value : 1.0;
+        $input['discount_price'] = (isset($request->discount_price) && is_numeric($request->discount_price)) ? ((float)$request->discount_price / $currValue) : 0.00;
+        $input['previous_price'] = (isset($request->previous_price) && is_numeric($request->previous_price)) ? ((float)$request->previous_price / $currValue) : 0.00;
 
         if($request->has('is_social')){
-            $input['social_icons'] = json_encode($input['social_icons']);
-            $input['social_links'] = json_encode($input['social_links']);
+            $input['social_icons'] = json_encode($input['social_icons'] ?? []);
+            $input['social_links'] = json_encode($input['social_links'] ?? []);
         }else{
             $input['is_social']    = 0;
             $input['social_icons'] = null;
@@ -209,8 +224,8 @@ class ItemRepository
         }
 
         if($request->has('is_specification')){
-            $input['specification_name'] = json_encode($input['specification_name']);
-            $input['specification_description'] = json_encode($input['specification_description']);
+            $input['specification_name'] = json_encode($input['specification_name'] ?? []);
+            $input['specification_description'] = json_encode($input['specification_description'] ?? []);
         }else{
             $input['is_specification']    = 0;
             $input['specification_name'] = null;
@@ -218,8 +233,8 @@ class ItemRepository
         }
 
         if($request->has('license_name') && $request->has('license_key')){
-            $input['license_name'] = json_encode($input['license_name']);
-            $input['license_key'] = json_encode($input['license_key']);
+            $input['license_name'] = json_encode($input['license_name'] ?? []);
+            $input['license_key'] = json_encode($input['license_key'] ?? []);
         }else{
             $input['license_name'] = null;
             $input['license_key'] = null;
@@ -252,6 +267,12 @@ class ItemRepository
                 $input['link'] = null;
             }
         }
+        $input['category_id'] = (int)($request->category_id ?? $item->category_id);
+        $input['subcategory_id'] = !empty($request->subcategory_id) ? (int)$request->subcategory_id : null;
+        $input['childcategory_id'] = !empty($request->childcategory_id) ? (int)$request->childcategory_id : null;
+        $input['brand_id'] = !empty($request->brand_id) ? (int)$request->brand_id : null;
+        $input['tax_id'] = !empty($request->tax_id) ? (int)$request->tax_id : 0;
+
         $input['advance_payment_type'] = !empty($input['advance_payment_type']) ? $input['advance_payment_type'] : 'percentage';
         $input['advance_payment_amount'] = (isset($input['advance_payment_amount']) && $input['advance_payment_amount'] !== '' && $input['advance_payment_amount'] !== null) ? (float)$input['advance_payment_amount'] : 0.00;
         $input['is_free_delivery'] = !empty($input['is_free_delivery']) ? 1 : 0;
@@ -261,6 +282,23 @@ class ItemRepository
         $input['is_custom_rating'] = !empty($input['is_custom_rating']) ? 1 : 0;
         $input['custom_rating'] = (isset($input['custom_rating']) && $input['custom_rating'] !== '' && $input['custom_rating'] !== null) ? (float)$input['custom_rating'] : 5.00;
         $input['custom_rating_count'] = (isset($input['custom_rating_count']) && $input['custom_rating_count'] !== '' && $input['custom_rating_count'] !== null) ? (int)$input['custom_rating_count'] : 0;
+        $input['estimated_profit'] = (isset($input['estimated_profit']) && $input['estimated_profit'] !== '' && $input['estimated_profit'] !== null) ? (float)$input['estimated_profit'] : 0.00;
+        $input['is_cod'] = !empty($input['is_cod']) ? 1 : 0;
+        if (isset($input['product_from'])) {
+            $input['product_from'] = ($input['product_from'] !== null && trim($input['product_from']) !== '') ? trim($input['product_from']) : null;
+        }
+        if (isset($input['contact_number'])) {
+            $input['contact_number'] = ($input['contact_number'] !== null && trim($input['contact_number']) !== '') ? trim($input['contact_number']) : null;
+        }
+        if ($request->filled('supplier_url')) {
+            $sUrl = trim($request->supplier_url);
+            if (!preg_match('~^(?:f|ht)tps?://~i', $sUrl)) {
+                $sUrl = 'https://' . $sUrl;
+            }
+            $input['supplier_url'] = $sUrl;
+        } else {
+            $input['supplier_url'] = null;
+        }
         if (isset($input['stock'])) {
             $input['stock'] = ($input['stock'] !== '' && $input['stock'] !== null) ? (int)$input['stock'] : 0;
         }
