@@ -171,7 +171,7 @@
                             <label class="font-weight-bold text-dark mb-1">
                                 <i class="fas fa-heading text-primary mr-1"></i> {{ __('Product Title / Name') }} *
                             </label>
-                            <input type="text" id="input_product_title" class="form-control form-control-lg font-weight-bold" placeholder="{{ __('e.g. Karseell Hair Mask For Damaged Hair - 300ml') }}">
+                            <input type="text" id="input_product_title" class="form-control form-control-lg font-weight-bold">
                         </div>
 
                         <!-- 2. Short Description -->
@@ -179,7 +179,7 @@
                             <label class="font-weight-bold text-dark mb-1">
                                 <i class="fas fa-align-left text-info mr-1"></i> {{ __('Short Description') }}
                             </label>
-                            <textarea id="input_product_sort_details" class="form-control" rows="2" placeholder="{{ __('e.g. Deep repair collagen treatment for dry and damaged hair...') }}"></textarea>
+                            <textarea id="input_product_sort_details" class="form-control" rows="2"></textarea>
                         </div>
 
                         <!-- 3. Full Main Description -->
@@ -187,7 +187,7 @@
                             <label class="font-weight-bold text-dark mb-1">
                                 <i class="fas fa-file-alt text-success mr-1"></i> {{ __('Main Description / Full Details') }} *
                             </label>
-                            <textarea id="input_product_details" class="form-control" rows="4" placeholder="{{ __('e.g. Enriched with rare maca essence, argan oil, keratin protein to deeply hydrate, repair damage, and restore silky shine...') }}"></textarea>
+                            <textarea id="input_product_details" class="form-control" rows="4"></textarea>
                         </div>
 
                         <!-- Optional: Bulk Paste helper -->
@@ -197,7 +197,7 @@
                             </a>
                             <div class="collapse mt-2" id="bulk_paste_collapse">
                                 <div class="card card-body p-2 bg-light border">
-                                    <textarea id="raw_text_input" class="form-control" rows="3" placeholder="{{ __('Paste full raw copied text here (e.g. Rs 330 x 1, Product ID : 3767460, Description...)') }}"></textarea>
+                                    <textarea id="raw_text_input" class="form-control" rows="3"></textarea>
                                 </div>
                             </div>
                         </div>
