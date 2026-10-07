@@ -198,14 +198,6 @@
                             <input type="url" id="input_supplier_url" class="form-control" placeholder="{{ __('https://hhcdropshipping.com/product/...') }}">
                         </div>
 
-                        <!-- 5. Product Tags (Manual Entry) -->
-                        <div class="form-group mb-3">
-                            <label class="font-weight-bold text-dark mb-1">
-                                <i class="fas fa-tags text-primary mr-1"></i> {{ __('Product Tags') }} <small class="text-muted">({{ __('Optional - Manual Entry, separated by commas') }})</small>
-                            </label>
-                            <input type="text" id="input_product_tags" class="form-control" placeholder="{{ __('e.g. skin care, hair mask, cosmetic') }}">
-                        </div>
-
                         <!-- Optional: Bulk Paste helper -->
                         <div class="mb-3">
                             <a class="text-primary font-weight-bold small" data-toggle="collapse" href="#bulk_paste_collapse" role="button" aria-expanded="false" aria-controls="bulk_paste_collapse">
@@ -398,13 +390,11 @@
                     <div class="card mb-4 shadow-sm">
                         <div class="card-header bg-light d-flex justify-content-between align-items-center">
                             <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-tags text-primary mr-2"></i>{{ __('Product Tags & Specifications') }}</h5>
-                            <span class="badge badge-secondary"><i class="fas fa-keyboard mr-1"></i> {{ __('Manual Entry') }}</span>
                         </div>
                         <div class="card-body">
                             <div class="form-group mb-3">
-                                <label for="imp_tags" class="font-weight-bold text-dark">{{ __('Product Tags') }} <small class="text-muted font-weight-normal">({{ __('Manual Entry') }})</small></label>
-                                <input type="text" name="tags" class="tags" id="imp_tags" placeholder="{{ __('Type tag and press Enter/comma...') }}">
-                                <small class="text-muted">{{ __('Type relevant product tags and press Enter or comma. Click × on any tag to remove.') }}</small>
+                                <label for="imp_tags" class="font-weight-bold text-dark">{{ __('Product Tags') }}</label>
+                                <input type="text" name="tags" class="tags" id="imp_tags" placeholder="{{ __('Tags') }}">
                             </div>
 
                             <div class="form-group mb-2">
@@ -949,7 +939,6 @@
         var inputSortDetails = document.getElementById('input_product_sort_details').value.trim();
         var inputDetails = document.getElementById('input_product_details').value.trim();
         var inputSupplierUrl = document.getElementById('input_supplier_url') ? document.getElementById('input_supplier_url').value.trim() : '';
-        var inputTags = document.getElementById('input_product_tags') ? document.getElementById('input_product_tags').value.trim() : '';
         var rawText = document.getElementById('raw_text_input') ? document.getElementById('raw_text_input').value.trim() : '';
         var mainImageUrl = document.getElementById('input_main_image_url').value.trim();
         
@@ -988,7 +977,6 @@
                 input_sort_details: inputSortDetails,
                 input_details: inputDetails,
                 input_supplier_url: inputSupplierUrl,
-                input_tags: inputTags,
                 raw_text: rawText,
                 main_image_url: mainImageUrl,
                 gallery_urls: galleryUrls
