@@ -408,13 +408,8 @@ class ProductImporterController extends Controller
             $price = floatval(str_replace(',', '', $m[1]));
         }
 
-        // 3. Find Product ID / SKU
-        if (preg_match('/(?:Product\s*ID|SKU|Item\s*Code|ID)\s*[:=]?\s*([0-9a-zA-Z_-]+)/i', $text, $m)) {
-            $cleanId = trim($m[1]);
-            $sku = (stripos($cleanId, 'TS') === 0) ? $cleanId : ('TS' . $cleanId);
-        } else {
-            $sku = ItemRepository::generateAutoSku();
-        }
+        // 3. Auto-generate standard 6-character unique SKU (Same as Add Product section)
+        $sku = ItemRepository::generateAutoSku();
 
         // 4. Find Stock Quantity
         if (preg_match('/(?:Quantity|Stock|Available|Qty)\s*[:=]?\s*([0-9]+)/i', $text, $m)) {
@@ -622,6 +617,7 @@ class ProductImporterController extends Controller
 
         return [
             'name' => trim($title),
+            'sku' => ItemRepository::generateAutoSku(),
             'details' => trim($description),
             'sort_details' => Str::limit(strip_tags($description), 220),
             'raw_price' => $price ? floatval($price) : null,
