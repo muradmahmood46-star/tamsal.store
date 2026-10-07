@@ -122,9 +122,10 @@ class ProductImporterController extends Controller
         }
         $data['supplier_url'] = $inputSupplierUrl;
 
-        // Auto-generate high-ranking SEO Tags, Meta Keywords & Meta Description
+        // Auto-generate high-ranking SEO Meta Keywords & Meta Description (Product Tags are manual only)
         $seo = $this->generateSeoAndTags($data['name'], $data['details'] ?: $data['sort_details'], $catName);
-        $data['tags'] = $seo['tags'];
+        $inputTags = trim($request->input('input_tags', $request->input('tags', '')));
+        $data['tags'] = $inputTags; // Manual only, no auto-generation
         $data['meta_keywords'] = $seo['meta_keywords'];
         $data['meta_description'] = $seo['meta_description'];
 
@@ -177,9 +178,9 @@ class ProductImporterController extends Controller
             // Supplier URL
             $productData['supplier_url'] = $url;
 
-            // Auto-generate high-ranking SEO Tags, Meta Keywords & Meta Description
+            // Auto-generate high-ranking SEO Meta Keywords & Meta Description (Product Tags manual only)
             $seo = $this->generateSeoAndTags($productData['name'], $productData['details'] ?: $productData['sort_details'], $catName);
-            $productData['tags'] = $seo['tags'];
+            $productData['tags'] = ''; // Manual entry only
             $productData['meta_keywords'] = $seo['meta_keywords'];
             $productData['meta_description'] = $seo['meta_description'];
 
