@@ -62,7 +62,7 @@ class ItemRepository
         $input['previous_price'] = $request->previous_price / $curr->value;
 
         if($request->has('meta_keywords')){
-            $input['meta_keywords'] = str_replace(["value", "{", "}", "[","]",":","\""], '', $request->meta_keywords);
+            $input['meta_keywords'] = self::sanitizeKeywords($request->meta_keywords);
         }
 
         if($request->has('is_social')){
@@ -75,7 +75,7 @@ class ItemRepository
         }
 
         if($request->has('tags')){
-            $input['tags'] = str_replace(["value", "{", "}", "[","]",":","\""], '', $request->tags);
+            $input['tags'] = self::sanitizeTags($request->tags);
         }
 
         if($request->has('is_specification')){
@@ -188,7 +188,7 @@ class ItemRepository
 
 
         if($request->has('meta_keywords')){
-            $input['meta_keywords'] = str_replace(["value", "{", "}", "[","]",":","\""], '', $request->meta_keywords);
+            $input['meta_keywords'] = self::sanitizeKeywords($request->meta_keywords);
         }
 
         $curr = Currency::where('is_default',1)->first();
@@ -205,7 +205,7 @@ class ItemRepository
         }
 
         if($request->has('tags')){
-            $input['tags'] = str_replace(["value", "{", "}", "[","]",":","\""], '', $request->tags);
+            $input['tags'] = self::sanitizeTags($request->tags);
         }
 
         if($request->has('is_specification')){
@@ -734,6 +734,56 @@ class ItemRepository
             }
         }
         return $storeData;
+    }
+
+    public static function sanitizeTags($tagsInput)
+    {
+        if (empty($tagsInput)) {
+            return null;
+        }
+        if (is_array($tagsInput)) {
+            $tagsInput = implode(',', $tagsInput);
+        }
+        // Check if Tagify JSON string like [{"value":"tag1"},{"value":"tag2"}]
+        if (is_string($tagsInput) && (strpos($tagsInput, '[{') !== false || strpos($tagsInput, '"value"') !== false)) {
+            $decoded = json_decode($tagsInput, true);
+            if (is_array($decoded)) {
+                $tagList = [];
+                foreach ($decoded as $t) {
+                    if (isset($t['value']) && trim($t['value']) !== '') {
+                        $val = trim($t['value']);
+                        $val = preg_replace('/[^\p{L}\p{N}\s-_]/u', ' ', $val);
+                        $val = preg_replace('/\s+/', ' ', $val);
+                        $val = trim($val);
+                        if (!empty($val)) {
+                            $tagList[] = $val;
+                        }
+                    }
+                }
+                if (!empty($tagList)) {
+                    return implode(', ', array_unique($tagList));
+                }
+            }
+        }
+
+        $clean = str_replace(["value", "{", "}", "[", "]", ":", "\"", "\\"], '', (string)$tagsInput);
+        $parts = explode(',', $clean);
+        $final = [];
+        foreach ($parts as $p) {
+            $val = trim($p);
+            $val = preg_replace('/[^\p{L}\p{N}\s-_]/u', ' ', $val);
+            $val = preg_replace('/\s+/', ' ', $val);
+            $val = trim($val);
+            if (!empty($val) && !in_array($val, $final)) {
+                $final[] = $val;
+            }
+        }
+        return !empty($final) ? implode(', ', $final) : null;
+    }
+
+    public static function sanitizeKeywords($keywordsInput)
+    {
+        return self::sanitizeTags($keywordsInput);
     }
 
 }

@@ -289,7 +289,7 @@ class ProductImporterController extends Controller
 
             // Tags & Meta sanitization (Supports Tagify JSON and plain comma-separated tags)
             if ($request->filled('tags')) {
-                $item->tags = str_replace(["value", "{", "}", "[","]",":","\""], '', $request->tags);
+                $item->tags = ItemRepository::sanitizeTags($request->tags);
             } else {
                 $item->tags = null;
             }
@@ -315,7 +315,7 @@ class ProductImporterController extends Controller
             $item->video = $request->video ?: null;
 
             if ($request->filled('meta_keywords')) {
-                $item->meta_keywords = str_replace(["value", "{", "}", "[","]",":","\""], '', $request->meta_keywords);
+                $item->meta_keywords = ItemRepository::sanitizeKeywords($request->meta_keywords);
             } else {
                 $item->meta_keywords = null;
             }

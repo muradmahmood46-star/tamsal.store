@@ -971,12 +971,109 @@
                 font-size: 13.5px !important;
             }
 
+            /* Tagify & Tag Inputs Full Responsive Containment */
             .tags,
             .tagify,
-            tagify {
+            tagify,
+            tags.tagify,
+            .tags + .tagify,
+            div.tagify {
                 width: 100% !important;
                 max-width: 100% !important;
                 box-sizing: border-box !important;
+                display: flex !important;
+                flex-wrap: wrap !important;
+                align-items: center !important;
+                min-height: 42px !important;
+                overflow-x: hidden !important;
+                padding: 4px 6px !important;
+                background-color: #fff !important;
+                border: 1px solid #ced4da !important;
+                border-radius: 4px !important;
+            }
+
+            .tagify tag,
+            tagify tag,
+            .tagify__tag,
+            tags.tagify tag {
+                display: inline-flex !important;
+                align-items: center !important;
+                max-width: calc(100% - 12px) !important;
+                margin: 3px 4px !important;
+                box-sizing: border-box !important;
+                position: relative !important;
+                vertical-align: middle !important;
+                border-radius: 4px !important;
+                background: #e9ecef !important;
+                border: 1px solid #dee2e6 !important;
+            }
+
+            .tagify tag > div,
+            tagify tag > div,
+            .tagify__tag > div,
+            tags.tagify tag > div {
+                display: inline-flex !important;
+                align-items: center !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                box-sizing: border-box !important;
+                overflow: hidden !important;
+                padding: 4px 22px 4px 8px !important;
+            }
+
+            .tagify tag > div > *,
+            tagify tag > div > span,
+            .tagify__tag-text,
+            tags.tagify tag > div > span {
+                max-width: 100% !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                display: inline-block !important;
+                font-size: 12.5px !important;
+                line-height: 1.4 !important;
+                color: #212529 !important;
+            }
+
+            .tagify tag x,
+            tagify tag x,
+            .tagify__tag__removeBtn,
+            tags.tagify tag x {
+                position: absolute !important;
+                right: 5px !important;
+                top: 50% !important;
+                transform: translateY(-50%) !important;
+                z-index: 10 !important;
+                cursor: pointer !important;
+                width: 16px !important;
+                height: 16px !important;
+                line-height: 14px !important;
+                text-align: center !important;
+                border-radius: 50% !important;
+                font-size: 13px !important;
+                color: #6c757d !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                transition: all 0.15s ease !important;
+            }
+
+            .tagify tag x:hover,
+            tagify tag x:hover,
+            .tagify__tag__removeBtn:hover {
+                color: #fff !important;
+                background: #dc3545 !important;
+            }
+
+            .tagify__input {
+                min-width: 120px !important;
+                max-width: 100% !important;
+                flex-grow: 1 !important;
+                margin: 3px 4px !important;
+                padding: 3px 6px !important;
+                box-sizing: border-box !important;
+                line-height: 1.5 !important;
+                font-size: 13.5px !important;
             }
 
             .btn-xs {
