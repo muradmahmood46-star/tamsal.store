@@ -87,9 +87,9 @@
                             {{ Str::limit($item->name, 70) }}
                         </a></h3>
                         <div class="rating-stars">
-                            {!! Helper::renderStarRating($item->customer_rating) !!}
-                            @if($item && $item->customer_rating > 0)
-                                <span class="text-muted ml-1" style="font-size: 11.5px; font-weight: 600;">({{ number_format($item->customer_rating, 1) }})</span>
+                            {!! Helper::renderStarRating($item) !!}
+                            @if($item && $item->rating > 0)
+                                <span class="text-muted ml-1" style="font-size: 11.5px; font-weight: 600;">({{ number_format($item->rating, 1) }})</span>
                             @endif
                         </div>
                         <h4 class="product-price">
