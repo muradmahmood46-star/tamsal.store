@@ -430,10 +430,31 @@
                             </div>
 
                             <!-- Net Profit Display -->
-                            <div class="p-3 bg-light rounded border border-success text-center">
+                            <div class="p-3 bg-light rounded border border-success text-center mb-3">
                                 <span class="small font-weight-bold text-muted d-block">{{ __('Estimated Profit per Unit') }}</span>
                                 <h4 class="font-weight-bold text-success mb-0" id="estimated_profit_display">Rs 0</h4>
                                 <input type="hidden" name="estimated_profit" id="imp_estimated_profit" value="0">
+                            </div>
+
+                            <!-- Advance Payment Offer UI -->
+                            <div class="form-group border-top pt-3 mb-0">
+                                <label class="font-weight-bold text-dark mb-1">{{ __('Advance Payment Offer Less') }}</label>
+                                <div class="mb-2">
+                                    <div class="custom-control custom-radio mb-2">
+                                        <input type="radio" id="adv_type_percentage" name="advance_payment_type" class="custom-control-input" value="percentage" checked onchange="document.getElementById('adv_payment_suffix').innerText = '%'">
+                                        <label class="custom-control-label" style="white-space: normal; line-height: 1.4;" for="adv_type_percentage">{{ __('Percentage (%)') }}</label>
+                                    </div>
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" id="adv_type_fixed" name="advance_payment_type" class="custom-control-input" value="fixed" onchange="document.getElementById('adv_payment_suffix').innerText = '{{ $curr->sign ?? 'PKR' }}'">
+                                        <label class="custom-control-label" style="white-space: normal; line-height: 1.4;" for="adv_type_fixed">{{ __('Fixed Price (PKR)') }}</label>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text font-weight-bold" id="adv_payment_suffix">%</span>
+                                    </div>
+                                    <input type="number" id="advance_payment_amount" name="advance_payment_amount" class="form-control" placeholder="{{ __('Enter amount e.g. 100, 200, 300') }}" min="0" step="0.1" value="0">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -486,8 +507,29 @@
                                 <small class="text-muted">{{ __('Enabled by default for Pakistan orders.') }}</small>
                             </div>
 
+                            <!-- Delivery Fee Setting -->
+                            <div class="form-group mb-3 border-top pt-3">
+                                <label class="font-weight-bold text-dark mb-1">{{ __('Delivery Fees') }}</label>
+                                <div class="mb-2">
+                                    <div class="custom-control custom-radio mb-2">
+                                        <input type="radio" id="delivery_type_amount" name="is_free_delivery" class="custom-control-input" value="0" checked onchange="document.getElementById('delivery_fee_input_group').style.display = 'flex';">
+                                        <label class="custom-control-label" style="white-space: normal; line-height: 1.4;" for="delivery_type_amount">{{ __('Delivery Charges (PKR)') }}</label>
+                                    </div>
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" id="delivery_type_free" name="is_free_delivery" class="custom-control-input" value="1" onchange="document.getElementById('delivery_fee_input_group').style.display = 'none';">
+                                        <label class="custom-control-label text-success font-weight-bold" style="white-space: normal; line-height: 1.4;" for="delivery_type_free">{{ __('Free Delivery') }}</label>
+                                    </div>
+                                </div>
+                                <div class="input-group" id="delivery_fee_input_group" style="display: flex;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text font-weight-bold">{{ $curr->sign ?? 'PKR' }}</span>
+                                    </div>
+                                    <input type="number" id="delivery_fee" name="delivery_fee" class="form-control" placeholder="{{ __('Enter delivery fee e.g. 150, 200, 300') }}" min="0" step="1" value="0">
+                                </div>
+                            </div>
+
                             <!-- Stock -->
-                            <div class="form-group mb-3">
+                            <div class="form-group mb-3 border-top pt-3">
                                 <label class="font-weight-bold text-dark">{{ __('Total Stock Quantity') }}</label>
                                 <input type="number" name="stock" id="imp_stock" class="form-control" value="20" min="1">
                             </div>
