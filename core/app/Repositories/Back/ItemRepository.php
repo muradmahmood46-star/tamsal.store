@@ -790,7 +790,7 @@ class ItemRepository
                 foreach ($decoded as $t) {
                     if (isset($t['value']) && trim($t['value']) !== '') {
                         $val = trim($t['value']);
-                        $val = preg_replace('/[^\p{L}\p{N}\s-_]/u', ' ', $val);
+                        $val = preg_replace('/[^\p{L}\p{N}\s\-_]/u', ' ', $val);
                         $val = preg_replace('/\s+/', ' ', $val);
                         $val = trim($val);
                         if (!empty($val)) {
@@ -809,7 +809,7 @@ class ItemRepository
         $final = [];
         foreach ($parts as $p) {
             $val = trim($p);
-            $val = preg_replace('/[^\p{L}\p{N}\s-_]/u', ' ', $val);
+            $val = preg_replace('/[^\p{L}\p{N}\s\-_]/u', ' ', $val);
             $val = preg_replace('/\s+/', ' ', $val);
             $val = trim($val);
             if (!empty($val) && !in_array($val, $final)) {
