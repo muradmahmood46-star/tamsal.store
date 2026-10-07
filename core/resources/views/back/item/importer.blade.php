@@ -137,10 +137,7 @@
     <div class="importer-hero">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
-                <h4 class="font-weight-bold mb-1"><i class="fas fa-bolt text-warning mr-1"></i> {{ __('Smart Product Auto-Importer') }}</h4>
-                <p class="mb-0 text-white-50" style="font-size: 14px;">
-                    {{ __('List dropshipping & wholesale products directly on your store in seconds without manual typing.') }}
-                </p>
+                <h4 class="font-weight-bold mb-0"><i class="fas fa-bolt text-warning mr-1"></i> {{ __('Smart Product Auto-Importer') }}</h4>
             </div>
             <span class="badge badge-light text-dark font-weight-bold py-2 px-3 d-none d-md-inline-block" style="font-size: 13px;">
                 <i class="fas fa-shield-alt text-success mr-1"></i> {{ __('100% Safe Preview Before Publish') }}
@@ -175,9 +172,6 @@
                                 <i class="fas fa-paste text-primary mr-1"></i> {{ __('1. Paste Product Text from HHC Dropshipping:') }}
                             </label>
                             <textarea id="raw_text_input" class="form-control" rows="4" placeholder="{{ __('Example:&#10;Karseell Hair Mask For Damaged Hair - 300ml&#10;Rs 330 x 1&#10;Product ID : 3767460&#10;Description: Deep repair collagen treatment for damaged hair...') }}"></textarea>
-                            <small class="text-muted">
-                                <i class="fas fa-info-circle text-info"></i> {{ __('HHC screen se Title, Price, SKU aur Description copy kar ke yahan paste karein.') }}
-                            </small>
                         </div>
 
                         <!-- Main Image URL Input -->
@@ -197,9 +191,6 @@
                                             </div>
                                             <input type="url" id="input_main_image_url" class="form-control" placeholder="{{ __('Right-click Main Photo on HHC -> Copy Image Address -> Paste here') }}" oninput="previewMainPhoto(this.value)">
                                         </div>
-                                        <small class="text-muted mt-1 d-block">
-                                            <i class="fas fa-info-circle text-info"></i> {{ __('Yeh product ki main front picture hogi.') }}
-                                        </small>
                                     </div>
                                     <div class="col-md-3 text-center mt-2 mt-md-0">
                                         <div id="main_photo_preview_box" class="border rounded p-1 bg-light d-flex align-items-center justify-content-center" style="height: 70px; background: #fff;">
