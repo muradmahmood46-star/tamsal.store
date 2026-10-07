@@ -249,7 +249,13 @@ class ProductImporterController extends Controller
         $item->stock = $request->stock ?: 20;
         $item->sort_details = $request->sort_details ?: Str::limit(strip_tags($request->details), 200);
         $item->details = $request->details ?: $request->name;
-        $item->tags = $request->tags ?: null;
+
+        // Tags & Meta sanitization (Supports Tagify JSON and plain comma-separated tags)
+        if ($request->filled('tags')) {
+            $item->tags = str_replace(["value", "{", "}", "[","]",":","\""], '', $request->tags);
+        } else {
+            $item->tags = null;
+        }
 
         $item->is_cod = $request->input('is_cod', 1);
         $item->is_free_delivery = $request->input('is_free_delivery', 0);
@@ -270,8 +276,15 @@ class ProductImporterController extends Controller
         $item->contact_number = $request->input('contact_number', null);
         $item->video = $request->video ?: null;
 
-        $item->meta_keywords = $request->meta_keywords ?: null;
-        $item->meta_description = $request->meta_description ?: Str::limit(strip_tags($request->details), 160);
+        if ($request->filled('meta_keywords')) {
+            $item->meta_keywords = str_replace(["value", "{", "}", "[","]",":","\""], '', $request->meta_keywords);
+        } else {
+            $item->meta_keywords = null;
+        }
+
+        $item->meta_description = $request->filled('meta_description') 
+            ? trim(strip_tags($request->meta_description)) 
+            : Str::limit(strip_tags($request->details ?: $request->name), 155, '...');
 
         $item->status = 1;
         $item->vendor_id = null; // Admin In-House Product
@@ -699,64 +712,120 @@ class ProductImporterController extends Controller
 
     /**
      * Generate SEO Meta Keywords, Meta Description, and Product Tags from Title and Content.
+     * Generates max 5 truly relatable Product Tags and max 5 Meta Keywords.
      */
     private function generateSeoAndTags($title, $description, $categoryName = '')
     {
-        $cleanTitle = trim(preg_replace('/[^\w\s-]/u', '', strip_tags($title)));
-        $words = array_filter(explode(' ', strtolower($cleanTitle)));
+        $rawTitle = strip_tags($title);
+        $cleanTitle = trim(preg_replace('/[^\p{L}\p{N}\s-]/u', ' ', $rawTitle));
+        $cleanTitle = preg_replace('/\s+/', ' ', $cleanTitle);
         
         $stopWords = [
             'for', 'the', 'and', 'with', 'in', 'of', 'to', 'a', 'an', 'is', 'on', 'at', 'by', 
             'from', 'this', 'that', 'it', 'are', 'was', 'will', 'or', 'be', 'as', 'but', 'not', 
             'all', 'any', 'can', 'had', 'has', 'have', 'each', 'few', 'more', 'most', 'other', 
             'some', 'such', 'no', 'nor', 'too', 'very', 'only', 'own', 'same', 'so', 'than', 
-            'just', 'should', 'now', 'pk', 'rs', 'pkr', 'price', 'off', 'deal', 'new'
+            'just', 'should', 'now', 'pk', 'rs', 'pkr', 'price', 'off', 'deal', 'new', 'original',
+            'pcs', 'piece', 'pieces', 'pack', 'set', 'item', 'items', 'genuine', 'hot', 'sale',
+            'high', 'quality', 'best', 'free', 'shipping'
         ];
 
-        $filteredWords = [];
-        foreach ($words as $w) {
+        // Tokenize words
+        $allWords = explode(' ', strtolower($cleanTitle));
+        $meaningfulWords = [];
+        foreach ($allWords as $w) {
             $w = trim($w);
-            if (strlen($w) > 2 && !in_array($w, $stopWords) && !is_numeric($w)) {
-                $filteredWords[] = $w;
+            // remove measurement suffixes like 500ml, 100g, 20w, etc.
+            $w = preg_replace('/^\d+(ml|g|kg|pcs|pc|mah|w|v|cm|mm|m|inch)?$/i', '', $w);
+            if (strlen($w) >= 3 && !in_array($w, $stopWords) && !is_numeric($w)) {
+                $meaningfulWords[] = $w;
             }
         }
-        $filteredWords = array_values(array_unique($filteredWords));
+        $meaningfulWords = array_values(array_unique($meaningfulWords));
 
-        // 1. Tags generation (clean comma-separated keywords)
+        // 1. Tags generation (Max 5 truly relatable product tags)
         $tags = [];
-        foreach ($filteredWords as $fw) {
-            $tags[] = $fw;
-        }
-        $wordCount = count($filteredWords);
-        for ($i = 0; $i < $wordCount - 1; $i++) {
-            $tags[] = $filteredWords[$i] . ' ' . $filteredWords[$i + 1];
-        }
-        if ($categoryName) {
-            $tags[] = strtolower(trim($categoryName));
-        }
-        $tags = array_values(array_unique($tags));
-        $tagsString = implode(', ', array_slice($tags, 0, 8));
 
-        // 2. Meta Keywords generation (SEO focused ecommerce search queries)
+        // Tag 1: Core 2-3 word phrase from meaningful words (e.g. "collagen hair mask")
+        if (count($meaningfulWords) >= 2) {
+            $tags[] = implode(' ', array_slice($meaningfulWords, 0, min(3, count($meaningfulWords))));
+        }
+
+        // Tag 2: Primary 2-word pair (e.g. "hair mask")
+        if (count($meaningfulWords) >= 2) {
+            $tags[] = $meaningfulWords[count($meaningfulWords) - 2] . ' ' . $meaningfulWords[count($meaningfulWords) - 1];
+        }
+
+        // Tag 3: Secondary 2-word pair or specific attribute
+        if (count($meaningfulWords) >= 3) {
+            $tags[] = $meaningfulWords[0] . ' ' . $meaningfulWords[1];
+        }
+
+        // Tag 4: Category Name
+        if (!empty($categoryName)) {
+            $cleanCat = strtolower(trim(preg_replace('/[^\p{L}\s]/u', '', $categoryName)));
+            if (!empty($cleanCat)) {
+                $tags[] = $cleanCat;
+            }
+        }
+
+        // Tag 5: Top individual meaningful words
+        foreach ($meaningfulWords as $mw) {
+            $tags[] = $mw;
+        }
+
+        // Clean & Deduplicate tags
+        $finalTags = [];
+        foreach ($tags as $t) {
+            $t = trim($t);
+            if (!empty($t) && !in_array($t, $finalTags)) {
+                $finalTags[] = $t;
+            }
+            if (count($finalTags) >= 5) {
+                break;
+            }
+        }
+        if (empty($finalTags)) {
+            $finalTags[] = strtolower(Str::limit($cleanTitle, 30, ''));
+        }
+        $tagsString = implode(', ', array_slice($finalTags, 0, 5));
+
+        // 2. Meta Keywords generation (Max 5 High-Intent Search Queries)
         $metaKeywords = [];
-        $metaKeywords[] = strtolower($cleanTitle);
-        $metaKeywords[] = 'buy ' . strtolower($cleanTitle);
-        if (!empty($filteredWords)) {
-            $metaKeywords[] = implode(' ', array_slice($filteredWords, 0, 3));
-        }
-        $metaKeywords[] = strtolower($cleanTitle) . ' price in pakistan';
-        $metaKeywords[] = 'best ' . ($categoryName ? strtolower($categoryName) : 'products') . ' pakistan';
-        $metaKeywords[] = 'online shopping in pakistan';
-        $metaKeywords = array_values(array_unique($metaKeywords));
-        $metaKeywordsString = implode(', ', array_slice($metaKeywords, 0, 8));
+        $shortCore = !empty($meaningfulWords) ? implode(' ', array_slice($meaningfulWords, 0, min(3, count($meaningfulWords)))) : strtolower(Str::limit($cleanTitle, 35, ''));
 
-        // 3. Meta Description (SEO snippet under 160 chars)
-        $cleanDesc = trim(strip_tags($description));
-        if (strlen($cleanDesc) > 30) {
-            $metaDesc = Str::limit($cleanDesc, 155, '...');
+        // Query 1: buy [core product]
+        $metaKeywords[] = 'buy ' . $shortCore;
+
+        // Query 2: [core product] price in pakistan
+        $metaKeywords[] = $shortCore . ' price in pakistan';
+
+        // Query 3: best [core product / category] in pakistan
+        $catLabel = !empty($categoryName) ? strtolower(trim($categoryName)) : $shortCore;
+        $metaKeywords[] = 'best ' . $catLabel . ' in pakistan';
+
+        // Query 4: [core product] online pakistan
+        $metaKeywords[] = $shortCore . ' online pakistan';
+
+        // Query 5: original [core product] cash on delivery
+        $metaKeywords[] = 'original ' . $shortCore . ' cash on delivery';
+
+        // Clean & strictly take top 5
+        $finalMetaKeywords = array_values(array_unique(array_slice($metaKeywords, 0, 5)));
+        $metaKeywordsString = implode(', ', $finalMetaKeywords);
+
+        // 3. Meta Description (100% perfectly fit SEO snippet under 160 chars)
+        $cleanDesc = trim(preg_replace('/\s+/', ' ', strip_tags($description)));
+        if (strlen($cleanDesc) >= 60 && strlen($cleanDesc) <= 155) {
+            $metaDesc = $cleanDesc;
+        } elseif (strlen($cleanDesc) > 155) {
+            $metaDesc = Str::limit($cleanDesc, 148, '...');
         } else {
-            $metaDesc = "Buy {$title} online in Pakistan at best price. High quality, cash on delivery and fast nationwide shipping at Tamsal.store.";
-            $metaDesc = Str::limit($metaDesc, 158, '...');
+            $displayTitle = Str::limit($rawTitle, 55, '');
+            $metaDesc = "Buy {$displayTitle} online in Pakistan at best price. High quality, cash on delivery & easy returns at Tamsal.";
+            if (strlen($metaDesc) > 158) {
+                $metaDesc = Str::limit($metaDesc, 155, '...');
+            }
         }
 
         return [

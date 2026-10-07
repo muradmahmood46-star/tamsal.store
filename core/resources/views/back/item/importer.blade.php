@@ -379,21 +379,21 @@
                         </div>
                         <div class="card-body">
                             <div class="form-group mb-3">
-                                <label for="imp_tags" class="font-weight-bold text-dark">{{ __('Product Tags (Comma Separated)') }}</label>
-                                <input type="text" name="tags" id="imp_tags" class="form-control font-weight-bold text-primary" placeholder="e.g. hair mask, damaged hair, collagen treatment, beauty">
-                                <small class="text-muted">{{ __('Automatically fetched from product title and keywords for site search & filters.') }}</small>
+                                <label for="imp_tags" class="font-weight-bold text-dark">{{ __('Product Tags') }}</label>
+                                <input type="text" name="tags" class="tags" id="imp_tags" placeholder="{{ __('Tags') }}">
+                                <small class="text-muted">{{ __('Max 5 truly relatable tags. Click × on any tag to remove, or type and press Enter/comma to add more.') }}</small>
                             </div>
 
                             <div class="form-group mb-3">
-                                <label for="imp_meta_keywords" class="font-weight-bold text-dark">{{ __('Meta Keywords (SEO Search Terms)') }}</label>
-                                <input type="text" name="meta_keywords" id="imp_meta_keywords" class="form-control" placeholder="e.g. buy karseell hair mask, hair mask price in pakistan">
-                                <small class="text-muted">{{ __('Target search phrases for Google, Bing and Meta ads indexing.') }}</small>
+                                <label for="imp_meta_keywords" class="font-weight-bold text-dark">{{ __('Meta Keywords') }}</label>
+                                <input type="text" name="meta_keywords" class="tags" id="imp_meta_keywords" placeholder="{{ __('Enter Meta Keywords') }}">
+                                <small class="text-muted">{{ __('Max 5 high-intent search queries. Click × on any tag to remove, or type and press Enter/comma to add more.') }}</small>
                             </div>
 
                             <div class="form-group mb-0">
-                                <label for="imp_meta_description" class="font-weight-bold text-dark">{{ __('Meta Description (Google Search Snippet)') }}</label>
-                                <textarea name="meta_description" id="imp_meta_description" class="form-control" rows="3" placeholder="SEO description under 160 characters..."></textarea>
-                                <small class="text-muted">{{ __('Optimized search snippet that appears on Google search results.') }}</small>
+                                <label for="imp_meta_description" class="font-weight-bold text-dark">{{ __('Meta Description') }}</label>
+                                <textarea name="meta_description" id="imp_meta_description" class="form-control" rows="3" placeholder="{{ __('Enter Meta Description') }}"></textarea>
+                                <small class="text-muted">{{ __('100% perfectly fit Google search snippet under 160 characters.') }}</small>
                             </div>
                         </div>
                     </div>
@@ -852,9 +852,9 @@
             $('#imp_stock').val(data.stock);
         }
 
-        // SEO Tags & Meta Fields
-        $('#imp_tags').val(data.tags || '');
-        $('#imp_meta_keywords').val(data.meta_keywords || '');
+        // SEO Tags & Meta Fields (Tagify with Cross Remove Buttons)
+        setTagifyValue('#imp_tags', data.tags || '');
+        setTagifyValue('#imp_meta_keywords', data.meta_keywords || '');
         $('#imp_meta_description').val(data.meta_description || '');
 
         // Price calculations
@@ -974,6 +974,26 @@
                 $('#imp_childcategory_id').html(html);
             }
         });
+    }
+
+    function setTagifyValue(selector, value) {
+        var $input = $(selector);
+        if (!$input.length) return;
+
+        var instance = $input.data('tagify');
+        if (!instance) {
+            $input.tagify();
+            instance = $input.data('tagify');
+        }
+
+        if (instance) {
+            instance.removeAllTags();
+            if (value && typeof value === 'string' && value.trim().length > 0) {
+                instance.addTags(value.trim());
+            }
+        } else {
+            $input.val(value || '');
+        }
     }
 
     function escapeHtml(text) {
