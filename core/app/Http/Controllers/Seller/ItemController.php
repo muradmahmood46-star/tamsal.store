@@ -159,7 +159,11 @@ class ItemController extends Controller
             'vendor_id' => Auth::id(),
             'status' => 0,
             'approval_status' => 'Pending',
-            'reject_reason' => null
+            'reject_reason' => null,
+            'is_custom_rating' => $item->is_custom_rating,
+            'custom_rating' => $item->custom_rating,
+            'custom_rating_count' => $item->custom_rating_count,
+            'demo_reviewer_name' => null,
         ]);
 
         $this->repository->update($item, $request);

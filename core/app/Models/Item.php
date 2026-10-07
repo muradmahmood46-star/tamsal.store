@@ -20,80 +20,89 @@ class Item extends Model
 
     public function getRatingAttribute()
     {
-        $hasCustom = ($this->is_custom_rating == 1 && $this->custom_rating !== null && $this->custom_rating > 0);
-        $customScore = $hasCustom ? (float) $this->custom_rating : 0.0;
-        $customCount = $hasCustom ? (int) ($this->custom_rating_count ?: 1) : 0;
-
+        // 1. If real customer reviews exist, calculate directly from real customer ratings
         if ($this->relationLoaded('reviews')) {
-            $activeReviews = $this->reviews->where('status', 1);
-            $realCount = $activeReviews->count();
-            $realSum = (float) $activeReviews->sum('rating');
+            $realReviews = $this->reviews->where('status', 1)->filter(function ($r) {
+                return empty($r->is_admin_added) || $r->is_admin_added == 0;
+            });
+            $realCount = $realReviews->count();
+            if ($realCount > 0) {
+                $realSum = (float) $realReviews->sum('rating');
+                return min(5.0, max(0.0, (float) round($realSum / $realCount, 1)));
+            }
         } else {
-            $realCount = (int) $this->reviews()->where('status', 1)->count();
-            $realSum = (float) ($this->reviews()->where('status', 1)->sum('rating') ?: 0);
+            $realReviewsQuery = $this->reviews()->where('status', 1)->where(function ($q) {
+                $q->whereNull('is_admin_added')->orWhere('is_admin_added', 0);
+            });
+            $realCount = $realReviewsQuery->count();
+            if ($realCount > 0) {
+                $avg = $realReviewsQuery->avg('rating');
+                return min(5.0, max(0.0, (float) round($avg, 1)));
+            }
         }
 
-        $totalCount = $customCount + $realCount;
-        if ($totalCount <= 0) {
-            return 0.0;
+        // 2. If no real customer reviews yet, fallback to initial custom / demo rating set at creation
+        if ($this->is_custom_rating == 1 && $this->custom_rating !== null && $this->custom_rating > 0) {
+            return min(5.0, max(0.0, (float) $this->custom_rating));
         }
 
-        $totalSum = ($customScore * $customCount) + $realSum;
-        $avg = round($totalSum / $totalCount, 1);
-        return min(5.0, max(0.0, (float) $avg));
+        // 3. Fallback to any active demo/admin reviews average
+        if ($this->relationLoaded('reviews')) {
+            $allReviews = $this->reviews->where('status', 1);
+            if ($allReviews->count() > 0) {
+                return min(5.0, max(0.0, (float) round($allReviews->sum('rating') / $allReviews->count(), 1)));
+            }
+        } else {
+            $allReviewsQuery = $this->reviews()->where('status', 1);
+            if ($allReviewsQuery->count() > 0) {
+                return min(5.0, max(0.0, (float) round($allReviewsQuery->avg('rating'), 1)));
+            }
+        }
+
+        return 0.0;
     }
 
     public function getRatingCountAttribute()
     {
-        $hasCustom = ($this->is_custom_rating == 1 && $this->custom_rating !== null && $this->custom_rating > 0);
-        $customCount = $hasCustom ? (int) ($this->custom_rating_count ?: 1) : 0;
-
+        // 1. If real customer reviews exist, return real customer count
         if ($this->relationLoaded('reviews')) {
-            $realCount = $this->reviews->where('status', 1)->count();
+            $realReviews = $this->reviews->where('status', 1)->filter(function ($r) {
+                return empty($r->is_admin_added) || $r->is_admin_added == 0;
+            });
+            $realCount = $realReviews->count();
+            if ($realCount > 0) {
+                return $realCount;
+            }
         } else {
-            $realCount = (int) $this->reviews()->where('status', 1)->count();
+            $realCount = $this->reviews()->where('status', 1)->where(function ($q) {
+                $q->whereNull('is_admin_added')->orWhere('is_admin_added', 0);
+            })->count();
+            if ($realCount > 0) {
+                return $realCount;
+            }
         }
 
-        return $customCount + $realCount;
+        // 2. If no real customer reviews yet, return initial custom rating count
+        if ($this->is_custom_rating == 1 && $this->custom_rating !== null && $this->custom_rating > 0) {
+            return (int) ($this->custom_rating_count ?: 1);
+        }
+
+        // 3. Fallback to any demo reviews count
+        if ($this->relationLoaded('reviews')) {
+            return $this->reviews->where('status', 1)->count();
+        } else {
+            return (int) $this->reviews()->where('status', 1)->count();
+        }
     }
 
     public function getCustomerRatingAttribute()
     {
-        if ($this->relationLoaded('reviews')) {
-            $customerReviews = $this->reviews->where('status', 1)->filter(function ($r) {
-                return empty($r->is_admin_added) || $r->is_admin_added == 0;
-            });
-            $count = $customerReviews->count();
-            if ($count <= 0) {
-                return 0.0;
-            }
-            $sum = (float) $customerReviews->sum('rating');
-            return min(5.0, max(0.0, round($sum / $count, 1)));
-        }
-
-        $reviewsQuery = $this->reviews()->where('status', 1)->where(function ($q) {
-            $q->whereNull('is_admin_added')->orWhere('is_admin_added', 0);
-        });
-        $count = $reviewsQuery->count();
-        if ($count <= 0) {
-            return 0.0;
-        }
-        $avg = $reviewsQuery->avg('rating');
-        return min(5.0, max(0.0, round((float)$avg, 1)));
+        return $this->rating;
     }
 
     public function getCustomerRatingCountAttribute()
     {
-        if ($this->relationLoaded('reviews')) {
-            $customerReviews = $this->reviews->where('status', 1)->filter(function ($r) {
-                return empty($r->is_admin_added) || $r->is_admin_added == 0;
-            });
-            return $customerReviews->count();
-        }
-
-        return (int) $this->reviews()->where('status', 1)->where(function ($q) {
-            $q->whereNull('is_admin_added')->orWhere('is_admin_added', 0);
-        })->count();
+        return $this->rating_count;
     }
 
     public function category()

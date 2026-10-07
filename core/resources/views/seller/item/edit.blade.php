@@ -242,115 +242,68 @@
                     </div>
                 </div>
 
-                <!-- Rating & Review Management (Demo / Initial Rating) -->
+                <!-- Rating Status (Protected - View Only for Vendors) -->
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-light d-flex justify-content-between align-items-center py-2">
-                        <h6 class="mb-0 font-weight-bold text-dark"><i class="fas fa-star text-warning mr-2"></i>{{ __('Rating & Reviews Management') }}</h6>
-                        <span class="badge badge-warning text-dark font-weight-bold">{{ __('Custom Rating') }}</span>
+                        <h6 class="mb-0 font-weight-bold text-dark"><i class="fas fa-star text-warning mr-2"></i>{{ __('Product Rating & Reviews') }}</h6>
+                        <span class="badge badge-secondary"><i class="fas fa-lock mr-1"></i>{{ __('Locked') }}</span>
                     </div>
                     <div class="card-body">
-                        <div class="form-group mb-3">
-                            <label class="switch-primary">
-                                <input type="checkbox" class="switch switch-bootstrap status radio-check" id="is_custom_rating_toggle" name="is_custom_rating" value="1" {{ $item->is_custom_rating == 1 ? 'checked' : '' }} onchange="toggleRatingSection(this)">
-                                <span class="switch-body"></span>
-                                <span class="switch-text font-weight-bold text-dark" style="font-size: 14.5px;">{{ __('Enable Custom / Demo Rating for this product') }}</span>
-                            </label>
-                            <p class="text-muted mb-0" style="font-size: 13px;">{{ __('Enable this to set custom star rating and review count for this product. Great for newly launched products and marketing initial trust.') }}</p>
+                        <div class="d-flex align-items-center justify-content-between p-3 rounded" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+                            <div>
+                                <h5 class="mb-1 font-weight-bold text-dark">
+                                    <span class="text-warning mr-1">{{ number_format($item->rating, 1) }} ★</span>
+                                    <span class="text-muted font-weight-normal" style="font-size: 14px;">({{ $item->rating_count }} {{ __('Reviews') }})</span>
+                                </h5>
+                                <p class="text-muted small mb-0">
+                                    <i class="fas fa-info-circle text-info mr-1"></i>
+                                    {{ __('Product rating is locked for vendors. Initial stars were set on creation, and real customer reviews will automatically calculate stars.') }}
+                                </p>
+                            </div>
+                            <div class="text-right d-none d-md-block">
+                                {!! Helper::renderStarRating($item) !!}
+                            </div>
                         </div>
 
-                        <div id="custom_rating_wrapper" style="display: {{ $item->is_custom_rating == 1 ? 'block' : 'none' }};">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="font-weight-bold text-dark mb-1">{{ __('Star Rating (1.0 to 5.0)') }}</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text bg-warning text-dark"><i class="fas fa-star"></i></span>
-                                        </div>
-                                        <input type="number" step="0.1" min="1" max="5" id="custom_rating_input" name="custom_rating" class="form-control" value="{{ $item->custom_rating ?? 5.0 }}" placeholder="e.g. 4.8">
-                                    </div>
-                                    <div class="mt-2">
-                                        <span class="small font-weight-bold text-muted mr-1">{{ __('Quick Presets:') }}</span>
-                                        <button type="button" class="btn btn-outline-warning btn-xs py-0 px-2 text-dark font-weight-bold" onclick="setRatingPreset(5.0)">5.0 ★</button>
-                                        <button type="button" class="btn btn-outline-warning btn-xs py-0 px-2 text-dark font-weight-bold" onclick="setRatingPreset(4.9)">4.9 ★</button>
-                                        <button type="button" class="btn btn-outline-warning btn-xs py-0 px-2 text-dark font-weight-bold" onclick="setRatingPreset(4.8)">4.8 ★</button>
-                                        <button type="button" class="btn btn-outline-warning btn-xs py-0 px-2 text-dark font-weight-bold" onclick="setRatingPreset(4.5)">4.5 ★</button>
-                                        <button type="button" class="btn btn-outline-warning btn-xs py-0 px-2 text-dark font-weight-bold" onclick="setRatingPreset(4.0)">4.0 ★</button>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="font-weight-bold text-dark mb-1">{{ __('Total Review Count') }}</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text bg-info text-white"><i class="fas fa-comments"></i></span>
-                                        </div>
-                                        <input type="number" min="0" id="custom_rating_count_input" name="custom_rating_count" class="form-control" value="{{ $item->custom_rating_count ?? 25 }}" placeholder="e.g. 48">
-                                    </div>
-                                    <div class="mt-2">
-                                        <span class="small font-weight-bold text-muted mr-1">{{ __('Quick Presets:') }}</span>
-                                        <button type="button" class="btn btn-outline-info btn-xs py-0 px-2 font-weight-bold" onclick="setReviewCountPreset(12)">12</button>
-                                        <button type="button" class="btn btn-outline-info btn-xs py-0 px-2 font-weight-bold" onclick="setReviewCountPreset(25)">25</button>
-                                        <button type="button" class="btn btn-outline-info btn-xs py-0 px-2 font-weight-bold" onclick="setReviewCountPreset(48)">48</button>
-                                        <button type="button" class="btn btn-outline-info btn-xs py-0 px-2 font-weight-bold" onclick="setReviewCountPreset(96)">96</button>
-                                        <button type="button" class="btn btn-outline-info btn-xs py-0 px-2 font-weight-bold" onclick="setReviewCountPreset(150)">150+</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {{-- Current Reviews Table --}}
-                            @if ($item->reviews->count() > 0)
-                                <div class="mb-3 border rounded p-2" style="background: #ffffff;">
-                                    <h6 class="font-weight-bold text-dark mb-2"><i class="fas fa-list-alt text-primary mr-1"></i> {{ __('Current Reviews on this Product') }} ({{ $item->reviews->count() }})</h6>
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered table-sm text-center mb-0">
-                                            <thead class="bg-light">
+                        {{-- Current Reviews Table if any --}}
+                        @if ($item->reviews->count() > 0)
+                            <div class="mt-3 border rounded p-2" style="background: #ffffff;">
+                                <h6 class="font-weight-bold text-dark mb-2"><i class="fas fa-list-alt text-primary mr-1"></i> {{ __('Customer Reviews on this Product') }} ({{ $item->reviews->count() }})</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-sm text-center mb-0">
+                                        <thead class="bg-light">
+                                            <tr>
+                                                <th>{{ __('Reviewer') }}</th>
+                                                <th>{{ __('Rating') }}</th>
+                                                <th>{{ __('Subject') }}</th>
+                                                <th>{{ __('Status') }}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($item->reviews as $rev)
                                                 <tr>
-                                                    <th>{{ __('Reviewer') }}</th>
-                                                    <th>{{ __('Rating') }}</th>
-                                                    <th>{{ __('Subject') }}</th>
-                                                    <th>{{ __('Status') }}</th>
+                                                    <td>
+                                                        <span class="font-weight-bold">{{ $rev->reviewer_name }}</span>
+                                                        @if($rev->is_admin_added == 1)
+                                                            <span class="badge badge-info ml-1" style="font-size: 10px;">{{ __('Initial') }}</span>
+                                                        @endif
+                                                    </td>
+                                                    <td class="text-warning font-weight-bold">{{ $rev->rating }} ★</td>
+                                                    <td><small>{{ Str::limit($rev->subject, 30) }}</small></td>
+                                                    <td>
+                                                        @if($rev->status == 1)
+                                                            <span class="badge badge-success">{{ __('Live') }}</span>
+                                                        @else
+                                                            <span class="badge badge-warning">{{ __('Pending') }}</span>
+                                                        @endif
+                                                    </td>
                                                 </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($item->reviews as $rev)
-                                                    <tr>
-                                                        <td>
-                                                            <span class="font-weight-bold">{{ $rev->reviewer_name }}</span>
-                                                            @if($rev->is_admin_added == 1)
-                                                                <span class="badge badge-info ml-1" style="font-size: 10px;">{{ __('Demo') }}</span>
-                                                            @endif
-                                                        </td>
-                                                        <td class="text-warning font-weight-bold">{{ $rev->rating }} ★</td>
-                                                        <td><small>{{ Str::limit($rev->subject, 30) }}</small></td>
-                                                        <td>
-                                                            @if($rev->status == 1)
-                                                                <span class="badge badge-success">{{ __('Live') }}</span>
-                                                            @else
-                                                                <span class="badge badge-warning">{{ __('Pending') }}</span>
-                                                            @endif
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            @endif
-
-                            {{-- Custom Demo Reviews Creator --}}
-                            <div class="p-3 mt-2 border rounded" style="background-color: #fcfcfd; border: 1px dashed #d97706 !important;">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <h6 class="font-weight-bold text-dark mb-0"><i class="fas fa-user-edit text-warning mr-1"></i> {{ __('Add Demo Customer Reviews (Optional)') }}</h6>
-                                    <button type="button" class="btn btn-success btn-xs font-weight-bold" onclick="addDemoReviewRow()">
-                                        <i class="fas fa-plus"></i> {{ __('+ Add Review') }}
-                                    </button>
-                                </div>
-                                <p class="text-muted small mb-2">{{ __('You can add realistic customer testimonials that will appear on the product page.') }}</p>
-                                
-                                <div id="demo_reviews_container">
-                                    {{-- Dynamically appended demo review cards --}}
+                                            @endforeach
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
 
@@ -770,25 +723,6 @@
         return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
-    // -----------------------------------------------------------------
-    // Rating & Reviews Management Functions
-    // -----------------------------------------------------------------
-    function toggleRatingSection(el) {
-        if (el.checked) {
-            $('#custom_rating_wrapper').slideDown();
-        } else {
-            $('#custom_rating_wrapper').slideUp();
-        }
-    }
-
-    function setRatingPreset(val) {
-        $('#custom_rating_input').val(val);
-    }
-
-    function setReviewCountPreset(val) {
-        $('#custom_rating_count_input').val(val);
-    }
-
     // Return Policy Functions
     function toggleReturnPolicySection(el) {
         if (el.checked) {
@@ -800,49 +734,6 @@
 
     function setReturnDaysPreset(days) {
         $('#return_days_input').val(days);
-    }
-
-    let demoReviewIndex = 0;
-    function addDemoReviewRow(name = '', rating = 5, subject = '', review = '') {
-        demoReviewIndex++;
-        const html = `
-            <div class="card border mb-2 demo-review-card shadow-sm" id="demo_review_card_${demoReviewIndex}" style="background: #ffffff;">
-                <div class="card-body p-2">
-                    <div class="row align-items-center mb-2">
-                        <div class="col-md-5 mb-1">
-                            <label class="small font-weight-bold text-dark mb-0">{{ __("Customer / Reviewer Name") }} *</label>
-                            <input type="text" name="demo_reviewer_name[]" class="form-control form-control-sm" placeholder="e.g. Ahmed Khan" value="${escapeHtml(name)}" required>
-                        </div>
-                        <div class="col-md-3 mb-1">
-                            <label class="small font-weight-bold text-dark mb-0">{{ __("Rating Stars") }}</label>
-                            <select name="demo_rating[]" class="form-control form-control-sm">
-                                <option value="5" ${rating == 5 ? 'selected' : ''}>⭐⭐⭐⭐⭐ (5 Stars)</option>
-                                <option value="4" ${rating == 4 ? 'selected' : ''}>⭐⭐⭐⭐ (4 Stars)</option>
-                                <option value="3" ${rating == 3 ? 'selected' : ''}>⭐⭐⭐ (3 Stars)</option>
-                                <option value="2" ${rating == 2 ? 'selected' : ''}>⭐⭐ (2 Stars)</option>
-                                <option value="1" ${rating == 1 ? 'selected' : ''}>⭐ (1 Star)</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4 mb-1">
-                            <label class="small font-weight-bold text-dark mb-0">{{ __("Title / Headline") }}</label>
-                            <input type="text" name="demo_subject[]" class="form-control form-control-sm" placeholder="e.g. Excellent Quality & Fast Delivery!" value="${escapeHtml(subject)}">
-                        </div>
-                    </div>
-                    <div class="row align-items-center">
-                        <div class="col-md-11 mb-1">
-                            <label class="small font-weight-bold text-dark mb-0">{{ __("Review Comment") }} *</label>
-                            <textarea name="demo_review[]" class="form-control form-control-sm" rows="2" placeholder="e.g. Ordered this and absolutely loved the fabric and quality! Will definitely buy again." required>${escapeHtml(review)}</textarea>
-                        </div>
-                        <div class="col-md-1 text-center mb-1">
-                            <button type="button" class="btn btn-outline-danger btn-sm p-1 mt-3" title="{{ __('Remove') }}" onclick="$('#demo_review_card_${demoReviewIndex}').remove()">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        $('#demo_reviews_container').append(html);
     }
 
     document.addEventListener("DOMContentLoaded", function() {
