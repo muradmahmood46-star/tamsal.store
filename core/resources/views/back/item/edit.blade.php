@@ -154,8 +154,15 @@
                     </div>
 
                     <div id="specifications-section" class="{{ $item->is_specification == 0 ? 'd-none' : '' }}">
-                        @if(!empty($specification_name))
-                        @foreach(array_combine($specification_name,$specification_description) as  $name => $description)
+                        @php
+                            $specNames = !empty($specification_name) && is_array($specification_name) ? array_values($specification_name) : [];
+                            $specDescs = !empty($specification_description) && is_array($specification_description) ? array_values($specification_description) : [];
+                        @endphp
+                        @if(!empty($specNames))
+                        @foreach($specNames as $sIdx => $name)
+                        @php
+                            $description = $specDescs[$sIdx] ?? '';
+                        @endphp
                         <div class="d-flex">
                             <div class="flex-grow-1">
                                 <div class="form-group">

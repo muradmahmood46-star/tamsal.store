@@ -151,8 +151,15 @@
                     <div class="form-group">
                         <label for="video">{{ __('Add License') }} *</label>
                     </div>
-                    @if(!empty($license_name))
-                    @foreach(array_combine($license_name,$license_key) as  $name => $key)
+                    @php
+                        $licNames = !empty($license_name) && is_array($license_name) ? array_values($license_name) : [];
+                        $licKeys = !empty($license_key) && is_array($license_key) ? array_values($license_key) : [];
+                    @endphp
+                    @if(!empty($licNames))
+                    @foreach($licNames as $lIdx => $name)
+                    @php
+                        $key = $licKeys[$lIdx] ?? '';
+                    @endphp
                     <div id="license-section">
                         <div class="d-flex">
                             <div class="flex-grow-1">
@@ -240,8 +247,15 @@
                     </div>
 
                     <div id="specifications-section" class="{{ $item->is_specification == 0 ? 'd-none' : '' }}">
-                        @if(!empty($specification_name))
-                        @foreach(array_combine($specification_name,$specification_description) as  $name => $description)
+                        @php
+                            $specNames = !empty($specification_name) && is_array($specification_name) ? array_values($specification_name) : [];
+                            $specDescs = !empty($specification_description) && is_array($specification_description) ? array_values($specification_description) : [];
+                        @endphp
+                        @if(!empty($specNames))
+                        @foreach($specNames as $sIdx => $name)
+                        @php
+                            $description = $specDescs[$sIdx] ?? '';
+                        @endphp
                         <div class="d-flex">
                             <div class="flex-grow-1">
                                 <div class="form-group">

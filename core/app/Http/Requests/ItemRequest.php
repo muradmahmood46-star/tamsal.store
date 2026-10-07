@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\Item;
+use App\Repositories\Back\ItemRepository;
 
 class ItemRequest extends FormRequest
 {
@@ -63,9 +64,29 @@ class ItemRequest extends FormRequest
             $slug = $slug . '-' . time() . '-' . Str::random(3);
         }
 
-        $this->merge([
+        $mergeData = [
             'slug' => strtolower($slug),
-        ]);
+        ];
+
+        if ($this->filled('sku')) {
+            $rawSku = trim($this->sku);
+            if (strlen($rawSku) < 6 || !preg_match('/[a-zA-Z]/', $rawSku) || !preg_match('/[0-9]/', $rawSku)) {
+                if ($itemId) {
+                    $existingItem = Item::find($itemId);
+                    if ($existingItem && !empty($existingItem->sku)) {
+                        $mergeData['sku'] = $existingItem->sku;
+                    } else {
+                        $mergeData['sku'] = ItemRepository::generateAutoSku();
+                    }
+                } else {
+                    $mergeData['sku'] = ItemRepository::generateAutoSku();
+                }
+            } else {
+                $mergeData['sku'] = strtoupper($rawSku);
+            }
+        }
+
+        $this->merge($mergeData);
     }
 
     /**

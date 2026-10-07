@@ -165,57 +165,76 @@ class ItemController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function edit(Item $item)
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($item)
     {
+        $itemModel = $item instanceof Item ? $item : Item::findOrFail($item);
+        $socialIcons = $itemModel->social_icons;
+        $socialLinks = $itemModel->social_links;
+        $specName = $itemModel->specification_name;
+        $specDesc = $itemModel->specification_description;
+
         return view('back.item.edit', [
-            'item' => $item,
+            'item' => $itemModel,
             'curr' => Currency::where('is_default', 1)->first(),
-            'social_icons' => json_decode($item->social_icons, true),
-            'social_links' => json_decode($item->social_links, true),
-            'specification_name' => json_decode($item->specification_name, true),
-            'specification_description' => json_decode($item->specification_description, true),
+            'social_icons' => is_string($socialIcons) ? (json_decode($socialIcons, true) ?? []) : (is_array($socialIcons) ? $socialIcons : []),
+            'social_links' => is_string($socialLinks) ? (json_decode($socialLinks, true) ?? []) : (is_array($socialLinks) ? $socialLinks : []),
+            'specification_name' => is_string($specName) ? (json_decode($specName, true) ?? []) : (is_array($specName) ? $specName : []),
+            'specification_description' => is_string($specDesc) ? (json_decode($specDesc, true) ?? []) : (is_array($specDesc) ? $specDesc : []),
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\ItemRequest  $request
+     * @param  \App\Http\Requests\ItemRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function update(ItemRequest $request, Item $item)
+    public function update(ItemRequest $request, $item)
     {
-        $this->repository->update($item, $request);
+        try {
+            $itemModel = $item instanceof Item ? $item : Item::findOrFail($item);
+            $this->repository->update($itemModel, $request);
 
-        if ($request->is_button == 0) {
-            return redirect()->route('back.item.index')->withSuccess(__('Product Updated Successfully.'));
-        } else {
-            return redirect()->back()->withSuccess(__('Product Updated Successfully.'));
+            if ($request->is_button == 0) {
+                return redirect()->route('back.item.index')->withSuccess(__('Product Updated Successfully.'));
+            } else {
+                return redirect()->back()->withSuccess(__('Product Updated Successfully.'));
+            }
+        } catch (\Exception $e) {
+            \Log::error('Product update failed: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+            return redirect()->back()->withInput()->withError(__('Failed to update product: ') . $e->getMessage());
         }
     }
 
     /**
      * Change the status for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  mixed  $item
      * @param  int  $status
      * @return \Illuminate\Http\Response
      */
-    public function status(Item $item, $status)
+    public function status($item, $status)
     {
-        $item->update(['status' => $status]);
+        $itemModel = $item instanceof Item ? $item : Item::findOrFail($item);
+        $itemModel->update(['status' => $status]);
         return redirect()->back()->withSuccess(__('Status Updated Successfully.'));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  mixed  $item
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Item $item)
+    public function destroy($item)
     {
-        $this->repository->delete($item);
+        $itemModel = $item instanceof Item ? $item : Item::findOrFail($item);
+        $this->repository->delete($itemModel);
         return redirect()->back()->withSuccess(__('Product Deleted Successfully.'));
     }
 
@@ -224,9 +243,10 @@ class ItemController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function galleries(Item $item)
+    public function galleries($item)
     {
-        return view('back.item.galleries', compact('item'));
+        $itemModel = $item instanceof Item ? $item : Item::findOrFail($item);
+        return view('back.item.galleries', ['item' => $itemModel]);
     }
 
     /**
@@ -254,8 +274,9 @@ class ItemController extends Controller
     }
 
 
-    public function highlight(Item $item)
+    public function highlight($item)
     {
+        $itemModel = $item instanceof Item ? $item : Item::findOrFail($item);
         PromotionTag::ensureTable();
         PromotionPlan::ensureTable();
 
@@ -263,14 +284,15 @@ class ItemController extends Controller
         $plans = PromotionPlan::where('status', 1)->orderBy('days', 'asc')->get();
 
         return view('back.item.highlight', [
-            'item' => $item,
+            'item' => $itemModel,
             'tags' => $tags,
             'plans' => $plans,
         ]);
     }
-    public function highlight_update(Item $item, Request $request)
+    public function highlight_update($item, Request $request)
     {
-        $this->repository->highlight($item, $request);
+        $itemModel = $item instanceof Item ? $item : Item::findOrFail($item);
+        $this->repository->highlight($itemModel, $request);
         return redirect()->route('back.item.index')->withSuccess(__('Product Updated Successfully.'));
     }
 
