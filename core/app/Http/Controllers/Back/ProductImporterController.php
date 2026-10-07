@@ -28,6 +28,10 @@ class ProductImporterController extends Controller
      */
     public function index()
     {
+        try {
+            ItemRepository::ensureColumnsExist();
+        } catch (\Throwable $e) {}
+
         $categories = Category::where('status', 1)->get();
         $curr = Currency::where('is_default', 1)->first();
 
@@ -200,6 +204,19 @@ class ProductImporterController extends Controller
      */
     public function store(Request $request)
     {
+        try {
+            ItemRepository::ensureColumnsExist();
+        } catch (\Throwable $e) {}
+
+        // Auto-prepend https:// to supplier_url if scheme is missing
+        if ($request->filled('supplier_url')) {
+            $sUrl = trim($request->supplier_url);
+            if (!preg_match('~^(?:f|ht)tps?://~i', $sUrl)) {
+                $sUrl = 'https://' . $sUrl;
+            }
+            $request->merge(['supplier_url' => $sUrl]);
+        }
+
         $request->validate([
             'name' => 'required|max:255',
             'discount_price' => 'required|numeric|min:0.1',
@@ -207,161 +224,170 @@ class ProductImporterController extends Controller
             'supplier_url' => 'required|url',
         ]);
 
-        $curr = Currency::where('is_default', 1)->first();
-        $currValue = $curr ? $curr->value : 1;
+        try {
+            $curr = Currency::where('is_default', 1)->first();
+            $currValue = $curr ? $curr->value : 1;
 
-        // 1. Download & store main image
-        $mainPhotoName = null;
-        $thumbnailName = null;
+            // 1. Download & store main image
+            $mainPhotoName = null;
+            $thumbnailName = null;
 
-        if ($request->hasFile('photo')) {
-            $images_name = \App\Helpers\ImageHelper::ItemhandleUploadedImage($request->file('photo'), 'images');
-            $mainPhotoName = $images_name[0];
-            $thumbnailName = $images_name[1];
-        } elseif (!empty($request->main_image_url)) {
-            $downloaded = $this->downloadAndSaveImage($request->main_image_url);
-            if ($downloaded) {
-                $mainPhotoName = $downloaded['photo'];
-                $thumbnailName = $downloaded['thumbnail'];
+            if ($request->hasFile('photo')) {
+                $images_name = \App\Helpers\ImageHelper::ItemhandleUploadedImage($request->file('photo'), 'images');
+                $mainPhotoName = $images_name[0];
+                $thumbnailName = $images_name[1];
+            } elseif (!empty($request->main_image_url)) {
+                $downloaded = $this->downloadAndSaveImage($request->main_image_url);
+                if ($downloaded) {
+                    $mainPhotoName = $downloaded['photo'];
+                    $thumbnailName = $downloaded['thumbnail'];
+                }
             }
-        }
 
-        // Fallback default image if none found
-        if (!$mainPhotoName) {
-            $mainPhotoName = 'default.jpg';
-            $thumbnailName = 'default.jpg';
-        }
+            // Fallback default image if none found
+            if (!$mainPhotoName) {
+                $mainPhotoName = 'default.jpg';
+                $thumbnailName = 'default.jpg';
+            }
 
-        // 2. Generate unique slug
-        $baseSlug = Str::slug($request->name);
-        if (empty($baseSlug)) {
-            $baseSlug = 'product-' . time();
-        }
-        $slug = $baseSlug;
-        $counter = 1;
-        while (Item::where('slug', $slug)->exists()) {
-            $slug = $baseSlug . '-' . $counter;
-            $counter++;
-        }
+            // 2. Generate unique slug
+            $baseSlug = Str::slug($request->name);
+            if (empty($baseSlug)) {
+                $baseSlug = 'product-' . time();
+            }
+            $slug = $baseSlug;
+            $counter = 1;
+            while (Item::where('slug', $slug)->exists()) {
+                $slug = $baseSlug . '-' . $counter;
+                $counter++;
+            }
 
-        // 3. Generate SKU
-        $sku = $request->sku ?: ItemRepository::generateAutoSku();
+            // 3. Generate SKU
+            $sku = $request->sku ?: ItemRepository::generateAutoSku();
 
-        // 4. Create Product
-        $item = new Item();
-        $item->name = $request->name;
-        $item->slug = $slug;
-        $item->sku = $sku;
-        $item->item_type = 'normal';
-        $item->category_id = $request->category_id;
-        $item->subcategory_id = $request->subcategory_id ?: null;
-        $item->childcategory_id = $request->childcategory_id ?: null;
-        $item->brand_id = $request->brand_id ?: null;
-        $item->tax_id = $request->tax_id ?: 0;
+            // 4. Create Product
+            $item = new Item();
+            $item->name = $request->name;
+            $item->slug = $slug;
+            $item->sku = $sku;
+            $item->item_type = 'normal';
+            $item->category_id = $request->category_id;
+            $item->subcategory_id = $request->subcategory_id ?: null;
+            $item->childcategory_id = $request->childcategory_id ?: null;
+            $item->brand_id = $request->brand_id ?: null;
+            $item->tax_id = $request->tax_id ?: 0;
 
-        $item->photo = $mainPhotoName;
-        $item->thumbnail = $thumbnailName;
+            $item->photo = $mainPhotoName;
+            $item->thumbnail = $thumbnailName;
 
-        $item->discount_price = $request->discount_price / $currValue;
-        $item->previous_price = !empty($request->previous_price) ? ($request->previous_price / $currValue) : 0;
+            $item->discount_price = $request->discount_price / $currValue;
+            $item->previous_price = !empty($request->previous_price) ? ($request->previous_price / $currValue) : 0;
 
-        $item->stock = $request->stock ?: 20;
-        $item->sort_details = $request->sort_details ?: Str::limit(strip_tags($request->details), 200);
-        $item->details = $request->details ?: $request->name;
+            $item->stock = $request->stock ?: 20;
+            $item->sort_details = $request->sort_details ?: Str::limit(strip_tags($request->details), 200);
+            $item->details = $request->details ?: $request->name;
 
-        // Tags & Meta sanitization (Supports Tagify JSON and plain comma-separated tags)
-        if ($request->filled('tags')) {
-            $item->tags = str_replace(["value", "{", "}", "[","]",":","\""], '', $request->tags);
-        } else {
-            $item->tags = null;
-        }
+            // Tags & Meta sanitization (Supports Tagify JSON and plain comma-separated tags)
+            if ($request->filled('tags')) {
+                $item->tags = str_replace(["value", "{", "}", "[","]",":","\""], '', $request->tags);
+            } else {
+                $item->tags = null;
+            }
 
-        $item->is_cod = $request->input('is_cod', 1);
-        $item->is_free_delivery = $request->input('is_free_delivery', 0);
-        $item->delivery_fee = $request->input('delivery_fee', 0);
+            $item->is_cod = $request->input('is_cod', 1);
+            $item->is_free_delivery = $request->input('is_free_delivery', 0);
+            $item->delivery_fee = $request->input('delivery_fee', 0);
 
-        $item->advance_payment_type = $request->input('advance_payment_type', 'percentage');
-        $item->advance_payment_amount = $request->input('advance_payment_amount', 0);
+            $item->advance_payment_type = $request->input('advance_payment_type', 'percentage');
+            $item->advance_payment_amount = $request->input('advance_payment_amount', 0);
 
-        $item->is_returnable = $request->input('is_returnable', 1);
-        $item->return_days = $request->input('return_days', 14);
+            $item->is_returnable = $request->input('is_returnable', 1);
+            $item->return_days = $request->input('return_days', 14);
 
-        $item->is_custom_rating = $request->input('is_custom_rating', 1);
-        $item->custom_rating = $request->input('custom_rating', '4.9');
-        $item->custom_rating_count = $request->input('custom_rating_count', 32);
+            $item->is_custom_rating = $request->input('is_custom_rating', 1);
+            $item->custom_rating = $request->input('custom_rating', '4.9');
+            $item->custom_rating_count = $request->input('custom_rating_count', 32);
 
-        $item->estimated_profit = $request->input('estimated_profit', 0);
-        $item->product_from = $request->input('product_from', 'HHC Dropshipping');
-        $item->contact_number = $request->input('contact_number', null);
-        $item->supplier_url = $request->filled('supplier_url') ? trim($request->supplier_url) : null;
-        $item->video = $request->video ?: null;
+            $item->estimated_profit = $request->input('estimated_profit', 0);
+            $item->product_from = $request->input('product_from', 'HHC Dropshipping');
+            $item->contact_number = $request->input('contact_number', null);
+            $item->supplier_url = $request->filled('supplier_url') ? trim($request->supplier_url) : null;
+            $item->video = $request->video ?: null;
 
-        if ($request->filled('meta_keywords')) {
-            $item->meta_keywords = str_replace(["value", "{", "}", "[","]",":","\""], '', $request->meta_keywords);
-        } else {
-            $item->meta_keywords = null;
-        }
+            if ($request->filled('meta_keywords')) {
+                $item->meta_keywords = str_replace(["value", "{", "}", "[","]",":","\""], '', $request->meta_keywords);
+            } else {
+                $item->meta_keywords = null;
+            }
 
-        $item->meta_description = $request->filled('meta_description') 
-            ? trim(strip_tags($request->meta_description)) 
-            : Str::limit(strip_tags($request->details ?: $request->name), 155, '...');
+            $item->meta_description = $request->filled('meta_description') 
+                ? trim(strip_tags($request->meta_description)) 
+                : Str::limit(strip_tags($request->details ?: $request->name), 155, '...');
 
-        $item->status = 1;
-        $item->vendor_id = null; // Admin In-House Product
+            $item->status = 1;
+            $item->vendor_id = 0; // Admin In-House Product
+            $item->is_type = 'undefine';
+            $item->approval_status = 'Approved';
+            $item->is_hidden_by_block = 0;
+            $item->date = date('d-m-y');
 
-        // Specifications
-        if ($request->has('is_specification') && $request->is_specification == 1) {
-            $item->is_specification = 1;
-            $item->specification_name = json_encode($request->specification_name ?? []);
-            $item->specification_description = json_encode($request->specification_description ?? []);
-        } else {
-            $item->is_specification = 0;
-            $item->specification_name = null;
-            $item->specification_description = null;
-        }
+            // Specifications
+            if ($request->has('is_specification') && $request->is_specification == 1) {
+                $item->is_specification = 1;
+                $item->specification_name = json_encode($request->specification_name ?? []);
+                $item->specification_description = json_encode($request->specification_description ?? []);
+            } else {
+                $item->is_specification = 0;
+                $item->specification_name = null;
+                $item->specification_description = null;
+            }
 
-        $item->save();
+            $item->save();
 
-        // Handle Variants, Demo Reviews & Rating, and Return Policy via ItemRepository
-        $itemRepo = new ItemRepository();
-        $itemRepo->handleVariants($item, $request);
-        $itemRepo->handleRatingManagement($item, $request);
-        $itemRepo->handleReturnPolicy($item, $request);
+            // Handle Variants, Demo Reviews & Rating, and Return Policy via ItemRepository
+            $itemRepo = new ItemRepository();
+            $itemRepo->handleVariants($item, $request);
+            $itemRepo->handleRatingManagement($item, $request);
+            $itemRepo->handleReturnPolicy($item, $request);
 
-        // 5. Download & attach gallery images (from URLs)
-        if ($request->has('gallery_urls') && is_array($request->gallery_urls)) {
-            foreach ($request->gallery_urls as $gUrl) {
-                if (!empty($gUrl) && $gUrl !== $request->main_image_url) {
-                    $savedGallery = $this->downloadAndSaveImage($gUrl);
-                    if ($savedGallery) {
+            // 5. Download & attach gallery images (from URLs)
+            if ($request->has('gallery_urls') && is_array($request->gallery_urls)) {
+                foreach ($request->gallery_urls as $gUrl) {
+                    if (!empty($gUrl) && $gUrl !== $request->main_image_url) {
+                        $savedGallery = $this->downloadAndSaveImage($gUrl);
+                        if ($savedGallery) {
+                            Gallery::create([
+                                'item_id' => $item->id,
+                                'photo' => $savedGallery['photo'],
+                            ]);
+                        }
+                    }
+                }
+            }
+
+            // 6. Attach uploaded gallery files
+            if ($request->hasFile('galleries')) {
+                foreach ($request->file('galleries') as $gFile) {
+                    $gName = \App\Helpers\ImageHelper::handleUploadedImage($gFile, 'images');
+                    if ($gName) {
                         Gallery::create([
                             'item_id' => $item->id,
-                            'photo' => $savedGallery['photo'],
+                            'photo' => $gName,
                         ]);
                     }
                 }
             }
-        }
 
-        // 6. Attach uploaded gallery files
-        if ($request->hasFile('galleries')) {
-            foreach ($request->file('galleries') as $gFile) {
-                $gName = \App\Helpers\ImageHelper::handleUploadedImage($gFile, 'images');
-                if ($gName) {
-                    Gallery::create([
-                        'item_id' => $item->id,
-                        'photo' => $gName,
-                    ]);
-                }
+            // Check if user clicked "Save & Edit"
+            if ($request->input('is_button') == 1) {
+                return redirect()->route('back.item.edit', $item->id)->withSuccess(__('Product Imported & Created Successfully! You can now fine-tune details.'));
             }
-        }
 
-        // Check if user clicked "Save & Edit"
-        if ($request->input('is_button') == 1) {
-            return redirect()->route('back.item.edit', $item->id)->withSuccess(__('Product Imported & Created Successfully! You can now fine-tune details.'));
+            return redirect()->route('back.item.index')->withSuccess(__('Product Imported & Published Successfully!'));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Product Importer Store Error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+            return redirect()->back()->withInput()->with('error', __('Error publishing product: ') . $e->getMessage());
         }
-
-        return redirect()->route('back.item.index')->withSuccess(__('Product Imported & Published Successfully!'));
     }
 
     /**
