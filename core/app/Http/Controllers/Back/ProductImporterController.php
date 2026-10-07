@@ -204,6 +204,7 @@ class ProductImporterController extends Controller
             'name' => 'required|max:255',
             'discount_price' => 'required|numeric|min:0.1',
             'category_id' => 'required|integer',
+            'supplier_url' => 'required|url',
         ]);
 
         $curr = Currency::where('is_default', 1)->first();
