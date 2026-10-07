@@ -39,11 +39,10 @@ class ProductImporterController extends Controller
      */
     public function parseText(Request $request)
     {
-        $request->validate([
-            'raw_text' => 'required|string|min:5',
-        ]);
-
-        $rawText = trim($request->raw_text);
+        $rawText = trim($request->input('raw_text', ''));
+        $inputTitle = trim($request->input('input_title', ''));
+        $inputSortDetails = trim($request->input('input_sort_details', ''));
+        $inputDetails = trim($request->input('input_details', ''));
         
         $mainImageUrl = trim($request->input('main_image_url', ''));
         $galleryUrls = $request->input('gallery_urls', []);
@@ -74,7 +73,23 @@ class ProductImporterController extends Controller
             }
         }
 
-        $data = $this->extractDataFromText($rawText, implode("\n", $explicitImages));
+        $combinedSource = ($inputTitle ? ("Product Title: " . $inputTitle . "\n") : '') . 
+                          ($inputSortDetails ? ("Short Description: " . $inputSortDetails . "\n") : '') . 
+                          ($inputDetails ? ("Description: " . $inputDetails . "\n") : '') . 
+                          $rawText;
+
+        $data = $this->extractDataFromText($combinedSource, implode("\n", $explicitImages));
+
+        // Overwrite with explicitly provided title/descriptions if available
+        if (!empty($inputTitle)) {
+            $data['name'] = $inputTitle;
+        }
+        if (!empty($inputSortDetails)) {
+            $data['sort_details'] = $inputSortDetails;
+        }
+        if (!empty($inputDetails)) {
+            $data['details'] = $inputDetails;
+        }
 
         // If explicit main or gallery images were provided, ensure they are placed first in exact order
         if (!empty($explicitImages)) {
@@ -92,6 +107,14 @@ class ProductImporterController extends Controller
         $categories = Category::where('status', 1)->get();
         $matchedCategoryId = $this->matchCategory($data['name'] . ' ' . ($data['category_hint'] ?? ''), $categories);
         $data['category_id'] = $matchedCategoryId;
+        $matchedCat = $categories->where('id', $matchedCategoryId)->first();
+        $catName = $matchedCat ? $matchedCat->name : '';
+
+        // Auto-generate high-ranking SEO Tags, Meta Keywords & Meta Description
+        $seo = $this->generateSeoAndTags($data['name'], $data['details'] ?: $data['sort_details'], $catName);
+        $data['tags'] = $seo['tags'];
+        $data['meta_keywords'] = $seo['meta_keywords'];
+        $data['meta_description'] = $seo['meta_description'];
 
         return response()->json([
             'success' => true,
@@ -133,6 +156,14 @@ class ProductImporterController extends Controller
             $categories = Category::where('status', 1)->get();
             $matchedCategoryId = $this->matchCategory($productData['name'], $categories);
             $productData['category_id'] = $matchedCategoryId;
+            $matchedCat = $categories->where('id', $matchedCategoryId)->first();
+            $catName = $matchedCat ? $matchedCat->name : '';
+
+            // Auto-generate high-ranking SEO Tags, Meta Keywords & Meta Description
+            $seo = $this->generateSeoAndTags($productData['name'], $productData['details'] ?: $productData['sort_details'], $catName);
+            $productData['tags'] = $seo['tags'];
+            $productData['meta_keywords'] = $seo['meta_keywords'];
+            $productData['meta_description'] = $seo['meta_description'];
 
             return response()->json([
                 'success' => true,
@@ -664,5 +695,74 @@ class ProductImporterController extends Controller
         $path = $parts['path'] ?? '/';
         $dir = dirname($path);
         return $scheme . '://' . $host . ($dir === '/' ? '' : $dir) . '/' . $url;
+    }
+
+    /**
+     * Generate SEO Meta Keywords, Meta Description, and Product Tags from Title and Content.
+     */
+    private function generateSeoAndTags($title, $description, $categoryName = '')
+    {
+        $cleanTitle = trim(preg_replace('/[^\w\s-]/u', '', strip_tags($title)));
+        $words = array_filter(explode(' ', strtolower($cleanTitle)));
+        
+        $stopWords = [
+            'for', 'the', 'and', 'with', 'in', 'of', 'to', 'a', 'an', 'is', 'on', 'at', 'by', 
+            'from', 'this', 'that', 'it', 'are', 'was', 'will', 'or', 'be', 'as', 'but', 'not', 
+            'all', 'any', 'can', 'had', 'has', 'have', 'each', 'few', 'more', 'most', 'other', 
+            'some', 'such', 'no', 'nor', 'too', 'very', 'only', 'own', 'same', 'so', 'than', 
+            'just', 'should', 'now', 'pk', 'rs', 'pkr', 'price', 'off', 'deal', 'new'
+        ];
+
+        $filteredWords = [];
+        foreach ($words as $w) {
+            $w = trim($w);
+            if (strlen($w) > 2 && !in_array($w, $stopWords) && !is_numeric($w)) {
+                $filteredWords[] = $w;
+            }
+        }
+        $filteredWords = array_values(array_unique($filteredWords));
+
+        // 1. Tags generation (clean comma-separated keywords)
+        $tags = [];
+        foreach ($filteredWords as $fw) {
+            $tags[] = $fw;
+        }
+        $wordCount = count($filteredWords);
+        for ($i = 0; $i < $wordCount - 1; $i++) {
+            $tags[] = $filteredWords[$i] . ' ' . $filteredWords[$i + 1];
+        }
+        if ($categoryName) {
+            $tags[] = strtolower(trim($categoryName));
+        }
+        $tags = array_values(array_unique($tags));
+        $tagsString = implode(', ', array_slice($tags, 0, 8));
+
+        // 2. Meta Keywords generation (SEO focused ecommerce search queries)
+        $metaKeywords = [];
+        $metaKeywords[] = strtolower($cleanTitle);
+        $metaKeywords[] = 'buy ' . strtolower($cleanTitle);
+        if (!empty($filteredWords)) {
+            $metaKeywords[] = implode(' ', array_slice($filteredWords, 0, 3));
+        }
+        $metaKeywords[] = strtolower($cleanTitle) . ' price in pakistan';
+        $metaKeywords[] = 'best ' . ($categoryName ? strtolower($categoryName) : 'products') . ' pakistan';
+        $metaKeywords[] = 'online shopping in pakistan';
+        $metaKeywords = array_values(array_unique($metaKeywords));
+        $metaKeywordsString = implode(', ', array_slice($metaKeywords, 0, 8));
+
+        // 3. Meta Description (SEO snippet under 160 chars)
+        $cleanDesc = trim(strip_tags($description));
+        if (strlen($cleanDesc) > 30) {
+            $metaDesc = Str::limit($cleanDesc, 155, '...');
+        } else {
+            $metaDesc = "Buy {$title} online in Pakistan at best price. High quality, cash on delivery and fast nationwide shipping at Tamsal.store.";
+            $metaDesc = Str::limit($metaDesc, 158, '...');
+        }
+
+        return [
+            'tags' => $tagsString,
+            'meta_keywords' => $metaKeywordsString,
+            'meta_description' => $metaDesc,
+        ];
     }
 }

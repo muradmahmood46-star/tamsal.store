@@ -161,23 +161,51 @@
         <!-- Tab Contents -->
         <div class="tab-content shadow-sm" id="importerTabContent">
             
-            <!-- TAB 1: Smart Text / HHC Copy-Paste -->
+            <!-- TAB 1: Smart Text / Structured Input -->
             <div class="tab-pane fade show active tab-content-box" id="tab-hhc-text" role="tabpanel" aria-labelledby="hhc-tab">
                 <div class="row">
                     <div class="col-lg-8">
                         
-                        <!-- Text Input Area -->
+                        <!-- 1. Product Name / Title -->
                         <div class="form-group mb-3">
                             <label class="font-weight-bold text-dark mb-1">
-                                <i class="fas fa-paste text-primary mr-1"></i> {{ __('1. Paste Product Text from HHC Dropshipping:') }}
+                                <i class="fas fa-heading text-primary mr-1"></i> {{ __('Product Title / Name') }} *
                             </label>
-                            <textarea id="raw_text_input" class="form-control" rows="4" placeholder="{{ __('Example:&#10;Karseell Hair Mask For Damaged Hair - 300ml&#10;Rs 330 x 1&#10;Product ID : 3767460&#10;Description: Deep repair collagen treatment for damaged hair...') }}"></textarea>
+                            <input type="text" id="input_product_title" class="form-control form-control-lg font-weight-bold" placeholder="{{ __('e.g. Karseell Hair Mask For Damaged Hair - 300ml') }}">
+                        </div>
+
+                        <!-- 2. Short Description -->
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold text-dark mb-1">
+                                <i class="fas fa-align-left text-info mr-1"></i> {{ __('Short Description') }}
+                            </label>
+                            <textarea id="input_product_sort_details" class="form-control" rows="2" placeholder="{{ __('e.g. Deep repair collagen treatment for dry and damaged hair...') }}"></textarea>
+                        </div>
+
+                        <!-- 3. Full Main Description -->
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold text-dark mb-1">
+                                <i class="fas fa-file-alt text-success mr-1"></i> {{ __('Main Description / Full Details') }} *
+                            </label>
+                            <textarea id="input_product_details" class="form-control" rows="4" placeholder="{{ __('e.g. Enriched with rare maca essence, argan oil, keratin protein to deeply hydrate, repair damage, and restore silky shine...') }}"></textarea>
+                        </div>
+
+                        <!-- Optional: Bulk Paste helper -->
+                        <div class="mb-3">
+                            <a class="text-primary font-weight-bold small" data-toggle="collapse" href="#bulk_paste_collapse" role="button" aria-expanded="false" aria-controls="bulk_paste_collapse">
+                                <i class="fas fa-paste mr-1"></i> {{ __('+ Or Paste Raw Bulk Text from HHC / Supplier (Auto-Extracts All Fields)') }}
+                            </a>
+                            <div class="collapse mt-2" id="bulk_paste_collapse">
+                                <div class="card card-body p-2 bg-light border">
+                                    <textarea id="raw_text_input" class="form-control" rows="3" placeholder="{{ __('Paste full raw copied text here (e.g. Rs 330 x 1, Product ID : 3767460, Description...)') }}"></textarea>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Main Image URL Input -->
                         <div class="card mb-2 border-success shadow-sm" style="border-width: 2px;">
                             <div class="card-header bg-success text-white py-2 d-flex justify-content-between align-items-center">
-                                <span class="font-weight-bold"><i class="fas fa-star text-warning mr-1"></i> {{ __('2. Main Featured Photo URL (Primary Image)') }} *</span>
+                                <span class="font-weight-bold"><i class="fas fa-star text-warning mr-1"></i> {{ __('Main Featured Photo URL (Primary Image)') }} *</span>
                                 <button type="button" class="btn btn-warning btn-sm font-weight-bold py-1 px-3 shadow-sm" id="btn_add_first_gallery" onclick="addGalleryImageInput()">
                                     <i class="fas fa-plus-circle mr-1"></i> <span id="add_gallery_btn_label">{{ __('+ Add Gallery Image') }}</span>
                                 </button>
@@ -210,7 +238,7 @@
                         <!-- Extra Add More Button (visible when rows exist) -->
                         <div id="add_more_gallery_btn_wrap" class="mb-3" style="display: none;">
                             <button type="button" class="btn btn-outline-primary btn-sm font-weight-bold" onclick="addGalleryImageInput()">
-                                <i class="fas fa-plus mr-1"></i> <span id="add_more_btn_label">{{ __('+ Add Another Gallery Image') }}</span>
+                                <i class="fas fa-plus mr-1"></i> <span id="add_more_btn_label">{{ __('+ Add Gallery Image') }}</span>
                             </button>
                         </div>
 
@@ -218,20 +246,20 @@
                         <div class="mt-4">
                             <button type="button" class="btn btn-primary btn-lg font-weight-bold px-4 shadow-sm" id="parse_text_btn" onclick="parseProductText()">
                                 <span id="parse_btn_spinner" class="spinner-border spinner-border-sm mr-1 d-none" role="status"></span>
-                                <span id="parse_btn_text"><i class="fas fa-magic mr-1"></i> {{ __('Parse & Auto-Fill Product Details') }}</span>
+                                <span id="parse_btn_text"><i class="fas fa-magic mr-1"></i> {{ __('⚡ Parse & Auto-Fill Product Details (Auto SEO Tags & Meta)') }}</span>
                             </button>
                         </div>
                     </div>
 
                     <div class="col-lg-4 mt-3 mt-lg-0">
                         <div class="guide-step-card h-100">
-                            <h6 class="font-weight-bold text-dark mb-2"><i class="fas fa-lightbulb text-warning mr-1"></i> {{ __('HHC Fast 3-Step Guide:') }}</h6>
-                            <ol class="pl-3 mb-2 text-secondary" style="line-height: 1.6;">
-                                <li><b>{{ __('Copy Text') }}:</b> {{ __('Open product on HHC and copy title, price & description.') }}</li>
-                                <li><b>{{ __('Main Image') }}:</b> {{ __('Right-click first image -> "Copy image address" -> paste in Main Photo.') }}</li>
-                                <li><b>{{ __('Gallery Photos') }}:</b> {{ __('Click "+" button to add Gallery Image 1, Gallery Image 2, etc.') }}</li>
-                                <li><b>{{ __('Publish') }}:</b> {{ __('Click Parse button, review price/profit, and click Publish!') }}</li>
-                            </ol>
+                            <h6 class="font-weight-bold text-dark mb-2"><i class="fas fa-lightbulb text-warning mr-1"></i> {{ __('Fast SEO Auto-Features:') }}</h6>
+                            <ul class="pl-3 mb-2 text-secondary" style="line-height: 1.6;">
+                                <li><b>{{ __('Auto Product Tags') }}:</b> {{ __('System extracts high-intent buyer tags automatically.') }}</li>
+                                <li><b>{{ __('Auto Meta Keywords') }}:</b> {{ __('Generates Google/Meta ranking keywords.') }}</li>
+                                <li><b>{{ __('Auto Meta Description') }}:</b> {{ __('Creates SEO-ready search snippet under 160 chars.') }}</li>
+                                <li><b>{{ __('Auto Main Category') }}:</b> {{ __('Matches best store category in 1 click.') }}</li>
+                            </ul>
                             <div class="text-success small font-weight-bold mt-2">
                                 <i class="fas fa-check-circle mr-1"></i> {{ __('Cash on Delivery (COD) is auto-enabled!') }}
                             </div>
@@ -257,9 +285,6 @@
                         </button>
                     </div>
                 </div>
-                <small class="text-muted d-block mt-2">
-                    <i class="fas fa-info-circle text-info"></i> {{ __('For member/login protected pages (like HHC dashboard), use the "Smart Text Copy-Paste" tab above.') }}
-                </small>
             </div>
 
         </div>
@@ -354,17 +379,40 @@
                                 <textarea name="sort_details" id="imp_sort_details" class="form-control" rows="3" placeholder="{{ __('Short summary for quick view...') }}" required></textarea>
                             </div>
 
-                            <div class="form-group mb-3">
+                            <div class="form-group mb-0">
                                 <label for="imp_details" class="font-weight-bold text-dark">{{ __('Full Description & Specifications') }} *</label>
                                 <textarea name="details" id="imp_details" class="form-control" rows="8" placeholder="{{ __('Enter full product description...') }}" required></textarea>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- SEO, Tags & Meta Keywords Card -->
+                    <div class="card mb-4 shadow-sm border-info">
+                        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center py-2">
+                            <h5 class="mb-0 font-weight-bold"><i class="fas fa-search text-warning mr-2"></i>{{ __('SEO Tags, Meta Keywords & Search Ranking') }}</h5>
+                            <span class="badge badge-light text-dark font-weight-bold"><i class="fas fa-robot text-primary mr-1"></i> {{ __('Auto-Generated') }}</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group mb-3">
+                                <label for="imp_tags" class="font-weight-bold text-dark">{{ __('Product Tags (Comma Separated)') }}</label>
+                                <input type="text" name="tags" id="imp_tags" class="form-control font-weight-bold text-primary" placeholder="e.g. hair mask, damaged hair, collagen treatment, beauty">
+                                <small class="text-muted">{{ __('Automatically fetched from product title and keywords for site search & filters.') }}</small>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="imp_meta_keywords" class="font-weight-bold text-dark">{{ __('Meta Keywords (SEO Search Terms)') }}</label>
+                                <input type="text" name="meta_keywords" id="imp_meta_keywords" class="form-control" placeholder="e.g. buy karseell hair mask, hair mask price in pakistan">
+                                <small class="text-muted">{{ __('Target search phrases for Google, Bing and Meta ads indexing.') }}</small>
+                            </div>
 
                             <div class="form-group mb-0">
-                                <label for="imp_tags" class="font-weight-bold text-dark">{{ __('Tags (comma separated)') }}</label>
-                                <input type="text" name="tags" id="imp_tags" class="form-control tags" placeholder="e.g. fashion, trending, gadget">
+                                <label for="imp_meta_description" class="font-weight-bold text-dark">{{ __('Meta Description (Google Search Snippet)') }}</label>
+                                <textarea name="meta_description" id="imp_meta_description" class="form-control" rows="3" placeholder="SEO description under 160 characters..."></textarea>
+                                <small class="text-muted">{{ __('Optimized search snippet that appears on Google search results.') }}</small>
                             </div>
                         </div>
                     </div>
+
                 </div>
 
                 <!-- Right Column (Settings & Pricing) -->
@@ -668,9 +716,12 @@
         }
     }
 
-    // Tab 1: Parse Smart Text / HHC Copy-Paste
+    // Tab 1: Parse Structured / Smart Text & SEO
     function parseProductText() {
-        var rawText = document.getElementById('raw_text_input').value.trim();
+        var inputTitle = document.getElementById('input_product_title').value.trim();
+        var inputSortDetails = document.getElementById('input_product_sort_details').value.trim();
+        var inputDetails = document.getElementById('input_product_details').value.trim();
+        var rawText = document.getElementById('raw_text_input') ? document.getElementById('raw_text_input').value.trim() : '';
         var mainImageUrl = document.getElementById('input_main_image_url').value.trim();
         
         // Collect dynamic gallery URLs
@@ -689,14 +740,14 @@
         var errorMsg = document.getElementById('fetch_error_msg');
         var previewContainer = document.getElementById('product_preview_container');
 
-        if (!rawText && !mainImageUrl) {
-            alert('{{ __("Please paste product text or at least one image URL!") }}');
+        if (!inputTitle && !rawText && !inputDetails) {
+            alert('{{ __("Please enter at least Product Title or paste product details!") }}');
             return;
         }
 
         parseBtn.disabled = true;
         spinner.classList.remove('d-none');
-        btnText.innerText = '{{ __("Parsing details...") }}';
+        btnText.innerText = '{{ __("Extracting SEO keywords & tags...") }}';
         errorAlert.classList.add('d-none');
 
         $.ajax({
@@ -704,14 +755,17 @@
             type: "POST",
             data: {
                 _token: "{{ csrf_token() }}",
-                raw_text: rawText || 'Product',
+                input_title: inputTitle,
+                input_sort_details: inputSortDetails,
+                input_details: inputDetails,
+                raw_text: rawText,
                 main_image_url: mainImageUrl,
                 gallery_urls: galleryUrls
             },
             success: function(response) {
                 parseBtn.disabled = false;
                 spinner.classList.add('d-none');
-                btnText.innerHTML = '<i class="fas fa-magic mr-1"></i> {{ __("Parse & Auto-Fill Product Details") }}';
+                btnText.innerHTML = '<i class="fas fa-magic mr-1"></i> {{ __("⚡ Parse & Auto-Fill Product Details (Auto SEO Tags & Meta)") }}';
 
                 if (response.success && response.data) {
                     populatePreviewForm(response.data);
@@ -720,16 +774,16 @@
                         scrollTop: $("#product_preview_container").offset().top - 40
                     }, 500);
                 } else {
-                    errorMsg.innerText = response.message || '{{ __("Unable to parse text.") }}';
+                    errorMsg.innerText = response.message || '{{ __("Unable to process details.") }}';
                     errorAlert.classList.remove('d-none');
                 }
             },
             error: function(xhr) {
                 parseBtn.disabled = false;
                 spinner.classList.add('d-none');
-                btnText.innerHTML = '<i class="fas fa-magic mr-1"></i> {{ __("Parse & Auto-Fill Product Details") }}';
+                btnText.innerHTML = '<i class="fas fa-magic mr-1"></i> {{ __("⚡ Parse & Auto-Fill Product Details (Auto SEO Tags & Meta)") }}';
 
-                var message = '{{ __("Failed to parse text. Please ensure you copied text properly.") }}';
+                var message = '{{ __("Failed to process details.") }}';
                 if (xhr.responseJSON && xhr.responseJSON.message) {
                     message = xhr.responseJSON.message;
                 }
@@ -812,6 +866,11 @@
         if (data.stock) {
             $('#imp_stock').val(data.stock);
         }
+
+        // SEO Tags & Meta Fields
+        $('#imp_tags').val(data.tags || '');
+        $('#imp_meta_keywords').val(data.meta_keywords || '');
+        $('#imp_meta_description').val(data.meta_description || '');
 
         // Price calculations
         var rawPrice = parseFloat(data.raw_price) || 0;
