@@ -506,10 +506,20 @@
                                 </select>
                             </div>
 
-                            <div class="form-group mb-0">
+                            <div class="form-group mb-3">
                                 <label for="imp_childcategory_id" class="font-weight-bold text-dark">{{ __('Child Category') }} <small class="text-muted">({{ __('Optional') }})</small></label>
                                 <select name="childcategory_id" id="imp_childcategory_id" class="form-control">
                                     <option value="">{{ __('Select One') }}</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group mb-0">
+                                <label for="imp_brand_id" class="font-weight-bold text-dark">{{ __('Select Brand') }} <small class="text-muted">({{ __('Optional') }})</small></label>
+                                <select name="brand_id" id="imp_brand_id" class="form-control">
+                                    <option value="">{{ __('Select Brand') }}</option>
+                                    @foreach(DB::table('brands')->whereStatus(1)->where(function($q){ $q->whereNull('vendor_id')->orWhere('vendor_id', 0); })->get() as $brand)
+                                    <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -876,6 +886,13 @@
         if (data.category_id) {
             $('#imp_category_id').val(data.category_id);
             loadSubcategories(data.category_id);
+        }
+
+        // Auto-select Matched Brand
+        if (data.brand_id) {
+            $('#imp_brand_id').val(data.brand_id);
+        } else {
+            $('#imp_brand_id').val('');
         }
 
         // Populate Images Grid

@@ -110,6 +110,9 @@ class ProductImporterController extends Controller
         $matchedCat = $categories->where('id', $matchedCategoryId)->first();
         $catName = $matchedCat ? $matchedCat->name : '';
 
+        // Auto-match Brand (if any brand matches the title)
+        $data['brand_id'] = $this->matchBrand($data['name']);
+
         // Auto-generate high-ranking SEO Tags, Meta Keywords & Meta Description
         $seo = $this->generateSeoAndTags($data['name'], $data['details'] ?: $data['sort_details'], $catName);
         $data['tags'] = $seo['tags'];
@@ -158,6 +161,9 @@ class ProductImporterController extends Controller
             $productData['category_id'] = $matchedCategoryId;
             $matchedCat = $categories->where('id', $matchedCategoryId)->first();
             $catName = $matchedCat ? $matchedCat->name : '';
+
+            // Auto-match Brand (if any brand matches the title)
+            $productData['brand_id'] = $this->matchBrand($productData['name']);
 
             // Auto-generate high-ranking SEO Tags, Meta Keywords & Meta Description
             $seo = $this->generateSeoAndTags($productData['name'], $productData['details'] ?: $productData['sort_details'], $catName);
@@ -679,6 +685,28 @@ class ProductImporterController extends Controller
         }
 
         return $bestCategoryId;
+    }
+
+    /**
+     * Match Brand based on Product Name.
+     */
+    private function matchBrand($productName)
+    {
+        if (empty($productName)) {
+            return null;
+        }
+        $brands = DB::table('brands')->whereStatus(1)->where(function($q){ 
+            $q->whereNull('vendor_id')->orWhere('vendor_id', 0); 
+        })->get();
+
+        $productLower = ' ' . strtolower($productName) . ' ';
+        foreach ($brands as $brand) {
+            $bName = strtolower(trim($brand->name));
+            if (strlen($bName) >= 2 && strpos($productLower, ' ' . $bName . ' ') !== false) {
+                return $brand->id;
+            }
+        }
+        return null;
     }
 
     /**
