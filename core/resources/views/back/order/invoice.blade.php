@@ -383,8 +383,8 @@
                                     <tr>
                                         <td class="px-0">
                                             <div class="font-weight-bold text-dark">{{$item['name']}}</div>
-                                            @if($productModel && (!empty($productModel->product_from) || !empty($productModel->contact_number)))
-                                                <div class="mt-2 p-2 rounded bg-light border" style="font-size: 12px; line-height: 1.4; border-left: 3px solid #17a2b8 !important; max-width: 320px;">
+                                            @if($productModel && (!empty($productModel->product_from) || !empty($productModel->contact_number) || !empty($productModel->supplier_url)))
+                                                <div class="mt-2 p-2 rounded bg-light border" style="font-size: 12px; line-height: 1.4; border-left: 3px solid #17a2b8 !important; max-width: 340px;">
                                                     @if(!empty($productModel->product_from))
                                                         <div class="text-dark">
                                                             <span class="font-weight-bold text-info"><i class="fas fa-truck-loading mr-1"></i> {{ __('Product From') }}:</span>
@@ -403,6 +403,14 @@
                                                                     <i class="fab fa-whatsapp"></i> WhatsApp
                                                                 </a>
                                                             @endif
+                                                        </div>
+                                                    @endif
+                                                    @if(!empty($productModel->supplier_url))
+                                                        <div class="text-dark mt-2 pt-1 border-top">
+                                                            <span class="font-weight-bold text-primary"><i class="fas fa-external-link-alt mr-1"></i> {{ __('Supplier / Source Link') }}:</span><br>
+                                                            <a href="{{ $productModel->supplier_url }}" target="_blank" class="btn btn-outline-primary btn-xs py-1 px-2 mt-1 font-weight-bold shadow-sm" style="font-size: 11.5px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;">
+                                                                <i class="fas fa-link"></i> {{ __('Open Supplier Product Page') }} <i class="fas fa-external-link-alt ml-1"></i>
+                                                            </a>
                                                         </div>
                                                     @endif
                                                 </div>

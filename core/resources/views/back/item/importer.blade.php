@@ -190,6 +190,14 @@
                             <textarea id="input_product_details" class="form-control" rows="4"></textarea>
                         </div>
 
+                        <!-- 4. Supplier / Source Product Page Link -->
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold text-dark mb-1">
+                                <i class="fas fa-link text-info mr-1"></i> {{ __('Supplier / Source Product Page Link') }} <small class="text-muted">({{ __('Optional - e.g. HHC / Daraz product page URL') }})</small>
+                            </label>
+                            <input type="url" id="input_supplier_url" class="form-control" placeholder="{{ __('https://hhcdropshipping.com/product/...') }}">
+                        </div>
+
                         <!-- Optional: Bulk Paste helper -->
                         <div class="mb-3">
                             <a class="text-primary font-weight-bold small" data-toggle="collapse" href="#bulk_paste_collapse" role="button" aria-expanded="false" aria-controls="bulk_paste_collapse">
@@ -315,6 +323,13 @@
                                         <input type="text" name="product_from" id="imp_product_from" class="form-control" value="HHC Dropshipping" placeholder="e.g. HHC Dropshipping">
                                     </div>
                                 </div>
+                            </div>
+                            <div class="form-group mt-3 mb-0">
+                                <label for="imp_supplier_url" class="font-weight-bold text-info d-flex justify-content-between align-items-center">
+                                    <span><i class="fas fa-link mr-1"></i>{{ __('Supplier / Source Product URL') }}</span>
+                                    <span class="badge badge-secondary" style="font-size: 11px;">{{ __('Admin Only - Visible in Order Invoices for 1-Click Ordering') }}</span>
+                                </label>
+                                <input type="url" name="supplier_url" id="imp_supplier_url" class="form-control" placeholder="{{ __('https://hhcdropshipping.com/product/...') }}">
                             </div>
                         </div>
                     </div>
@@ -924,6 +939,7 @@
         var inputTitle = document.getElementById('input_product_title').value.trim();
         var inputSortDetails = document.getElementById('input_product_sort_details').value.trim();
         var inputDetails = document.getElementById('input_product_details').value.trim();
+        var inputSupplierUrl = document.getElementById('input_supplier_url') ? document.getElementById('input_supplier_url').value.trim() : '';
         var rawText = document.getElementById('raw_text_input') ? document.getElementById('raw_text_input').value.trim() : '';
         var mainImageUrl = document.getElementById('input_main_image_url').value.trim();
         
@@ -961,6 +977,7 @@
                 input_title: inputTitle,
                 input_sort_details: inputSortDetails,
                 input_details: inputDetails,
+                input_supplier_url: inputSupplierUrl,
                 raw_text: rawText,
                 main_image_url: mainImageUrl,
                 gallery_urls: galleryUrls
@@ -1066,6 +1083,7 @@
         $('#imp_sort_details').val(data.sort_details || '');
         $('#imp_details').val(data.details || '');
         $('#imp_product_from').val(data.product_from || 'HHC Dropshipping');
+        $('#imp_supplier_url').val(data.supplier_url || '');
         if (data.stock) {
             $('#imp_stock').val(data.stock);
         }

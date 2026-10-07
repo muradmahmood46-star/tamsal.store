@@ -113,6 +113,15 @@ class ProductImporterController extends Controller
         // Auto-match Brand (if any brand matches the title)
         $data['brand_id'] = $this->matchBrand($data['name']);
 
+        // Supplier URL
+        $inputSupplierUrl = trim($request->input('supplier_url', $request->input('input_supplier_url', '')));
+        if (empty($inputSupplierUrl)) {
+            if (preg_match('/https?:\/\/(?!.*\.(?:jpg|jpeg|png|webp|gif|svg))(?:[^\s<>"\']+)/i', $rawText . ' ' . $inputDetails, $urlMatch)) {
+                $inputSupplierUrl = $urlMatch[0];
+            }
+        }
+        $data['supplier_url'] = $inputSupplierUrl;
+
         // Auto-generate high-ranking SEO Tags, Meta Keywords & Meta Description
         $seo = $this->generateSeoAndTags($data['name'], $data['details'] ?: $data['sort_details'], $catName);
         $data['tags'] = $seo['tags'];
@@ -164,6 +173,9 @@ class ProductImporterController extends Controller
 
             // Auto-match Brand (if any brand matches the title)
             $productData['brand_id'] = $this->matchBrand($productData['name']);
+
+            // Supplier URL
+            $productData['supplier_url'] = $url;
 
             // Auto-generate high-ranking SEO Tags, Meta Keywords & Meta Description
             $seo = $this->generateSeoAndTags($productData['name'], $productData['details'] ?: $productData['sort_details'], $catName);
@@ -280,6 +292,7 @@ class ProductImporterController extends Controller
         $item->estimated_profit = $request->input('estimated_profit', 0);
         $item->product_from = $request->input('product_from', 'HHC Dropshipping');
         $item->contact_number = $request->input('contact_number', null);
+        $item->supplier_url = $request->filled('supplier_url') ? trim($request->supplier_url) : null;
         $item->video = $request->video ?: null;
 
         if ($request->filled('meta_keywords')) {

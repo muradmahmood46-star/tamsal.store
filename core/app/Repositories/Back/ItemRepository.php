@@ -148,6 +148,9 @@ class ItemRepository
         if (isset($input['contact_number'])) {
             $input['contact_number'] = ($input['contact_number'] !== null && trim($input['contact_number']) !== '') ? trim($input['contact_number']) : null;
         }
+        if (isset($input['supplier_url'])) {
+            $input['supplier_url'] = ($input['supplier_url'] !== null && trim($input['supplier_url']) !== '') ? trim($input['supplier_url']) : null;
+        }
 
         $item = Item::create($input);
         $item_id = $item->id;
@@ -271,6 +274,9 @@ class ItemRepository
         if (array_key_exists('contact_number', $input)) {
             $input['contact_number'] = ($input['contact_number'] !== null && trim($input['contact_number']) !== '') ? trim($input['contact_number']) : null;
         }
+        if (array_key_exists('supplier_url', $input)) {
+            $input['supplier_url'] = ($input['supplier_url'] !== null && trim($input['supplier_url']) !== '') ? trim($input['supplier_url']) : null;
+        }
         $rawSku = isset($input['sku']) ? trim($input['sku']) : '';
         if (empty($rawSku)) {
             $input['sku'] = !empty($item->sku) ? $item->sku : self::generateAutoSku();
@@ -310,6 +316,9 @@ class ItemRepository
                     }
                     if (!Schema::hasColumn('items', 'contact_number')) {
                         $table->string('contact_number')->nullable()->after('product_from');
+                    }
+                    if (!Schema::hasColumn('items', 'supplier_url')) {
+                        $table->text('supplier_url')->nullable()->after('contact_number');
                     }
                     if (!Schema::hasColumn('items', 'item_variants')) {
                         $table->longText('item_variants')->nullable()->after('stock');

@@ -560,6 +560,15 @@
                             id="contact_number" placeholder="{{ __('Enter supplier/seller contact number (e.g. 03001234567)') }}"
                             value="{{ old('contact_number') }}">
                     </div>
+                    <div class="form-group mb-0">
+                        <label for="supplier_url" class="font-weight-bold text-info d-flex flex-wrap align-items-center justify-content-between" style="gap: 6px;">
+                            <span><i class="fas fa-link mr-1"></i> {{ __('Supplier / Source Product URL') }}</span>
+                            <span class="badge badge-secondary text-white" style="font-size: 11px; padding: 4px 8px; border-radius: 4px;">{{ __('Admin Only (Hidden from Customers)') }}</span>
+                        </label>
+                        <input type="url" name="supplier_url" class="form-control"
+                            id="supplier_url" placeholder="{{ __('Enter HHC / Daraz / Supplier product page URL (e.g. https://...)') }}"
+                            value="{{ old('supplier_url') }}">
+                    </div>
                 </div>
             </div>
         </div>
