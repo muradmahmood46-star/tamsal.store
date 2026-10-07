@@ -72,9 +72,24 @@
     .image-picker-card.selected-main .main-badge {
         display: block;
     }
+    .image-picker-card .gallery-badge {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        background: #3b82f6;
+        color: #fff;
+        font-size: 11px;
+        font-weight: bold;
+        padding: 2px 7px;
+        border-radius: 4px;
+        z-index: 2;
+    }
+    .image-picker-card.selected-main .gallery-badge {
+        display: none;
+    }
     .image-picker-img {
         width: 100%;
-        height: 115px;
+        height: 120px;
         object-fit: cover;
         border-radius: 6px;
     }
@@ -90,6 +105,12 @@
         border-radius: 8px;
         padding: 12px 15px;
         font-size: 13px;
+    }
+    .gallery-row-card {
+        border-left: 4px solid #3b82f6;
+        border-radius: 6px;
+        background: #f8fafc;
+        transition: all 0.2s ease-in-out;
     }
 </style>
 @endsection
@@ -147,41 +168,80 @@
             <div class="tab-pane fade show active tab-content-box" id="tab-hhc-text" role="tabpanel" aria-labelledby="hhc-tab">
                 <div class="row">
                     <div class="col-lg-8">
+                        
+                        <!-- Text Input Area -->
                         <div class="form-group mb-3">
                             <label class="font-weight-bold text-dark mb-1">
-                                <i class="fas fa-paste text-primary mr-1"></i> {{ __('Paste Product Text / Details from HHC Dropshipping:') }}
+                                <i class="fas fa-paste text-primary mr-1"></i> {{ __('1. Paste Product Text from HHC Dropshipping:') }}
                             </label>
-                            <textarea id="raw_text_input" class="form-control" rows="5" placeholder="{{ __('Example:&#10;Karseell Hair Mask For Damaged Hair - 300ml&#10;Rs 330 x 1&#10;Product ID : 3767460&#10;Description: Deep repair collagen treatment for damaged hair...') }}"></textarea>
+                            <textarea id="raw_text_input" class="form-control" rows="4" placeholder="{{ __('Example:&#10;Karseell Hair Mask For Damaged Hair - 300ml&#10;Rs 330 x 1&#10;Product ID : 3767460&#10;Description: Deep repair collagen treatment for damaged hair...') }}"></textarea>
                             <small class="text-muted">
-                                <i class="fas fa-info-circle text-info"></i> {{ __('Simply copy all text from the HHC product screen and paste it here. Title, SKU, Cost Price & Description will be extracted automatically.') }}
+                                <i class="fas fa-info-circle text-info"></i> {{ __('HHC screen se Title, Price, SKU aur Description copy kar ke yahan paste karein.') }}
                             </small>
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label class="font-weight-bold text-dark mb-1">
-                                <i class="fas fa-image text-success mr-1"></i> {{ __('Image Link(s) / Photo URLs (Optional):') }}
-                            </label>
-                            <input type="text" id="image_urls_input" class="form-control" placeholder="{{ __('Paste image URL(s) or Right click product photo on HHC -> "Copy Image Address" -> paste here') }}">
-                            <small class="text-muted">
-                                {{ __('Multiple image URLs can be separated by commas or spaces. You can also upload photos from your computer below.') }}
-                            </small>
+                        <!-- Main Image URL Input -->
+                        <div class="card mb-2 border-success shadow-sm" style="border-width: 2px;">
+                            <div class="card-header bg-success text-white py-2 d-flex justify-content-between align-items-center">
+                                <span class="font-weight-bold"><i class="fas fa-star text-warning mr-1"></i> {{ __('2. Main Featured Photo URL (Primary Image)') }} *</span>
+                                <button type="button" class="btn btn-warning btn-sm font-weight-bold py-1 px-3 shadow-sm" id="btn_add_first_gallery" onclick="addGalleryImageInput()">
+                                    <i class="fas fa-plus-circle mr-1"></i> <span id="add_gallery_btn_label">{{ __('+ Add Gallery Image') }}</span>
+                                </button>
+                            </div>
+                            <div class="card-body p-3">
+                                <div class="row align-items-center">
+                                    <div class="col-md-9">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text bg-light"><i class="fas fa-link text-primary"></i></span>
+                                            </div>
+                                            <input type="url" id="input_main_image_url" class="form-control" placeholder="{{ __('Right-click Main Photo on HHC -> Copy Image Address -> Paste here') }}" oninput="previewMainPhoto(this.value)">
+                                        </div>
+                                        <small class="text-muted mt-1 d-block">
+                                            <i class="fas fa-info-circle text-info"></i> {{ __('Yeh product ki main front picture hogi.') }}
+                                        </small>
+                                    </div>
+                                    <div class="col-md-3 text-center mt-2 mt-md-0">
+                                        <div id="main_photo_preview_box" class="border rounded p-1 bg-light d-flex align-items-center justify-content-center" style="height: 70px; background: #fff;">
+                                            <span class="text-muted small" id="main_photo_placeholder"><i class="fas fa-image fa-2x text-black-50 d-block"></i> {{ __('Main Preview') }}</span>
+                                            <img id="main_photo_preview_img" src="" class="img-fluid rounded" style="max-height: 65px; display: none;" onerror="hideMainPreview()" onload="showMainPreview()">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <button type="button" class="btn btn-primary btn-lg font-weight-bold px-4 shadow-sm" id="parse_text_btn" onclick="parseProductText()">
-                            <span id="parse_btn_spinner" class="spinner-border spinner-border-sm mr-1 d-none" role="status"></span>
-                            <span id="parse_btn_text"><i class="fas fa-magic mr-1"></i> {{ __('Parse & Auto-Fill Product Details') }}</span>
-                        </button>
+                        <!-- Dynamic Gallery Images Container -->
+                        <div id="gallery_inputs_container" class="mb-3">
+                            <!-- Dynamic Gallery 1, Gallery 2, Gallery 3 rows will be inserted here -->
+                        </div>
+
+                        <!-- Extra Add More Button (visible when rows exist) -->
+                        <div id="add_more_gallery_btn_wrap" class="mb-3" style="display: none;">
+                            <button type="button" class="btn btn-outline-primary btn-sm font-weight-bold" onclick="addGalleryImageInput()">
+                                <i class="fas fa-plus mr-1"></i> <span id="add_more_btn_label">{{ __('+ Add Another Gallery Image') }}</span>
+                            </button>
+                        </div>
+
+                        <!-- Parse & Auto-Fill Action Button -->
+                        <div class="mt-4">
+                            <button type="button" class="btn btn-primary btn-lg font-weight-bold px-4 shadow-sm" id="parse_text_btn" onclick="parseProductText()">
+                                <span id="parse_btn_spinner" class="spinner-border spinner-border-sm mr-1 d-none" role="status"></span>
+                                <span id="parse_btn_text"><i class="fas fa-magic mr-1"></i> {{ __('Parse & Auto-Fill Product Details') }}</span>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="col-lg-4 mt-3 mt-lg-0">
                         <div class="guide-step-card h-100">
                             <h6 class="font-weight-bold text-dark mb-2"><i class="fas fa-lightbulb text-warning mr-1"></i> {{ __('HHC Fast 3-Step Guide:') }}</h6>
                             <ol class="pl-3 mb-2 text-secondary" style="line-height: 1.6;">
-                                <li><b>{{ __('Copy Text') }}:</b> {{ __('Open the product on HHC and copy the title, price and description.') }}</li>
-                                <li><b>{{ __('Copy Image') }}:</b> {{ __('Right-click the photo on HHC and click "Copy image address".') }}</li>
-                                <li><b>{{ __('Auto-Fill & Publish') }}:</b> {{ __('Click Parse button, set your selling price, and click Publish!') }}</li>
+                                <li><b>{{ __('Copy Text') }}:</b> {{ __('Open product on HHC and copy title, price & description.') }}</li>
+                                <li><b>{{ __('Main Image') }}:</b> {{ __('Right-click first image -> "Copy image address" -> paste in Main Photo.') }}</li>
+                                <li><b>{{ __('Gallery Photos') }}:</b> {{ __('Click "+" button to add Gallery Image 1, Gallery Image 2, etc.') }}</li>
+                                <li><b>{{ __('Publish') }}:</b> {{ __('Click Parse button, review price/profit, and click Publish!') }}</li>
                             </ol>
-                            <div class="text-success small font-weight-bold">
+                            <div class="text-success small font-weight-bold mt-2">
                                 <i class="fas fa-check-circle mr-1"></i> {{ __('Cash on Delivery (COD) is auto-enabled!') }}
                             </div>
                         </div>
@@ -266,8 +326,8 @@
                         </div>
                         <div class="card-body">
                             <p class="text-muted small mb-2">
-                                <span class="badge badge-success mr-1">{{ __('Green border') }} = {{ __('Main Featured Photo') }}</span>
-                                <span class="badge badge-secondary mr-1">{{ __('Checked') }} = {{ __('Gallery Photos') }}</span>
+                                <span class="badge badge-success mr-1"><i class="fas fa-star"></i> {{ __('Green border') }} = {{ __('Main Featured Photo') }}</span>
+                                <span class="badge badge-primary mr-1"><i class="fas fa-images"></i> {{ __('Blue badge') }} = {{ __('Gallery Photos') }}</span>
                             </p>
                             
                             <!-- Extracted Images Grid -->
@@ -452,10 +512,143 @@
 </div>
 
 <script>
+    var galleryRowCount = 0;
+
+    // Add Dynamic Gallery Image Input Row
+    function addGalleryImageInput(initialUrl = '') {
+        galleryRowCount++;
+        var rowId = 'gallery_row_' + galleryRowCount;
+        var container = document.getElementById('gallery_inputs_container');
+
+        var card = document.createElement('div');
+        card.className = 'card mb-2 gallery-row-card shadow-sm';
+        card.id = rowId;
+        card.innerHTML = `
+            <div class="card-body p-2 px-3">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="font-weight-bold text-dark small gallery-label">
+                        <i class="fas fa-images text-primary mr-1"></i> <span class="gallery-title-text">{{ __('Gallery Image') }} ${galleryRowCount} URL</span>
+                    </span>
+                    <button type="button" class="btn btn-outline-danger btn-xs py-0 px-2 font-weight-bold" onclick="removeGalleryImageInput('${rowId}')" title="{{ __('Delete') }}">
+                        <i class="fas fa-times"></i> {{ __('Remove') }}
+                    </button>
+                </div>
+                <div class="row align-items-center">
+                    <div class="col-md-9">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-white"><i class="fas fa-link text-info"></i></span>
+                            </div>
+                            <input type="url" class="form-control form-control-sm gallery-url-field" placeholder="{{ __('Right-click Gallery Photo -> Copy Image Address -> Paste here') }}" value="${escapeHtml(initialUrl)}" oninput="previewGalleryItem(this, '${rowId}')">
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center mt-2 mt-md-0">
+                        <div class="border rounded p-1 bg-white d-flex align-items-center justify-content-center gallery-thumb-box" style="height: 50px;">
+                            <span class="text-muted small gallery-thumb-empty"><i class="fas fa-image text-black-50"></i> Preview</span>
+                            <img src="${escapeHtml(initialUrl)}" class="img-fluid rounded gallery-thumb-img" style="max-height: 45px; display: ${initialUrl ? 'block' : 'none'};" onerror="this.style.display='none'; this.previousElementSibling.style.display='block';" onload="this.style.display='block'; this.previousElementSibling.style.display='none';">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        container.appendChild(card);
+        updateGalleryLabels();
+        document.getElementById('add_more_gallery_btn_wrap').style.display = 'block';
+
+        if (initialUrl) {
+            var imgEl = card.querySelector('.gallery-thumb-img');
+            imgEl.src = initialUrl;
+        }
+    }
+
+    // Remove Dynamic Gallery Row
+    function removeGalleryImageInput(rowId) {
+        var el = document.getElementById(rowId);
+        if (el) {
+            el.remove();
+            updateGalleryLabels();
+        }
+    }
+
+    // Update Numbering: Gallery Image 1, Gallery Image 2, etc.
+    function updateGalleryLabels() {
+        var rows = document.querySelectorAll('#gallery_inputs_container .gallery-row-card');
+        rows.forEach(function(row, idx) {
+            var num = idx + 1;
+            var labelSpan = row.querySelector('.gallery-title-text');
+            if (labelSpan) {
+                labelSpan.innerText = '{{ __("Gallery Image") }} ' + num + ' URL';
+            }
+        });
+
+        var nextNum = rows.length + 1;
+        var btnLabel = document.getElementById('add_gallery_btn_label');
+        if (btnLabel) {
+            btnLabel.innerText = '{{ __("+ Add Gallery Image") }} ' + nextNum;
+        }
+
+        var addMoreLabel = document.getElementById('add_more_btn_label');
+        if (addMoreLabel) {
+            addMoreLabel.innerText = '{{ __("+ Add Gallery Image") }} ' + nextNum;
+        }
+
+        if (rows.length === 0) {
+            document.getElementById('add_more_gallery_btn_wrap').style.display = 'none';
+        }
+    }
+
+    // Realtime Main Photo Preview
+    function previewMainPhoto(url) {
+        var img = document.getElementById('main_photo_preview_img');
+        var placeholder = document.getElementById('main_photo_placeholder');
+        if (url && url.trim().length > 5) {
+            img.src = url.trim();
+        } else {
+            hideMainPreview();
+        }
+    }
+
+    function showMainPreview() {
+        document.getElementById('main_photo_preview_img').style.display = 'block';
+        document.getElementById('main_photo_placeholder').style.display = 'none';
+    }
+
+    function hideMainPreview() {
+        document.getElementById('main_photo_preview_img').style.display = 'none';
+        document.getElementById('main_photo_placeholder').style.display = 'block';
+    }
+
+    // Realtime Gallery Photo Preview
+    function previewGalleryItem(inputEl, rowId) {
+        var row = document.getElementById(rowId);
+        if (!row) return;
+        var img = row.querySelector('.gallery-thumb-img');
+        var emptySpan = row.querySelector('.gallery-thumb-empty');
+        var url = inputEl.value.trim();
+
+        if (url.length > 5) {
+            img.src = url;
+        } else {
+            img.style.display = 'none';
+            emptySpan.style.display = 'block';
+        }
+    }
+
     // Tab 1: Parse Smart Text / HHC Copy-Paste
     function parseProductText() {
         var rawText = document.getElementById('raw_text_input').value.trim();
-        var imageUrls = document.getElementById('image_urls_input').value.trim();
+        var mainImageUrl = document.getElementById('input_main_image_url').value.trim();
+        
+        // Collect dynamic gallery URLs
+        var galleryUrls = [];
+        document.querySelectorAll('#gallery_inputs_container .gallery-url-field').forEach(function(inp) {
+            var val = inp.value.trim();
+            if (val) {
+                galleryUrls.push(val);
+            }
+        });
+
         var parseBtn = document.getElementById('parse_text_btn');
         var spinner = document.getElementById('parse_btn_spinner');
         var btnText = document.getElementById('parse_btn_text');
@@ -463,8 +656,8 @@
         var errorMsg = document.getElementById('fetch_error_msg');
         var previewContainer = document.getElementById('product_preview_container');
 
-        if (!rawText) {
-            alert('{{ __("Please paste product text from HHC or supplier first!") }}');
+        if (!rawText && !mainImageUrl) {
+            alert('{{ __("Please paste product text or at least one image URL!") }}');
             return;
         }
 
@@ -478,8 +671,9 @@
             type: "POST",
             data: {
                 _token: "{{ csrf_token() }}",
-                raw_text: rawText,
-                image_urls: imageUrls
+                raw_text: rawText || 'Product',
+                main_image_url: mainImageUrl,
+                gallery_urls: galleryUrls
             },
             success: function(response) {
                 parseBtn.disabled = false;
@@ -616,11 +810,13 @@
 
             data.images.forEach(function(imgUrl, idx) {
                 var isMain = (idx === 0);
+                var labelText = isMain ? '{{ __("⭐ Main Featured") }}' : ('{{ __("Gallery") }} ' + idx);
                 var col = document.createElement('div');
                 col.className = 'col-6 col-md-4 col-lg-3 mb-3';
                 col.innerHTML = `
                     <div class="image-picker-card ${isMain ? 'selected-main' : ''}" onclick="selectMainImage(this, '${escapeHtml(imgUrl)}')">
-                        <span class="main-badge"><i class="fas fa-star mr-1"></i> Main</span>
+                        <span class="main-badge"><i class="fas fa-star mr-1"></i> Main Photo</span>
+                        <span class="gallery-badge"><i class="fas fa-image mr-1"></i> ${labelText}</span>
                         <div class="gallery-checkbox-wrap" onclick="event.stopPropagation();">
                             <input type="checkbox" name="gallery_urls[]" value="${escapeHtml(imgUrl)}" ${isMain ? '' : 'checked'} title="{{ __('Include in Gallery') }}">
                         </div>

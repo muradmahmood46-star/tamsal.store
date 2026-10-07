@@ -44,9 +44,49 @@ class ProductImporterController extends Controller
         ]);
 
         $rawText = trim($request->raw_text);
-        $imageUrlsInput = trim($request->input('image_urls', ''));
+        
+        $mainImageUrl = trim($request->input('main_image_url', ''));
+        $galleryUrls = $request->input('gallery_urls', []);
+        if (is_string($galleryUrls)) {
+            $galleryUrls = array_filter(array_map('trim', preg_split('/[\r\n,]+/', $galleryUrls)));
+        }
 
-        $data = $this->extractDataFromText($rawText, $imageUrlsInput);
+        $explicitImages = [];
+        if (!empty($mainImageUrl)) {
+            $explicitImages[] = $mainImageUrl;
+        }
+        if (is_array($galleryUrls)) {
+            foreach ($galleryUrls as $gUrl) {
+                $gUrl = trim($gUrl);
+                if (!empty($gUrl) && !in_array($gUrl, $explicitImages)) {
+                    $explicitImages[] = $gUrl;
+                }
+            }
+        }
+
+        $imageUrlsInput = trim($request->input('image_urls', ''));
+        if (!empty($imageUrlsInput)) {
+            $extraUrls = array_filter(array_map('trim', preg_split('/[\r\n,]+/', $imageUrlsInput)));
+            foreach ($extraUrls as $eUrl) {
+                if (!empty($eUrl) && !in_array($eUrl, $explicitImages)) {
+                    $explicitImages[] = $eUrl;
+                }
+            }
+        }
+
+        $data = $this->extractDataFromText($rawText, implode("\n", $explicitImages));
+
+        // If explicit main or gallery images were provided, ensure they are placed first in exact order
+        if (!empty($explicitImages)) {
+            $existingImages = $data['images'] ?? [];
+            $mergedImages = $explicitImages;
+            foreach ($existingImages as $img) {
+                if (!in_array($img, $mergedImages)) {
+                    $mergedImages[] = $img;
+                }
+            }
+            $data['images'] = array_slice($mergedImages, 0, 10);
+        }
 
         // Auto-match best category
         $categories = Category::where('status', 1)->get();
