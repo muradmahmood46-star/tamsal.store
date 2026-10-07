@@ -314,6 +314,110 @@
 
                                 </div>
                               </div>
+
+                            @php
+                                $orderCartItems = json_decode($order->cart, true) ?: [];
+                                $summaryCustPrice = 0;
+                                $summarySuppCost = 0;
+                                $summaryNetProfit = 0;
+                                $dropshipItemCount = 0;
+                                $selfItemCount = 0;
+
+                                foreach($orderCartItems as $ckey => $citem) {
+                                    $cId = explode('-', $ckey)[0];
+                                    $cModel = \App\Models\Item::find($cId);
+                                    $cQty = isset($citem['qty']) ? (int)$citem['qty'] : 1;
+                                    $cUnitSelling = ($citem['main_price'] ?? 0) + ($citem['attribute_price'] ?? 0);
+                                    $cLineSelling = $cUnitSelling * $cQty;
+                                    $summaryCustPrice += $cLineSelling;
+
+                                    $cProfitUnit = $cModel ? (float)($cModel->estimated_profit ?? 0) : 0;
+                                    $cSupplierUnit = $cProfitUnit > 0 ? max(0, $cUnitSelling - $cProfitUnit) : $cUnitSelling;
+
+                                    $summaryNetProfit += ($cProfitUnit * $cQty);
+                                    $summarySuppCost += ($cSupplierUnit * $cQty);
+
+                                    if ($cModel && (!empty($cModel->supplier_url) || !empty($cModel->product_from) || $cProfitUnit > 0)) {
+                                        $dropshipItemCount += $cQty;
+                                    } else {
+                                        $selfItemCount += $cQty;
+                                    }
+                                }
+                            @endphp
+
+                            @if($dropshipItemCount > 0 || $summaryNetProfit > 0)
+                                <div class="row mt-4 mb-2">
+                                    <div class="col-12">
+                                        <div class="card shadow-sm border-0" style="background: linear-gradient(135deg, #f8f9fc 0%, #edf2f7 100%); border-left: 5px solid #4e73df !important; border-radius: 10px;">
+                                            <div class="card-body p-3">
+                                                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+                                                    <div>
+                                                        <h6 class="font-weight-bold text-dark mb-0" style="font-size: 15px;">
+                                                            <i class="fas fa-boxes text-primary mr-1"></i> {{ __('Dropshipping Fulfillment & Profit Breakdown') }}
+                                                        </h6>
+                                                        <small class="text-muted">{{ __('Review your selling price, supplier cost, and expected profit before placing supplier orders.') }}</small>
+                                                    </div>
+                                                    <div>
+                                                        <span class="badge badge-primary px-2 py-1 font-weight-bold" style="font-size: 12px;">
+                                                            <i class="fas fa-truck-loading mr-1"></i> {{ $dropshipItemCount }} {{ __('Dropship Item(s)') }}
+                                                        </span>
+                                                        @if($selfItemCount > 0)
+                                                            <span class="badge badge-secondary px-2 py-1 ml-1" style="font-size: 12px;">
+                                                                <i class="fas fa-warehouse mr-1"></i> {{ $selfItemCount }} {{ __('Self Listed') }}
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+
+                                                <div class="row text-center">
+                                                    <div class="col-md-4 col-12 mb-2">
+                                                        <div class="p-3 rounded bg-white border shadow-xs h-100">
+                                                            <div class="text-muted small font-weight-bold text-uppercase"><i class="fas fa-receipt text-primary mr-1"></i> {{ __('Customer Selling Price') }}</div>
+                                                            <div class="h4 font-weight-bold text-dark mt-2 mb-0">
+                                                                @if ($setting->currency_direction == 1)
+                                                                    {{$order->currency_sign}}{{ round($summaryCustPrice * $order->currency_value, 2) }}
+                                                                @else
+                                                                    {{ round($summaryCustPrice * $order->currency_value, 2) }}{{$order->currency_sign}}
+                                                                @endif
+                                                            </div>
+                                                            <small class="text-primary font-weight-bold d-block mt-1"><i class="fas fa-arrow-circle-right"></i> {{ __('Enter this Sales Price on HHC / Portal') }}</small>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4 col-12 mb-2">
+                                                        <div class="p-3 rounded bg-white border shadow-xs h-100">
+                                                            <div class="text-muted small font-weight-bold text-uppercase"><i class="fas fa-hand-holding-usd text-danger mr-1"></i> {{ __('Wholesale Cost (Pay to Supplier)') }}</div>
+                                                            <div class="h4 font-weight-bold text-danger mt-2 mb-0">
+                                                                @if ($setting->currency_direction == 1)
+                                                                    {{$order->currency_sign}}{{ round($summarySuppCost * $order->currency_value, 2) }}
+                                                                @else
+                                                                    {{ round($summarySuppCost * $order->currency_value, 2) }}{{$order->currency_sign}}
+                                                                @endif
+                                                            </div>
+                                                            <small class="text-muted d-block mt-1"><i class="fas fa-tag"></i> {{ __('Estimated wholesale cost to HHC / Supplier') }}</small>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4 col-12 mb-2">
+                                                        <div class="p-3 rounded bg-white border shadow-xs h-100" style="background-color: #f0fdf4 !important; border-color: #22c55e !important;">
+                                                            <div class="text-success small font-weight-bold text-uppercase"><i class="fas fa-coins text-success mr-1"></i> {{ __('Your Estimated Net Profit') }}</div>
+                                                            <div class="h4 font-weight-bold text-success mt-2 mb-0">
+                                                                +@if ($setting->currency_direction == 1)
+                                                                    {{$order->currency_sign}}{{ round($summaryNetProfit * $order->currency_value, 2) }}
+                                                                @else
+                                                                    {{ round($summaryNetProfit * $order->currency_value, 2) }}{{$order->currency_sign}}
+                                                                @endif
+                                                            </div>
+                                                            <small class="text-success font-weight-bold d-block mt-1"><i class="fas fa-chart-line"></i> {{ __('Admin Pure Profit Margin') }}</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
                             <div class="row">
                                 <div class="col-12">
 
@@ -322,8 +426,8 @@
                                     <table class="table my-4">
                                     <thead>
                                         <tr>
-                                        <th width="35%" class="px-0 bg-transparent border-top-0">
-                                            <span class="h6">{{__('Products')}}</span>
+                                        <th width="38%" class="px-0 bg-transparent border-top-0">
+                                            <span class="h6">{{__('Products & Supplier Details')}}</span>
                                         </th>
                                         <th class="px-0 bg-transparent border-top-0">
                                             <span class="h6">{{__('Attribute')}}</span>
@@ -379,40 +483,99 @@
                                                 $isItemFreeDelivery = true;
                                             }
                                         }
+
+                                        $rowUnitPrice = ($item['main_price'] ?? 0) + ($item['attribute_price'] ?? 0);
+                                        $rowQty = $item['qty'] ?? 1;
+                                        $rowLineTotal = $rowUnitPrice * $rowQty;
+                                        $rowProfitUnit = $productModel ? (float)($productModel->estimated_profit ?? 0) : 0;
+                                        $rowTotalProfit = $rowProfitUnit * $rowQty;
+                                        $rowSupplierUnit = $rowProfitUnit > 0 ? max(0, $rowUnitPrice - $rowProfitUnit) : $rowUnitPrice;
+                                        $rowTotalSupplier = $rowSupplierUnit * $rowQty;
+                                        $hasItemSupplier = $productModel && (!empty($productModel->product_from) || !empty($productModel->contact_number) || !empty($productModel->supplier_url) || $rowProfitUnit > 0);
                                     @endphp
                                     <tr>
                                         <td class="px-0">
-                                            <div class="font-weight-bold text-dark">{{$item['name']}}</div>
-                                            @if($productModel && (!empty($productModel->product_from) || !empty($productModel->contact_number) || !empty($productModel->supplier_url)))
-                                                <div class="mt-2 p-2 rounded bg-light border" style="font-size: 12px; line-height: 1.4; border-left: 3px solid #17a2b8 !important; max-width: 340px;">
+                                            <div class="font-weight-bold text-dark" style="font-size: 14.5px;">{{$item['name']}}</div>
+                                            @if($hasItemSupplier)
+                                                <div class="mt-2 p-2 rounded bg-light border" style="font-size: 12px; line-height: 1.5; border-left: 4px solid #4e73df !important; max-width: 380px;">
                                                     @if(!empty($productModel->product_from))
-                                                        <div class="text-dark">
-                                                            <span class="font-weight-bold text-info"><i class="fas fa-truck-loading mr-1"></i> {{ __('Product From') }}:</span>
-                                                            <span class="font-weight-bold">{{ $productModel->product_from }}</span>
+                                                        <div class="text-dark d-flex align-items-center justify-content-between">
+                                                            <span><i class="fas fa-truck-loading text-info mr-1"></i> <strong>{{ __('Source / Platform') }}:</strong></span>
+                                                            <span class="badge badge-info font-weight-bold">{{ $productModel->product_from }}</span>
                                                         </div>
                                                     @endif
-                                                    @if(!empty($productModel->contact_number))
-                                                        <div class="text-dark mt-1">
-                                                            <span class="font-weight-bold text-info"><i class="fas fa-phone-alt mr-1"></i> {{ __('Contact Number') }}:</span>
-                                                            <a href="tel:{{ $productModel->contact_number }}" class="font-weight-bold text-primary">{{ $productModel->contact_number }}</a>
-                                                            @php
-                                                                $cleanPhone = preg_replace('/[^0-9]/', '', $productModel->contact_number);
-                                                            @endphp
-                                                            @if(!empty($cleanPhone))
-                                                                <a href="https://wa.me/{{ $cleanPhone }}" target="_blank" class="badge badge-success ml-1 text-white" style="font-size: 11px; padding: 2px 6px;">
-                                                                    <i class="fab fa-whatsapp"></i> WhatsApp
-                                                                </a>
+
+                                                    {{-- Customer Price (To enter on supplier portal) --}}
+                                                    <div class="text-dark mt-1 pt-1 border-top d-flex justify-content-between align-items-center">
+                                                        <span class="text-muted"><i class="fas fa-shopping-cart text-primary mr-1"></i> {{ __('Customer Price (Enter on HHC)') }}:</span>
+                                                        <strong class="text-dark">
+                                                            @if ($setting->currency_direction == 1)
+                                                                {{$order->currency_sign}}{{ round($rowUnitPrice * $order->currency_value, 2) }}
+                                                            @else
+                                                                {{ round($rowUnitPrice * $order->currency_value, 2) }}{{$order->currency_sign}}
                                                             @endif
+                                                            @if($rowQty > 1)
+                                                                <small class="text-muted">(Total: @if($setting->currency_direction == 1){{$order->currency_sign}}{{ round($rowLineTotal * $order->currency_value, 2) }}@else{{ round($rowLineTotal * $order->currency_value, 2) }}{{$order->currency_sign}}@endif)</small>
+                                                            @endif
+                                                        </strong>
+                                                    </div>
+
+                                                    {{-- Supplier Wholesale Cost --}}
+                                                    @if($rowProfitUnit > 0)
+                                                        <div class="text-dark mt-1 d-flex justify-content-between align-items-center">
+                                                            <span class="text-muted"><i class="fas fa-tag text-secondary mr-1"></i> {{ __('Wholesale Cost (Pay HHC)') }}:</span>
+                                                            <strong class="text-danger">
+                                                                @if ($setting->currency_direction == 1)
+                                                                    {{$order->currency_sign}}{{ round($rowSupplierUnit * $order->currency_value, 2) }}
+                                                                @else
+                                                                    {{ round($rowSupplierUnit * $order->currency_value, 2) }}{{$order->currency_sign}}
+                                                                @endif
+                                                                @if($rowQty > 1)
+                                                                    <small class="text-danger">(Total: @if($setting->currency_direction == 1){{$order->currency_sign}}{{ round($rowTotalSupplier * $order->currency_value, 2) }}@else{{ round($rowTotalSupplier * $order->currency_value, 2) }}{{$order->currency_sign}}@endif)</small>
+                                                                @endif
+                                                            </strong>
+                                                        </div>
+
+                                                        {{-- Admin Net Profit --}}
+                                                        <div class="text-dark mt-1 d-flex justify-content-between align-items-center">
+                                                            <span class="text-muted"><i class="fas fa-coins text-success mr-1"></i> {{ __('Your Net Profit') }}:</span>
+                                                            <span class="badge badge-success font-weight-bold" style="font-size: 11.5px; padding: 3px 7px;">
+                                                                +@if ($setting->currency_direction == 1){{$order->currency_sign}}{{ round($rowTotalProfit * $order->currency_value, 2) }}@else{{ round($rowTotalProfit * $order->currency_value, 2) }}{{$order->currency_sign}}@endif
+                                                                @if($rowQty > 1)
+                                                                    <small class="text-white font-weight-normal">({{ round($rowProfitUnit * $order->currency_value, 2) }}/pc)</small>
+                                                                @endif
+                                                            </span>
                                                         </div>
                                                     @endif
+
+                                                    @if(!empty($productModel->contact_number))
+                                                        <div class="text-dark mt-1 pt-1 border-top d-flex justify-content-between align-items-center">
+                                                            <span><i class="fas fa-phone-alt text-info mr-1"></i> {{ __('Contact') }}:</span>
+                                                            <div>
+                                                                <a href="tel:{{ $productModel->contact_number }}" class="font-weight-bold text-primary">{{ $productModel->contact_number }}</a>
+                                                                @php
+                                                                    $cleanPhone = preg_replace('/[^0-9]/', '', $productModel->contact_number);
+                                                                @endphp
+                                                                @if(!empty($cleanPhone))
+                                                                    <a href="https://wa.me/{{ $cleanPhone }}" target="_blank" class="badge badge-success ml-1 text-white" style="font-size: 11px; padding: 2px 6px;">
+                                                                        <i class="fab fa-whatsapp"></i> WhatsApp
+                                                                    </a>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    @endif
+
                                                     @if(!empty($productModel->supplier_url))
                                                         <div class="text-dark mt-2 pt-1 border-top">
-                                                            <span class="font-weight-bold text-primary"><i class="fas fa-external-link-alt mr-1"></i> {{ __('Supplier / Source Link') }}:</span><br>
-                                                            <a href="{{ $productModel->supplier_url }}" target="_blank" class="btn btn-outline-primary btn-xs py-1 px-2 mt-1 font-weight-bold shadow-sm" style="font-size: 11.5px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;">
+                                                            <a href="{{ $productModel->supplier_url }}" target="_blank" class="btn btn-primary btn-xs py-1 px-2 btn-block font-weight-bold shadow-sm" style="font-size: 11.5px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; gap: 4px;">
                                                                 <i class="fas fa-link"></i> {{ __('Open Supplier Product Page') }} <i class="fas fa-external-link-alt ml-1"></i>
                                                             </a>
                                                         </div>
                                                     @endif
+                                                </div>
+                                            @else
+                                                <div class="mt-1">
+                                                    <span class="badge badge-secondary px-2 py-1" style="font-size: 10.5px;"><i class="fas fa-cube mr-1"></i> {{ __('Self Listed / Local Inventory') }}</span>
                                                 </div>
                                             @endif
                                         </td>
