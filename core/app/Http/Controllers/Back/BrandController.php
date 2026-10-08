@@ -4,10 +4,14 @@ namespace App\Http\Controllers\Back;
 
 use App\{
     Models\Brand,
+    Models\Setting,
     Repositories\Back\BrandRepository,
     Http\Requests\BrandRequest,
     Http\Controllers\Controller
 };
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
 
 class BrandController extends Controller
 {
@@ -60,6 +64,55 @@ class BrandController extends Controller
     {
         $this->repository->store($request);
         return redirect()->route('back.brand.index')->withSuccess(__('New Brand Added Successfully.'));
+    }
+
+    /**
+     * Toggle Brand Image / Logo visibility and requirement.
+     *
+     * @param int $status
+     * @return \Illuminate\Http\Response
+     */
+    public function imageToggle($status)
+    {
+        if (Schema::hasTable('settings')) {
+            if (!Schema::hasColumn('settings', 'is_brand_image')) {
+                try {
+                    Schema::table('settings', function (Blueprint $table) {
+                        $table->tinyInteger('is_brand_image')->default(1)->nullable();
+                    });
+                } catch (\Throwable $e) {}
+            }
+        }
+
+        $setting = Setting::first();
+        if ($setting) {
+            $setting->is_brand_image = (int)$status;
+            $setting->save();
+        }
+
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'status' => true,
+                'is_brand_image' => (int)$status,
+                'message' => ((int)$status == 1) ? __('Brand image has been enabled.') : __('Brand image has been disabled.')
+            ]);
+        }
+
+        return redirect()->route('back.brand.index')->withSuccess(
+            ((int)$status == 1) ? __('Brand image has been enabled.') : __('Brand image has been disabled.')
+        );
+    }
+
+    /**
+     * AJAX Toggle Brand Image / Logo.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function imageToggleAjax(Request $request)
+    {
+        $status = $request->input('status', 1);
+        return $this->imageToggle($status);
     }
 
     /**

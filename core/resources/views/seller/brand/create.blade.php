@@ -28,6 +28,7 @@
 
 								@include('alerts.alerts')
 
+								@if(($setting->is_brand_image ?? 1) == 1)
 								<div class="form-group">
 									<label for="name">{{ __('Brand Logo / Image') }} *</label>
 									<br>
@@ -38,10 +39,11 @@
 
 								<div class="form-group position-relative">
 									<label class="file">
-										<input type="file" accept="image/*" class="upload-photo" name="photo" id="file" required>
+										<input type="file" accept="image/*" class="upload-photo" name="photo" id="file" {{ ($setting->is_brand_image ?? 1) == 1 ? 'required' : '' }}>
 										<span class="file-custom text-left">{{ __('Upload Image...') }}</span>
 									</label>
                                 </div>
+								@endif
 
 								<div class="form-group">
 									<label for="name">{{ __('Brand Name') }} *</label>
@@ -58,6 +60,7 @@
                                         <i class="fas fa-save mr-1"></i> {{ __('Save Brand') }}
                                     </button>
 								</div>
+
 							</form>
 						</div>
 					</div>
@@ -68,18 +71,4 @@
 
 </div>
 
-@endsection
-
-@section('scripts')
-<script>
-    $('.upload-photo').on('change', function () {
-        if (this.files && this.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                $('.admin-img').attr('src', e.target.result);
-            }
-            reader.readAsDataURL(this.files[0]);
-        }
-    });
-</script>
 @endsection

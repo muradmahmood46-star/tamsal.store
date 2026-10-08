@@ -21,7 +21,7 @@ class BrandRepository
     {
         $input = $request->all();
         $input['vendor_id'] = $request->vendor_id ?? 0;
-        $input['photo'] = ImageHelper::handleUploadedImage($request->file('photo'),'images');
+        $input['photo'] = $request->hasFile('photo') ? ImageHelper::handleUploadedImage($request->file('photo'), 'images') : null;
 
         $slug = $request->slug ? \Illuminate\Support\Str::slug($request->slug) : \Illuminate\Support\Str::slug($request->name);
         if (empty($slug)) {
@@ -77,7 +77,9 @@ class BrandRepository
 
     public function delete($brand)
     {
-        ImageHelper::handleDeletedImage($brand,'photo','images');
+        if (!empty($brand->photo)) {
+            ImageHelper::handleDeletedImage($brand,'photo','images');
+        }
         $brand->delete();
     }
 

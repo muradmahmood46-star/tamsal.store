@@ -8,10 +8,24 @@
 	<!-- Page Heading -->
     <div class="card mb-4">
         <div class="card-body">
-            <div class="d-sm-flex align-items-center justify-content-between">
+            <div class="d-flex flex-wrap align-items-center justify-content-between">
                 <h3 class="mb-0 bc-title"><b>{{ __('Brands') }}</b></h3>
-                <a class="btn btn-primary  btn-sm" href="{{route('back.brand.create')}}"><i class="fas fa-plus"></i> {{ __('Add') }}</a>
+                <div class="d-flex align-items-center mt-2 mt-sm-0">
+                    <div class="d-flex align-items-center mr-4" style="background: #f8f9fa; padding: 6px 14px; border-radius: 20px; border: 1px solid #e3e6f0;">
+                        <span class="mr-2 font-weight-bold text-dark" style="font-size: 13px;">
+                            <i class="fas fa-image mr-1 text-primary"></i> {{ __('Brand Picture') }}:
+                        </span>
+                        <label class="switch-primary mb-0" style="vertical-align: middle;">
+                            <input type="checkbox" id="brand-image-toggle" class="switch switch-bootstrap" 
+                                {{ ($setting->is_brand_image ?? 1) == 1 ? 'checked' : '' }}>
+                            <span class="switch-body"></span>
+                        </label>
+                    </div>
+                    <a class="btn btn-primary btn-sm font-weight-bold" href="{{route('back.brand.create')}}">
+                        <i class="fas fa-plus mr-1"></i> {{ __('Add Brand') }}
+                    </a>
                 </div>
+            </div>
         </div>
     </div>
 
@@ -25,7 +39,9 @@
 					<thead>
 						<tr>
                             <th>{{ __('Name') }}</th>
-                            <th>{{ __('Logo') }}</th>
+                            @if(($setting->is_brand_image ?? 1) == 1)
+                                <th>{{ __('Logo') }}</th>
+                            @endif
                             <th>{{ __('Slug') }}</th>
 							<th>{{ __('Status') }}</th>
 							<th>{{ __('Popular') }}</th>
@@ -44,7 +60,6 @@
 
 </div>
 
-</div>
 <!-- End of Main Content -->
 
 {{-- DELETE MODAL --}}
@@ -86,4 +101,34 @@
 
 {{-- DELETE MODAL ENDS --}}
 
+@endsection
+
+@section('scripts')
+<script>
+    $(document).on('change', '#brand-image-toggle', function() {
+        var isChecked = $(this).is(':checked') ? 1 : 0;
+        var toggleUrl = "{{ route('back.brand.image.toggle', ':status') }}".replace(':status', isChecked);
+        
+        $.ajax({
+            url: toggleUrl,
+            type: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            success: function(response) {
+                if (typeof SuccessNotification === 'function') {
+                    SuccessNotification(response.message || "{{ __('Status Updated Successfully.') }}");
+                }
+                setTimeout(function() {
+                    window.location.reload();
+                }, 400);
+            },
+            error: function() {
+                if (typeof DangerNotification === 'function') {
+                    DangerNotification("{{ __('Something went wrong. Please try again.') }}");
+                }
+            }
+        });
+    });
+</script>
 @endsection

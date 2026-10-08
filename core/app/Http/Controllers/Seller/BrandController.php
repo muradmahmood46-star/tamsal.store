@@ -52,7 +52,7 @@ class BrandController extends Controller
     {
         $input = $request->all();
         $input['vendor_id'] = Auth::id();
-        $input['photo'] = ImageHelper::handleUploadedImage($request->file('photo'), 'images');
+        $input['photo'] = $request->hasFile('photo') ? ImageHelper::handleUploadedImage($request->file('photo'), 'images') : null;
         $input['status'] = 1;
         $input['is_popular'] = $request->is_popular ?? 0;
 
@@ -174,7 +174,9 @@ class BrandController extends Controller
     public function destroy($id)
     {
         $brand = Brand::where('id', $id)->where('vendor_id', Auth::id())->firstOrFail();
-        ImageHelper::handleDeletedImage($brand, 'photo', 'images');
+        if (!empty($brand->photo)) {
+            ImageHelper::handleDeletedImage($brand, 'photo', 'images');
+        }
         $brand->delete();
         return redirect()->route('seller.brand.index')->withSuccess(__('Brand Deleted Successfully.'));
     }

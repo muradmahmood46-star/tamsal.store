@@ -27,10 +27,16 @@
     <div class="row g-3">
         @foreach ($brands as $brand)
             <div class="col-xxl-2 col-xl-3 col-lg-4 col-md-4 col-6">
-                <a class="b-p-s-b" href="{{ route('front.catalog') . '?brand=' . $brand->slug }}">
-                    <img class="d-block hi-50"
-                        src="{{ url('/core/public/storage/images/' . $brand->photo) }}"
-                        alt="{{ $brand->name }}" title="{{ $brand->name }}">
+                <a class="b-p-s-b d-flex align-items-center justify-content-center text-center p-2 text-decoration-none" href="{{ route('front.catalog') . '?brand=' . $brand->slug }}" style="min-height: 80px;">
+                    @if(($setting->is_brand_image ?? 1) == 1 && !empty($brand->photo))
+                        <img class="d-block hi-50"
+                            src="{{ url('/core/public/storage/images/' . $brand->photo) }}"
+                            alt="{{ $brand->name }}" title="{{ $brand->name }}">
+                    @else
+                        <span class="font-weight-bold text-dark" style="font-size: 15px; font-weight: 600;">
+                            {{ $brand->name }}
+                        </span>
+                    @endif
                 </a>
             </div>
         @endforeach

@@ -25,7 +25,9 @@
 					<thead>
 						<tr>
                             <th>{{ __('Name') }}</th>
-                            <th>{{ __('Logo') }}</th>
+                            @if(($setting->is_brand_image ?? 1) == 1)
+                                <th>{{ __('Logo') }}</th>
+                            @endif
                             <th>{{ __('Slug') }}</th>
 							<th>{{ __('Status') }}</th>
 							<th>{{ __('Actions') }}</th>
@@ -65,6 +67,5 @@
         </div>
     </div>
 </div>
-{{-- DELETE MODAL ENDS --}}
 
 @endsection

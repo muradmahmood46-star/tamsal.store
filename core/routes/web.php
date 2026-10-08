@@ -203,6 +203,8 @@ Route::group(['middleware' => ['adminlocalize', 'demo']], function () {
 
 
             //------------ BRAND ------------
+            Route::get('brand/image/toggle/{status}', 'Back\BrandController@imageToggle')->name('back.brand.image.toggle');
+            Route::post('brand/image/toggle', 'Back\BrandController@imageToggleAjax')->name('back.brand.image.toggle.ajax');
             Route::get('brand/status/{id}/{status}/{type}', 'Back\BrandController@status')->name('back.brand.status');
             Route::resource('brand', 'Back\BrandController', ['as' => 'back', 'except' => 'show']);
 

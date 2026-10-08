@@ -11,9 +11,11 @@
             <span class="badge badge-secondary ml-1" style="font-size: 11px;"><i class="fas fa-shield-alt"></i> {{ __('Admin') }}</span>
         @endif
     </td>
+    @if(($setting->is_brand_image ?? 1) == 1)
     <td>
         <img style="max-height: 40px; max-width: 80px; object-fit: contain;" src="{{ $data->photo ? url('/core/public/storage/images/'.$data->photo) : url('/core/public/storage/images/placeholder.png') }}" alt="{{ $data->name }}">
     </td>
+    @endif
     <td>
         <code>{{ $data->slug }}</code>
     </td>

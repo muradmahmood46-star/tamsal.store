@@ -68,6 +68,7 @@ class Setting extends Model
         'is_best',
         'is_flash',
         'is_brand',
+        'is_brand_image',
         'is_blogs',
         'is_campaign',
         'is_brands',
@@ -160,6 +161,14 @@ class Setting extends Model
         } catch (\Throwable $e) {}
 
         return 'admin';
+    }
+
+    public function getIsBrandImageAttribute($value)
+    {
+        if ($value === null || $value === '') {
+            return 1;
+        }
+        return (int)$value;
     }
 
     public function getAdminStoreUrl(): string

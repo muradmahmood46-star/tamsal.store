@@ -40,7 +40,18 @@ class BrandRequest extends FormRequest
      */
     public function rules()
     {
-        $required = $this->brand ? '' : 'required';
+        $setting = \App\Models\Setting::first();
+        $isBrandImageEnabled = ($setting && isset($setting->is_brand_image)) ? (int)$setting->is_brand_image : 1;
+
+        if ($isBrandImageEnabled === 0) {
+            return [
+                'photo' => ['nullable', 'mimes:jpeg,jpg,png,svg,webp,gif,bmp,tiff,tif,avif,ico,jfif,heic,heif'],
+                'name'  => 'required|max:255',
+                'slug'  => 'nullable|string|max:255',
+            ];
+        }
+
+        $required = $this->brand ? 'nullable' : 'required';
 
         return [
             'photo' => [$required, 'mimes:jpeg,jpg,png,svg,webp,gif,bmp,tiff,tif,avif,ico,jfif,heic,heif'],

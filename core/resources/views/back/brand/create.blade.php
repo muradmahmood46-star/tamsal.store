@@ -9,8 +9,8 @@
         <div class="card-body">
             <div class="d-sm-flex align-items-center justify-content-between">
                 <h3 class="mb-0 bc-title"><b>{{ __('Create Brand') }}</b> </h3>
-                <a class="btn btn-primary  btn-sm" href="{{route('back.brand.index')}}"><i class="fas fa-chevron-left"></i> {{ __('Back') }}</a>
-                </div>
+                <a class="btn btn-primary btn-sm font-weight-bold" href="{{route('back.brand.index')}}"><i class="fas fa-chevron-left mr-1"></i> {{ __('Back') }}</a>
+            </div>
         </div>
     </div>
 
@@ -31,13 +31,14 @@
 
 									@include('alerts.alerts')
 
+									@if(($setting->is_brand_image ?? 1) == 1)
 									<div class="form-group">
 										<label for="name">{{ __('Set Image') }} *</label>
 										<br>
 											<img class="admin-img" src="{{  url('/core/public/storage/images/placeholder.png') }}"
-												alt="No Image Found">
+												alt="No Image Found" style="max-height: 100px;">
 										<br>
-										<span class="mt-1">{{ __('Image Size Should Be 110 x 81.') }}</span>
+										<span class="mt-1 small text-muted">{{ __('Image Size Should Be 110 x 81.') }}</span>
 									</div>
 
 									<div class="form-group position-relative">
@@ -47,25 +48,24 @@
 											<span class="file-custom text-left">{{ __('Upload Image...') }}</span>
 										</label>
                                     </div>
+									@endif
 
 									<div class="form-group">
 										<label for="name">{{ __('Name') }} *</label>
 										<input type="text" name="name" class="form-control item-name" id="name"
-											placeholder="{{ __('Enter Name') }}" value="{{ old('name') }}">
+											placeholder="{{ __('Enter Name') }}" value="{{ old('name') }}" required>
 									</div>
 
 									<div class="form-group">
-										<label for="slug">{{ __('Slug') }} *</label>
+										<label for="slug">{{ __('Slug') }}</label>
 										<input type="text" name="slug" class="form-control" id="slug"
-											placeholder="{{ __('Enter Slug') }}" value="{{ old('slug') }}">
+											placeholder="{{ __('Enter Slug (Optional - Auto generated)') }}" value="{{ old('slug') }}">
 									</div>
 
-								<div class="form-group">
-										<button type="submit"
-											class="btn btn-secondary ">{{ __('Submit') }}</button>
+									<div class="form-group">
+										<button type="submit" class="btn btn-secondary font-weight-bold">{{ __('Submit') }}</button>
 									</div>
 
-									<div>
 								</form>
 						</div>
 					</div>
