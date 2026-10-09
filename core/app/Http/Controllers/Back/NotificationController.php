@@ -43,8 +43,11 @@ class NotificationController extends Controller
 
     public function delete($id)
     {
-        Notification::findOrFail($id)->delete();
-        return back()->withSuccess(__('Notification Delete Successfully.'));
+        $notf = Notification::find($id);
+        if ($notf) {
+            $notf->delete();
+        }
+        return back()->withSuccess(__('Notification Deleted Successfully.'));
     }
 
 
@@ -55,6 +58,7 @@ class NotificationController extends Controller
      */
     public function clear_notf(){
         Notification::truncate();
+        return back()->withSuccess(__('All Notifications Cleared Successfully.'));
     }
 
 }

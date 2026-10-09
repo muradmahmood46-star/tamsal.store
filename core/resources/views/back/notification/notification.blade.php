@@ -66,8 +66,11 @@
                         </div>
                     @endif
                     @if($notf->user_id != null)
+                        @php
+                            $userLink = ($notf->user && $notf->user->id) ? route('back.user.show', $notf->user->id) : route('back.user.index');
+                        @endphp
                         <div class="list-group-item list-group-item-action d-flex align-items-center justify-content-between py-3 px-3 px-md-4">
-                            <a class="d-flex align-items-center text-decoration-none text-dark flex-grow-1 mr-3" href="{{ route('back.user.show',$notf->user_id) }}">
+                            <a class="d-flex align-items-center text-decoration-none text-dark flex-grow-1 mr-3" href="{{ $userLink }}">
                                 <div class="mr-3 flex-shrink-0">
                                     <div class="icon-circle bg-primary text-white d-flex align-items-center justify-content-center shadow-sm" style="width: 42px; height: 42px; border-radius: 50%;">
                                         <i class="fas fa-user-plus" style="font-size: 16px;"></i>
@@ -93,8 +96,11 @@
                         </div>
                     @endif
                     @if($notf->order_id != null)
+                        @php
+                            $orderLink = ($notf->order && $notf->order->id) ? route('back.order.invoice', $notf->order->id) : route('back.order.index');
+                        @endphp
                         <div class="list-group-item list-group-item-action d-flex align-items-center justify-content-between py-3 px-3 px-md-4">
-                            <a class="d-flex align-items-center text-decoration-none text-dark flex-grow-1 mr-3" href="{{ route('back.order.invoice',$notf->order_id) }}">
+                            <a class="d-flex align-items-center text-decoration-none text-dark flex-grow-1 mr-3" href="{{ $orderLink }}">
                                 <div class="mr-3 flex-shrink-0">
                                     <div class="icon-circle bg-success text-white d-flex align-items-center justify-content-center shadow-sm" style="width: 42px; height: 42px; border-radius: 50%;">
                                         <i class="fas fa-shopping-cart" style="font-size: 16px;"></i>

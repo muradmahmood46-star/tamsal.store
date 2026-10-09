@@ -122,7 +122,10 @@ class OrderController extends Controller
     public function invoice($id)
     {
         Notification::where('order_id', $id)->where('is_read', 0)->update(['is_read' => 1]);
-        $order = Order::findOrfail($id);
+        $order = Order::find($id);
+        if (!$order) {
+            return redirect()->route('back.order.index')->withError(__('Order not found or has been deleted.'));
+        }
         $cart = json_decode($order->cart, true);
         return view('back.order.invoice',compact('order','cart'));
     }

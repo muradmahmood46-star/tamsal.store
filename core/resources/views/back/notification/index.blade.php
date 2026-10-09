@@ -44,7 +44,10 @@
                 </a>
             @endif
             @if($notf->user_id != null)
-                <a class="dropdown-item d-flex align-items-center py-2 px-3 border-bottom text-wrap" href="{{ route('back.user.show', $notf->user_id) }}" style="transition: background 0.15s; text-decoration: none;">
+                @php
+                    $userLink = ($notf->user && $notf->user->id) ? route('back.user.show', $notf->user->id) : route('back.user.index');
+                @endphp
+                <a class="dropdown-item d-flex align-items-center py-2 px-3 border-bottom text-wrap" href="{{ $userLink }}" style="transition: background 0.15s; text-decoration: none;">
                     <div class="mr-3 flex-shrink-0">
                         <div class="icon-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; border-radius: 50%;">
                             <i class="fas fa-user-plus" style="font-size: 14px;"></i>
@@ -66,7 +69,10 @@
                 </a>
             @endif
             @if($notf->order_id != null)
-                <a class="dropdown-item d-flex align-items-center py-2 px-3 border-bottom text-wrap" href="{{ route('back.order.invoice', $notf->order_id) }}" style="transition: background 0.15s; text-decoration: none;">
+                @php
+                    $orderLink = ($notf->order && $notf->order->id) ? route('back.order.invoice', $notf->order->id) : route('back.order.index');
+                @endphp
+                <a class="dropdown-item d-flex align-items-center py-2 px-3 border-bottom text-wrap" href="{{ $orderLink }}" style="transition: background 0.15s; text-decoration: none;">
                     <div class="mr-3 flex-shrink-0">
                         <div class="icon-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; border-radius: 50%;">
                             <i class="fas fa-shopping-cart" style="font-size: 14px;"></i>

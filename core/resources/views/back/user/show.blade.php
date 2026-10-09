@@ -57,11 +57,11 @@
 
                                 <tr>
                                     <th>{{ __("Total Orders") }}</th>
-                                    <td>{{count($user->orders)}}</td>
+                                    <td>{{ $user->orders ? count($user->orders) : 0 }}</td>
                                 </tr>
                                 <tr>
                                     <th>{{ __("Joined") }}</th>
-                                    <td>{{$user->created_at->diffForHumans()}}</td>
+                                    <td>{{ $user->created_at ? $user->created_at->diffForHumans() : 'N/A' }}</td>
                                 </tr>
 
 

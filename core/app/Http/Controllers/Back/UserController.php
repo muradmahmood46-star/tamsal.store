@@ -51,9 +51,13 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
+    public function show($id)
     {
-        return view('back.user.show',compact('user'));
+        $user = User::find($id);
+        if (!$user) {
+            return redirect()->route('back.user.index')->withError(__('Customer / User record not found.'));
+        }
+        return view('back.user.show', compact('user'));
     }
 
 
@@ -64,7 +68,6 @@ class UserController extends Controller
         ]);
         $this->repository->profileUpdate($request);
         return redirect()->back()->withSuccess(__('Profile Updated Successfully.'));
-        
     }
 
 
@@ -74,9 +77,15 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
-        ImageHelper::handleDeletedImage($user,'photo','images');
+        $user = User::find($id);
+        if (!$user) {
+            return redirect()->route('back.user.index')->withError(__('Customer / User record not found.'));
+        }
+        if (!empty($user->photo)) {
+            ImageHelper::handleDeletedImage($user, 'photo', 'images');
+        }
         $user->delete();
         return redirect()->route('back.user.index')->withSuccess(__('Customer Deleted Successfully.'));
     }
