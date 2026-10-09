@@ -105,6 +105,53 @@
                         <hr class="my-4">
                         <h6 class="font-weight-bold text-primary mb-3"><i class="fas fa-percentage mr-1"></i> {{ __('Vendor Commission & Wallet Rules') }}</h6>
 
+                        <style>
+                            .vendor-mode-card {
+                                cursor: pointer;
+                                transition: all 0.2s ease-in-out;
+                                border: 2px solid #e2e8f0 !important;
+                                border-radius: 10px;
+                                background: #ffffff;
+                                position: relative;
+                                user-select: none;
+                            }
+                            .vendor-mode-card:hover {
+                                border-color: #93c5fd !important;
+                                box-shadow: 0 4px 12px rgba(13, 110, 253, 0.08);
+                            }
+                            .vendor-mode-card.active-mode {
+                                border-color: #0d6efd !important;
+                                background: #f0f7ff !important;
+                                box-shadow: 0 4px 14px rgba(13, 110, 253, 0.12);
+                            }
+                            .vendor-mode-card .mode-radio-circle {
+                                width: 20px;
+                                height: 20px;
+                                border-radius: 50%;
+                                border: 2px solid #cbd5e1;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                background: #ffffff;
+                                flex-shrink: 0;
+                                transition: all 0.2s ease;
+                            }
+                            .vendor-mode-card.active-mode .mode-radio-circle {
+                                border-color: #0d6efd;
+                                background: #ffffff;
+                            }
+                            .vendor-mode-card .mode-radio-inner {
+                                width: 10px;
+                                height: 10px;
+                                border-radius: 50%;
+                                background: transparent;
+                                transition: all 0.2s ease;
+                            }
+                            .vendor-mode-card.active-mode .mode-radio-inner {
+                                background: #0d6efd;
+                            }
+                        </style>
+
                         <!-- Mode Selector Box -->
                         <div class="card border mb-4 shadow-none" style="border-radius: 10px; background: #f8fafc; border-left: 4px solid #1572e8 !important;">
                             <div class="card-body p-3">
@@ -114,24 +161,52 @@
                                 <p class="small text-muted mb-3">
                                     {{ __('Choose whether vendors operate on per-order sales commission or on recurring time-based subscription plans.') }}
                                 </p>
-                                <div class="row">
-                                    <div class="col-12 col-md-6 mb-2">
-                                        <div class="custom-control custom-radio p-2 bg-white rounded border {{ old('vendor_plan_mode', $setting->vendor_plan_mode ?? 'commission') === 'commission' ? 'border-primary' : '' }}">
-                                            <input type="radio" id="mode_commission" name="vendor_plan_mode" value="commission" class="custom-control-input" {{ old('vendor_plan_mode', $setting->vendor_plan_mode ?? 'commission') === 'commission' ? 'checked' : '' }} onchange="togglePlanMode(this.value)">
-                                            <label class="custom-control-label font-weight-bold text-dark cursor-pointer d-block" for="mode_commission">
-                                                <i class="fas fa-percent text-info mr-1"></i> {{ __('Commission Per Order') }}
-                                                <div class="small font-weight-normal text-muted">{{ __('Free orders allowance, then % commission deduction per order.') }}</div>
-                                            </label>
-                                        </div>
+                                <div class="row align-items-stretch">
+                                    <div class="col-12 col-md-6 mb-3 d-flex">
+                                        <label for="mode_commission" class="vendor-mode-card flex-fill p-3 mb-0 d-flex flex-column justify-content-between {{ old('vendor_plan_mode', $setting->vendor_plan_mode ?? 'commission') === 'commission' ? 'active-mode' : '' }}" id="modeCardCommission" onclick="selectMode('commission')">
+                                            <div>
+                                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                                    <div class="d-flex align-items-center" style="gap: 8px;">
+                                                        <span class="rounded-circle d-flex align-items-center justify-content-center bg-primary text-white" style="width: 30px; height: 30px; font-size: 13px; flex-shrink: 0;">
+                                                            <i class="fas fa-percent"></i>
+                                                        </span>
+                                                        <span class="font-weight-bold text-dark" style="font-size: 14px;">
+                                                            {{ __('Commission Per Order') }}
+                                                        </span>
+                                                    </div>
+                                                    <div class="mode-radio-circle ml-2">
+                                                        <div class="mode-radio-inner"></div>
+                                                    </div>
+                                                </div>
+                                                <p class="small text-muted mb-0" style="line-height: 1.45; font-size: 12px;">
+                                                    {{ __('Free orders allowance, then % commission deduction per order.') }}
+                                                </p>
+                                            </div>
+                                            <input type="radio" id="mode_commission" name="vendor_plan_mode" value="commission" class="d-none" {{ old('vendor_plan_mode', $setting->vendor_plan_mode ?? 'commission') === 'commission' ? 'checked' : '' }}>
+                                        </label>
                                     </div>
-                                    <div class="col-12 col-md-6 mb-2">
-                                        <div class="custom-control custom-radio p-2 bg-white rounded border {{ old('vendor_plan_mode', $setting->vendor_plan_mode ?? 'commission') === 'time_based' ? 'border-primary' : '' }}">
-                                            <input type="radio" id="mode_time_based" name="vendor_plan_mode" value="time_based" class="custom-control-input" {{ old('vendor_plan_mode', $setting->vendor_plan_mode ?? 'commission') === 'time_based' ? 'checked' : '' }} onchange="togglePlanMode(this.value)">
-                                            <label class="custom-control-label font-weight-bold text-dark cursor-pointer d-block" for="mode_time_based">
-                                                <i class="fas fa-calendar-alt text-success mr-1"></i> {{ __('Time-Based Plan') }}
-                                                <div class="small font-weight-normal text-muted">{{ __('Initial Free Time, then recurring plan duration (0% commission).') }}</div>
-                                            </label>
-                                        </div>
+                                    <div class="col-12 col-md-6 mb-3 d-flex">
+                                        <label for="mode_time_based" class="vendor-mode-card flex-fill p-3 mb-0 d-flex flex-column justify-content-between {{ old('vendor_plan_mode', $setting->vendor_plan_mode ?? 'commission') === 'time_based' ? 'active-mode' : '' }}" id="modeCardTimeBased" onclick="selectMode('time_based')">
+                                            <div>
+                                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                                    <div class="d-flex align-items-center" style="gap: 8px;">
+                                                        <span class="rounded-circle d-flex align-items-center justify-content-center bg-success text-white" style="width: 30px; height: 30px; font-size: 13px; flex-shrink: 0;">
+                                                            <i class="fas fa-calendar-alt"></i>
+                                                        </span>
+                                                        <span class="font-weight-bold text-dark" style="font-size: 14px;">
+                                                            {{ __('Time-Based Plan') }}
+                                                        </span>
+                                                    </div>
+                                                    <div class="mode-radio-circle ml-2">
+                                                        <div class="mode-radio-inner"></div>
+                                                    </div>
+                                                </div>
+                                                <p class="small text-muted mb-0" style="line-height: 1.45; font-size: 12px;">
+                                                    {{ __('Initial Free Time, then recurring plan duration (0% commission).') }}
+                                                </p>
+                                            </div>
+                                            <input type="radio" id="mode_time_based" name="vendor_plan_mode" value="time_based" class="d-none" {{ old('vendor_plan_mode', $setting->vendor_plan_mode ?? 'commission') === 'time_based' ? 'checked' : '' }}>
+                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -829,23 +904,31 @@
         }
     }
 
-    function togglePlanMode(mode) {
+    function selectMode(mode) {
+        var radioComm = document.getElementById('mode_commission');
+        var radioTime = document.getElementById('mode_time_based');
+        var cardComm = document.getElementById('modeCardCommission');
+        var cardTime = document.getElementById('modeCardTimeBased');
         var commFields = document.getElementById('commissionModeFields');
         var timeFields = document.getElementById('timeBasedModeFields');
-        var commRadioCard = document.getElementById('mode_commission')?.closest('.custom-radio');
-        var timeRadioCard = document.getElementById('mode_time_based')?.closest('.custom-radio');
 
         if (mode === 'time_based') {
+            if (radioTime) radioTime.checked = true;
+            if (cardTime) cardTime.classList.add('active-mode');
+            if (cardComm) cardComm.classList.remove('active-mode');
             if (commFields) commFields.style.display = 'none';
             if (timeFields) timeFields.style.display = 'block';
-            if (commRadioCard) commRadioCard.classList.remove('border-primary');
-            if (timeRadioCard) timeRadioCard.classList.add('border-primary');
         } else {
+            if (radioComm) radioComm.checked = true;
+            if (cardComm) cardComm.classList.add('active-mode');
+            if (cardTime) cardTime.classList.remove('active-mode');
             if (commFields) commFields.style.display = 'block';
             if (timeFields) timeFields.style.display = 'none';
-            if (commRadioCard) commRadioCard.classList.add('border-primary');
-            if (timeRadioCard) timeRadioCard.classList.remove('border-primary');
         }
+    }
+
+    function togglePlanMode(mode) {
+        selectMode(mode);
     }
 
     function openEditModal(account) {
