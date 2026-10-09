@@ -201,17 +201,25 @@
     @endphp
 
     @if($isTimeBased && $isPlanExpired)
-        <div class="alert alert-danger shadow-sm mb-4 border-left border-danger" style="border-left-width: 5px !important; border-radius: 10px;">
+        <div class="alert alert-danger shadow-sm mb-4 border-left border-danger" style="border-left-width: 5px !important; border-radius: 10px; background: #fff5f5;">
             <div class="d-flex flex-wrap align-items-center justify-content-between">
                 <div class="d-flex align-items-center mb-2 mb-md-0">
-                    <i class="fas fa-exclamation-triangle fa-2x mr-3 text-danger"></i>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center bg-danger text-white mr-3 shadow-sm flex-shrink-0" style="width: 44px; height: 44px; font-size: 20px;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
                     <div>
-                        <h6 class="mb-1 font-weight-bold text-danger">{{ __('Your plan has expired.') }}</h6>
-                        <p class="mb-0 text-dark small">{{ __('Please deposit at least :curr :amount to continue managing your store.', ['curr' => PriceHelper::adminCurrency(), 'amount' => number_format($planCharge, 2)]) }} ({{ __('Min Deposit:') }} {{ PriceHelper::adminCurrency() }} {{ number_format($dashSetting->vendor_min_balance ?? 500, 2) }})</p>
+                        <h6 class="mb-1 font-weight-bold text-danger" style="font-size: 15px;">
+                            {{ __('Your store plan has expired!') }}
+                        </h6>
+                        <p class="mb-0 text-dark small" style="line-height: 1.5;">
+                            {{ __('Plan Price:') }} <strong class="text-danger">{{ PriceHelper::adminCurrency() }} {{ number_format($planCharge, 2) }}</strong> {{ __('for :days Days active duration (0% sales commission).', ['days' => $dashSetting->vendor_plan_duration ?? 30]) }}
+                            <br class="d-none d-sm-inline">
+                            {{ __('Please deposit balance to auto-reactivate your store and restore your products.') }}
+                        </p>
                     </div>
                 </div>
-                <a href="{{ route('seller.wallet.index') }}" class="btn btn-danger font-weight-bold shadow-sm px-4 py-2 mt-2 mt-md-0" style="border-radius: 8px;">
-                    <i class="fas fa-plus-circle mr-1"></i> {{ __('Add Balance') }}
+                <a href="{{ route('seller.wallet.index') }}" class="btn btn-danger font-weight-bold shadow-sm px-4 py-2 mt-2 mt-md-0 d-inline-flex align-items-center" style="border-radius: 8px;">
+                    <i class="fas fa-plus-circle mr-1.5"></i> {{ __('Deposit Balance Now') }}
                 </a>
             </div>
         </div>
