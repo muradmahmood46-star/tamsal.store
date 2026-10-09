@@ -112,6 +112,32 @@
         background: #f8fafc;
         transition: all 0.2s ease-in-out;
     }
+    .btn-remove-picker-img {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        z-index: 5;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: #dc3545;
+        color: #fff;
+        border: 2px solid #fff;
+        font-size: 10px;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+        transition: all 0.2s ease;
+        padding: 0;
+    }
+    .btn-remove-picker-img:hover {
+        background: #bd2130;
+        transform: scale(1.15);
+        color: #fff;
+    }
 </style>
 @endsection
 
@@ -353,15 +379,20 @@
 
                             <!-- Manual Upload Fallback -->
                             <div class="border-top pt-3 mt-3">
-                                <h6 class="font-weight-bold text-dark mb-2"><i class="fas fa-upload text-muted mr-1"></i> {{ __('Or Upload Images Directly from Computer:') }}</h6>
+                                <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap">
+                                    <h6 class="font-weight-bold text-dark mb-1"><i class="fas fa-upload text-primary mr-1"></i> {{ __('Or Upload Images Directly from Computer:') }}</h6>
+                                    <span class="badge badge-info mb-1"><i class="fas fa-bolt mr-1"></i> {{ __('Instant Live Preview & Auto-Combine') }}</span>
+                                </div>
                                 <div class="row">
                                     <div class="col-md-6 mb-2 mb-md-0">
                                         <label class="small font-weight-bold text-muted">{{ __('Upload Main Featured Photo:') }}</label>
-                                        <input type="file" name="photo" class="form-control-file" accept="image/*">
+                                        <input type="file" name="photo" id="imp_manual_main_photo" class="form-control-file" accept="image/*" onchange="handleManualMainPhoto(this)">
+                                        <small class="text-muted d-block mt-1">{{ __('Selecting a main file will set it as primary featured image.') }}</small>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="small font-weight-bold text-muted">{{ __('Upload Extra Gallery Photos:') }}</label>
-                                        <input type="file" name="galleries[]" multiple class="form-control-file" accept="image/*">
+                                        <input type="file" name="galleries[]" id="imp_manual_gallery_photos" multiple class="form-control-file" accept="image/*" onchange="handleManualGalleryPhotos(this)">
+                                        <small class="text-muted d-block mt-1">{{ __('Select multiple images to show alongside URL images in gallery.') }}</small>
                                     </div>
                                 </div>
                             </div>
@@ -1128,6 +1159,13 @@
             $('#imp_brand_id').val('');
         }
 
+        // Reset manual uploaded files array and file inputs on fresh parse
+        uploadedGalleryFiles = [];
+        var mainFileInput = document.getElementById('imp_manual_main_photo');
+        if (mainFileInput) mainFileInput.value = '';
+        var galleryFileInput = document.getElementById('imp_manual_gallery_photos');
+        if (galleryFileInput) galleryFileInput.value = '';
+
         // Populate Images Grid
         var grid = document.getElementById('images_grid_container');
         grid.innerHTML = '';
@@ -1139,7 +1177,7 @@
                 var isMain = (idx === 0);
                 var labelText = isMain ? '{{ __("⭐ Main Featured") }}' : ('{{ __("Gallery") }} ' + idx);
                 var col = document.createElement('div');
-                col.className = 'col-6 col-md-4 col-lg-3 mb-3';
+                col.className = 'col-6 col-md-4 col-lg-3 mb-3 url-image-col';
                 col.innerHTML = `
                     <div class="image-picker-card ${isMain ? 'selected-main' : ''}" onclick="selectMainImage(this, '${escapeHtml(imgUrl)}')">
                         <span class="main-badge"><i class="fas fa-star mr-1"></i> Main Photo</span>
@@ -1153,11 +1191,178 @@
                 grid.appendChild(col);
             });
         } else {
-            grid.innerHTML = '<div class="col-12 text-muted text-center py-3"><i class="fas fa-image mr-1"></i> {{ __("No images found in text. You can paste image link above or upload photo files below.") }}</div>';
+            grid.innerHTML = '<div class="col-12 text-muted text-center py-3 no-images-placeholder"><i class="fas fa-image mr-1"></i> {{ __("No images found in text. You can paste image link above or upload photo files below.") }}</div>';
+        }
+    }
+
+    // Storage for locally uploaded gallery files
+    var uploadedGalleryFiles = [];
+
+    function handleManualGalleryPhotos(input) {
+        if (!input.files || input.files.length === 0) return;
+
+        // Append new files to uploadedGalleryFiles array (avoiding duplicates)
+        for (var i = 0; i < input.files.length; i++) {
+            var file = input.files[i];
+            var exists = uploadedGalleryFiles.some(function(f) {
+                return f.name === file.name && f.size === file.size && f.lastModified === file.lastModified;
+            });
+            if (!exists) {
+                uploadedGalleryFiles.push(file);
+            }
+        }
+
+        syncGalleryInputFiles(input);
+        renderUploadedGalleryCards();
+    }
+
+    function syncGalleryInputFiles(input) {
+        if (!input) input = document.getElementById('imp_manual_gallery_photos');
+        if (!input) return;
+
+        if (window.DataTransfer) {
+            try {
+                var dt = new DataTransfer();
+                uploadedGalleryFiles.forEach(function(file) {
+                    dt.items.add(file);
+                });
+                input.files = dt.files;
+            } catch (err) {
+                console.error('DataTransfer sync error:', err);
+            }
+        }
+    }
+
+    function renderUploadedGalleryCards() {
+        // Remove existing manual gallery cards from grid
+        $('.manual-gallery-col').remove();
+
+        if (uploadedGalleryFiles.length > 0) {
+            $('#images_grid_container .no-images-placeholder').remove();
+        }
+
+        var grid = document.getElementById('images_grid_container');
+        if (!grid) return;
+
+        uploadedGalleryFiles.forEach(function(file, idx) {
+            var blobUrl = URL.createObjectURL(file);
+            var col = document.createElement('div');
+            col.className = 'col-6 col-md-4 col-lg-3 mb-3 manual-gallery-col';
+            col.setAttribute('data-file-idx', idx);
+            col.innerHTML = `
+                <div class="image-picker-card" style="border-color: #3b82f6; background: #f0f7ff;">
+                    <span class="gallery-badge" style="display: block; background: #2563eb;">
+                        <i class="fas fa-desktop mr-1"></i> {{ __('Gallery (File)') }}
+                    </span>
+                    <button type="button" class="btn-remove-picker-img" onclick="removeUploadedGalleryFile(${idx}, event)" title="{{ __('Remove this image') }}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <img src="${blobUrl}" class="image-picker-img" alt="Uploaded Gallery Image">
+                    <small class="text-truncate d-block mt-1 text-dark font-weight-bold" style="font-size: 11px;" title="${escapeHtml(file.name)}">
+                        <i class="fas fa-file-image text-primary mr-1"></i> ${escapeHtml(file.name)}
+                    </small>
+                </div>
+            `;
+            grid.appendChild(col);
+        });
+    }
+
+    function removeUploadedGalleryFile(index, event) {
+        if (event) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
+
+        if (index >= 0 && index < uploadedGalleryFiles.length) {
+            uploadedGalleryFiles.splice(index, 1);
+            syncGalleryInputFiles();
+            renderUploadedGalleryCards();
+        }
+
+        checkEmptyGrid();
+    }
+
+    function handleManualMainPhoto(input) {
+        if (!input.files || input.files.length === 0) return;
+
+        var file = input.files[0];
+        var blobUrl = URL.createObjectURL(file);
+
+        // Remove old manual main card
+        $('.manual-main-col').remove();
+
+        // Unselect URL main cards
+        document.querySelectorAll('.image-picker-card').forEach(function(el) {
+            el.classList.remove('selected-main');
+        });
+
+        // Clear selected_main_image_url since manual file takes priority
+        $('#selected_main_image_url').val('');
+
+        $('#images_grid_container .no-images-placeholder').remove();
+
+        var grid = document.getElementById('images_grid_container');
+        if (!grid) return;
+
+        var col = document.createElement('div');
+        col.className = 'col-6 col-md-4 col-lg-3 mb-3 manual-main-col';
+        col.innerHTML = `
+            <div class="image-picker-card selected-main" style="border-color: #10b981; background: #ecfdf5;">
+                <span class="main-badge" style="display: block;">
+                    <i class="fas fa-star mr-1"></i> {{ __('Main Photo (File)') }}
+                </span>
+                <button type="button" class="btn-remove-picker-img" onclick="removeManualMainPhoto(event)" title="{{ __('Remove this main photo') }}">
+                    <i class="fas fa-times"></i>
+                </button>
+                <img src="${blobUrl}" class="image-picker-img" alt="Main Photo">
+                <small class="text-truncate d-block mt-1 text-success font-weight-bold" style="font-size: 11px;" title="${escapeHtml(file.name)}">
+                    <i class="fas fa-check-circle mr-1"></i> ${escapeHtml(file.name)}
+                </small>
+            </div>
+        `;
+
+        if (grid.firstChild) {
+            grid.insertBefore(col, grid.firstChild);
+        } else {
+            grid.appendChild(col);
+        }
+    }
+
+    function removeManualMainPhoto(event) {
+        if (event) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
+
+        var input = document.getElementById('imp_manual_main_photo');
+        if (input) input.value = '';
+        $('.manual-main-col').remove();
+
+        // Select the first URL image card as main if available
+        var firstUrlCard = document.querySelector('.url-image-col .image-picker-card');
+        if (firstUrlCard) {
+            firstUrlCard.click();
+        } else {
+            checkEmptyGrid();
+        }
+    }
+
+    function checkEmptyGrid() {
+        var grid = document.getElementById('images_grid_container');
+        if (!grid) return;
+        if (grid.children.length === 0) {
+            grid.innerHTML = '<div class="col-12 text-muted text-center py-3 no-images-placeholder"><i class="fas fa-image mr-1"></i> {{ __("No images found in text. You can paste image link above or upload photo files below.") }}</div>';
         }
     }
 
     function selectMainImage(cardEl, imgUrl) {
+        // If there was a manual main photo, remove it so URL image becomes primary
+        if ($('.manual-main-col').length > 0) {
+            var mainFileInput = document.getElementById('imp_manual_main_photo');
+            if (mainFileInput) mainFileInput.value = '';
+            $('.manual-main-col').remove();
+        }
+
         document.querySelectorAll('.image-picker-card').forEach(function(el) {
             el.classList.remove('selected-main');
         });
