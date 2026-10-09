@@ -9,6 +9,9 @@
     <td>
         {{ $data->phone }}
     </td>
+    <td>
+        {{ $data->created_at ? $data->created_at->format('d M Y, h:i A') : 'N/A' }}
+    </td>
 
     <td>
         <div class="action-list">
