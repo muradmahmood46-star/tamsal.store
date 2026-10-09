@@ -61,7 +61,14 @@ class CartRepository
 
         $cart = Session::get('cart');
 
-        $item = Item::where('id', $input['item_id'])->select('id', 'name', 'photo', 'discount_price', 'previous_price', 'slug', 'item_type', 'license_name', 'license_key', 'stock', 'item_variants', 'estimated_profit')->first();
+        $item = Item::where('id', $input['item_id'])->select('id', 'name', 'photo', 'discount_price', 'previous_price', 'slug', 'item_type', 'license_name', 'license_key', 'stock', 'item_variants', 'estimated_profit', 'vendor_id', 'status')->first();
+
+        if ($item && (int)$item->vendor_id > 0) {
+            $itemSeller = \App\Models\Seller::where('user_id', $item->vendor_id)->first();
+            if ($itemSeller && $itemSeller->isTimeBasedMode() && $itemSeller->isPlanExpired()) {
+                return ['message' => __('This store\'s plan is currently inactive. Products from this store cannot be ordered right now.'), 'status' => 'storeExpired'];
+            }
+        }
 
         $deal = null;
         $dealItem = null;
@@ -70,6 +77,13 @@ class CartRepository
             $dealItem = $deal ? $deal->dealItems()->where('item_id', $input['item_id'])->first() : null;
             if (!$dealItem) {
                 return ['message' => __('This deal is no longer available.'), 'status' => 'dealExpired'];
+            }
+
+            if ($deal && (int)$deal->vendor_id > 0) {
+                $dealSeller = \App\Models\Seller::where('user_id', $deal->vendor_id)->first();
+                if ($dealSeller && $dealSeller->isTimeBasedMode() && $dealSeller->isPlanExpired()) {
+                    return ['message' => __('This store\'s plan is currently inactive. Bundles from this store cannot be ordered right now.'), 'status' => 'storeExpired'];
+                }
             }
         }
 

@@ -62,6 +62,17 @@ class PromotionController extends Controller
         $vendorId = $user->id;
         $seller = Seller::where('user_id', $vendorId)->firstOrFail();
 
+        if ($seller->isTimeBasedMode() && $seller->isPlanExpired()) {
+            $setting = Setting::first();
+            $planCharge = (float)($setting->vendor_plan_charge ?? 1000.00);
+            return redirect()->route('seller.dashboard')->withErrors(
+                __('Your plan has expired. Please deposit at least :curr :amount to continue managing your store.', [
+                    'curr' => PriceHelper::adminCurrency(),
+                    'amount' => number_format($planCharge, 2)
+                ])
+            );
+        }
+
         $promotionsData = $request->input('promotions', []);
 
         if (empty($promotionsData) || !is_array($promotionsData)) {

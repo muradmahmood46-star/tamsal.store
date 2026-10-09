@@ -105,24 +105,125 @@
                         <hr class="my-4">
                         <h6 class="font-weight-bold text-primary mb-3"><i class="fas fa-percentage mr-1"></i> {{ __('Vendor Commission & Wallet Rules') }}</h6>
 
-                        <!-- A) Vendor Free Orders Setting -->
-                        <div class="form-group mb-4">
-                            <label for="vendor_free_orders" class="font-weight-bold">
-                                <i class="fas fa-gift text-success mr-1"></i> {{ __('Vendor Free Orders') }} <span class="text-danger">*</span>
-                            </label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-box-open"></i></span>
-                                </div>
-                                <input type="number" min="0" step="1" name="vendor_free_orders" id="vendor_free_orders" class="form-control" value="{{ old('vendor_free_orders', $setting->vendor_free_orders ?? 5) }}" placeholder="e.g. 5" required>
-                                <div class="input-group-append">
-                                    <span class="input-group-text">{{ __('Orders') }}</span>
+                        <!-- Mode Selector Box -->
+                        <div class="card border mb-4 shadow-none" style="border-radius: 10px; background: #f8fafc; border-left: 4px solid #1572e8 !important;">
+                            <div class="card-body p-3">
+                                <label class="font-weight-bold text-dark d-block mb-2">
+                                    <i class="fas fa-layer-group text-primary mr-1"></i> {{ __('Vendor System Active Mode') }} <span class="text-danger">*</span>
+                                </label>
+                                <p class="small text-muted mb-3">
+                                    {{ __('Choose whether vendors operate on per-order sales commission or on recurring time-based subscription plans.') }}
+                                </p>
+                                <div class="row">
+                                    <div class="col-12 col-md-6 mb-2">
+                                        <div class="custom-control custom-radio p-2 bg-white rounded border {{ old('vendor_plan_mode', $setting->vendor_plan_mode ?? 'commission') === 'commission' ? 'border-primary' : '' }}">
+                                            <input type="radio" id="mode_commission" name="vendor_plan_mode" value="commission" class="custom-control-input" {{ old('vendor_plan_mode', $setting->vendor_plan_mode ?? 'commission') === 'commission' ? 'checked' : '' }} onchange="togglePlanMode(this.value)">
+                                            <label class="custom-control-label font-weight-bold text-dark cursor-pointer d-block" for="mode_commission">
+                                                <i class="fas fa-percent text-info mr-1"></i> {{ __('Commission Per Order') }}
+                                                <div class="small font-weight-normal text-muted">{{ __('Free orders allowance, then % commission deduction per order.') }}</div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6 mb-2">
+                                        <div class="custom-control custom-radio p-2 bg-white rounded border {{ old('vendor_plan_mode', $setting->vendor_plan_mode ?? 'commission') === 'time_based' ? 'border-primary' : '' }}">
+                                            <input type="radio" id="mode_time_based" name="vendor_plan_mode" value="time_based" class="custom-control-input" {{ old('vendor_plan_mode', $setting->vendor_plan_mode ?? 'commission') === 'time_based' ? 'checked' : '' }} onchange="togglePlanMode(this.value)">
+                                            <label class="custom-control-label font-weight-bold text-dark cursor-pointer d-block" for="mode_time_based">
+                                                <i class="fas fa-calendar-alt text-success mr-1"></i> {{ __('Time-Based Plan') }}
+                                                <div class="small font-weight-normal text-muted">{{ __('Initial Free Time, then recurring plan duration (0% commission).') }}</div>
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <small class="text-muted">{{ __('Number of initial orders a vendor receives for FREE before commission-based balance deductions start applying.') }}</small>
                         </div>
 
-                        <!-- B) Minimum Balance Setting -->
+                        <!-- ================= COMMISSION MODE SPECIFIC FIELDS ================= -->
+                        <div id="commissionModeFields" style="{{ old('vendor_plan_mode', $setting->vendor_plan_mode ?? 'commission') === 'time_based' ? 'display: none;' : 'display: block;' }}">
+                            <!-- A) Vendor Free Orders Setting -->
+                            <div class="form-group mb-4">
+                                <label for="vendor_free_orders" class="font-weight-bold">
+                                    <i class="fas fa-gift text-success mr-1"></i> {{ __('Vendor Free Orders') }} <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-box-open"></i></span>
+                                    </div>
+                                    <input type="number" min="0" step="1" name="vendor_free_orders" id="vendor_free_orders" class="form-control" value="{{ old('vendor_free_orders', $setting->vendor_free_orders ?? 5) }}" placeholder="e.g. 5">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">{{ __('Orders') }}</span>
+                                    </div>
+                                </div>
+                                <small class="text-muted">{{ __('Number of initial orders a vendor receives for FREE before commission-based balance deductions start applying.') }}</small>
+                            </div>
+
+                            <!-- B) Cut Commission Setting -->
+                            <div class="form-group mb-4">
+                                <label for="vendor_commission_percent" class="font-weight-bold">
+                                    <i class="fas fa-cut text-danger mr-1"></i> {{ __('Cut Commission') }} <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" step="0.01" min="0" max="100" name="vendor_commission_percent" id="vendor_commission_percent" class="form-control" value="{{ old('vendor_commission_percent', $setting->vendor_commission_percent ?? 2) }}" placeholder="e.g. 2">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><b>%</b></span>
+                                    </div>
+                                </div>
+                                <small class="text-muted">{{ __('Percentage commission deducted from vendor wallet on their own product sales once the free order limit is exceeded.') }}</small>
+                            </div>
+                        </div>
+
+                        <!-- ================= TIME-BASED PLAN MODE SPECIFIC FIELDS ================= -->
+                        <div id="timeBasedModeFields" style="{{ old('vendor_plan_mode', $setting->vendor_plan_mode ?? 'commission') === 'time_based' ? 'display: block;' : 'display: none;' }}">
+                            <!-- 1. Free Time (days) -->
+                            <div class="form-group mb-4">
+                                <label for="vendor_free_days" class="font-weight-bold">
+                                    <i class="fas fa-gift text-success mr-1"></i> {{ __('Free Time (Days)') }} <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-clock"></i></span>
+                                    </div>
+                                    <input type="number" min="1" step="1" name="vendor_free_days" id="vendor_free_days" class="form-control" value="{{ old('vendor_free_days', $setting->vendor_free_days ?? 30) }}" placeholder="e.g. 30">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">{{ __('Days') }}</span>
+                                    </div>
+                                </div>
+                                <small class="text-muted">{{ __('How many days a newly approved store can use the platform for free without any charges.') }}</small>
+                            </div>
+
+                            <!-- 2. Plan Duration (days) -->
+                            <div class="form-group mb-4">
+                                <label for="vendor_plan_duration" class="font-weight-bold">
+                                    <i class="fas fa-history text-primary mr-1"></i> {{ __('Plan Duration (Days)') }} <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-calendar-check"></i></span>
+                                    </div>
+                                    <input type="number" min="1" step="1" name="vendor_plan_duration" id="vendor_plan_duration" class="form-control" value="{{ old('vendor_plan_duration', $setting->vendor_plan_duration ?? 30) }}" placeholder="e.g. 30">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">{{ __('Days') }}</span>
+                                    </div>
+                                </div>
+                                <small class="text-muted">{{ __('Length of one paid cycle/plan duration (e.g. 30 days).') }}</small>
+                            </div>
+
+                            <!-- 3. Plan Charge (PKR) -->
+                            <div class="form-group mb-4">
+                                <label for="vendor_plan_charge" class="font-weight-bold">
+                                    <i class="fas fa-coins text-warning mr-1"></i> {{ __('Plan Charge') }} <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">{{ PriceHelper::adminCurrency() }}</span>
+                                    </div>
+                                    <input type="number" min="0" step="0.01" name="vendor_plan_charge" id="vendor_plan_charge" class="form-control" value="{{ old('vendor_plan_charge', $setting->vendor_plan_charge ?? 1000) }}" placeholder="e.g. 1000">
+                                </div>
+                                <small class="text-muted">{{ __('Amount charged from vendor wallet balance per plan renewal (0% commission applies on sales in this mode).') }}</small>
+                            </div>
+                        </div>
+
+                        <!-- ================= SHARED FIELD (BOTH MODES) ================= -->
+                        <!-- Minimum Balance Setting -->
                         <div class="form-group mb-4">
                             <label for="vendor_min_balance" class="font-weight-bold">
                                 <i class="fas fa-money-bill-wave text-warning mr-1"></i> {{ __('Minimum Balance to Add') }} <span class="text-danger">*</span>
@@ -134,20 +235,6 @@
                                 <input type="number" step="0.01" min="0" name="vendor_min_balance" id="vendor_min_balance" class="form-control" value="{{ old('vendor_min_balance', $setting->vendor_min_balance ?? 500) }}" placeholder="e.g. 500" required>
                             </div>
                             <small class="text-muted">{{ __('Minimum deposit amount required when a vendor submits an "Add Balance" request. Submissions below this amount will be blocked.') }}</small>
-                        </div>
-
-                        <!-- C) Cut Commission Setting -->
-                        <div class="form-group mb-4">
-                            <label for="vendor_commission_percent" class="font-weight-bold">
-                                <i class="fas fa-cut text-danger mr-1"></i> {{ __('Cut Commission') }} <span class="text-danger">*</span>
-                            </label>
-                            <div class="input-group">
-                                <input type="number" step="0.01" min="0" max="100" name="vendor_commission_percent" id="vendor_commission_percent" class="form-control" value="{{ old('vendor_commission_percent', $setting->vendor_commission_percent ?? 2) }}" placeholder="e.g. 2" required>
-                                <div class="input-group-append">
-                                    <span class="input-group-text"><b>%</b></span>
-                                </div>
-                            </div>
-                            <small class="text-muted">{{ __('Percentage commission deducted from vendor wallet on their own product sales once the free order limit is exceeded.') }}</small>
                         </div>
 
                         <button type="submit" class="btn btn-primary btn-block py-2 font-weight-bold shadow-sm">
@@ -739,6 +826,25 @@
             badge.className = "badge badge-danger px-2 py-1 font-weight-bold";
             if (label) label.innerText = "{{ __('Paid Store Opening Enabled (Fee Applies)') }}";
             if (feeGroup) feeGroup.style.opacity = '1';
+        }
+    }
+
+    function togglePlanMode(mode) {
+        var commFields = document.getElementById('commissionModeFields');
+        var timeFields = document.getElementById('timeBasedModeFields');
+        var commRadioCard = document.getElementById('mode_commission')?.closest('.custom-radio');
+        var timeRadioCard = document.getElementById('mode_time_based')?.closest('.custom-radio');
+
+        if (mode === 'time_based') {
+            if (commFields) commFields.style.display = 'none';
+            if (timeFields) timeFields.style.display = 'block';
+            if (commRadioCard) commRadioCard.classList.remove('border-primary');
+            if (timeRadioCard) timeRadioCard.classList.add('border-primary');
+        } else {
+            if (commFields) commFields.style.display = 'block';
+            if (timeFields) timeFields.style.display = 'none';
+            if (commRadioCard) commRadioCard.classList.add('border-primary');
+            if (timeRadioCard) timeRadioCard.classList.remove('border-primary');
         }
     }
 

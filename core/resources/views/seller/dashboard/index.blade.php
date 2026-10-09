@@ -158,33 +158,97 @@
         </div>
     @endif
 
-    <!-- Wallet Balance & Commission Overview Banner -->
+    <!-- Wallet Balance & Plan/Commission Overview Banner -->
     @php
         $dashSetting = \App\Models\Setting::first();
+        $isTimeBased = $seller->isTimeBasedMode();
+        $isPlanExpired = $seller->isPlanExpired();
+        $planCharge = (float)($dashSetting->vendor_plan_charge ?? 1000.00);
+        $daysRemaining = $seller->plan_days_remaining;
+        $planEndDate = $seller->plan_end_date ? \Carbon\Carbon::parse($seller->plan_end_date) : null;
+        $isBalanceLowForRenewal = ((float)($seller->balance ?? 0) < $planCharge);
+
         $freeOrdersLimit = (int)($dashSetting->vendor_free_orders ?? 5);
         $currVendorOrdersCount = \App\Models\Order::where('vendor_id', Auth::id())->count();
         $freeOrdersLeft = max(0, $freeOrdersLimit - $currVendorOrdersCount);
     @endphp
+
+    @if($isTimeBased && $isPlanExpired)
+        <div class="alert alert-danger shadow-sm mb-4 border-left border-danger" style="border-left-width: 5px !important; border-radius: 10px;">
+            <div class="d-flex flex-wrap align-items-center justify-content-between">
+                <div class="d-flex align-items-center mb-2 mb-md-0">
+                    <i class="fas fa-exclamation-triangle fa-2x mr-3 text-danger"></i>
+                    <div>
+                        <h6 class="mb-1 font-weight-bold text-danger">{{ __('Your plan has expired.') }}</h6>
+                        <p class="mb-0 text-dark small">{{ __('Please deposit at least :curr :amount to continue managing your store.', ['curr' => PriceHelper::adminCurrency(), 'amount' => number_format($planCharge, 2)]) }} ({{ __('Min Deposit:') }} {{ PriceHelper::adminCurrency() }} {{ number_format($dashSetting->vendor_min_balance ?? 500, 2) }})</p>
+                    </div>
+                </div>
+                <a href="{{ route('seller.wallet.index') }}" class="btn btn-danger font-weight-bold shadow-sm px-4 py-2 mt-2 mt-md-0" style="border-radius: 8px;">
+                    <i class="fas fa-plus-circle mr-1"></i> {{ __('Add Balance') }}
+                </a>
+            </div>
+        </div>
+    @endif
+
     <div class="card shadow-sm mb-4 border-0 vendor-wallet-card" style="border-radius: 12px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #fff;">
         <div class="card-body py-2.5 px-3 p-md-4" style="padding: 12px 14px;">
             <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between">
-                <div class="d-flex align-items-center mb-0.5 mb-md-0 w-100" style="width: auto;">
+                <div class="d-flex align-items-center mb-2 mb-md-0 w-100" style="width: auto;">
                     <div class="rounded-circle d-flex align-items-center justify-content-center shadow flex-shrink-0 wallet-icon-badge" style="width: 44px; height: 44px; background: rgba(16, 185, 129, 0.2); color: #10b981; font-size: 19px; margin-right: 12px;">
                         <i class="fas fa-wallet"></i>
                     </div>
                     <div>
                         <div class="wallet-heading-balance-wrap"><span class="text-uppercase small font-weight-bold wallet-title-text">{{ __('Store Wallet Balance') }}<span class="wallet-title-colon">:</span></span><span class="font-weight-bold wallet-balance-amount">{{ PriceHelper::adminCurrency() }} {{ number_format($seller->balance ?? 0, 2) }}</span></div>
-                        <div class="d-flex flex-wrap align-items-center mt-0.5" style="gap: 4px 10px; font-size: 12.5px; line-height: 1.2;">
-                            @if($freeOrdersLeft > 0)
-                                <span class="text-success font-weight-bold"><i class="fas fa-gift mr-1"></i> {{ $freeOrdersLeft }} {{ __('Free order(s) left') }}</span>
-                            @else
-                                <span class="text-warning font-weight-bold"><i class="fas fa-percentage mr-1"></i> {{ $dashSetting->vendor_commission_percent ?? 2 }}% {{ __('Commission Active') }}</span>
-                            @endif
-                            <span class="wallet-min-deposit"><i class="fas fa-clock mr-1"></i> {{ __('Min Deposit:') }} {{ PriceHelper::adminCurrency() }} {{ number_format($dashSetting->vendor_min_balance ?? 500, 2) }}</span>
-                        </div>
+                        
+                        @if($isTimeBased)
+                            <!-- Time-Based Plan Mode Display -->
+                            <div class="d-flex flex-wrap align-items-center mt-1" style="gap: 4px 10px; font-size: 12px; line-height: 1.3;">
+                                @if($isPlanExpired)
+                                    <span class="badge badge-danger px-2 py-0.5 font-weight-bold"><i class="fas fa-times-circle mr-1"></i> {{ __('Plan Expired') }}</span>
+                                @elseif($seller->plan_status === 'active_plan')
+                                    <span class="badge badge-primary px-2 py-0.5 font-weight-bold"><i class="fas fa-check-circle mr-1"></i> {{ __('Active Plan') }}</span>
+                                @else
+                                    <span class="badge badge-success px-2 py-0.5 font-weight-bold"><i class="fas fa-gift mr-1"></i> {{ __('Free Time') }}</span>
+                                @endif
+
+                                @if(!$isPlanExpired && $planEndDate)
+                                    <span class="text-success font-weight-bold">
+                                        <i class="fas fa-clock mr-1"></i> {{ $daysRemaining }} {{ __('day(s) left') }} ({{ __('Valid until:') }} {{ $planEndDate->format('d M Y') }})
+                                    </span>
+                                @elseif($isPlanExpired && $planEndDate)
+                                    <span class="text-danger font-weight-bold">
+                                        <i class="fas fa-calendar-times mr-1"></i> {{ __('Expired on:') }} {{ $planEndDate->format('d M Y') }}
+                                    </span>
+                                @endif
+
+                                <span class="wallet-renewal-charge" style="color: rgba(255, 255, 255, 0.85);">
+                                    <i class="fas fa-redo mr-1 text-info"></i> {{ __('Next renewal charge:') }} <b class="text-warning">{{ PriceHelper::adminCurrency() }} {{ number_format($planCharge, 2) }}</b>
+                                </span>
+
+                                @if(!$isPlanExpired && $isBalanceLowForRenewal)
+                                    <span class="text-warning font-weight-bold">
+                                        <i class="fas fa-exclamation-triangle mr-1"></i> {{ __('Low balance for renewal') }}
+                                    </span>
+                                @endif
+
+                                <span class="wallet-min-deposit">
+                                    <i class="fas fa-arrow-circle-down mr-1"></i> {{ __('Min Deposit:') }} {{ PriceHelper::adminCurrency() }} {{ number_format($dashSetting->vendor_min_balance ?? 500, 2) }}
+                                </span>
+                            </div>
+                        @else
+                            <!-- Commission Per Order Mode Display -->
+                            <div class="d-flex flex-wrap align-items-center mt-0.5" style="gap: 4px 10px; font-size: 12.5px; line-height: 1.2;">
+                                @if($freeOrdersLeft > 0)
+                                    <span class="text-success font-weight-bold"><i class="fas fa-gift mr-1"></i> {{ $freeOrdersLeft }} {{ __('Free order(s) left') }}</span>
+                                @else
+                                    <span class="text-warning font-weight-bold"><i class="fas fa-percentage mr-1"></i> {{ $dashSetting->vendor_commission_percent ?? 2 }}% {{ __('Commission Active') }}</span>
+                                @endif
+                                <span class="wallet-min-deposit"><i class="fas fa-clock mr-1"></i> {{ __('Min Deposit:') }} {{ PriceHelper::adminCurrency() }} {{ number_format($dashSetting->vendor_min_balance ?? 500, 2) }}</span>
+                            </div>
+                        @endif
                     </div>
                 </div>
-                <div class="d-flex justify-content-center justify-content-md-end w-100 mt-0 mt-md-0 vendor-wallet-btn-wrap" style="width: auto;">
+                <div class="d-flex justify-content-center justify-content-md-end w-100 mt-2 mt-md-0 vendor-wallet-btn-wrap" style="width: auto;">
                     <a href="{{ route('seller.wallet.index') }}" class="btn btn-success font-weight-bold shadow-sm vendor-add-balance-btn px-4 py-1.5" style="border-radius: 8px; font-size: 13px; white-space: nowrap;">
                         <i class="fas fa-plus-circle mr-1"></i> {{ __('Add Balance') }}
                     </a>

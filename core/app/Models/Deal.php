@@ -25,6 +25,7 @@ class Deal extends Model
         'start_date',
         'end_date',
         'status',
+        'is_hidden_by_plan',
         'orders_count',
         'is_promoted',
         'promotion_tag',

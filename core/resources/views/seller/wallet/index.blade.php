@@ -17,6 +17,15 @@
     @include('alerts.alerts')
 
     <!-- Top Stats Row -->
+    <!-- Top Stats Row -->
+    @php
+        $isTimeBased = $seller->isTimeBasedMode();
+        $isPlanExpired = $seller->isPlanExpired();
+        $planCharge = (float)($setting->vendor_plan_charge ?? 1000.00);
+        $planDuration = (int)($setting->vendor_plan_duration ?? 30);
+        $daysRemaining = $seller->plan_days_remaining;
+        $planEndDate = $seller->plan_end_date ? \Carbon\Carbon::parse($seller->plan_end_date) : null;
+    @endphp
     <div class="row mb-4">
         <!-- 1. Current Balance Card -->
         <div class="col-xl-4 col-md-6 mb-3">
@@ -31,7 +40,7 @@
                                 {{ PriceHelper::adminCurrency() }} {{ number_format($seller->balance ?? 0, 2) }}
                             </div>
                             <small class="text-muted mt-1 d-block">
-                                <i class="fas fa-info-circle text-info mr-1"></i> {{ __('Used for order commission deductions') }}
+                                <i class="fas fa-info-circle text-info mr-1"></i> {{ $isTimeBased ? __('Used for automatic plan renewal charges') : __('Used for order commission deductions') }}
                             </small>
                         </div>
                         <div class="col-auto">
@@ -44,66 +53,132 @@
             </div>
         </div>
 
-        <!-- 2. Free Orders Status Card -->
-        <div class="col-xl-4 col-md-6 mb-3">
-            @php
-                $freeOrdersAllowed = (int)($setting->vendor_free_orders ?? 5);
-                $vendorOrdersCount = \App\Models\Order::where('vendor_id', $user->id)->count();
-                $freeRemaining = max(0, $freeOrdersAllowed - $vendorOrdersCount);
-            @endphp
-            <div class="card border-left-info shadow h-100 py-2" style="border-left: 5px solid #17a2b8 !important; border-radius: 10px;">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                {{ __('Free Orders Allowance') }}
+        @if($isTimeBased)
+            <!-- 2. Time-Based Plan Status Card -->
+            <div class="col-xl-4 col-md-6 mb-3">
+                <div class="card {{ $isPlanExpired ? 'border-left-danger' : 'border-left-info' }} shadow h-100 py-2" style="border-left: 5px solid {{ $isPlanExpired ? '#dc3545' : '#17a2b8' }} !important; border-radius: 10px;">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold {{ $isPlanExpired ? 'text-danger' : 'text-info' }} text-uppercase mb-1">
+                                    {{ __('Plan Status & Validity') }}
+                                </div>
+                                <div class="h3 mb-0 font-weight-bold text-gray-800">
+                                    @if($isPlanExpired)
+                                        <span class="text-danger">{{ __('Expired') }}</span>
+                                    @elseif($seller->plan_status === 'active_plan')
+                                        <span class="text-primary">{{ __('Active Plan') }}</span>
+                                    @else
+                                        <span class="text-success">{{ __('Free Time') }}</span>
+                                    @endif
+                                </div>
+                                <small class="mt-1 d-block font-weight-bold {{ $isPlanExpired ? 'text-danger' : 'text-success' }}">
+                                    @if($isPlanExpired && $planEndDate)
+                                        <i class="fas fa-calendar-times mr-1"></i> {{ __('Expired on :date', ['date' => $planEndDate->format('d M Y')]) }}
+                                    @elseif($planEndDate)
+                                        <i class="fas fa-clock mr-1"></i> {{ $daysRemaining }} {{ __('day(s) left (Valid until :date)', ['date' => $planEndDate->format('d M Y')]) }}
+                                    @else
+                                        <i class="fas fa-check-circle mr-1"></i> {{ __('Active') }}
+                                    @endif
+                                </small>
                             </div>
-                            <div class="h3 mb-0 font-weight-bold text-gray-800">
-                                {{ $vendorOrdersCount }} / {{ $freeOrdersAllowed }}
-                            </div>
-                            <small class="mt-1 d-block font-weight-bold {{ $freeRemaining > 0 ? 'text-success' : 'text-danger' }}">
-                                @if($freeRemaining > 0)
-                                    <i class="fas fa-gift mr-1"></i> {{ $freeRemaining }} {{ __('Free order(s) remaining (No balance cut)') }}
-                                @else
-                                    <i class="fas fa-check-double mr-1"></i> {{ __('Free limit reached. Commission applies on orders.') }}
-                                @endif
-                            </small>
-                        </div>
-                        <div class="col-auto">
-                            <div class="rounded-circle d-flex align-items-center justify-content-center bg-info text-white shadow-sm" style="width: 50px; height: 50px; font-size: 22px;">
-                                <i class="fas fa-gift"></i>
+                            <div class="col-auto">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center {{ $isPlanExpired ? 'bg-danger' : 'bg-info' }} text-white shadow-sm" style="width: 50px; height: 50px; font-size: 22px;">
+                                    <i class="fas {{ $isPlanExpired ? 'fa-exclamation-triangle' : 'fa-calendar-alt' }}"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- 3. Commission Rate Card -->
-        <div class="col-xl-4 col-md-12 mb-3">
-            <div class="card border-left-warning shadow h-100 py-2" style="border-left: 5px solid #ffc107 !important; border-radius: 10px;">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                {{ __('Store Commission Rate') }}
+            <!-- 3. Time-Based Plan Renewal Charge Card -->
+            <div class="col-xl-4 col-md-12 mb-3">
+                <div class="card border-left-warning shadow h-100 py-2" style="border-left: 5px solid #ffc107 !important; border-radius: 10px;">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                    {{ __('Plan Renewal Charge') }}
+                                </div>
+                                <div class="h3 mb-0 font-weight-bold text-gray-800">
+                                    {{ PriceHelper::adminCurrency() }} {{ number_format($planCharge, 2) }}
+                                </div>
+                                <small class="text-muted mt-1 d-block">
+                                    <i class="fas fa-shield-alt text-success mr-1"></i> {{ __('Every :days days — 0% sales commission', ['days' => $planDuration]) }}
+                                </small>
                             </div>
-                            <div class="h3 mb-0 font-weight-bold text-gray-800">
-                                {{ $setting->vendor_commission_percent ?? 2 }}%
-                            </div>
-                            <small class="text-muted mt-1 d-block">
-                                <i class="fas fa-shield-alt text-warning mr-1"></i> {{ __('Deducted only after free orders limit') }}
-                            </small>
-                        </div>
-                        <div class="col-auto">
-                            <div class="rounded-circle d-flex align-items-center justify-content-center bg-warning text-dark shadow-sm" style="width: 50px; height: 50px; font-size: 22px;">
-                                <i class="fas fa-percentage"></i>
+                            <div class="col-auto">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center bg-warning text-dark shadow-sm" style="width: 50px; height: 50px; font-size: 22px;">
+                                    <i class="fas fa-redo"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        @else
+            <!-- 2. Free Orders Status Card (Commission Mode) -->
+            <div class="col-xl-4 col-md-6 mb-3">
+                @php
+                    $freeOrdersAllowed = (int)($setting->vendor_free_orders ?? 5);
+                    $vendorOrdersCount = \App\Models\Order::where('vendor_id', $user->id)->count();
+                    $freeRemaining = max(0, $freeOrdersAllowed - $vendorOrdersCount);
+                @endphp
+                <div class="card border-left-info shadow h-100 py-2" style="border-left: 5px solid #17a2b8 !important; border-radius: 10px;">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                    {{ __('Free Orders Allowance') }}
+                                </div>
+                                <div class="h3 mb-0 font-weight-bold text-gray-800">
+                                    {{ $vendorOrdersCount }} / {{ $freeOrdersAllowed }}
+                                </div>
+                                <small class="mt-1 d-block font-weight-bold {{ $freeRemaining > 0 ? 'text-success' : 'text-danger' }}">
+                                    @if($freeRemaining > 0)
+                                        <i class="fas fa-gift mr-1"></i> {{ $freeRemaining }} {{ __('Free order(s) remaining (No balance cut)') }}
+                                    @else
+                                        <i class="fas fa-check-double mr-1"></i> {{ __('Free limit reached. Commission applies on orders.') }}
+                                    @endif
+                                </small>
+                            </div>
+                            <div class="col-auto">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center bg-info text-white shadow-sm" style="width: 50px; height: 50px; font-size: 22px;">
+                                    <i class="fas fa-gift"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Commission Rate Card (Commission Mode) -->
+            <div class="col-xl-4 col-md-12 mb-3">
+                <div class="card border-left-warning shadow h-100 py-2" style="border-left: 5px solid #ffc107 !important; border-radius: 10px;">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                    {{ __('Store Commission Rate') }}
+                                </div>
+                                <div class="h3 mb-0 font-weight-bold text-gray-800">
+                                    {{ $setting->vendor_commission_percent ?? 2 }}%
+                                </div>
+                                <small class="text-muted mt-1 d-block">
+                                    <i class="fas fa-shield-alt text-warning mr-1"></i> {{ __('Deducted only after free orders limit') }}
+                                </small>
+                            </div>
+                            <div class="col-auto">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center bg-warning text-dark shadow-sm" style="width: 50px; height: 50px; font-size: 22px;">
+                                    <i class="fas fa-percentage"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
 
     <!-- Main Content: Deposit Form & Instructions -->

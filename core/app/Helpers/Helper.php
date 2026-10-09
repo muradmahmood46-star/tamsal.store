@@ -786,10 +786,89 @@ class Helper
                         });
                     } catch (\Throwable $e) {}
                 }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('settings', 'vendor_plan_mode')) {
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('settings', function ($table) {
+                            $table->string('vendor_plan_mode', 30)->default('commission');
+                        });
+                    } catch (\Throwable $e) {}
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('settings', 'vendor_free_days')) {
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('settings', function ($table) {
+                            $table->integer('vendor_free_days')->default(30);
+                        });
+                    } catch (\Throwable $e) {}
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('settings', 'vendor_plan_duration')) {
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('settings', function ($table) {
+                            $table->integer('vendor_plan_duration')->default(30);
+                        });
+                    } catch (\Throwable $e) {}
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('settings', 'vendor_plan_charge')) {
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('settings', function ($table) {
+                            $table->decimal('vendor_plan_charge', 12, 2)->default(1000.00);
+                        });
+                    } catch (\Throwable $e) {}
+                }
                 if (!\Illuminate\Support\Facades\Schema::hasColumn('settings', 'admin_store_code')) {
                     try {
                         \Illuminate\Support\Facades\Schema::table('settings', function ($table) {
                             $table->string('admin_store_code', 32)->nullable();
+                        });
+                    } catch (\Throwable $e) {}
+                }
+            }
+
+            if (\Illuminate\Support\Facades\Schema::hasTable('sellers')) {
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('sellers', 'plan_status')) {
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('sellers', function ($table) {
+                            $table->string('plan_status', 30)->default('free_time');
+                        });
+                    } catch (\Throwable $e) {}
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('sellers', 'plan_start_date')) {
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('sellers', function ($table) {
+                            $table->timestamp('plan_start_date')->nullable();
+                        });
+                    } catch (\Throwable $e) {}
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('sellers', 'plan_end_date')) {
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('sellers', function ($table) {
+                            $table->timestamp('plan_end_date')->nullable();
+                        });
+                    } catch (\Throwable $e) {}
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('sellers', 'plan_warned_at')) {
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('sellers', function ($table) {
+                            $table->timestamp('plan_warned_at')->nullable();
+                        });
+                    } catch (\Throwable $e) {}
+                }
+            }
+
+            if (\Illuminate\Support\Facades\Schema::hasTable('items')) {
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('items', 'is_hidden_by_plan')) {
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('items', function ($table) {
+                            $table->tinyInteger('is_hidden_by_plan')->default(0)->index();
+                        });
+                    } catch (\Throwable $e) {}
+                }
+            }
+
+            if (\Illuminate\Support\Facades\Schema::hasTable('deals')) {
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('deals', 'is_hidden_by_plan')) {
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('deals', function ($table) {
+                            $table->tinyInteger('is_hidden_by_plan')->default(0)->index();
                         });
                     } catch (\Throwable $e) {}
                 }

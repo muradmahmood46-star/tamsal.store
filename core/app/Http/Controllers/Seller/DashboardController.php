@@ -381,6 +381,11 @@ class DashboardController extends Controller
             return redirect()->route('user.store.apply')->withErrors(__('You must have an approved store application to access the Seller Dashboard.'));
         }
 
+        if ($seller->isTimeBasedMode()) {
+            $seller->checkAndRenewPlan();
+            $seller->refresh();
+        }
+
         $totalProducts = Item::where('vendor_id', $vendorId)->count();
         $totalCategories = Category::where('vendor_id', $vendorId)->count();
         $totalBrands = Brand::where('vendor_id', $vendorId)->count();

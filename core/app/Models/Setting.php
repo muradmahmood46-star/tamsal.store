@@ -140,6 +140,10 @@ class Setting extends Model
         "vendor_free_orders",
         "vendor_min_balance",
         "vendor_commission_percent",
+        "vendor_plan_mode",
+        "vendor_free_days",
+        "vendor_plan_duration",
+        "vendor_plan_charge",
         "admin_store_code",
     ];
 

@@ -68,9 +68,25 @@ class StoreRequestController extends Controller
                 $user->is_seller_blocked = 0;
                 $user->save();
 
+                $setting = \App\Models\Setting::first();
+                $freeDays = (int)($setting->vendor_free_days ?? 30);
+                if ($freeDays < 1) {
+                    $freeDays = 30;
+                }
+
+                $planData = [];
+                if ($setting && $setting->vendor_plan_mode === 'time_based') {
+                    $planData = [
+                        'plan_status' => 'free_time',
+                        'plan_start_date' => \Carbon\Carbon::now(),
+                        'plan_end_date' => \Carbon\Carbon::now()->addDays($freeDays),
+                        'plan_warned_at' => null,
+                    ];
+                }
+
                 Seller::updateOrCreate(
                     ['user_id' => $user->id],
-                    [
+                    array_merge([
                         'shop_name' => $storeRequest->shop_name ?: ($user->first_name . '\'s Store'),
                         'shop_address' => $storeRequest->shop_address ?: $user->ship_address1,
                         'product_types' => $storeRequest->product_types,
@@ -78,7 +94,7 @@ class StoreRequestController extends Controller
                         'shop_phone' => $storeRequest->phone ?: $user->phone,
                         'shop_email' => $storeRequest->email ?: $user->email,
                         'status' => 1
-                    ]
+                    ], $planData)
                 );
             }
         }

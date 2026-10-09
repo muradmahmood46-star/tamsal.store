@@ -115,60 +115,66 @@ class DepositRequestController extends Controller
             ]);
         }
 
-        // 4. Auto-Unlock Pending Locked Orders if Balance is Now Sufficient
+        // 4. Time-Based Plan Reactivation OR Commission Mode Auto-Unlock
         $setting = Setting::first();
-        $commissionPercent = $setting ? (float) $setting->vendor_commission_percent : 2.0;
-
-        $lockedOrders = Order::where('vendor_id', $deposit->user_id)
-            ->where('is_locked', 1)
-            ->orderBy('id', 'asc')
-            ->get();
-
         $unlockedOrdersCount = 0;
+        $planReactivated = false;
 
-        foreach ($lockedOrders as $lockedOrder) {
-            $requiredCommission = (float) $lockedOrder->commission_amount;
-            if ($requiredCommission <= 0) {
-                // Calculate from vendor cart
-                $cart = json_decode($lockedOrder->cart, true);
-                $cartTotal = 0;
-                if (is_array($cart)) {
-                    foreach ($cart as $item) {
-                        $p = $item['main_price'] ?? 0;
-                        $ap = $item['attribute_price'] ?? 0;
-                        $q = $item['qty'] ?? 1;
-                        $cartTotal += ($p + $ap) * $q;
+        if ($setting && $setting->vendor_plan_mode === 'time_based') {
+            $planReactivated = $seller->reactivatePlanAfterDeposit();
+        } else {
+            // Commission Per Order Mode: Auto-Unlock Pending Locked Orders
+            $commissionPercent = $setting ? (float) $setting->vendor_commission_percent : 2.0;
+
+            $lockedOrders = Order::where('vendor_id', $deposit->user_id)
+                ->where('is_locked', 1)
+                ->orderBy('id', 'asc')
+                ->get();
+
+            foreach ($lockedOrders as $lockedOrder) {
+                $requiredCommission = (float) $lockedOrder->commission_amount;
+                if ($requiredCommission <= 0) {
+                    // Calculate from vendor cart
+                    $cart = json_decode($lockedOrder->cart, true);
+                    $cartTotal = 0;
+                    if (is_array($cart)) {
+                        foreach ($cart as $item) {
+                            $p = $item['main_price'] ?? 0;
+                            $ap = $item['attribute_price'] ?? 0;
+                            $q = $item['qty'] ?? 1;
+                            $cartTotal += ($p + $ap) * $q;
+                        }
                     }
+                    $requiredCommission = round(($cartTotal * $commissionPercent) / 100, 2);
                 }
-                $requiredCommission = round(($cartTotal * $commissionPercent) / 100, 2);
-            }
 
-            // Check if seller's balance can cover this commission
-            if ($seller->balance >= $requiredCommission && $requiredCommission > 0) {
-                $seller->balance -= $requiredCommission;
-                $seller->save();
+                // Check if seller's balance can cover this commission
+                if ($seller->balance >= $requiredCommission && $requiredCommission > 0) {
+                    $seller->balance -= $requiredCommission;
+                    $seller->save();
 
-                VendorTransaction::create([
-                    'seller_id' => $seller->id,
-                    'user_id' => $deposit->user_id,
-                    'type' => 'commission_deduction',
-                    'amount' => -$requiredCommission,
-                    'balance_after' => $seller->balance,
-                    'order_id' => $lockedOrder->id,
-                    'details' => __('Commission deducted: :currency :amount for Order #:order', [
-                        'currency' => PriceHelper::adminCurrency(),
-                        'amount' => number_format($requiredCommission, 2),
-                        'order' => $lockedOrder->transaction_number
-                    ]),
-                    'status' => 'completed'
-                ]);
+                    VendorTransaction::create([
+                        'seller_id' => $seller->id,
+                        'user_id' => $deposit->user_id,
+                        'type' => 'commission_deduction',
+                        'amount' => -$requiredCommission,
+                        'balance_after' => $seller->balance,
+                        'order_id' => $lockedOrder->id,
+                        'details' => __('Commission deducted: :currency :amount for Order #:order', [
+                            'currency' => PriceHelper::adminCurrency(),
+                            'amount' => number_format($requiredCommission, 2),
+                            'order' => $lockedOrder->transaction_number
+                        ]),
+                        'status' => 'completed'
+                    ]);
 
-                $lockedOrder->is_locked = 0;
-                $lockedOrder->commission_amount = $requiredCommission;
-                $lockedOrder->commission_status = 'deducted';
-                $lockedOrder->save();
+                    $lockedOrder->is_locked = 0;
+                    $lockedOrder->commission_amount = $requiredCommission;
+                    $lockedOrder->commission_status = 'deducted';
+                    $lockedOrder->save();
 
-                $unlockedOrdersCount++;
+                    $unlockedOrdersCount++;
+                }
             }
         }
 
@@ -177,7 +183,9 @@ class DepositRequestController extends Controller
             'amount' => number_format($depositAmount, 2)
         ]);
 
-        if ($unlockedOrdersCount > 0) {
+        if ($planReactivated) {
+            $successMsg .= ' ' . __('Store plan has been reactivated for :days days.', ['days' => (int)($setting->vendor_plan_duration ?? 30)]);
+        } elseif ($unlockedOrdersCount > 0) {
             $successMsg .= ' ' . __(':count previously locked order(s) have been unlocked and commission deducted.', ['count' => $unlockedOrdersCount]);
         }
 

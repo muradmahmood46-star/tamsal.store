@@ -124,24 +124,34 @@ class OrderHelper
 
             if ($vendorId > 0) {
                 $seller = Seller::where('user_id', $vendorId)->first();
-                $freeOrdersLimit = (int)($setting->vendor_free_orders ?? 5);
-                $priorOrdersCount = Order::where('vendor_id', $vendorId)->count();
+                $isTimeBased = $seller ? $seller->isTimeBasedMode() : ($setting && $setting->vendor_plan_mode === 'time_based');
 
-                if ($priorOrdersCount >= $freeOrdersLimit) {
-                    $commissionPercent = (float)($setting->vendor_commission_percent ?? 2.0);
-                    $commissionAmount = round(($vendorCartTotal * $commissionPercent) / 100, 2);
+                if ($isTimeBased) {
+                    // Time-Based Plan Mode: NO commission deduction or order locking on orders
+                    $isLocked = 0;
+                    $commissionAmount = 0.00;
+                    $commissionStatus = 'free';
+                } else {
+                    // Commission Per Order Mode: Existing logic
+                    $freeOrdersLimit = (int)($setting->vendor_free_orders ?? 5);
+                    $priorOrdersCount = Order::where('vendor_id', $vendorId)->count();
 
-                    if ($seller && $seller->balance >= $commissionAmount && $commissionAmount > 0) {
-                        // Sufficient balance: Deduct immediately and unlock
-                        $seller->balance = (float)$seller->balance - $commissionAmount;
-                        $seller->save();
+                    if ($priorOrdersCount >= $freeOrdersLimit) {
+                        $commissionPercent = (float)($setting->vendor_commission_percent ?? 2.0);
+                        $commissionAmount = round(($vendorCartTotal * $commissionPercent) / 100, 2);
 
-                        $isLocked = 0;
-                        $commissionStatus = 'deducted';
-                    } else {
-                        // Insufficient balance: Lock the order until vendor tops up wallet
-                        $isLocked = 1;
-                        $commissionStatus = 'pending_balance';
+                        if ($seller && $seller->balance >= $commissionAmount && $commissionAmount > 0) {
+                            // Sufficient balance: Deduct immediately and unlock
+                            $seller->balance = (float)$seller->balance - $commissionAmount;
+                            $seller->save();
+
+                            $isLocked = 0;
+                            $commissionStatus = 'deducted';
+                        } else {
+                            // Insufficient balance: Lock the order until vendor tops up wallet
+                            $isLocked = 1;
+                            $commissionStatus = 'pending_balance';
+                        }
                     }
                 }
             }
