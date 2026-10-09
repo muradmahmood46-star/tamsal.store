@@ -3,18 +3,20 @@
 @section('content')
 <style>
     .vendor-wallet-card .wallet-title-text {
-        color: rgba(255, 255, 255, 0.7);
-        font-size: 11px;
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 11.5px;
         letter-spacing: 0.5px;
         line-height: 1.2;
     }
     .vendor-wallet-card .wallet-balance-amount {
         color: #ffffff;
-        font-size: 1.25rem;
+        font-size: 1.35rem;
         line-height: 1.3;
+        font-weight: 800;
     }
     .vendor-wallet-card .wallet-min-deposit {
-        color: rgba(255, 255, 255, 0.7);
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 12.5px;
     }
 
     @media (min-width: 992px) {
@@ -50,71 +52,95 @@
             color: #1e3a8a !important;
         }
         .vendor-wallet-card .card-body {
-            padding: 9px 12px !important;
+            padding: 10px 14px !important;
         }
         .wallet-heading-balance-wrap {
             display: flex !important;
             flex-direction: row !important;
             flex-wrap: wrap !important;
             align-items: center !important;
-            gap: 0 3px !important;
+            gap: 0 4px !important;
         }
         .wallet-title-colon {
             display: inline !important;
             margin-right: 2px !important;
         }
-        .vendor-wallet-card .wallet-title-text,
-        .vendor-wallet-card .text-white-50 {
+        .vendor-wallet-card .wallet-title-text {
             color: #1d4ed8 !important;
             font-weight: 700 !important;
-            font-size: 13.5px !important;
+            font-size: 13px !important;
             letter-spacing: 0.2px !important;
         }
-        .vendor-wallet-card .wallet-balance-amount,
-        .vendor-wallet-card .text-white {
+        .vendor-wallet-card .wallet-balance-amount {
             color: #0f172a !important;
             font-weight: 800 !important;
-            font-size: 14.5px !important;
+            font-size: 15px !important;
         }
-        .vendor-wallet-card .wallet-min-deposit,
-        .vendor-wallet-card .wallet-min-deposit * {
+        .vendor-wallet-card .wallet-min-deposit {
             color: #334155 !important;
             font-weight: 600 !important;
             font-size: 12px !important;
         }
-        .vendor-wallet-card .text-success,
-        .vendor-wallet-card .text-success * {
-            color: #15803d !important;
-            font-weight: 700 !important;
-            font-size: 12px !important;
-        }
-        .vendor-wallet-card .text-warning,
-        .vendor-wallet-card .text-warning * {
-            color: #d97706 !important;
-            font-weight: 700 !important;
-            font-size: 12px !important;
-        }
-        .vendor-wallet-card .wallet-icon-badge,
-        .vendor-wallet-card .rounded-circle {
+        .vendor-wallet-card .wallet-icon-badge {
             background: rgba(37, 99, 235, 0.18) !important;
             color: #1d4ed8 !important;
             width: 42px !important;
             height: 42px !important;
             font-size: 18px !important;
             margin-right: 12px !important;
-            margin-top: 18px !important;
         }
         .vendor-wallet-btn-wrap {
-            margin-top: 0px !important;
+            margin-top: 8px !important;
         }
         .vendor-add-balance-btn {
-            padding: 4px 36px !important;
-            font-size: 12.5px !important;
-            line-height: 1.3 !important;
-            min-width: 180px !important;
+            padding: 6px 24px !important;
+            font-size: 13px !important;
+            width: 100% !important;
             background-color: #10b981 !important;
             border-color: #10b981 !important;
             color: #ffffff !important;
+        }
+    }
+
+    /* Current Plan Card Styles */
+    .vendor-plan-card {
+        border-radius: 12px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+    .vendor-plan-card .plan-stat-box {
+        padding: 12px 14px;
+        background: #f8fafc;
+        border-radius: 8px;
+        border: 1px solid #edf2f7;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .vendor-plan-card .plan-stat-title {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #64748b;
+        margin-bottom: 4px;
+    }
+    .vendor-plan-card .plan-renewal-amount {
+        color: #047857;
+        font-weight: 800;
+        font-size: 16px;
+    }
+    @media (max-width: 767.98px) {
+        .vendor-plan-card .card-body {
+            padding: 12px 14px !important;
+        }
+        .vendor-plan-card .plan-stat-box {
+            padding: 8px 10px !important;
+        }
+        .vendor-plan-card .plan-renewal-amount {
+            font-size: 14.5px !important;
         }
     }
 </style>
@@ -158,7 +184,7 @@
         </div>
     @endif
 
-    <!-- Wallet Balance & Plan/Commission Overview Banner -->
+    <!-- Wallet Balance & Plan Overview Logic -->
     @php
         $dashSetting = \App\Models\Setting::first();
         $isTimeBased = $seller->isTimeBasedMode();
@@ -190,72 +216,174 @@
         </div>
     @endif
 
-    <div class="card shadow-sm mb-4 border-0 vendor-wallet-card" style="border-radius: 12px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #fff;">
-        <div class="card-body py-2.5 px-3 p-md-4" style="padding: 12px 14px;">
+    <!-- 1. STORE WALLET BALANCE CARD (Shows ONLY Balance & Min Deposit) -->
+    <div class="card shadow-sm mb-3 border-0 vendor-wallet-card" style="border-radius: 12px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #fff;">
+        <div class="card-body py-3 px-3 p-md-4">
             <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between">
                 <div class="d-flex align-items-center mb-2 mb-md-0 w-100" style="width: auto;">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow flex-shrink-0 wallet-icon-badge" style="width: 44px; height: 44px; background: rgba(16, 185, 129, 0.2); color: #10b981; font-size: 19px; margin-right: 12px;">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow flex-shrink-0 wallet-icon-badge" style="width: 46px; height: 46px; background: rgba(16, 185, 129, 0.2); color: #10b981; font-size: 20px; margin-right: 14px;">
                         <i class="fas fa-wallet"></i>
                     </div>
                     <div>
-                        <div class="wallet-heading-balance-wrap"><span class="text-uppercase small font-weight-bold wallet-title-text">{{ __('Store Wallet Balance') }}<span class="wallet-title-colon">:</span></span><span class="font-weight-bold wallet-balance-amount">{{ PriceHelper::adminCurrency() }} {{ number_format($seller->balance ?? 0, 2) }}</span></div>
+                        <div class="wallet-heading-balance-wrap">
+                            <span class="text-uppercase small font-weight-bold wallet-title-text">{{ __('Store Wallet Balance') }}<span class="wallet-title-colon">:</span></span>
+                            <span class="font-weight-bold wallet-balance-amount">{{ PriceHelper::adminCurrency() }} {{ number_format($seller->balance ?? 0, 2) }}</span>
+                        </div>
                         
-                        @if($isTimeBased)
-                            <!-- Time-Based Plan Mode Display -->
-                            <div class="d-flex flex-wrap align-items-center mt-1" style="gap: 4px 10px; font-size: 12px; line-height: 1.3;">
-                                @if($isPlanExpired)
-                                    <span class="badge badge-danger px-2 py-0.5 font-weight-bold"><i class="fas fa-times-circle mr-1"></i> {{ __('Plan Expired') }}</span>
-                                @elseif($seller->plan_status === 'active_plan')
-                                    <span class="badge badge-primary px-2 py-0.5 font-weight-bold"><i class="fas fa-check-circle mr-1"></i> {{ __('Active Plan') }}</span>
-                                @else
-                                    <span class="badge badge-success px-2 py-0.5 font-weight-bold"><i class="fas fa-gift mr-1"></i> {{ __('Free Time') }}</span>
-                                @endif
-
-                                @if(!$isPlanExpired && $planEndDate)
-                                    <span class="text-success font-weight-bold">
-                                        <i class="fas fa-clock mr-1"></i> {{ $daysRemaining }} {{ __('day(s) left') }} ({{ __('Valid until:') }} {{ $planEndDate->format('d M Y') }})
-                                    </span>
-                                @elseif($isPlanExpired && $planEndDate)
-                                    <span class="text-danger font-weight-bold">
-                                        <i class="fas fa-calendar-times mr-1"></i> {{ __('Expired on:') }} {{ $planEndDate->format('d M Y') }}
-                                    </span>
-                                @endif
-
-                                <span class="wallet-renewal-charge" style="color: rgba(255, 255, 255, 0.85);">
-                                    <i class="fas fa-redo mr-1 text-info"></i> {{ __('Next renewal charge:') }} <b class="text-warning">{{ PriceHelper::adminCurrency() }} {{ number_format($planCharge, 2) }}</b>
-                                </span>
-
-                                @if(!$isPlanExpired && $isBalanceLowForRenewal)
-                                    <span class="text-warning font-weight-bold">
-                                        <i class="fas fa-exclamation-triangle mr-1"></i> {{ __('Low balance for renewal') }}
-                                    </span>
-                                @endif
-
-                                <span class="wallet-min-deposit">
-                                    <i class="fas fa-arrow-circle-down mr-1"></i> {{ __('Min Deposit:') }} {{ PriceHelper::adminCurrency() }} {{ number_format($dashSetting->vendor_min_balance ?? 500, 2) }}
-                                </span>
-                            </div>
-                        @else
-                            <!-- Commission Per Order Mode Display -->
-                            <div class="d-flex flex-wrap align-items-center mt-0.5" style="gap: 4px 10px; font-size: 12.5px; line-height: 1.2;">
+                        <div class="d-flex flex-wrap align-items-center mt-1" style="gap: 4px 10px; font-size: 12px; line-height: 1.3;">
+                            <span class="wallet-min-deposit">
+                                <i class="fas fa-arrow-circle-down text-info mr-1"></i> {{ __('Min Deposit:') }} <b style="color: inherit;">{{ PriceHelper::adminCurrency() }} {{ number_format($dashSetting->vendor_min_balance ?? 500, 2) }}</b>
+                            </span>
+                            @if(!$isTimeBased)
                                 @if($freeOrdersLeft > 0)
-                                    <span class="text-success font-weight-bold"><i class="fas fa-gift mr-1"></i> {{ $freeOrdersLeft }} {{ __('Free order(s) left') }}</span>
+                                    <span class="text-success font-weight-bold ml-md-2"><i class="fas fa-gift mr-1"></i> {{ $freeOrdersLeft }} {{ __('Free order(s) left') }}</span>
                                 @else
-                                    <span class="text-warning font-weight-bold"><i class="fas fa-percentage mr-1"></i> {{ $dashSetting->vendor_commission_percent ?? 2 }}% {{ __('Commission Active') }}</span>
+                                    <span class="text-warning font-weight-bold ml-md-2"><i class="fas fa-percentage mr-1"></i> {{ $dashSetting->vendor_commission_percent ?? 2 }}% {{ __('Commission Active') }}</span>
                                 @endif
-                                <span class="wallet-min-deposit"><i class="fas fa-clock mr-1"></i> {{ __('Min Deposit:') }} {{ PriceHelper::adminCurrency() }} {{ number_format($dashSetting->vendor_min_balance ?? 500, 2) }}</span>
-                            </div>
-                        @endif
+                            @endif
+                        </div>
                     </div>
                 </div>
                 <div class="d-flex justify-content-center justify-content-md-end w-100 mt-2 mt-md-0 vendor-wallet-btn-wrap" style="width: auto;">
-                    <a href="{{ route('seller.wallet.index') }}" class="btn btn-success font-weight-bold shadow-sm vendor-add-balance-btn px-4 py-1.5" style="border-radius: 8px; font-size: 13px; white-space: nowrap;">
+                    <a href="{{ route('seller.wallet.index') }}" class="btn btn-success font-weight-bold shadow-sm vendor-add-balance-btn px-4 py-2" style="border-radius: 8px; font-size: 13px; white-space: nowrap;">
                         <i class="fas fa-plus-circle mr-1"></i> {{ __('Add Balance') }}
                     </a>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- 2. CURRENT PLAN CARD (Time-Based Plan Overview) -->
+    @if($isTimeBased)
+        <div class="card shadow-sm mb-4 border-0 vendor-plan-card">
+            <div class="card-body p-3 p-md-4">
+                <!-- Header: Title & Free Time / Status Badge -->
+                <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between pb-3 mb-3 border-bottom" style="gap: 8px;">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm flex-shrink-0" style="width: 38px; height: 38px; background: #e0f2fe; color: #0284c7; font-size: 17px; margin-right: 12px;">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 font-weight-bold text-dark" style="font-size: 15px;">
+                                {{ __('Current Plan') }}
+                            </h6>
+                            <span class="small text-muted" style="font-size: 11.5px;">{{ __('Time-Based Subscription Overview') }}</span>
+                        </div>
+                    </div>
+                    <div>
+                        @if($isPlanExpired)
+                            <span class="badge badge-danger px-3 py-1.5 font-weight-bold" style="font-size: 12.5px; border-radius: 20px;">
+                                <i class="fas fa-times-circle mr-1"></i> {{ __('Plan Expired') }}
+                            </span>
+                        @elseif($seller->plan_status === 'active_plan')
+                            <span class="badge badge-primary px-3 py-1.5 font-weight-bold" style="font-size: 12.5px; border-radius: 20px;">
+                                <i class="fas fa-check-circle mr-1"></i> {{ __('Active Plan') }}
+                            </span>
+                        @else
+                            <span class="badge badge-success px-3 py-1.5 font-weight-bold" style="font-size: 12.5px; border-radius: 20px; background-color: #10b981;">
+                                <i class="fas fa-gift mr-1"></i> {{ __('Free Time (Active)') }}
+                            </span>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- 4 Details Boxes -->
+                <div class="row">
+                    <!-- 1. Days Left -->
+                    <div class="col-6 col-md-3 mb-2 mb-md-0">
+                        <div class="plan-stat-box">
+                            <div>
+                                <div class="plan-stat-title">
+                                    <i class="fas fa-hourglass-half text-primary mr-1"></i> {{ __('Days Left') }}
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold {{ $isPlanExpired ? 'text-danger' : 'text-primary' }}" style="font-size: 16px;">
+                                    @if($isPlanExpired)
+                                        0 {{ __('Days') }}
+                                    @else
+                                        {{ $daysRemaining }} {{ __('Day(s)') }}
+                                    @endif
+                                </div>
+                            </div>
+                            <small class="text-muted mt-1" style="font-size: 11px;">
+                                {{ $isPlanExpired ? __('Expired') : __('Remaining validity') }}
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- 2. Valid Until / Expiry Date -->
+                    <div class="col-6 col-md-3 mb-2 mb-md-0">
+                        <div class="plan-stat-box">
+                            <div>
+                                <div class="plan-stat-title">
+                                    <i class="fas fa-calendar-alt text-info mr-1"></i> {{ $isPlanExpired ? __('Expired On') : __('Valid Until') }}
+                                </div>
+                                <div class="h6 mb-0 font-weight-bold text-dark" style="font-size: 14.5px;">
+                                    @if($planEndDate)
+                                        {{ $planEndDate->format('d M Y') }}
+                                    @else
+                                        {{ __('N/A') }}
+                                    @endif
+                                </div>
+                            </div>
+                            <small class="text-muted mt-1" style="font-size: 11px;">
+                                {{ $isPlanExpired ? __('Renew to reactivate') : __('Plan expiration date') }}
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- 3. Next Renewal Charge (High Visibility) -->
+                    <div class="col-6 col-md-3 mb-2 mb-md-0">
+                        <div class="plan-stat-box" style="border-left: 3px solid #10b981;">
+                            <div>
+                                <div class="plan-stat-title">
+                                    <i class="fas fa-redo text-success mr-1"></i> {{ __('Next Renewal Charge') }}
+                                </div>
+                                <div class="plan-renewal-amount" style="color: #047857 !important; font-size: 16px; font-weight: 800;">
+                                    {{ PriceHelper::adminCurrency() }} {{ number_format($planCharge, 2) }}
+                                </div>
+                            </div>
+                            <small class="text-muted mt-1" style="font-size: 11px;">
+                                {{ __('0% sales commission') }}
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- 4. Low Balance for Renewal / Status -->
+                    <div class="col-6 col-md-3 mb-2 mb-md-0">
+                        <div class="plan-stat-box" style="{{ $isBalanceLowForRenewal && !$isPlanExpired ? 'background: #fffbeb; border-left: 3px solid #f59e0b;' : ($isPlanExpired ? 'background: #fef2f2; border-left: 3px solid #ef4444;' : 'background: #f0fdf4; border-left: 3px solid #10b981;') }}">
+                            <div>
+                                <div class="plan-stat-title">
+                                    <i class="fas fa-shield-alt text-secondary mr-1"></i> {{ __('Renewal Status') }}
+                                </div>
+                                @if($isPlanExpired)
+                                    <div class="font-weight-bold text-danger" style="font-size: 13px;">
+                                        <i class="fas fa-times-circle mr-1"></i> {{ __('Plan Expired') }}
+                                    </div>
+                                    <small class="text-danger font-weight-bold d-block mt-1" style="font-size: 11px;">
+                                        {{ __('Deposit required') }}
+                                    </small>
+                                @elseif($isBalanceLowForRenewal)
+                                    <div class="font-weight-bold" style="font-size: 13px; color: #b45309;">
+                                        <i class="fas fa-exclamation-triangle mr-1 text-warning"></i> {{ __('Low Balance') }}
+                                    </div>
+                                    <small class="text-danger font-weight-bold d-block mt-1" style="font-size: 11px;">
+                                        {{ __('Add :curr :amount', ['curr' => PriceHelper::adminCurrency(), 'amount' => number_format($planCharge - (float)($seller->balance ?? 0), 2)]) }}
+                                    </small>
+                                @else
+                                    <div class="font-weight-bold" style="font-size: 13px; color: #15803d !important;">
+                                        <i class="fas fa-check-circle mr-1 text-success"></i> {{ __('Sufficient') }}
+                                    </div>
+                                    <small class="text-muted d-block mt-1" style="font-size: 11px;">
+                                        {{ __('Auto renew ready') }}
+                                    </small>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 
     <!-- Sales Row -->
     <div class="row">
