@@ -68,8 +68,10 @@
                                         <span class="text-danger">{{ __('Expired') }}</span>
                                     @elseif($seller->plan_status === 'active_plan')
                                         <span class="text-primary">{{ __('Active Plan') }}</span>
-                                    @else
+                                    @elseif(!$isPlanExpired && in_array($seller->plan_status, ['free_time', 'free_period']))
                                         <span class="text-success">{{ __('Free Time') }}</span>
+                                    @else
+                                        <span class="text-primary">{{ __('Active Plan') }}</span>
                                     @endif
                                 </div>
                                 <small class="mt-1 d-block font-weight-bold {{ $isPlanExpired ? 'text-danger' : 'text-success' }}">

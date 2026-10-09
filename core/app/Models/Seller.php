@@ -214,7 +214,11 @@ class Seller extends Model
             return __('Active Plan');
         }
 
-        return __('Free Time');
+        if (in_array($this->plan_status, ['free_time', 'free_period'])) {
+            return __('Free Time');
+        }
+
+        return __('Active Plan');
     }
 
     /**

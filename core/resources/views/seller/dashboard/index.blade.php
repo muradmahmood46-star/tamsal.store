@@ -193,6 +193,7 @@
         $daysRemaining = $seller->plan_days_remaining;
         $planEndDate = $seller->plan_end_date ? \Carbon\Carbon::parse($seller->plan_end_date) : null;
         $isBalanceLowForRenewal = ((float)($seller->balance ?? 0) < $planCharge);
+        $isFreeTimeActive = (!$isPlanExpired && in_array($seller->plan_status, ['free_time', 'free_period']));
 
         $freeOrdersLimit = (int)($dashSetting->vendor_free_orders ?? 5);
         $currVendorOrdersCount = \App\Models\Order::where('vendor_id', Auth::id())->count();
@@ -279,7 +280,7 @@
                             <span class="badge badge-primary px-3 py-1.5 font-weight-bold" style="font-size: 12.5px; border-radius: 20px;">
                                 <i class="fas fa-check-circle mr-1"></i> {{ __('Active Plan') }}
                             </span>
-                        @else
+                        @elseif($isFreeTimeActive)
                             <span class="badge badge-success px-3 py-1.5 font-weight-bold" style="font-size: 12.5px; border-radius: 20px; background-color: #10b981;">
                                 <i class="fas fa-gift mr-1"></i> {{ __('Free Time (Active)') }}
                             </span>
