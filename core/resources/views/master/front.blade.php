@@ -1092,7 +1092,7 @@
             box-shadow: 0 6px 18px rgba(140, 207, 0, 0.2) !important;
         }
 
-        /* Left Side (Half Left) Text Content */
+        /* Left Side (Half Left) Text Content with Dashing Pearl-Slate Tint */
         .bannner-section .modern-banner-card .banner-text-content,
         .modern-banner-card .banner-text-content {
             flex: 0 0 50% !important;
@@ -1109,15 +1109,23 @@
             transform: none !important;
             box-sizing: border-box !important;
             overflow: hidden !important;
+            background: linear-gradient(135deg, #f8fafc 0%, #edf2f7 100%) !important;
+            border-right: 1px solid rgba(226, 232, 240, 0.8) !important;
+            transition: background 0.3s ease !important;
+        }
+
+        .bannner-section .modern-banner-card:hover .banner-text-content,
+        .modern-banner-card:hover .banner-text-content {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important;
         }
 
         .bannner-section .modern-banner-card .banner-subtitle,
         .modern-banner-card .banner-subtitle {
             font-size: 11px !important;
-            font-weight: 700 !important;
+            font-weight: 800 !important;
             color: {{ $setting->primary_color ?? '#8CCF00' }} !important;
             text-transform: uppercase !important;
-            letter-spacing: 0.4px !important;
+            letter-spacing: 0.5px !important;
             margin-bottom: 2px !important;
             line-height: 1.15 !important;
             display: inline-block !important;
@@ -1138,7 +1146,7 @@
         .bannner-section .modern-banner-card .banner-title,
         .modern-banner-card .banner-title {
             font-size: 13.5px !important;
-            font-weight: 700 !important;
+            font-weight: 800 !important;
             color: #0f172a !important;
             line-height: 1.25 !important;
             margin: 0 !important;
