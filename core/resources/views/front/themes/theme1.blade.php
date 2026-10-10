@@ -1047,7 +1047,7 @@
             <div class="container ">
                 <div class="row gx-3 mobile-banner-row">
                     <div class="col-6 col-md-3 mb-3 mobile-banner-col">
-                        <a href="{{ $banner_first['firsturl1'] ?? '#' }}" class="genius-banner modern-banner-card">
+                        <div class="genius-banner modern-banner-card">
                             <div class="banner-text-content">
                                 @if (!empty($banner_first['subtitle1']))
                                     <span class="banner-subtitle">{{ $banner_first['subtitle1'] }}</span>
@@ -1069,10 +1069,10 @@
                                     <img src="{{ url('/core/public/storage/images/' . $b1_img1) }}" alt="{{ $banner_first['title1'] ?? '' }}">
                                 @endif
                             </div>
-                        </a>
+                        </div>
                     </div>
                     <div class="col-6 col-md-3 mb-3 mobile-banner-col">
-                        <a href="{{ $banner_first['firsturl2'] ?? '#' }}" class="genius-banner modern-banner-card">
+                        <div class="genius-banner modern-banner-card">
                             <div class="banner-text-content">
                                 @if (!empty($banner_first['subtitle2']))
                                     <span class="banner-subtitle">{{ $banner_first['subtitle2'] }}</span>
@@ -1094,10 +1094,10 @@
                                     <img src="{{ url('/core/public/storage/images/' . $b1_img2) }}" alt="{{ $banner_first['title2'] ?? '' }}">
                                 @endif
                             </div>
-                        </a>
+                        </div>
                     </div>
                     <div class="col-6 col-md-3 mb-3 mobile-banner-col">
-                        <a href="{{ $banner_first['firsturl3'] ?? '#' }}" class="genius-banner modern-banner-card">
+                        <div class="genius-banner modern-banner-card">
                             <div class="banner-text-content">
                                 @if (!empty($banner_first['subtitle3']))
                                     <span class="banner-subtitle">{{ $banner_first['subtitle3'] }}</span>
@@ -1119,10 +1119,10 @@
                                     <img src="{{ url('/core/public/storage/images/' . $b1_img3) }}" alt="{{ $banner_first['title3'] ?? '' }}">
                                 @endif
                             </div>
-                        </a>
+                        </div>
                     </div>
                     <div class="col-6 col-md-3 mb-3 mobile-banner-col">
-                        <a href="{{ $banner_first['firsturl4'] ?? ($banner_first['firsturl3'] ?? '#') }}" class="genius-banner modern-banner-card">
+                        <div class="genius-banner modern-banner-card">
                             <div class="banner-text-content">
                                 @if (!empty($banner_first['subtitle4']) || !empty($banner_first['subtitle3']))
                                     <span class="banner-subtitle">{{ $banner_first['subtitle4'] ?? ($banner_first['subtitle3'] ?? '') }}</span>
@@ -1144,7 +1144,7 @@
                                     <img src="{{ url('/core/public/storage/images/' . $b1_img4) }}" alt="{{ $banner_first['title4'] ?? ($banner_first['title3'] ?? '') }}">
                                 @endif
                             </div>
-                        </a>
+                        </div>
                     </div>
                 </div>
             </div>

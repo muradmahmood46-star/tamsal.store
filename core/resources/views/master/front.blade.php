@@ -1080,6 +1080,7 @@
             position: relative !important;
             overflow: hidden !important;
             text-decoration: none !important;
+            cursor: default !important;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03) !important;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
             box-sizing: border-box !important;
