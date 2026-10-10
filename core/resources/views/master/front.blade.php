@@ -1072,10 +1072,11 @@
             justify-content: space-between !important;
             background: #ffffff !important;
             border: 1.5px solid #e2e8f0 !important;
-            border-radius: 12px !important;
+            border-radius: 10px !important;
             padding: 0 !important;
-            min-height: 104px !important;
-            height: 100% !important;
+            height: 78px !important;
+            min-height: 78px !important;
+            max-height: 82px !important;
             position: relative !important;
             overflow: hidden !important;
             text-decoration: none !important;
@@ -1086,9 +1087,9 @@
 
         .bannner-section .modern-banner-card:hover,
         .modern-banner-card:hover {
-            transform: translateY(-3px) !important;
+            transform: translateY(-2px) !important;
             border-color: {{ $setting->primary_color ?? '#8CCF00' }} !important;
-            box-shadow: 0 8px 24px rgba(140, 207, 0, 0.22) !important;
+            box-shadow: 0 6px 18px rgba(140, 207, 0, 0.2) !important;
         }
 
         /* Left Side (Half Left) Text Content */
@@ -1097,7 +1098,7 @@
             flex: 0 0 50% !important;
             width: 50% !important;
             max-width: 50% !important;
-            padding: 12px 14px !important;
+            padding: 8px 12px !important;
             display: flex !important;
             flex-direction: column !important;
             justify-content: center !important;
@@ -1107,17 +1108,18 @@
             position: static !important;
             transform: none !important;
             box-sizing: border-box !important;
+            overflow: hidden !important;
         }
 
         .bannner-section .modern-banner-card .banner-subtitle,
         .modern-banner-card .banner-subtitle {
-            font-size: 11.5px !important;
+            font-size: 11px !important;
             font-weight: 700 !important;
             color: {{ $setting->primary_color ?? '#8CCF00' }} !important;
             text-transform: uppercase !important;
-            letter-spacing: 0.5px !important;
-            margin-bottom: 4px !important;
-            line-height: 1.2 !important;
+            letter-spacing: 0.4px !important;
+            margin-bottom: 2px !important;
+            line-height: 1.15 !important;
             display: inline-block !important;
             transition: color 0.3s ease !important;
             background: transparent !important;
@@ -1127,14 +1129,18 @@
             padding: 0 !important;
             border: none !important;
             border-radius: 0 !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            max-width: 100% !important;
         }
 
         .bannner-section .modern-banner-card .banner-title,
         .modern-banner-card .banner-title {
-            font-size: 14.5px !important;
+            font-size: 13.5px !important;
             font-weight: 700 !important;
             color: #0f172a !important;
-            line-height: 1.3 !important;
+            line-height: 1.25 !important;
             margin: 0 !important;
             display: -webkit-box !important;
             -webkit-line-clamp: 2 !important;
@@ -1159,9 +1165,9 @@
             flex: 0 0 50% !important;
             width: 50% !important;
             max-width: 50% !important;
-            height: auto !important;
+            height: 100% !important;
             min-height: 100% !important;
-            max-height: none !important;
+            max-height: 100% !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
@@ -1181,7 +1187,7 @@
             width: 100% !important;
             height: 100% !important;
             max-width: 100% !important;
-            max-height: none !important;
+            max-height: 100% !important;
             object-fit: cover !important;
             object-position: center !important;
             border-radius: 0 !important;
@@ -1225,33 +1231,36 @@
             .bannner-section .modern-banner-card,
             .modern-banner-card {
                 padding: 0 !important;
-                min-height: 80px !important;
-                border-radius: 10px !important;
+                height: 66px !important;
+                min-height: 66px !important;
+                max-height: 70px !important;
+                border-radius: 8px !important;
             }
             .bannner-section .modern-banner-card .banner-text-content,
             .modern-banner-card .banner-text-content {
                 flex: 0 0 50% !important;
                 width: 50% !important;
                 max-width: 50% !important;
-                padding: 8px 10px !important;
+                padding: 6px 8px !important;
             }
             .bannner-section .modern-banner-card .banner-subtitle,
             .modern-banner-card .banner-subtitle {
-                font-size: 10px !important;
-                margin-bottom: 2px !important;
+                font-size: 9.5px !important;
+                margin-bottom: 1px !important;
             }
             .bannner-section .modern-banner-card .banner-title,
             .modern-banner-card .banner-title {
-                font-size: 12px !important;
-                line-height: 1.25 !important;
+                font-size: 11.5px !important;
+                line-height: 1.2 !important;
             }
             .bannner-section .modern-banner-card .banner-img-box,
             .modern-banner-card .banner-img-box {
                 flex: 0 0 50% !important;
                 width: 50% !important;
                 max-width: 50% !important;
-                height: auto !important;
+                height: 100% !important;
                 min-height: 100% !important;
+                max-height: 100% !important;
                 padding: 0 !important;
                 border: none !important;
                 border-radius: 0 !important;
