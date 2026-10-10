@@ -729,4 +729,149 @@ class FrontendController extends Controller
 
         return redirect(route('front.index'));
     }
+
+    public function sitemap()
+    {
+        $urls = [];
+
+        // 1. Static main pages
+        try {
+            $urls[] = [
+                'loc' => route('front.index'),
+                'lastmod' => now()->toAtomString(),
+                'changefreq' => 'daily',
+                'priority' => '1.0'
+            ];
+            $urls[] = [
+                'loc' => route('front.catalog'),
+                'lastmod' => now()->toAtomString(),
+                'changefreq' => 'daily',
+                'priority' => '0.9'
+            ];
+            if (\Illuminate\Support\Facades\Route::has('front.brand')) {
+                $urls[] = [
+                    'loc' => route('front.brand'),
+                    'lastmod' => now()->toAtomString(),
+                    'changefreq' => 'weekly',
+                    'priority' => '0.7'
+                ];
+            }
+            if (\Illuminate\Support\Facades\Route::has('front.faq')) {
+                $urls[] = [
+                    'loc' => route('front.faq'),
+                    'lastmod' => now()->toAtomString(),
+                    'changefreq' => 'monthly',
+                    'priority' => '0.5'
+                ];
+            }
+            if (\Illuminate\Support\Facades\Route::has('front.contact')) {
+                $urls[] = [
+                    'loc' => route('front.contact'),
+                    'lastmod' => now()->toAtomString(),
+                    'changefreq' => 'monthly',
+                    'priority' => '0.5'
+                ];
+            }
+        } catch (\Throwable $e) {}
+
+        // 2. Active Products
+        try {
+            $items = Item::where('status', 1)
+                ->where(function($q) {
+                    $q->whereNull('is_hidden_by_block')->orWhere('is_hidden_by_block', 0);
+                })
+                ->where(function($q) {
+                    $q->whereNull('is_hidden_by_plan')->orWhere('is_hidden_by_plan', 0);
+                })
+                ->select(['id', 'slug', 'updated_at'])
+                ->get();
+
+            foreach ($items as $item) {
+                if (!empty($item->slug)) {
+                    $urls[] = [
+                        'loc' => route('front.product', $item->slug),
+                        'lastmod' => !empty($item->updated_at) ? $item->updated_at->toAtomString() : now()->toAtomString(),
+                        'changefreq' => 'weekly',
+                        'priority' => '0.8'
+                    ];
+                }
+            }
+        } catch (\Throwable $e) {}
+
+        // 3. Active Categories
+        try {
+            $categories = Category::where('status', 1)->select(['id', 'slug', 'updated_at'])->get();
+            foreach ($categories as $cat) {
+                if (!empty($cat->slug)) {
+                    $urls[] = [
+                        'loc' => route('front.catalog', ['category' => $cat->slug]),
+                        'lastmod' => !empty($cat->updated_at) ? $cat->updated_at->toAtomString() : now()->toAtomString(),
+                        'changefreq' => 'weekly',
+                        'priority' => '0.8'
+                    ];
+                }
+            }
+        } catch (\Throwable $e) {}
+
+        // 4. Active Brands
+        try {
+            $brands = Brand::where('status', 1)->select(['id', 'slug', 'updated_at'])->get();
+            foreach ($brands as $brand) {
+                if (!empty($brand->slug)) {
+                    $urls[] = [
+                        'loc' => route('front.catalog', ['brand' => $brand->slug]),
+                        'lastmod' => !empty($brand->updated_at) ? $brand->updated_at->toAtomString() : now()->toAtomString(),
+                        'changefreq' => 'monthly',
+                        'priority' => '0.6'
+                    ];
+                }
+            }
+        } catch (\Throwable $e) {}
+
+        // 5. Active Pages
+        try {
+            $pages = \App\Models\Page::where('status', 1)->select(['id', 'slug', 'updated_at'])->get();
+            foreach ($pages as $p) {
+                if (!empty($p->slug)) {
+                    $urls[] = [
+                        'loc' => route('front.page', $p->slug),
+                        'lastmod' => !empty($p->updated_at) ? $p->updated_at->toAtomString() : now()->toAtomString(),
+                        'changefreq' => 'monthly',
+                        'priority' => '0.5'
+                    ];
+                }
+            }
+        } catch (\Throwable $e) {}
+
+        // 6. Active Posts (Blogs)
+        try {
+            $posts = Post::select(['id', 'slug', 'updated_at'])->get();
+            foreach ($posts as $post) {
+                if (!empty($post->slug)) {
+                    $urls[] = [
+                        'loc' => route('front.blog.details', $post->slug),
+                        'lastmod' => !empty($post->updated_at) ? $post->updated_at->toAtomString() : now()->toAtomString(),
+                        'changefreq' => 'monthly',
+                        'priority' => '0.6'
+                    ];
+                }
+            }
+        } catch (\Throwable $e) {}
+
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+        foreach ($urls as $u) {
+            $xml .= "  <url>\n";
+            $xml .= "    <loc>" . htmlspecialchars($u['loc'], ENT_XML1, 'UTF-8') . "</loc>\n";
+            $xml .= "    <lastmod>" . $u['lastmod'] . "</lastmod>\n";
+            $xml .= "    <changefreq>" . $u['changefreq'] . "</changefreq>\n";
+            $xml .= "    <priority>" . $u['priority'] . "</priority>\n";
+            $xml .= "  </url>\n";
+        }
+        $xml .= '</urlset>';
+
+        return response($xml, 200)
+            ->header('Content-Type', 'application/xml; charset=utf-8')
+            ->header('Cache-Control', 'public, max-age=3600');
+    }
 }

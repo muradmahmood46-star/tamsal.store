@@ -731,6 +731,9 @@ Route::group(['middleware' => 'maintainance'], function () {
             return redirect()->route('back.dashboard')->withSuccess(__('System Cache Has Been Removed.'));
         })->name('front.cache.clear');
 
+        //------------ SITEMAP ------------
+        Route::get('/sitemap.xml', 'Front\FrontendController@sitemap')->name('front.sitemap');
+
         //------------ PAGE ------------
         Route::get('/{slug}', 'Front\FrontendController@page')->name('front.page');
 

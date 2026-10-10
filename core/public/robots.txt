@@ -1,4 +1,11 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /seller/
+Disallow: /cart
+Disallow: /checkout
+Disallow: /user/
+Disallow: /compare/
+Disallow: /clear-server-cache
 
 Sitemap: https://tamsal.store/sitemap.xml

@@ -5,8 +5,10 @@
 @endsection
 
 
+@section('canonical'){{ route('front.product', $item->slug) }}@endsection
+
 @section('meta')
-    <meta name="tile" content="{{ $item->title }}">
+    <meta name="title" content="{{ $item->title }}">
     <meta name="keywords" content="{{ $item->meta_keywords }}">
     <meta name="description" content="{{ $item->meta_description }}">
 

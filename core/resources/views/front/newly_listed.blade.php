@@ -4,6 +4,7 @@
     {{ __('Newly Listed Products') }}
 @endsection
 
+@section('canonical'){{ route('front.newly_listed') }}@endsection
 @section('meta')
 <meta name="keywords" content="{{$setting->meta_keywords}}">
 <meta name="description" content="{{$setting->meta_description}}">

@@ -31,6 +31,14 @@
         @yield('meta')
     @endif
 
+    <!-- Search Engine Directives & Canonical URL -->
+    @if (request()->is('user*') || request()->is('checkout*') || request()->is('cart*') || request()->is('compare*'))
+        <meta name="robots" content="noindex, nofollow">
+    @else
+        <meta name="robots" content="index, follow">
+    @endif
+    <link rel="canonical" href="@yield('canonical', url()->current())">
+
     <!-- Mobile Specific Meta Tag-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 

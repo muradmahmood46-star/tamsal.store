@@ -1,4 +1,5 @@
 @extends('master.front')
+@section('canonical'){{ route('front.brand') }}@endsection
 @section('meta')
 <meta name="keywords" content="{{$setting->meta_keywords}}">
 <meta name="description" content="{{$setting->meta_description}}">

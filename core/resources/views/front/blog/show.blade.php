@@ -9,6 +9,7 @@
         $keyword = $post->title;
     }
 @endphp
+@section('canonical'){{ route('front.blog.details', $post->slug) }}@endsection
 @section('meta')
     <meta name="title" content="{{ $post->title }}">
     <meta name="keywords" content="{{ $keyword }}">

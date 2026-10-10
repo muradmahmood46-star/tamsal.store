@@ -1,4 +1,9 @@
 @extends('master.front')
+@php
+    $allowedParams = array_filter(request()->only(['category', 'subcategory', 'childcategory', 'brand', 'tag', 'store']));
+    $canonicalUrl = !empty($allowedParams) ? route('front.catalog', $allowedParams) : route('front.catalog');
+@endphp
+@section('canonical'){{ $canonicalUrl }}@endsection
 @section('meta')
 <meta name="keywords" content="{{$setting->meta_keywords}}">
 <meta name="description" content="{{$setting->meta_description}}">

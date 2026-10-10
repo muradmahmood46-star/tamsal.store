@@ -4,6 +4,8 @@
     {{__('Page')}}
 @endsection
 
+@section('canonical'){{ route('front.page', $page->slug) }}@endsection
+
 @section('content')
     <!-- Page Title-->
 <div class="page-title">
