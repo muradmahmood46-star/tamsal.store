@@ -1235,7 +1235,7 @@
             .bannner-section .mobile-banner-col {
                 padding-right: 4px !important;
                 padding-left: 4px !important;
-                margin-bottom: 4px !important;
+                margin-bottom: 5px !important;
             }
             .bannner-section .mobile-banner-col:nth-child(n+3) {
                 margin-bottom: 0 !important;
