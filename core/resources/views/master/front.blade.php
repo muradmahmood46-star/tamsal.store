@@ -1074,9 +1074,9 @@
             border: 1.5px solid #e2e8f0 !important;
             border-radius: 10px !important;
             padding: 0 !important;
-            height: 78px !important;
-            min-height: 78px !important;
-            max-height: 82px !important;
+            height: 90px !important;
+            min-height: 90px !important;
+            max-height: 94px !important;
             position: relative !important;
             overflow: hidden !important;
             text-decoration: none !important;
@@ -1098,7 +1098,7 @@
             flex: 0 0 50% !important;
             width: 50% !important;
             max-width: 50% !important;
-            padding: 8px 12px !important;
+            padding: 10px 14px !important;
             display: flex !important;
             flex-direction: column !important;
             justify-content: center !important;
@@ -1121,12 +1121,12 @@
 
         .bannner-section .modern-banner-card .banner-subtitle,
         .modern-banner-card .banner-subtitle {
-            font-size: 11px !important;
+            font-size: 11.5px !important;
             font-weight: 800 !important;
             color: {{ $setting->primary_color ?? '#8CCF00' }} !important;
             text-transform: uppercase !important;
             letter-spacing: 0.5px !important;
-            margin-bottom: 2px !important;
+            margin-bottom: 3px !important;
             line-height: 1.15 !important;
             display: inline-block !important;
             transition: color 0.3s ease !important;
@@ -1145,7 +1145,7 @@
 
         .bannner-section .modern-banner-card .banner-title,
         .modern-banner-card .banner-title {
-            font-size: 13.5px !important;
+            font-size: 14px !important;
             font-weight: 800 !important;
             color: #0f172a !important;
             line-height: 1.25 !important;
@@ -1226,7 +1226,7 @@
         }
 
         /* Mobile Responsiveness */
-        @media (max-width: 575px) {
+        @media (max-width: 767.98px) {
             .bannner-section .mobile-banner-row {
                 margin-right: -4px !important;
                 margin-left: -4px !important;
@@ -1234,32 +1234,35 @@
             .bannner-section .mobile-banner-col {
                 padding-right: 4px !important;
                 padding-left: 4px !important;
-                margin-bottom: 8px !important;
+                margin-bottom: 6px !important;
+            }
+            .bannner-section .mobile-banner-col:nth-child(n+3) {
+                margin-bottom: 0 !important;
             }
             .bannner-section .modern-banner-card,
             .modern-banner-card {
                 padding: 0 !important;
-                height: 66px !important;
-                min-height: 66px !important;
-                max-height: 70px !important;
-                border-radius: 8px !important;
+                height: 75px !important;
+                min-height: 75px !important;
+                max-height: 78px !important;
+                border-radius: 9px !important;
             }
             .bannner-section .modern-banner-card .banner-text-content,
             .modern-banner-card .banner-text-content {
                 flex: 0 0 50% !important;
                 width: 50% !important;
                 max-width: 50% !important;
-                padding: 6px 8px !important;
+                padding: 7px 10px !important;
             }
             .bannner-section .modern-banner-card .banner-subtitle,
             .modern-banner-card .banner-subtitle {
-                font-size: 9.5px !important;
-                margin-bottom: 1px !important;
+                font-size: 10px !important;
+                margin-bottom: 2px !important;
             }
             .bannner-section .modern-banner-card .banner-title,
             .modern-banner-card .banner-title {
-                font-size: 11.5px !important;
-                line-height: 1.2 !important;
+                font-size: 12px !important;
+                line-height: 1.25 !important;
             }
             .bannner-section .modern-banner-card .banner-img-box,
             .modern-banner-card .banner-img-box {
