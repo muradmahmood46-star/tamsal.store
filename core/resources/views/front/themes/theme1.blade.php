@@ -1062,9 +1062,9 @@
                                     $b1_ext1 = strtolower(pathinfo($b1_img1, PATHINFO_EXTENSION));
                                 @endphp
                                 @if ($b1_ext1 == 'lottie')
-                                    <dotlottie-player src="{{ url('/core/public/storage/images/' . $b1_img1) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 80px; object-fit: contain;"></dotlottie-player>
+                                    <dotlottie-player src="{{ url('/core/public/storage/images/' . $b1_img1) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 100%; min-height: 80px; object-fit: cover;"></dotlottie-player>
                                 @elseif ($b1_ext1 == 'json')
-                                    <lottie-player src="{{ url('/core/public/storage/images/' . $b1_img1) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 80px; object-fit: contain;"></lottie-player>
+                                    <lottie-player src="{{ url('/core/public/storage/images/' . $b1_img1) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 100%; min-height: 80px; object-fit: cover;"></lottie-player>
                                 @else
                                     <img src="{{ url('/core/public/storage/images/' . $b1_img1) }}" alt="{{ $banner_first['title1'] ?? '' }}">
                                 @endif
@@ -1087,9 +1087,9 @@
                                     $b1_ext2 = strtolower(pathinfo($b1_img2, PATHINFO_EXTENSION));
                                 @endphp
                                 @if ($b1_ext2 == 'lottie')
-                                    <dotlottie-player src="{{ url('/core/public/storage/images/' . $b1_img2) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 80px; object-fit: contain;"></dotlottie-player>
+                                    <dotlottie-player src="{{ url('/core/public/storage/images/' . $b1_img2) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 100%; min-height: 80px; object-fit: cover;"></dotlottie-player>
                                 @elseif ($b1_ext2 == 'json')
-                                    <lottie-player src="{{ url('/core/public/storage/images/' . $b1_img2) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 80px; object-fit: contain;"></lottie-player>
+                                    <lottie-player src="{{ url('/core/public/storage/images/' . $b1_img2) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 100%; min-height: 80px; object-fit: cover;"></lottie-player>
                                 @else
                                     <img src="{{ url('/core/public/storage/images/' . $b1_img2) }}" alt="{{ $banner_first['title2'] ?? '' }}">
                                 @endif
@@ -1112,9 +1112,9 @@
                                     $b1_ext3 = strtolower(pathinfo($b1_img3, PATHINFO_EXTENSION));
                                 @endphp
                                 @if ($b1_ext3 == 'lottie')
-                                    <dotlottie-player src="{{ url('/core/public/storage/images/' . $b1_img3) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 80px; object-fit: contain;"></dotlottie-player>
+                                    <dotlottie-player src="{{ url('/core/public/storage/images/' . $b1_img3) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 100%; min-height: 80px; object-fit: cover;"></dotlottie-player>
                                 @elseif ($b1_ext3 == 'json')
-                                    <lottie-player src="{{ url('/core/public/storage/images/' . $b1_img3) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 80px; object-fit: contain;"></lottie-player>
+                                    <lottie-player src="{{ url('/core/public/storage/images/' . $b1_img3) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 100%; min-height: 80px; object-fit: cover;"></lottie-player>
                                 @else
                                     <img src="{{ url('/core/public/storage/images/' . $b1_img3) }}" alt="{{ $banner_first['title3'] ?? '' }}">
                                 @endif
@@ -1137,9 +1137,9 @@
                                     $b1_ext4 = strtolower(pathinfo($b1_img4, PATHINFO_EXTENSION));
                                 @endphp
                                 @if ($b1_ext4 == 'lottie')
-                                    <dotlottie-player src="{{ url('/core/public/storage/images/' . $b1_img4) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 80px; object-fit: contain;"></dotlottie-player>
+                                    <dotlottie-player src="{{ url('/core/public/storage/images/' . $b1_img4) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 100%; min-height: 80px; object-fit: cover;"></dotlottie-player>
                                 @elseif ($b1_ext4 == 'json')
-                                    <lottie-player src="{{ url('/core/public/storage/images/' . $b1_img4) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 80px; object-fit: contain;"></lottie-player>
+                                    <lottie-player src="{{ url('/core/public/storage/images/' . $b1_img4) }}" background="transparent" speed="1" loop autoplay style="width: 100%; height: 100%; min-height: 80px; object-fit: cover;"></lottie-player>
                                 @else
                                     <img src="{{ url('/core/public/storage/images/' . $b1_img4) }}" alt="{{ $banner_first['title4'] ?? ($banner_first['title3'] ?? '') }}">
                                 @endif

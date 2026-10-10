@@ -1068,12 +1068,12 @@
         .modern-banner-card {
             display: flex !important;
             flex-direction: row !important;
-            align-items: center !important;
+            align-items: stretch !important;
             justify-content: space-between !important;
             background: #ffffff !important;
             border: 1.5px solid #e2e8f0 !important;
             border-radius: 12px !important;
-            padding: 12px 14px !important;
+            padding: 0 !important;
             min-height: 104px !important;
             height: 100% !important;
             position: relative !important;
@@ -1091,12 +1091,13 @@
             box-shadow: 0 8px 24px rgba(140, 207, 0, 0.22) !important;
         }
 
-        /* Left Side Text Content */
+        /* Left Side (Half Left) Text Content */
         .bannner-section .modern-banner-card .banner-text-content,
         .modern-banner-card .banner-text-content {
-            flex: 1 1 56% !important;
-            max-width: 58% !important;
-            padding-right: 10px !important;
+            flex: 0 0 50% !important;
+            width: 50% !important;
+            max-width: 50% !important;
+            padding: 12px 14px !important;
             display: flex !important;
             flex-direction: column !important;
             justify-content: center !important;
@@ -1105,6 +1106,7 @@
             z-index: 2 !important;
             position: static !important;
             transform: none !important;
+            box-sizing: border-box !important;
         }
 
         .bannner-section .modern-banner-card .banner-subtitle,
@@ -1151,51 +1153,62 @@
             color: #0f172a !important;
         }
 
-        /* Right Side Image Box with Rounded Bordering */
+        /* Right Side (Half Right) Image Box - Line-to-Line Edge to Edge */
         .bannner-section .modern-banner-card .banner-img-box,
         .modern-banner-card .banner-img-box {
-            flex: 0 0 42% !important;
-            width: 42% !important;
-            max-width: 42% !important;
-            height: 78px !important;
-            max-height: 82px !important;
+            flex: 0 0 50% !important;
+            width: 50% !important;
+            max-width: 50% !important;
+            height: auto !important;
+            min-height: 100% !important;
+            max-height: none !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            background-color: #f8fafc !important;
-            border: 1.5px solid #e2e8f0 !important;
-            border-radius: 10px !important;
-            padding: 5px !important;
+            background-color: transparent !important;
+            border: none !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
             overflow: hidden !important;
             margin-left: auto !important;
             box-sizing: border-box !important;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease !important;
+            position: relative !important;
         }
 
         .bannner-section .modern-banner-card .banner-img-box img,
         .modern-banner-card .banner-img-box img {
+            width: 100% !important;
+            height: 100% !important;
             max-width: 100% !important;
-            max-height: 100% !important;
-            width: auto !important;
-            height: auto !important;
-            object-fit: contain !important;
+            max-height: none !important;
+            object-fit: cover !important;
             object-position: center !important;
-            border-radius: 6px !important;
+            border-radius: 0 !important;
             display: block !important;
-            margin: auto !important;
+            margin: 0 !important;
             transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
             transform: scale(1) !important;
         }
 
+        .bannner-section .modern-banner-card .banner-img-box dotlottie-player,
+        .modern-banner-card .banner-img-box dotlottie-player,
+        .bannner-section .modern-banner-card .banner-img-box lottie-player,
+        .modern-banner-card .banner-img-box lottie-player {
+            width: 100% !important;
+            height: 100% !important;
+            display: block !important;
+        }
+
         .bannner-section .modern-banner-card:hover .banner-img-box,
         .modern-banner-card:hover .banner-img-box {
-            border-color: {{ $setting->primary_color ?? '#8CCF00' }} !important;
-            box-shadow: 0 2px 8px rgba(140, 207, 0, 0.15) !important;
+            border-color: transparent !important;
+            box-shadow: none !important;
         }
 
         .bannner-section .modern-banner-card:hover .banner-img-box img,
         .modern-banner-card:hover .banner-img-box img {
-            transform: scale(1.08) !important;
+            transform: scale(1.05) !important;
         }
 
         /* Mobile Responsiveness */
@@ -1211,15 +1224,16 @@
             }
             .bannner-section .modern-banner-card,
             .modern-banner-card {
-                padding: 8px 10px !important;
-                min-height: 84px !important;
+                padding: 0 !important;
+                min-height: 80px !important;
                 border-radius: 10px !important;
             }
             .bannner-section .modern-banner-card .banner-text-content,
             .modern-banner-card .banner-text-content {
-                flex: 1 1 54% !important;
-                max-width: 56% !important;
-                padding-right: 6px !important;
+                flex: 0 0 50% !important;
+                width: 50% !important;
+                max-width: 50% !important;
+                padding: 8px 10px !important;
             }
             .bannner-section .modern-banner-card .banner-subtitle,
             .modern-banner-card .banner-subtitle {
@@ -1233,13 +1247,14 @@
             }
             .bannner-section .modern-banner-card .banner-img-box,
             .modern-banner-card .banner-img-box {
-                flex: 0 0 44% !important;
-                width: 44% !important;
-                max-width: 44% !important;
-                height: 64px !important;
-                max-height: 68px !important;
-                padding: 4px !important;
-                border-radius: 8px !important;
+                flex: 0 0 50% !important;
+                width: 50% !important;
+                max-width: 50% !important;
+                height: auto !important;
+                min-height: 100% !important;
+                padding: 0 !important;
+                border: none !important;
+                border-radius: 0 !important;
             }
         }
     </style>
