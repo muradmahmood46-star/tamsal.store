@@ -1074,9 +1074,9 @@
             border: 1.5px solid #e2e8f0 !important;
             border-radius: 10px !important;
             padding: 0 !important;
-            height: 90px !important;
-            min-height: 90px !important;
-            max-height: 94px !important;
+            height: 100px !important;
+            min-height: 100px !important;
+            max-height: 104px !important;
             position: relative !important;
             overflow: hidden !important;
             text-decoration: none !important;
@@ -1235,7 +1235,7 @@
             .bannner-section .mobile-banner-col {
                 padding-right: 4px !important;
                 padding-left: 4px !important;
-                margin-bottom: 6px !important;
+                margin-bottom: 4px !important;
             }
             .bannner-section .mobile-banner-col:nth-child(n+3) {
                 margin-bottom: 0 !important;
