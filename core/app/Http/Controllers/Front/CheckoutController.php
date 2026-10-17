@@ -180,10 +180,11 @@ class CheckoutController extends Controller
             'bill_locality' => 'nullable',
             'bill_address1' => 'required',
             'bill_zip' => 'nullable',
-            'bill_country' => 'nullable',
         ]);
 
-        Session::put('billing_address', $request->all());
+        $billingData = $request->all();
+        $billingData['bill_country'] = 'Pakistan';
+        Session::put('billing_address', $billingData);
 
         if (PriceHelper::CheckDigital()) {
             $shipping = [
@@ -200,7 +201,7 @@ class CheckoutController extends Controller
                 "ship_complete_address" => $request->bill_address1,
                 "ship_address2" => $request->bill_locality ?? null,
                 "ship_zip" => $request->bill_zip ?? 'N/A',
-                "ship_country" => $request->bill_country ?? 'Pakistan',
+                "ship_country" => 'Pakistan',
             ];
         } else {
             $shipping = [

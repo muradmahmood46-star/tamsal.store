@@ -127,8 +127,7 @@
                                     </div>
                                 </div>
 
-                                {{-- Preserved fields for checkout compatibility --}}
-                                <input type="hidden" name="bill_country" value="{{ old('bill_country', (isset($bill['bill_country']) && $bill['bill_country'] != 'Choose Country' ? $bill['bill_country'] : (isset($user) && $user->bill_country ? $user->bill_country : 'Pakistan'))) }}">
+                                {{-- Preserved field for checkout compatibility --}}
                                 <input type="hidden" name="bill_zip" value="{{ old('bill_zip', (isset($bill['bill_zip']) ? $bill['bill_zip'] : (isset($user) && $user->bill_zip ? $user->bill_zip : 'N/A'))) }}">
                             @endif
 
