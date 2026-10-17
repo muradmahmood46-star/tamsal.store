@@ -163,6 +163,15 @@
         </div>
     </div>
 
+    <style>
+        #continue__button:disabled,
+        #continue__button[disabled] {
+            pointer-events: none !important;
+            opacity: 0.5 !important;
+            cursor: not-allowed !important;
+        }
+    </style>
+
     <script>
         (function() {
             function validateCheckoutAddressForm() {
@@ -191,12 +200,14 @@
 
                 if (allFilled) {
                     btn.disabled = false;
+                    btn.removeAttribute('disabled');
                     btn.setAttribute('type', 'submit');
                     btn.style.pointerEvents = 'auto';
                     btn.style.opacity = '1';
                     btn.style.cursor = 'pointer';
                 } else {
                     btn.disabled = true;
+                    btn.setAttribute('disabled', 'disabled');
                     btn.setAttribute('type', 'button');
                     btn.style.pointerEvents = 'none';
                     btn.style.opacity = '0.5';
@@ -205,9 +216,16 @@
                 return allFilled;
             }
 
-            document.addEventListener('DOMContentLoaded', function() {
+            function initCheckoutValidation() {
                 var form = document.getElementById('checkoutBilling');
                 if (!form) return;
+
+                if (window.jQuery) {
+                    window.jQuery(document).off('click', '#trams__condition');
+                    window.jQuery(document).on('click change', '#trams__condition', function() {
+                        validateCheckoutAddressForm();
+                    });
+                }
 
                 validateCheckoutAddressForm();
 
@@ -217,9 +235,13 @@
                     inputs[i].addEventListener('change', validateCheckoutAddressForm);
                     inputs[i].addEventListener('keyup', validateCheckoutAddressForm);
                     inputs[i].addEventListener('click', function() {
-                        setTimeout(validateCheckoutAddressForm, 10);
+                        setTimeout(validateCheckoutAddressForm, 15);
                     });
                 }
+
+                document.addEventListener('click', function() {
+                    setTimeout(validateCheckoutAddressForm, 20);
+                });
 
                 form.addEventListener('submit', function(e) {
                     if (!validateCheckoutAddressForm()) {
@@ -227,7 +249,14 @@
                         return false;
                     }
                 });
-            });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initCheckoutValidation);
+            } else {
+                initCheckoutValidation();
+            }
+            window.addEventListener('load', initCheckoutValidation);
         })();
     </script>
 
