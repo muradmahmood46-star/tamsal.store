@@ -221,9 +221,12 @@
                                             <div class="col-sm-6">
                                                 <div class="form-group">
                                                     <label for="checkout-city">{{ __('City') }}*</label>
-                                                    <input class="form-control {{ $errors->has('bill_city') ? 'requireInput' : '' }}" name="bill_city" type="text" 
-                                                        id="checkout-city" placeholder="{{ __('Enter your city') }}"
-                                                        value="{{ old('bill_city', (isset($bill['bill_city']) ? $bill['bill_city'] : (isset($user) ? $user->bill_city : ''))) }}">
+                                                    @php
+                                                        $selectedCity = old('bill_city', (isset($bill['bill_city']) ? $bill['bill_city'] : (isset($user) ? $user->bill_city : '')));
+                                                    @endphp
+                                                    <select class="form-control {{ $errors->has('bill_city') ? 'requireInput' : '' }}" name="bill_city" id="checkout-city" data-selected="{{ $selectedCity }}" required {{ empty($selectedProvince) ? 'disabled' : '' }}>
+                                                        <option value="" disabled selected>{{ empty($selectedProvince) ? __('Select Province First') : __('Select City') }}</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
@@ -271,6 +274,180 @@
             </div>
         </div>
     </div>
+
+    <script>
+        (function() {
+            var pakistanProvinceCities = {
+                "Azad Kashmir": [
+                    "Abbaspur", "Athmuqam", "Bagh", "Barnala", "Bhimber", "Chakswari", "Charhoi", "Chikar", "Chinari",
+                    "Dadyal", "Dhirkot", "Forward Kahuta", "Garhi Dupatta", "Hajira", "Hattian Bala", "Haveli",
+                    "Islamgarh", "Kahori", "Kel", "Khuiratta", "Kotli", "Leepa", "Mangla", "Mirpur", "Muzaffarabad",
+                    "Nakiyal", "Neelam", "Pallandri", "Paniola", "Patika", "Rawalakot", "Samahni", "Sehnsa", "Sharda",
+                    "Sudhanoti", "Tarar Khal", "Thorar"
+                ],
+                "Balochistan": [
+                    "Awaran", "Barkhan", "Bela", "Bhag", "Buleda", "Chagai", "Chaman", "Chattar", "Dalbandin",
+                    "Dera Allah Yar", "Dera Bugti", "Dera Murad Jamali", "Dhadar", "Duki", "Gadani", "Gandawah",
+                    "Gulistan", "Gwadar", "Harnai", "Hub", "Jafarabad", "Jhal Magsi", "Jiwani", "Kachhi", "Kalat",
+                    "Khanozai", "Kharan", "Khuzdar", "Killa Abdullah", "Killa Saifullah", "Kohlu", "Lasbela", "Lehri",
+                    "Loralai", "Mach", "Mand", "Mastung", "Mekhtar", "Musakhel", "Muslim Bagh", "Nasirabad", "Nokkundi",
+                    "Nushki", "Ormara", "Panjgur", "Pasni", "Pishin", "Qila Abdullah", "Qila Saifullah", "Quetta",
+                    "Rakhni", "Rojhan Jamali", "Saranan", "Sherani", "Sibi", "Sohbatpur", "Sui", "Surab", "Taftan",
+                    "Tump", "Turbat", "Usta Muhammad", "Uthal", "Wadh", "Washuk", "Winder", "Zehri", "Zhob", "Ziarat"
+                ],
+                "Federally Administered Tribal Areas": [
+                    "Alizai", "Bajaur", "Bara", "Darra Adam Khel", "Dogar", "Fort Lockhart", "Ghalanai", "Ghulam Khan",
+                    "Hassan Khel", "Inayat Qilla", "Jamrud", "Jandola", "Kalaya", "Khar", "Kharlachi", "Khyber",
+                    "Kurram", "Landi Kotal", "Makeen", "Mamund", "Mir Ali", "Miranshah", "Mohmand", "Nawagai",
+                    "North Waziristan", "Orakzai", "Parachinar", "Razmak", "Sadda", "Salarzai", "Sararogha", "Sarwakai",
+                    "Shakai", "South Waziristan", "Spinwam", "Tiarza", "Torkham", "Wana"
+                ],
+                "Gilgit-Baltistan": [
+                    "Aliabad", "Astore", "Bunji", "Chilas", "Dambudas", "Danyor", "Darel", "Diamer", "Gahkuch",
+                    "Ghanche", "Ghizer", "Gilgit", "Gojal", "Gorikot", "Gultari", "Gupis", "Haldi", "Hopar", "Hunza",
+                    "Ishkoman", "Jaglot", "Jalalabad", "Jutal", "Karimabad", "Khaplu", "Kharmang", "Minimarg", "Misgar",
+                    "Nagar", "Naltar", "Nasirabad", "Passu", "Phander", "Roundu", "Shigar", "Shimshal", "Skardu",
+                    "Sost", "Tangir", "Tolti", "Yasin"
+                ],
+                "Islamabad": [
+                    "Bani Gala", "Bhara Kahu", "Chak Shahzad", "DHA Islamabad", "Golra Sharif", "Humak", "Islamabad",
+                    "Koral", "Loi Bher", "Margalla Town", "Model Town Humak", "Nilore", "Park View City Islamabad",
+                    "PWD Islamabad", "Rawat", "Sangjani", "Shah Allah Ditta", "Sihala", "Soan Garden", "Tarlai Kalan",
+                    "Tarnol"
+                ],
+                "Khyber Pakhtunkhwa": [
+                    "Abbottabad", "Akora Khattak", "Alpuri", "Amangarh", "Ayubia", "Baffa", "Bahrain", "Balakot",
+                    "Bannu", "Barikot", "Batagram", "Batkhela", "Besham", "Buner", "Chakdara", "Charsadda", "Cherat",
+                    "Chitral", "Daggar", "Daraban", "Dargai", "Dasu", "Dera Ismail Khan", "Dir", "Doaba", "Domel",
+                    "Drosh", "Gadoon Amazai", "Garhi Habibullah", "Garhi Kapura", "Ghazi", "Ghoriwala", "Gulabad",
+                    "Hangu", "Haripur", "Havelian", "Hayatabad", "Jahangira", "Jalozai", "Kabal", "Kakul", "Kalam",
+                    "Karak", "Katlang", "Khalabat", "Khawazakhela", "Kohat", "Kohistan", "Kot Najibullah", "Kulachi",
+                    "Lachi", "Lakki Marwat", "Lamber", "Lower Dir", "Malakand", "Malam Jabba", "Mansehra", "Mardan",
+                    "Mastuj", "Matta", "Mingora", "Naran", "Nathia Gali", "Naurang", "Nowshera", "Oghi", "Pabbi",
+                    "Paharpur", "Paniala", "Paroa", "Pattan", "Peshawar", "Pezu", "Puran", "Qalandarabad", "Risalpur",
+                    "Rustam", "Saidu Sharif", "Samar Bagh", "Serai Naurang", "Shabqadar", "Shahbaz Garhi", "Shaidu",
+                    "Shangla", "Shewa Adda", "Shinkiari", "Swabi", "Swat", "Takht-i-Bahi", "Tall", "Tangi", "Tank",
+                    "Tarbela", "Thakot", "Timergara", "Topi", "Tordher", "Torghar", "Totalai", "Upper Dir", "Utmanzai",
+                    "Wari", "Zaida"
+                ],
+                "Punjab": [
+                    "Abdul Hakim", "Ahmadpur East", "Ahmadpur Sial", "Alipur", "Alipur Chattha", "Arifwala", "Attock",
+                    "Baddomalhi", "Bahawalnagar", "Bahawalpur", "Bhakkar", "Bhalwal", "Bhawana", "Bhera", "Bhurban",
+                    "Burewala", "Chak Jhumra", "Chakwal", "Chawinda", "Chichawatni", "Chiniot", "Chishtian",
+                    "Choa Saidanshah", "Chuhar Kana", "Chunian", "Dajal", "Darya Khan", "Daska", "Daud Khel",
+                    "Depalpur", "Dera Ghazi Khan", "Dhaunkal", "Dijkot", "Dina", "Dinga", "Dunyapur", "Eminabad",
+                    "Faisalabad", "Faqirwali", "Farooqabad", "Fateh Jang", "Fatehpur", "Fazilpur", "Ferozewala",
+                    "Fort Abbas", "Gaggoo Mandi", "Garh Maharaja", "Ghakhar Mandi", "Gojra", "Gujar Khan",
+                    "Gujranwala", "Gujrat", "Hadali", "Hafizabad", "Haroonabad", "Hasilpur", "Hassan Abdal",
+                    "Haveli Lakha", "Hazro", "Hujra Shah Muqeem", "Isa Khel", "Jahanian", "Jalalpur Bhattian",
+                    "Jalalpur Jattan", "Jalalpur Pirwala", "Jampur", "Jand", "Jaranwala", "Jatoi", "Jauharabad",
+                    "Jhang", "Jhelum", "Kabirwala", "Kahna Nau", "Kahror Pakka", "Kahuta", "Kala Bagh",
+                    "Kala Shah Kaku", "Kallar Kahar", "Kallar Syedan", "Kalur Kot", "Kamalia", "Kamoke", "Kamra",
+                    "Kanganpur", "Karor Lal Esan", "Kasur", "Khairpur Tamewali", "Khanewal", "Khangah Dogran",
+                    "Khangarh", "Khanpur", "Khanqah Sharif", "Kharian", "Khewra", "Khurrianwala", "Khushab",
+                    "Kot Addu", "Kot Chutta", "Kot Mithan", "Kot Momin", "Kot Radha Kishan", "Kot Samaba",
+                    "Kot Sultan", "Kotli Loharan", "Kotli Sattian", "Kundian", "Kunjah", "Ladhewala Waraich",
+                    "Lahore", "Lalamusa", "Lalian", "Layyah", "Liaquatpur", "Lodhran", "Luddan", "Mailsi", "Malakwal",
+                    "Mamukanjan", "Mananwala", "Mandi Bahauddin", "Mandi Faizabad", "Mangla", "Mankera", "Mian Channu",
+                    "Miani", "Mianwali", "Minchinabad", "Mithankot", "More Khunda", "Muridke", "Murree", "Mustafabad",
+                    "Muzaffargarh", "Nankana Sahib", "Narang Mandi", "Narowal", "Naushera Virkan", "Noorpur Thal",
+                    "Okara", "Pakpattan", "Pasrur", "Pattoki", "Phalia", "Phularwan", "Pind Dadan Khan",
+                    "Pindi Bhattian", "Pindi Gheb", "Piplan", "Pir Mahal", "Qadirpur Ran", "Qila Didar Singh",
+                    "Quaidabad", "Rabwah (Chenab Nagar)", "Rahim Yar Khan", "Raiwind", "Raja Jang", "Rajanpur",
+                    "Renala Khurd", "Rojhan", "Sadiqabad", "Safdarabad", "Sahiwal", "Sambrial", "Samundri",
+                    "Sangla Hill", "Sarai Alamgir", "Sargodha", "Shahdara", "Shahkot", "Shahpur", "Shakargarh",
+                    "Sharaqpur", "Sheikhupura", "Shorkot", "Shujaabad", "Sialkot", "Sillanwali", "Sohawa", "Talagang",
+                    "Tandlianwala", "Taunsa Sharif", "Taxila", "Tibba Sultanpur", "Toba Tek Singh", "Tulamba",
+                    "Uch Sharif", "Vehari", "Wah Cantt", "Wan Radha Ram", "Warburton", "Wazirabad", "Yazman",
+                    "Zafarwal", "Zahir Pir"
+                ],
+                "Sindh": [
+                    "Adilpur", "Badah", "Badin", "Bagerji", "Bakrani", "Berani", "Bhan Syedabad", "Bhiria City",
+                    "Bhiria Road", "Bhit Shah", "Bozdar Wada", "Bulri Shah Karim", "Chachro", "Chamber",
+                    "Chohar Jamali", "Chor", "Dadu", "Daharki", "Darbelo", "Daro", "Daulatpur", "Daur", "Digri",
+                    "Diplo", "Dokri", "Faiz Ganj", "Gambat", "Garhi Khairo", "Garhi Yasin", "Gharo", "Ghotki",
+                    "Golarchi", "Guddu", "Hala", "Halani", "Hingorja", "Hyderabad", "Islamkot", "Jacobabad",
+                    "Jam Nawaz Ali", "Jamshoro", "Jati", "Jhol", "Jhudo", "Johi", "Kadhan", "Kandhkot", "Kandhra",
+                    "Kandiaro", "Karachi", "Karampur", "Kario Ghanwar", "Kashmore", "Keti Bandar", "Khairpur",
+                    "Khairpur Nathan Shah", "Khanpur Mahar", "Khipro", "Khuhra", "Kingri", "Kot Diji",
+                    "Kot Ghulam Muhammad", "Kotri", "Kunri", "Lakhi Ghulam Shah", "Larkana", "Madeji", "Malir",
+                    "Manjhand", "Matiari", "Matli", "Mehar", "Mehrabpur", "Mian Sahib", "Mirpur Bathoro",
+                    "Mirpur Khas", "Mirpur Mathelo", "Mirpur Sakro", "Mirwah", "Mithi", "Moro", "Nagarparkar",
+                    "Nasirabad", "Naudero", "Naukot", "Naushahro Feroze", "Nawabshah (Shaheed Benazirabad)",
+                    "New Saeedabad", "Nooriabad", "Odero Lal", "Pacca Chang", "Padidan", "Pano Aqil", "Perumal",
+                    "Phulji", "Pir Jo Goth", "Piryaloi", "Pithoro", "Qambar (Kamber)", "Qazi Ahmad",
+                    "Qubo Saeed Khan", "Radhan", "Rahimabad", "Rajo Khanani", "Ranipur", "Ratodero", "Rohri",
+                    "Rustam", "Saeedabad", "Sakrand", "Samaro", "Sanghar", "Sann", "Sarhari", "Sehwan Sharif",
+                    "Setharja", "Shahdadkot", "Shahdadpur", "Shahpur Chakar", "Shahpur Jahania", "Shikarpur",
+                    "Sinjhoro", "Sita Road", "Sobhodero", "Sujawal", "Sukkur", "Talhar", "Tando Adam",
+                    "Tando Allahyar", "Tando Bago", "Tando Ghulam Ali", "Tando Jam", "Tando Jan Mohammad",
+                    "Tando Masti", "Tando Muhammad Khan", "Tangwani", "Thari Mirwah", "Tharo Shah", "Thatta",
+                    "Therhi", "Thul", "Ubauro", "Umerkot", "Warah"
+                ]
+            };
+
+            function populateCitiesByProvince(preserveSelection) {
+                var provinceEl = document.getElementById('checkout-province');
+                var cityEl = document.getElementById('checkout-city');
+                if (!provinceEl || !cityEl) return;
+
+                var selectedProvince = provinceEl.value;
+                var previouslySelected = preserveSelection ? (cityEl.getAttribute('data-selected') || cityEl.value || '') : '';
+
+                cityEl.innerHTML = '';
+
+                if (!selectedProvince || !pakistanProvinceCities[selectedProvince]) {
+                    var defaultOpt = document.createElement('option');
+                    defaultOpt.value = '';
+                    defaultOpt.disabled = true;
+                    defaultOpt.selected = true;
+                    defaultOpt.textContent = 'Select Province First';
+                    cityEl.appendChild(defaultOpt);
+                    cityEl.disabled = true;
+                    return;
+                }
+
+                cityEl.disabled = false;
+
+                var placeholderOpt = document.createElement('option');
+                placeholderOpt.value = '';
+                placeholderOpt.disabled = true;
+                placeholderOpt.selected = !previouslySelected;
+                placeholderOpt.textContent = 'Select City';
+                cityEl.appendChild(placeholderOpt);
+
+                var cities = pakistanProvinceCities[selectedProvince].slice().sort(function(a, b) {
+                    return a.localeCompare(b, 'en', { sensitivity: 'base' });
+                });
+
+                var matched = false;
+                for (var i = 0; i < cities.length; i++) {
+                    var opt = document.createElement('option');
+                    opt.value = cities[i];
+                    opt.textContent = cities[i];
+                    if (previouslySelected && previouslySelected.toLowerCase() === cities[i].toLowerCase()) {
+                        opt.selected = true;
+                        matched = true;
+                    }
+                    cityEl.appendChild(opt);
+                }
+
+                if (!matched) {
+                    placeholderOpt.selected = true;
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                populateCitiesByProvince(true);
+                var provinceEl = document.getElementById('checkout-province');
+                if (provinceEl) {
+                    provinceEl.addEventListener('change', function() {
+                        populateCitiesByProvince(false);
+                    });
+                }
+            });
+        })();
+    </script>
 
     @php $checkoutMsg = DB::table('checkout_messages')->where('is_active', 1)->first(); @endphp
     @if($checkoutMsg)
