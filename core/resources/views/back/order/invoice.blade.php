@@ -327,17 +327,17 @@
                                     $cId = explode('-', $ckey)[0];
                                     $cModel = \App\Models\Item::find($cId);
                                     $cQty = isset($citem['qty']) ? (int)$citem['qty'] : 1;
-                                    $cUnitSelling = ($citem['main_price'] ?? 0) + ($citem['attribute_price'] ?? 0);
-                                    $cLineSelling = $cUnitSelling * $cQty;
-                                    $summaryCustPrice += $cLineSelling;
+                                    $cUnitSellingPKR = round((($citem['main_price'] ?? 0) + ($citem['attribute_price'] ?? 0)) * $order->currency_value, 2);
+                                    $cLineSellingPKR = $cUnitSellingPKR * $cQty;
+                                    $summaryCustPrice += $cLineSellingPKR;
 
-                                    $cProfitUnit = $cModel ? (float)($cModel->estimated_profit ?? 0) : 0;
-                                    $cSupplierUnit = $cProfitUnit > 0 ? max(0, $cUnitSelling - $cProfitUnit) : $cUnitSelling;
+                                    $cProfitUnitPKR = $cModel ? (float)($cModel->estimated_profit ?? 0) : 0;
+                                    $cSupplierUnitPKR = $cProfitUnitPKR > 0 ? max(0, $cUnitSellingPKR - $cProfitUnitPKR) : $cUnitSellingPKR;
 
-                                    $summaryNetProfit += ($cProfitUnit * $cQty);
-                                    $summarySuppCost += ($cSupplierUnit * $cQty);
+                                    $summaryNetProfit += ($cProfitUnitPKR * $cQty);
+                                    $summarySuppCost += ($cSupplierUnitPKR * $cQty);
 
-                                    if ($cModel && (!empty($cModel->supplier_url) || !empty($cModel->product_from) || $cProfitUnit > 0)) {
+                                    if ($cModel && (!empty($cModel->supplier_url) || !empty($cModel->product_from) || $cProfitUnitPKR > 0)) {
                                         $dropshipItemCount += $cQty;
                                     } else {
                                         $selfItemCount += $cQty;
@@ -375,9 +375,9 @@
                                                             <div class="text-muted small font-weight-bold text-uppercase"><i class="fas fa-receipt text-primary mr-1"></i> {{ __('Customer Selling Price') }}</div>
                                                             <div class="h4 font-weight-bold text-dark mt-2 mb-0">
                                                                 @if ($setting->currency_direction == 1)
-                                                                    {{$order->currency_sign}}{{ round($summaryCustPrice * $order->currency_value, 2) }}
+                                                                    {{$order->currency_sign}}{{ round($summaryCustPrice, 2) }}
                                                                 @else
-                                                                    {{ round($summaryCustPrice * $order->currency_value, 2) }}{{$order->currency_sign}}
+                                                                    {{ round($summaryCustPrice, 2) }}{{$order->currency_sign}}
                                                                 @endif
                                                             </div>
                                                             <small class="text-primary font-weight-bold d-block mt-1"><i class="fas fa-arrow-circle-right"></i> {{ __('Enter this Sales Price on HHC / Portal') }}</small>
@@ -389,9 +389,9 @@
                                                             <div class="text-muted small font-weight-bold text-uppercase"><i class="fas fa-hand-holding-usd text-danger mr-1"></i> {{ __('Wholesale Cost (Pay to Supplier)') }}</div>
                                                             <div class="h4 font-weight-bold text-danger mt-2 mb-0">
                                                                 @if ($setting->currency_direction == 1)
-                                                                    {{$order->currency_sign}}{{ round($summarySuppCost * $order->currency_value, 2) }}
+                                                                    {{$order->currency_sign}}{{ round($summarySuppCost, 2) }}
                                                                 @else
-                                                                    {{ round($summarySuppCost * $order->currency_value, 2) }}{{$order->currency_sign}}
+                                                                    {{ round($summarySuppCost, 2) }}{{$order->currency_sign}}
                                                                 @endif
                                                             </div>
                                                             <small class="text-muted d-block mt-1"><i class="fas fa-tag"></i> {{ __('Estimated wholesale cost to HHC / Supplier') }}</small>
@@ -403,9 +403,9 @@
                                                             <div class="text-success small font-weight-bold text-uppercase"><i class="fas fa-coins text-success mr-1"></i> {{ __('Your Estimated Net Profit') }}</div>
                                                             <div class="h4 font-weight-bold text-success mt-2 mb-0">
                                                                 +@if ($setting->currency_direction == 1)
-                                                                    {{$order->currency_sign}}{{ round($summaryNetProfit * $order->currency_value, 2) }}
+                                                                    {{$order->currency_sign}}{{ round($summaryNetProfit, 2) }}
                                                                 @else
-                                                                    {{ round($summaryNetProfit * $order->currency_value, 2) }}{{$order->currency_sign}}
+                                                                    {{ round($summaryNetProfit, 2) }}{{$order->currency_sign}}
                                                                 @endif
                                                             </div>
                                                             <small class="text-success font-weight-bold d-block mt-1"><i class="fas fa-chart-line"></i> {{ __('Admin Pure Profit Margin') }}</small>
@@ -484,14 +484,14 @@
                                             }
                                         }
 
-                                        $rowUnitPrice = ($item['main_price'] ?? 0) + ($item['attribute_price'] ?? 0);
+                                        $rowUnitPricePKR = round((($item['main_price'] ?? 0) + ($item['attribute_price'] ?? 0)) * $order->currency_value, 2);
                                         $rowQty = $item['qty'] ?? 1;
-                                        $rowLineTotal = $rowUnitPrice * $rowQty;
-                                        $rowProfitUnit = $productModel ? (float)($productModel->estimated_profit ?? 0) : 0;
-                                        $rowTotalProfit = $rowProfitUnit * $rowQty;
-                                        $rowSupplierUnit = $rowProfitUnit > 0 ? max(0, $rowUnitPrice - $rowProfitUnit) : $rowUnitPrice;
-                                        $rowTotalSupplier = $rowSupplierUnit * $rowQty;
-                                        $hasItemSupplier = $productModel && (!empty($productModel->product_from) || !empty($productModel->contact_number) || !empty($productModel->supplier_url) || $rowProfitUnit > 0);
+                                        $rowLineTotalPKR = $rowUnitPricePKR * $rowQty;
+                                        $rowProfitUnitPKR = $productModel ? (float)($productModel->estimated_profit ?? 0) : 0;
+                                        $rowTotalProfitPKR = $rowProfitUnitPKR * $rowQty;
+                                        $rowSupplierUnitPKR = $rowProfitUnitPKR > 0 ? max(0, $rowUnitPricePKR - $rowProfitUnitPKR) : $rowUnitPricePKR;
+                                        $rowTotalSupplierPKR = $rowSupplierUnitPKR * $rowQty;
+                                        $hasItemSupplier = $productModel && (!empty($productModel->product_from) || !empty($productModel->contact_number) || !empty($productModel->supplier_url) || $rowProfitUnitPKR > 0);
                                     @endphp
                                     <tr>
                                         <td class="px-0">
@@ -510,28 +510,28 @@
                                                         <span class="text-muted"><i class="fas fa-shopping-cart text-primary mr-1"></i> {{ __('Customer Price (Enter on HHC)') }}:</span>
                                                         <strong class="text-dark">
                                                             @if ($setting->currency_direction == 1)
-                                                                {{$order->currency_sign}}{{ round($rowUnitPrice * $order->currency_value, 2) }}
+                                                                {{$order->currency_sign}}{{ round($rowUnitPricePKR, 2) }}
                                                             @else
-                                                                {{ round($rowUnitPrice * $order->currency_value, 2) }}{{$order->currency_sign}}
+                                                                {{ round($rowUnitPricePKR, 2) }}{{$order->currency_sign}}
                                                             @endif
                                                             @if($rowQty > 1)
-                                                                <small class="text-muted">(Total: @if($setting->currency_direction == 1){{$order->currency_sign}}{{ round($rowLineTotal * $order->currency_value, 2) }}@else{{ round($rowLineTotal * $order->currency_value, 2) }}{{$order->currency_sign}}@endif)</small>
+                                                                <small class="text-muted">(Total: @if($setting->currency_direction == 1){{$order->currency_sign}}{{ round($rowLineTotalPKR, 2) }}@else{{ round($rowLineTotalPKR, 2) }}{{$order->currency_sign}}@endif)</small>
                                                             @endif
                                                         </strong>
                                                     </div>
 
                                                     {{-- Supplier Wholesale Cost --}}
-                                                    @if($rowProfitUnit > 0)
+                                                    @if($rowProfitUnitPKR > 0)
                                                         <div class="text-dark mt-1 d-flex justify-content-between align-items-center">
                                                             <span class="text-muted"><i class="fas fa-tag text-secondary mr-1"></i> {{ __('Wholesale Cost (Pay HHC)') }}:</span>
                                                             <strong class="text-danger">
                                                                 @if ($setting->currency_direction == 1)
-                                                                    {{$order->currency_sign}}{{ round($rowSupplierUnit * $order->currency_value, 2) }}
+                                                                    {{$order->currency_sign}}{{ round($rowSupplierUnitPKR, 2) }}
                                                                 @else
-                                                                    {{ round($rowSupplierUnit * $order->currency_value, 2) }}{{$order->currency_sign}}
+                                                                    {{ round($rowSupplierUnitPKR, 2) }}{{$order->currency_sign}}
                                                                 @endif
                                                                 @if($rowQty > 1)
-                                                                    <small class="text-danger">(Total: @if($setting->currency_direction == 1){{$order->currency_sign}}{{ round($rowTotalSupplier * $order->currency_value, 2) }}@else{{ round($rowTotalSupplier * $order->currency_value, 2) }}{{$order->currency_sign}}@endif)</small>
+                                                                    <small class="text-danger">(Total: @if($setting->currency_direction == 1){{$order->currency_sign}}{{ round($rowTotalSupplierPKR, 2) }}@else{{ round($rowTotalSupplierPKR, 2) }}{{$order->currency_sign}}@endif)</small>
                                                                 @endif
                                                             </strong>
                                                         </div>
@@ -540,9 +540,9 @@
                                                         <div class="text-dark mt-1 d-flex justify-content-between align-items-center">
                                                             <span class="text-muted"><i class="fas fa-coins text-success mr-1"></i> {{ __('Your Net Profit') }}:</span>
                                                             <span class="badge badge-success font-weight-bold" style="font-size: 11.5px; padding: 3px 7px;">
-                                                                +@if ($setting->currency_direction == 1){{$order->currency_sign}}{{ round($rowTotalProfit * $order->currency_value, 2) }}@else{{ round($rowTotalProfit * $order->currency_value, 2) }}{{$order->currency_sign}}@endif
+                                                                +@if ($setting->currency_direction == 1){{$order->currency_sign}}{{ round($rowTotalProfitPKR, 2) }}@else{{ round($rowTotalProfitPKR, 2) }}{{$order->currency_sign}}@endif
                                                                 @if($rowQty > 1)
-                                                                    <small class="text-white font-weight-normal">({{ round($rowProfitUnit * $order->currency_value, 2) }}/pc)</small>
+                                                                    <small class="text-white font-weight-normal">({{ round($rowProfitUnitPKR, 2) }}/pc)</small>
                                                                 @endif
                                                             </span>
                                                         </div>
