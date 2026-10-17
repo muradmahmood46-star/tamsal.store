@@ -175,6 +175,22 @@ class Setting extends Model
         return (int)$value;
     }
 
+    public function getPolicyLinkAttribute($value)
+    {
+        if (empty($value) || strpos($value, 'localhost') !== false) {
+            return route('front.page', 'privacy-policy');
+        }
+        return $value;
+    }
+
+    public function getTermsLinkAttribute($value)
+    {
+        if (empty($value) || strpos($value, 'localhost') !== false) {
+            return route('front.page', 'terms-and-service');
+        }
+        return $value;
+    }
+
     public function getAdminStoreUrl(): string
     {
         try {

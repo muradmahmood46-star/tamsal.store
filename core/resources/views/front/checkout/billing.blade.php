@@ -136,9 +136,9 @@
                                     <div class="custom-control custom-checkbox">
                                         <input class="custom-control-input" type="checkbox" id="trams__condition">
                                         <label class="custom-control-label" for="trams__condition">This site is protected
-                                            by reCAPTCHA and the <a href="{{ $setting->policy_link }}"
+                                            by reCAPTCHA and the <a href="{{ (!empty($setting->policy_link) && strpos($setting->policy_link, 'localhost') === false) ? $setting->policy_link : route('front.page', 'privacy-policy') }}"
                                                 target="_blank">Privacy Policy</a> and <a
-                                                href="{{ $setting->terms_link }}" target="_blank">Terms of Service</a>
+                                                href="{{ (!empty($setting->terms_link) && strpos($setting->terms_link, 'localhost') === false) ? $setting->terms_link : route('front.page', 'terms-and-service') }}" target="_blank">Terms of Service</a>
                                             apply.</label>
                                     </div>
                                 </div>
