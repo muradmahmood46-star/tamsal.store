@@ -37,6 +37,7 @@
 
                         @php
                             $bill = Session::get('billing_address');
+                            $selectedProvince = old('bill_province', (isset($bill['bill_province']) ? $bill['bill_province'] : (isset($user) ? $user->bill_state : '')));
                         @endphp
 
                         <form id="checkoutBilling" action="{{ route('front.checkout.store') }}" method="POST">
@@ -74,53 +75,61 @@
                                 </div>
                             </div>
                             @if (PriceHelper::CheckDigital())
-                                
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="form-group">
-                                            <label for="checkout-address1">{{ __('Address') }}*</label>
-                                            <input class="form-control {{ $errors->has('bill_address1') ? 'requireInput' : '' }}" name="bill_address1"  type="text"
-                                                id="checkout-address1"
-                                                value="{{ old('bill_address1', (isset($bill['bill_address1']) ? $bill['bill_address1'] : (isset($user) ? $user->bill_address1 : ''))) }}">
-                                        </div>
-                                    </div>
-                                    
-                                </div>
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label for="checkout-zip">{{ __('Zip Code') }}*</label>
-                                            <input class="form-control {{ $errors->has('bill_zip') ? 'requireInput' : '' }}" name="bill_zip" type="text" id="checkout-zip"
-                                                value="{{ old('bill_zip', (isset($bill['bill_zip']) ? $bill['bill_zip'] : (isset($user) ? $user->bill_zip : ''))) }}">
+                                            <label for="checkout-province">{{ __('Province') }}*</label>
+                                            <select class="form-control {{ $errors->has('bill_province') ? 'requireInput' : '' }}" name="bill_province" id="checkout-province" required>
+                                                <option value="" disabled {{ empty($selectedProvince) ? 'selected' : '' }}>{{ __('Select Province') }}</option>
+                                                <option value="Azad Kashmir" {{ $selectedProvince == 'Azad Kashmir' ? 'selected' : '' }}>Azad Kashmir</option>
+                                                <option value="Balochistan" {{ $selectedProvince == 'Balochistan' ? 'selected' : '' }}>Balochistan</option>
+                                                <option value="Federally Administered Tribal Areas" {{ $selectedProvince == 'Federally Administered Tribal Areas' ? 'selected' : '' }}>Federally Administered Tribal Areas</option>
+                                                <option value="Gilgit-Baltistan" {{ $selectedProvince == 'Gilgit-Baltistan' ? 'selected' : '' }}>Gilgit-Baltistan</option>
+                                                <option value="Islamabad" {{ $selectedProvince == 'Islamabad' ? 'selected' : '' }}>Islamabad</option>
+                                                <option value="Khyber Pakhtunkhwa" {{ $selectedProvince == 'Khyber Pakhtunkhwa' ? 'selected' : '' }}>Khyber Pakhtunkhwa</option>
+                                                <option value="Punjab" {{ $selectedProvince == 'Punjab' ? 'selected' : '' }}>Punjab</option>
+                                                <option value="Sindh" {{ $selectedProvince == 'Sindh' ? 'selected' : '' }}>Sindh</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label for="checkout-city">{{ __('City') }}*</label>
                                             <input class="form-control {{ $errors->has('bill_city') ? 'requireInput' : '' }}" name="bill_city" type="text" 
-                                                id="checkout-city" value="{{ old('bill_city', (isset($bill['bill_city']) ? $bill['bill_city'] : (isset($user) ? $user->bill_city : ''))) }}">
+                                                id="checkout-city" placeholder="{{ __('Enter your city') }}" value="{{ old('bill_city', (isset($bill['bill_city']) ? $bill['bill_city'] : (isset($user) ? $user->bill_city : ''))) }}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label for="checkout-area">{{ __('Area') }}*</label>
+                                            <input class="form-control {{ $errors->has('bill_area') ? 'requireInput' : '' }}" name="bill_area" type="text" 
+                                                id="checkout-area" placeholder="{{ __('Enter your area or neighborhood') }}" value="{{ old('bill_area', (isset($bill['bill_area']) ? $bill['bill_area'] : '')) }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label for="checkout-locality">{{ __('Colony / Suburb / Locality / Landmark') }}</label>
+                                            <input class="form-control {{ $errors->has('bill_locality') ? 'requireInput' : '' }}" name="bill_locality" type="text" 
+                                                id="checkout-locality" placeholder="{{ __('Enter colony, sector, street area or nearby landmark') }}" value="{{ old('bill_locality', (isset($bill['bill_locality']) ? $bill['bill_locality'] : (isset($bill['bill_address2']) ? $bill['bill_address2'] : ''))) }}">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <label for="checkout-country">{{ __('Country') }}</label>
-                                            <select class="form-control {{ $errors->has('bill_country') ? 'requireInput' : '' }}"  name="bill_country"
-                                                id="billing-country">
-                                                <option selected>{{ __('Choose Country') }}</option>
-                                                @php
-                                                    $selectedCountry = old('bill_country', (isset($bill['bill_country']) ? $bill['bill_country'] : (isset($user) ? $user->bill_country : '')));
-                                                @endphp
-                                                @foreach (DB::table('countries')->get() as $country)
-                                                    <option value="{{ $country->name }}"
-                                                        {{ $selectedCountry == $country->name ? 'selected' : '' }}>
-                                                        {{ $country->name }}</option>
-                                                @endforeach
-                                            </select>
+                                            <label for="checkout-address1">{{ __('Complete Address') }}*</label>
+                                            <textarea class="form-control {{ $errors->has('bill_address1') ? 'requireInput' : '' }}" name="bill_address1" rows="3"
+                                                id="checkout-address1" placeholder="{{ __('House No. 123, Street 5, Sector G-11, near [Landmark]') }}">{{ old('bill_address1', (isset($bill['bill_address1']) ? $bill['bill_address1'] : (isset($user) ? $user->bill_address1 : ''))) }}</textarea>
+                                            <small class="form-text text-muted">{{ __('Enter your house or flat number, street number, building name and any details that will help the courier find your location.') }}</small>
                                         </div>
                                     </div>
                                 </div>
+
+                                {{-- Preserved fields for checkout compatibility --}}
+                                <input type="hidden" name="bill_country" value="{{ old('bill_country', (isset($bill['bill_country']) && $bill['bill_country'] != 'Choose Country' ? $bill['bill_country'] : (isset($user) && $user->bill_country ? $user->bill_country : 'Pakistan'))) }}">
+                                <input type="hidden" name="bill_zip" value="{{ old('bill_zip', (isset($bill['bill_zip']) ? $bill['bill_zip'] : (isset($user) && $user->bill_zip ? $user->bill_zip : 'N/A'))) }}">
                             @endif
 
                             @if ($setting->is_privacy_trams == 1)

@@ -687,12 +687,16 @@ class PriceHelper
                 "ship_last_name" => $request->bill_last_name,
                 "ship_email" => $request->bill_email,
                 "ship_phone" => $request->bill_phone,
-                "ship_company" => $request->bill_company,
+                "ship_company" => $request->bill_company ?? null,
+                "ship_province" => $request->bill_province ?? null,
+                "ship_city" => $request->bill_city ?? null,
+                "ship_area" => $request->bill_area ?? null,
+                "ship_locality" => $request->bill_locality ?? null,
                 "ship_address1" => $request->bill_address1,
-                "ship_address2" => $request->bill_address2,
-                "ship_zip" => $request->bill_zip,
-                "ship_city" => $request->bill_city,
-                "ship_country" => $request->bill_country,
+                "ship_complete_address" => $request->bill_address1,
+                "ship_address2" => $request->bill_locality ?? ($request->bill_address2 ?? null),
+                "ship_zip" => $request->bill_zip ?? 'N/A',
+                "ship_country" => $request->bill_country ?? 'Pakistan',
             ];
         } else {
             $shipping = [

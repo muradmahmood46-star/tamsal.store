@@ -174,9 +174,13 @@ class CheckoutController extends Controller
             'bill_last_name' => 'required',
             'bill_email' => 'required|email',
             'bill_phone' => 'required',
-            'bill_address1' => 'required',
+            'bill_province' => 'required',
             'bill_city' => 'required',
-            'bill_zip' => 'required',
+            'bill_area' => 'required',
+            'bill_locality' => 'nullable',
+            'bill_address1' => 'required',
+            'bill_zip' => 'nullable',
+            'bill_country' => 'nullable',
         ]);
 
         Session::put('billing_address', $request->all());
@@ -188,11 +192,15 @@ class CheckoutController extends Controller
                 "ship_email" => $request->bill_email,
                 "ship_phone" => $request->bill_phone,
                 "ship_company" => $request->bill_company ?? null,
-                "ship_address1" => $request->bill_address1,
-                "ship_address2" => $request->bill_address2 ?? null,
-                "ship_zip" => $request->bill_zip,
+                "ship_province" => $request->bill_province,
                 "ship_city" => $request->bill_city,
-                "ship_country" => $request->bill_country ?? null,
+                "ship_area" => $request->bill_area,
+                "ship_locality" => $request->bill_locality ?? null,
+                "ship_address1" => $request->bill_address1,
+                "ship_complete_address" => $request->bill_address1,
+                "ship_address2" => $request->bill_locality ?? null,
+                "ship_zip" => $request->bill_zip ?? 'N/A',
+                "ship_country" => $request->bill_country ?? 'Pakistan',
             ];
         } else {
             $shipping = [
