@@ -251,7 +251,7 @@
                                                     <label for="checkout-address1">{{ __('Complete Address') }}*</label>
                                                     <textarea class="form-control {{ $errors->has('bill_address1') ? 'requireInput' : '' }}" name="bill_address1" rows="3"
                                                         id="checkout-address1" placeholder="{{ __('House No. 123, Street 5, Sector G-11, near [Landmark]') }}">{{ old('bill_address1', (isset($bill['bill_address1']) ? $bill['bill_address1'] : (isset($user) ? $user->bill_address1 : ''))) }}</textarea>
-                                                    <small class="form-text text-muted">{{ __('Enter your house or flat number, street number, building name and any details that will help the courier find your location.') }}</small>
+                                                    <small class="d-block text-muted mt-1" style="padding-left: 0 !important; margin-left: 0 !important; text-indent: 0 !important; text-align: left;">{{ __('Enter your house or flat number, street number, building name and any details that will help the courier find your location.') }}</small>
                                                 </div>
                                             </div>
                                         </div>

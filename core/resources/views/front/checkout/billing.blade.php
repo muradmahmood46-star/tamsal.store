@@ -122,7 +122,7 @@
                                             <label for="checkout-address1">{{ __('Complete Address') }}*</label>
                                             <textarea class="form-control {{ $errors->has('bill_address1') ? 'requireInput' : '' }}" name="bill_address1" rows="3"
                                                 id="checkout-address1" placeholder="{{ __('House No. 123, Street 5, Sector G-11, near [Landmark]') }}">{{ old('bill_address1', (isset($bill['bill_address1']) ? $bill['bill_address1'] : (isset($user) ? $user->bill_address1 : ''))) }}</textarea>
-                                            <small class="form-text text-muted">{{ __('Enter your house or flat number, street number, building name and any details that will help the courier find your location.') }}</small>
+                                            <small class="d-block text-muted mt-1" style="padding-left: 0 !important; margin-left: 0 !important; text-indent: 0 !important; text-align: left;">{{ __('Enter your house or flat number, street number, building name and any details that will help the courier find your location.') }}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -148,15 +148,9 @@
                                 <a class="btn btn-primary btn-sm" href="{{ route('front.cart') }}"><span
                                         class="hidden-xs-down"><i
                                             class="icon-arrow-left"></i>{{ __('Back To Cart') }}</span></a>
-                                @if ($setting->is_privacy_trams == 1)
-                                    <button disabled id="continue__button" class="btn btn-primary  btn-sm"
-                                        type="button"><span class="hidden-xs-down">{{ __('Continue') }}</span><i
-                                            class="icon-arrow-right"></i></button>
-                                @else
-                                    <button class="btn btn-primary btn-sm" type="submit"><span
-                                            class="hidden-xs-down">{{ __('Continue') }}</span><i
-                                            class="icon-arrow-right"></i></button>
-                                @endif
+                                <button disabled id="continue__button" class="btn btn-primary btn-sm"
+                                    type="button" style="pointer-events: none; opacity: 0.5;"><span class="hidden-xs-down">{{ __('Continue') }}</span><i
+                                        class="icon-arrow-right"></i></button>
                             </div>
                         </form>
                     </div>
@@ -168,6 +162,74 @@
             </div>
         </div>
     </div>
+
+    <script>
+        (function() {
+            function validateCheckoutAddressForm() {
+                var form = document.getElementById('checkoutBilling');
+                var btn = document.getElementById('continue__button');
+                if (!form || !btn) return false;
+
+                var requiredIds = ['checkout-fn', 'checkout-ln', 'checkout_email_billing', 'checkout-phone'];
+                if (document.getElementById('checkout-province')) {
+                    requiredIds.push('checkout-province', 'checkout-city', 'checkout-area', 'checkout-address1');
+                }
+
+                var allFilled = true;
+                for (var i = 0; i < requiredIds.length; i++) {
+                    var el = document.getElementById(requiredIds[i]);
+                    if (!el || !el.value || el.value.trim() === '') {
+                        allFilled = false;
+                        break;
+                    }
+                }
+
+                var termsCheckbox = document.getElementById('trams__condition');
+                if (termsCheckbox && !termsCheckbox.checked) {
+                    allFilled = false;
+                }
+
+                if (allFilled) {
+                    btn.disabled = false;
+                    btn.setAttribute('type', 'submit');
+                    btn.style.pointerEvents = 'auto';
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
+                } else {
+                    btn.disabled = true;
+                    btn.setAttribute('type', 'button');
+                    btn.style.pointerEvents = 'none';
+                    btn.style.opacity = '0.5';
+                    btn.style.cursor = 'not-allowed';
+                }
+                return allFilled;
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                var form = document.getElementById('checkoutBilling');
+                if (!form) return;
+
+                validateCheckoutAddressForm();
+
+                var inputs = form.querySelectorAll('input, select, textarea');
+                for (var i = 0; i < inputs.length; i++) {
+                    inputs[i].addEventListener('input', validateCheckoutAddressForm);
+                    inputs[i].addEventListener('change', validateCheckoutAddressForm);
+                    inputs[i].addEventListener('keyup', validateCheckoutAddressForm);
+                    inputs[i].addEventListener('click', function() {
+                        setTimeout(validateCheckoutAddressForm, 10);
+                    });
+                }
+
+                form.addEventListener('submit', function(e) {
+                    if (!validateCheckoutAddressForm()) {
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+            });
+        })();
+    </script>
 
     @php $checkoutMsg = DB::table('checkout_messages')->where('is_active', 1)->first(); @endphp
     @if($checkoutMsg)

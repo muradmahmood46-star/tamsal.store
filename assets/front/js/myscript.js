@@ -1334,12 +1334,24 @@ $(document).on('change', '#shipping_id_select', function () {
 
 
 $(document).on('click', '#trams__condition', function () {
-    if ($(this).is(':checked')) {
+    var requiredIds = ['checkout-fn', 'checkout-ln', 'checkout_email_billing', 'checkout-phone'];
+    if (document.getElementById('checkout-province')) {
+        requiredIds.push('checkout-province', 'checkout-city', 'checkout-area', 'checkout-address1');
+    }
+    var allFilled = true;
+    for (var i = 0; i < requiredIds.length; i++) {
+        var el = document.getElementById(requiredIds[i]);
+        if (el && (!el.value || el.value.trim() === '')) {
+            allFilled = false;
+            break;
+        }
+    }
+    if ($(this).is(':checked') && allFilled) {
         $('#continue__button').attr('type', 'submit');
-        $('#continue__button').prop('disabled', false);
+        $('#continue__button').prop('disabled', false).css({ 'pointer-events': 'auto', 'opacity': '1', 'cursor': 'pointer' });
     } else {
         $('#continue__button').attr('type', 'button');
-        $('#continue__button').prop('disabled', true);
+        $('#continue__button').prop('disabled', true).css({ 'pointer-events': 'none', 'opacity': '0.5', 'cursor': 'not-allowed' });
     }
 })
 
