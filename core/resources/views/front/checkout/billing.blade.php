@@ -1,7 +1,7 @@
 @extends('master.front')
 
 @section('title')
-    {{ __('Billing') }}
+    {{ __('Address') }}
 @endsection
 
 @section('content')
@@ -12,7 +12,7 @@
                 <ul class="breadcrumbs">
                     <li><a href="{{ route('front.index') }}">{{ __('Home') }}</a> </li>
                     <li class="separator"></li>
-                    <li>{{ __('Billing address') }}</li>
+                    <li>{{ __('Address') }}</li>
                 </ul>
             </div>
         </div>
@@ -21,22 +21,23 @@
     <!-- Page Content-->
     <div class="container padding-bottom-3x mb-1 checkut-page">
         <div class="row">
-            <!-- Billing Adress-->
+            <!-- Address-->
             <div class="col-xl-9 col-lg-8">
                 <div class="steps flex-sm-nowrap mb-5">
                     <a class="step active" href="{{ route('front.checkout.billing') }}">
-                        <h4 class="step-title">1. {{ __('Billing Address') }}:</h4>
-                    </a>
-                    <a class="step" href="javascript:;">
-                        <h4 class="step-title">2. {{ __('Shipping Address') }}:</h4>
+                        <h4 class="step-title">1. {{ __('Address') }}:</h4>
                     </a>
                     <a class="step" href="{{ route('front.checkout.payment') }}">
-                        <h4 class="step-title">3. {{ __('Review and pay') }}</h4>
+                        <h4 class="step-title">2. {{ __('Review and pay') }}</h4>
                     </a>
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <h6>{{ __('Billing Address') }}</h6>
+                        <h6>{{ __('Address') }}</h6>
+
+                        @php
+                            $bill = Session::get('billing_address');
+                        @endphp
 
                         <form id="checkoutBilling" action="{{ route('front.checkout.store') }}" method="POST">
                             @csrf
@@ -45,14 +46,14 @@
                                     <div class="form-group">
                                         <label for="checkout-fn">{{ __('First Name') }}*</label>
                                         <input class="form-control {{ $errors->has('bill_first_name') ? 'requireInput' : '' }}" name="bill_first_name" type="text" 
-                                            id="checkout-fn" value="{{ isset($user) ? $user->first_name : '' }}">
+                                            id="checkout-fn" value="{{ old('bill_first_name', (isset($bill['bill_first_name']) ? $bill['bill_first_name'] : (isset($user) ? $user->first_name : ''))) }}">
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label for="checkout-ln">{{ __('Last Name') }}*</label>
                                         <input class="form-control {{ $errors->has('bill_last_name') ? 'requireInput' : '' }}" name="bill_last_name" type="text" 
-                                            id="checkout-ln" value="{{ isset($user) ? $user->last_name : '' }}">
+                                            id="checkout-ln" value="{{ old('bill_last_name', (isset($bill['bill_last_name']) ? $bill['bill_last_name'] : (isset($user) ? $user->last_name : ''))) }}">
                                     </div>
                                 </div>
                             </div>
@@ -61,14 +62,14 @@
                                     <div class="form-group">
                                         <label for="checkout_email_billing">{{ __('E-mail Address') }}*</label>
                                         <input class="form-control {{ $errors->has('bill_email') ? 'requireInput' : '' }}" name="bill_email" type="email" 
-                                            id="checkout_email_billing" value="{{ isset($user) ? $user->email : '' }}">
+                                            id="checkout_email_billing" value="{{ old('bill_email', (isset($bill['bill_email']) ? $bill['bill_email'] : (isset($user) ? $user->email : ''))) }}">
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label for="checkout-phone">{{ __('Phone Number') }}*</label>
                                         <input class="form-control {{ $errors->has('bill_phone') ? 'requireInput' : '' }}" name="bill_phone" type="text" id="checkout-phone"
-                                             value="{{ isset($user) ? $user->phone : '' }}">
+                                             value="{{ old('bill_phone', (isset($bill['bill_phone']) ? $bill['bill_phone'] : (isset($user) ? $user->phone : ''))) }}">
                                     </div>
                                 </div>
                             </div>
@@ -80,7 +81,7 @@
                                             <label for="checkout-address1">{{ __('Address') }}*</label>
                                             <input class="form-control {{ $errors->has('bill_address1') ? 'requireInput' : '' }}" name="bill_address1"  type="text"
                                                 id="checkout-address1"
-                                                value="{{ isset($user) ? $user->bill_address1 : '' }}">
+                                                value="{{ old('bill_address1', (isset($bill['bill_address1']) ? $bill['bill_address1'] : (isset($user) ? $user->bill_address1 : ''))) }}">
                                         </div>
                                     </div>
                                     
@@ -90,14 +91,14 @@
                                         <div class="form-group">
                                             <label for="checkout-zip">{{ __('Zip Code') }}*</label>
                                             <input class="form-control {{ $errors->has('bill_zip') ? 'requireInput' : '' }}" name="bill_zip" type="text" id="checkout-zip"
-                                                value="{{ isset($user) ? $user->bill_zip : '' }}">
+                                                value="{{ old('bill_zip', (isset($bill['bill_zip']) ? $bill['bill_zip'] : (isset($user) ? $user->bill_zip : ''))) }}">
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label for="checkout-city">{{ __('City') }}*</label>
                                             <input class="form-control {{ $errors->has('bill_city') ? 'requireInput' : '' }}" name="bill_city" type="text" 
-                                                id="checkout-city" value="{{ isset($user) ? $user->bill_city : '' }}">
+                                                id="checkout-city" value="{{ old('bill_city', (isset($bill['bill_city']) ? $bill['bill_city'] : (isset($user) ? $user->bill_city : ''))) }}">
                                         </div>
                                     </div>
                                 </div>
@@ -108,9 +109,12 @@
                                             <select class="form-control {{ $errors->has('bill_country') ? 'requireInput' : '' }}"  name="bill_country"
                                                 id="billing-country">
                                                 <option selected>{{ __('Choose Country') }}</option>
+                                                @php
+                                                    $selectedCountry = old('bill_country', (isset($bill['bill_country']) ? $bill['bill_country'] : (isset($user) ? $user->bill_country : '')));
+                                                @endphp
                                                 @foreach (DB::table('countries')->get() as $country)
                                                     <option value="{{ $country->name }}"
-                                                        {{ isset($user) && $user->bill_country == $country->name ? 'selected' : '' }}>
+                                                        {{ $selectedCountry == $country->name ? 'selected' : '' }}>
                                                         {{ $country->name }}</option>
                                                 @endforeach
                                             </select>
@@ -118,15 +122,6 @@
                                     </div>
                                 </div>
                             @endif
-
-                            <div class="form-group">
-                                <div class="custom-control custom-checkbox">
-                                    <input class="custom-control-input" type="checkbox" id="same_address"
-                                        name="same_ship_address" {{ Session::has('shipping_address') ? 'checked' : '' }}>
-                                    <label class="custom-control-label"
-                                        for="same_address">{{ __('Same as billing address') }}</label>
-                                </div>
-                            </div>
 
                             @if ($setting->is_privacy_trams == 1)
                                 <div class="form-group">

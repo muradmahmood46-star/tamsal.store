@@ -116,14 +116,6 @@ class CheckoutController extends Controller
             return redirect(route("front.checkout"));
         }
 
-
-        Session::forget('shipping_address');
-        if (Session::has('shipping_address')) {
-            return redirect(route('front.checkout.payment'));
-        }
-
-
-
         if (!Session::has('cart')) {
             return redirect(route('front.cart'));
         }
@@ -187,41 +179,32 @@ class CheckoutController extends Controller
             'bill_zip' => 'required',
         ]);
 
-        if ($request->same_ship_address) {
-            Session::put('billing_address', $request->all());
+        Session::put('billing_address', $request->all());
 
-            if (PriceHelper::CheckDigital()) {
-                $shipping = [
-                    "ship_first_name" => $request->bill_first_name,
-                    "ship_last_name" => $request->bill_last_name,
-                    "ship_email" => $request->bill_email,
-                    "ship_phone" => $request->bill_phone,
-                    "ship_company" => $request->bill_company,
-                    "ship_address1" => $request->bill_address1,
-                    "ship_address2" => $request->bill_address2,
-                    "ship_zip" => $request->bill_zip,
-                    "ship_city" => $request->bill_city,
-                    "ship_country" => $request->bill_country,
-                ];
-            } else {
-                $shipping = [
-                    "ship_first_name" => $request->bill_first_name,
-                    "ship_last_name" => $request->bill_last_name,
-                    "ship_email" => $request->bill_email,
-                    "ship_phone" => $request->bill_phone,
-                ];
-            }
-            Session::put('shipping_address', $shipping);
+        if (PriceHelper::CheckDigital()) {
+            $shipping = [
+                "ship_first_name" => $request->bill_first_name,
+                "ship_last_name" => $request->bill_last_name,
+                "ship_email" => $request->bill_email,
+                "ship_phone" => $request->bill_phone,
+                "ship_company" => $request->bill_company ?? null,
+                "ship_address1" => $request->bill_address1,
+                "ship_address2" => $request->bill_address2 ?? null,
+                "ship_zip" => $request->bill_zip,
+                "ship_city" => $request->bill_city,
+                "ship_country" => $request->bill_country ?? null,
+            ];
         } else {
-            Session::put('billing_address', $request->all());
-            Session::forget('shipping_address');
+            $shipping = [
+                "ship_first_name" => $request->bill_first_name,
+                "ship_last_name" => $request->bill_last_name,
+                "ship_email" => $request->bill_email,
+                "ship_phone" => $request->bill_phone,
+            ];
         }
+        Session::put('shipping_address', $shipping);
 
-        if (Session::has('shipping_address')) {
-            return redirect()->route('front.checkout.payment');
-        } else {
-            return redirect()->route('front.checkout.shipping');
-        }
+        return redirect()->route('front.checkout.payment');
     }
 
 
@@ -231,6 +214,7 @@ class CheckoutController extends Controller
         if (Session::has('shipping_address')) {
             return redirect(route('front.checkout.payment'));
         }
+        return redirect(route('front.checkout.billing'));
 
         if (!Session::has('cart')) {
             return redirect(route('front.cart'));
@@ -300,12 +284,8 @@ class CheckoutController extends Controller
 
     public function payment()
     {
-        if (!Session::has('billing_address')) {
+        if (!Session::has('billing_address') || !Session::has('shipping_address')) {
             return redirect(route('front.checkout.billing'));
-        }
-
-        if (!Session::has('shipping_address')) {
-            return redirect(route('front.checkout.shipping'));
         }
 
 

@@ -20,12 +20,12 @@
         <div class="row">
             <!-- Payment Methode-->
             <div class="col-xl-9 col-lg-8">
-                <div class="steps flex-sm-nowrap mb-5"> <a class="step" href="{{ route('front.checkout.billing') }}">
-                        <h4 class="step-title"><i class="icon-check-circle"></i>1. {{ __('Invoice to') }}:</h4>
-                    </a> <a class="step" href="{{ route('front.checkout.shipping') }}">
-                        <h4 class="step-title"><i class="icon-check-circle"></i>2. {{ __('Ship to') }}:</h4>
-                    </a> <a class="step active" href="{{ route('front.checkout.payment') }}">
-                        <h4 class="step-title">3. {{ __('Review and pay') }}</h4>
+                <div class="steps flex-sm-nowrap mb-5">
+                    <a class="step" href="{{ route('front.checkout.billing') }}">
+                        <h4 class="step-title"><i class="icon-check-circle"></i>1. {{ __('Address') }}:</h4>
+                    </a>
+                    <a class="step active" href="{{ route('front.checkout.payment') }}">
+                        <h4 class="step-title">2. {{ __('Review and pay') }}</h4>
                     </a>
                 </div>
                 <div class="card">
@@ -33,8 +33,8 @@
                         <h6 class="pb-2 widget-title2">{{ __('Review Your Order') }} :</h6>
                         
                         <div class="row">
-                            <div class="col-sm-6 mb-4">
-                                <h6 class="fz-16-bold">{{ __('Invoice address') }} :</h6>
+                            <div class="col-sm-12 mb-4">
+                                <h6 class="fz-16-bold">{{ __('Address') }} :</h6>
                                 @php
 
                                     $ship = Session::get('shipping_address');
@@ -45,27 +45,11 @@
                                         </span>{{ $ship['ship_first_name'] ?? ($bill['bill_first_name'] ?? '') }} {{ $ship['ship_last_name'] ?? ($bill['bill_last_name'] ?? '') }}</li>
                                     @if (PriceHelper::CheckDigital())
                                         <li><span class="text-muted pay-label">{{ __('Address') }}:
-                                            </span>{{ $ship['ship_address1'] ?? ($bill['bill_address1'] ?? '') }} {{ $ship['ship_address2'] ?? ($bill['bill_address2'] ?? '') }}</li>
+                                            </span>{{ $ship['ship_address1'] ?? ($bill['bill_address1'] ?? '') }}{{ !empty($ship['ship_city'] ?? ($bill['bill_city'] ?? '')) ? ', ' . ($ship['ship_city'] ?? ($bill['bill_city'] ?? '')) : '' }}{{ !empty($ship['ship_country'] ?? ($bill['bill_country'] ?? '')) ? ', ' . ($ship['ship_country'] ?? ($bill['bill_country'] ?? '')) : '' }}</li>
                                     @endif
                                     <li><span class="text-muted pay-label">{{ __('Phone') }}: </span>{{ $ship['ship_phone'] ?? ($bill['bill_phone'] ?? '') }}
                                     </li>
                                 </ul>
-                            </div>
-                            <div class="col-sm-6  mb-4">
-                                <h6 class="fz-16-bold">{{ __('Shipping address') }} :</h6>
-                                <ul class="list-unstyled">
-                                    <li><span class="text-muted pay-label">{{ __('Name') }}:
-                                        </span>{{ $bill['bill_first_name'] ?? ($ship['ship_first_name'] ?? '') }} {{ $bill['bill_last_name'] ?? ($ship['ship_last_name'] ?? '') }}</li>
-                                    @if (PriceHelper::CheckDigital())
-                                        <li><span class="text-muted pay-label">{{ __('Address') }}:
-                                            </span>{{ $ship['ship_address1'] ?? ($bill['bill_address1'] ?? '') }} {{ $ship['ship_address2'] ?? ($bill['bill_address2'] ?? '') }}</li>
-                                    @endif
-                                    <li><span class="text-muted pay-label">{{ __('Phone') }}: </span>{{ $bill['bill_phone'] ?? ($ship['ship_phone'] ?? '') }}
-                                    </li>
-                                </ul>
-
-                              
-                               
                             </div>
                         </div>
                         <div class="row">

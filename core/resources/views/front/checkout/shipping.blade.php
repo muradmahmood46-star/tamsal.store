@@ -1,7 +1,7 @@
 @extends('master.front')
 
 @section('title')
-    {{ __('Shipping') }}
+    {{ __('Address') }}
 @endsection
 @section('content')
     <!-- Page Title-->
@@ -11,7 +11,7 @@
                 <ul class="breadcrumbs">
                     <li><a href="{{ route('front.index') }}">{{ __('Home') }}</a> </li>
                     <li class="separator"></li>
-                    <li>{{ __('Shipping address') }}</li>
+                    <li>{{ __('Address') }}</li>
                 </ul>
             </div>
         </div>
@@ -19,22 +19,19 @@
     <!-- Page Content-->
     <div class="container padding-bottom-3x mb-1  checkut-page">
         <div class="row">
-            <!-- Shipping Adress-->
+            <!-- Address-->
             <div class="col-xl-9 col-lg-8">
                 <div class="steps flex-sm-nowrap mb-5">
-                    <a class="step" href="{{ route('front.checkout.billing') }}">
-                        <h4 class="step-title">1. {{ __('Billing Address') }}:</h4>
-                    </a>
-                    <a class="step active" href="javascript:;">
-                        <h4 class="step-title">2. {{ __('Shipping Address') }}:</h4>
+                    <a class="step active" href="{{ route('front.checkout.billing') }}">
+                        <h4 class="step-title">1. {{ __('Address') }}:</h4>
                     </a>
                     <a class="step" href="{{ route('front.checkout.payment') }}">
-                        <h4 class="step-title">3. {{ __('Review and pay') }}</h4>
+                        <h4 class="step-title">2. {{ __('Review and pay') }}</h4>
                     </a>
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <h6>{{ __('Shipping Address') }}</h6>
+                        <h6>{{ __('Address') }}</h6>
 
                         <form id="checkoutShipping" action="{{ route('front.checkout.shipping.store') }}" method="POST">
                             @csrf

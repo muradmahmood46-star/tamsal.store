@@ -1,7 +1,7 @@
 @extends('master.front')
 
 @section('title')
-    {{ __('Billing') }}
+    {{ __('Address') }}
 @endsection
 
 @section('content')
@@ -11,7 +11,7 @@
                 <ul class="breadcrumbs">
                     <li><a href="{{ route('front.index') }}">{{ __('Home') }}</a> </li>
                     <li class="separator"></li>
-                    <li>{{ __('Billing address') }}</li>
+                    <li>{{ __('Address') }}</li>
                 </ul>
             </div>
         </div>
@@ -160,7 +160,7 @@
                         </section>
                         <div class="card">
                             <div class="card-body">
-                                <h6>{{ __('Billing Address') }}</h6>
+                                <h6>{{ __('Address') }}</h6>
                                 <form id="checkoutBilling" action="{{ route('front.checkout.store') }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="single_page_checkout" value="1">
