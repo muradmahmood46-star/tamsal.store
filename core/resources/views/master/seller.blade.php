@@ -643,15 +643,15 @@
                 font-size: 14px !important;
             }
 
-            .d-sm-flex.justify-content-between,
-            .d-flex.justify-content-between:not(.custom-control):not(.form-check):not(.nav) {
+            .d-sm-flex.justify-content-between:not(.no-mob-stack),
+            .d-flex.justify-content-between:not(.custom-control):not(.form-check):not(.nav):not(.no-mob-stack):not(.plan-card-header):not(.plan-metric-card *) {
                 flex-direction: column !important;
                 align-items: stretch !important;
                 gap: 8px !important;
             }
 
-            .d-sm-flex.justify-content-between > div,
-            .d-flex.justify-content-between > div {
+            .d-sm-flex.justify-content-between:not(.no-mob-stack) > div:not(.no-mob-full):not(.plan-card-icon-wrap),
+            .d-flex.justify-content-between:not(.custom-control):not(.form-check):not(.nav):not(.no-mob-stack):not(.plan-card-header):not(.plan-metric-card *) > div:not(.no-mob-full):not(.plan-card-icon-wrap) {
                 width: 100% !important;
             }
 
