@@ -25,15 +25,15 @@
     <!-- 1. Top 5 Overview Metric Cards -->
     <div class="row mb-4">
 
-        <!-- Card 1: Plan Status -->
-        <div class="col-12 col-sm-6 col-md-4 col-xl mb-3">
+        <!-- Card 1: Plan Status (Line 1 on Mobile) -->
+        <div class="col-12 col-xl mb-3">
             <div class="card {{ $isPlanExpired ? 'border-left-danger' : 'border-left-primary' }} shadow h-100" style="border-left: 5px solid {{ $isPlanExpired ? '#dc3545' : '#4e73df' }} !important; border-radius: 10px;">
-                <div class="card-body p-3 d-flex flex-column justify-content-between" style="min-height: 125px;">
+                <div class="card-body p-2 p-sm-3 d-flex flex-column justify-content-between" style="min-height: 120px;">
                     <div class="d-flex align-items-center justify-content-between mb-2">
                         <div class="text-xs font-weight-bold {{ $isPlanExpired ? 'text-danger' : 'text-primary' }} text-uppercase">
                             {{ __('Plan Status') }}
                         </div>
-                        <div class="rounded-circle d-flex align-items-center justify-content-center {{ $isPlanExpired ? 'bg-danger' : 'bg-primary' }} text-white shadow-sm" style="width: 40px; height: 40px; font-size: 16px; min-width: 40px;">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center {{ $isPlanExpired ? 'bg-danger' : 'bg-primary' }} text-white shadow-sm" style="width: 36px; height: 36px; font-size: 15px; min-width: 36px;">
                             <i class="fas {{ $isPlanExpired ? 'fa-exclamation-triangle' : 'fa-crown' }}"></i>
                         </div>
                     </div>
@@ -49,7 +49,7 @@
                                 <span class="badge badge-primary px-2 py-1" style="font-size: 12.5px;">{{ __('Active Plan') }}</span>
                             @endif
                         </div>
-                        <small class="text-muted d-block" style="font-size: 11.5px; line-height: 1.2;">
+                        <small class="text-muted d-block" style="font-size: 11px; line-height: 1.2;">
                             {{ __('Time-Based Store Subscription') }}
                         </small>
                     </div>
@@ -57,23 +57,23 @@
             </div>
         </div>
 
-        <!-- Card 2: Days Left -->
-        <div class="col-12 col-sm-6 col-md-4 col-xl mb-3">
+        <!-- Card 2: Days Left (Line 2 Left on Mobile) -->
+        <div class="col-6 col-xl mb-3">
             <div class="card border-left-info shadow h-100" style="border-left: 5px solid #36b9cc !important; border-radius: 10px;">
-                <div class="card-body p-3 d-flex flex-column justify-content-between" style="min-height: 125px;">
+                <div class="card-body p-2 p-sm-3 d-flex flex-column justify-content-between" style="min-height: 120px;">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <div class="text-xs font-weight-bold text-info text-uppercase">
+                        <div class="text-xs font-weight-bold text-info text-uppercase" style="font-size: 11px;">
                             {{ __('Days Left') }}
                         </div>
-                        <div class="rounded-circle d-flex align-items-center justify-content-center bg-info text-white shadow-sm" style="width: 40px; height: 40px; font-size: 16px; min-width: 40px;">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center bg-info text-white shadow-sm" style="width: 34px; height: 34px; font-size: 14px; min-width: 34px;">
                             <i class="fas fa-hourglass-half"></i>
                         </div>
                     </div>
                     <div>
-                        <div class="h5 mb-1 font-weight-bold {{ $isPlanExpired ? 'text-danger' : 'text-gray-800' }}">
+                        <div class="h5 mb-1 font-weight-bold {{ $isPlanExpired ? 'text-danger' : 'text-gray-800' }}" style="font-size: 15px;">
                             {{ $daysRemaining }} {{ __('Day(s)') }}
                         </div>
-                        <small class="text-muted d-block" style="font-size: 11.5px; line-height: 1.2;">
+                        <small class="text-muted d-block" style="font-size: 11px; line-height: 1.2;">
                             {{ __('Remaining validity') }}
                         </small>
                     </div>
@@ -81,23 +81,23 @@
             </div>
         </div>
 
-        <!-- Card 3: Valid Until -->
-        <div class="col-12 col-sm-6 col-md-4 col-xl mb-3">
+        <!-- Card 3: Valid Until (Line 2 Right on Mobile) -->
+        <div class="col-6 col-xl mb-3">
             <div class="card border-left-success shadow h-100" style="border-left: 5px solid #1cc88a !important; border-radius: 10px;">
-                <div class="card-body p-3 d-flex flex-column justify-content-between" style="min-height: 125px;">
+                <div class="card-body p-2 p-sm-3 d-flex flex-column justify-content-between" style="min-height: 120px;">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <div class="text-xs font-weight-bold text-success text-uppercase">
+                        <div class="text-xs font-weight-bold text-success text-uppercase" style="font-size: 11px;">
                             {{ __('Valid Until') }}
                         </div>
-                        <div class="rounded-circle d-flex align-items-center justify-content-center bg-success text-white shadow-sm" style="width: 40px; height: 40px; font-size: 16px; min-width: 40px;">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center bg-success text-white shadow-sm" style="width: 34px; height: 34px; font-size: 14px; min-width: 34px;">
                             <i class="fas fa-calendar-alt"></i>
                         </div>
                     </div>
                     <div>
-                        <div class="h5 mb-1 font-weight-bold text-gray-800">
+                        <div class="h5 mb-1 font-weight-bold text-gray-800" style="font-size: 14px; white-space: nowrap;">
                             {{ $planEndDate ? $planEndDate->format('d M Y') : 'N/A' }}
                         </div>
-                        <small class="text-muted d-block" style="font-size: 11.5px; line-height: 1.2;">
+                        <small class="text-muted d-block" style="font-size: 11px; line-height: 1.2;">
                             {{ __('Plan expiration date') }}
                         </small>
                     </div>
@@ -105,23 +105,23 @@
             </div>
         </div>
 
-        <!-- Card 4: Next Renewal Charge -->
-        <div class="col-12 col-sm-6 col-md-4 col-xl mb-3">
+        <!-- Card 4: Next Renewal Charge (Line 3 Left on Mobile) -->
+        <div class="col-6 col-xl mb-3">
             <div class="card border-left-warning shadow h-100" style="border-left: 5px solid #f6c23e !important; border-radius: 10px;">
-                <div class="card-body p-3 d-flex flex-column justify-content-between" style="min-height: 125px;">
+                <div class="card-body p-2 p-sm-3 d-flex flex-column justify-content-between" style="min-height: 120px;">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <div class="text-xs font-weight-bold text-warning text-uppercase">
-                            {{ __('Next Renewal Charge') }}
+                        <div class="text-xs font-weight-bold text-warning text-uppercase" style="font-size: 11px;">
+                            {{ __('Next Renewal') }}
                         </div>
-                        <div class="rounded-circle d-flex align-items-center justify-content-center bg-warning text-white shadow-sm" style="width: 40px; height: 40px; font-size: 16px; min-width: 40px;">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center bg-warning text-white shadow-sm" style="width: 34px; height: 34px; font-size: 14px; min-width: 34px;">
                             <i class="fas fa-coins"></i>
                         </div>
                     </div>
                     <div>
-                        <div class="h5 mb-1 font-weight-bold text-gray-800">
+                        <div class="h5 mb-1 font-weight-bold text-gray-800" style="font-size: 14px;">
                             {{ PriceHelper::adminCurrency() }} {{ number_format($planCharge, 2) }}
                         </div>
-                        <small class="text-muted d-block" style="font-size: 11.5px; line-height: 1.2;">
+                        <small class="text-muted d-block" style="font-size: 11px; line-height: 1.2;">
                             {{ __('0% sales commission') }}
                         </small>
                     </div>
@@ -129,27 +129,27 @@
             </div>
         </div>
 
-        <!-- Card 5: Renewal Status -->
-        <div class="col-12 col-sm-6 col-md-4 col-xl mb-3">
+        <!-- Card 5: Renewal Status (Line 3 Right on Mobile) -->
+        <div class="col-6 col-xl mb-3">
             <div class="card {{ $isSufficient ? 'border-left-success' : 'border-left-danger' }} shadow h-100" style="border-left: 5px solid {{ $isSufficient ? '#28a745' : '#dc3545' }} !important; border-radius: 10px;">
-                <div class="card-body p-3 d-flex flex-column justify-content-between" style="min-height: 125px;">
+                <div class="card-body p-2 p-sm-3 d-flex flex-column justify-content-between" style="min-height: 120px;">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <div class="text-xs font-weight-bold {{ $isSufficient ? 'text-success' : 'text-danger' }} text-uppercase">
+                        <div class="text-xs font-weight-bold {{ $isSufficient ? 'text-success' : 'text-danger' }} text-uppercase" style="font-size: 11px;">
                             {{ __('Renewal Status') }}
                         </div>
-                        <div class="rounded-circle d-flex align-items-center justify-content-center {{ $isSufficient ? 'bg-success' : 'bg-danger' }} text-white shadow-sm" style="width: 40px; height: 40px; font-size: 16px; min-width: 40px;">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center {{ $isSufficient ? 'bg-success' : 'bg-danger' }} text-white shadow-sm" style="width: 34px; height: 34px; font-size: 14px; min-width: 34px;">
                             <i class="fas {{ $isSufficient ? 'fa-sync-alt' : 'fa-wallet' }}"></i>
                         </div>
                     </div>
                     <div>
-                        <div class="h5 mb-1 font-weight-bold">
+                        <div class="h5 mb-1 font-weight-bold" style="font-size: 14px;">
                             @if($isSufficient)
                                 <span class="text-success"><i class="fas fa-check-circle mr-1"></i>{{ __('Sufficient') }}</span>
                             @else
                                 <span class="text-danger"><i class="fas fa-exclamation-triangle mr-1"></i>{{ __('Low Balance') }}</span>
                             @endif
                         </div>
-                        <small class="text-muted d-block" style="font-size: 11.5px; line-height: 1.2;">
+                        <small class="text-muted d-block" style="font-size: 11px; line-height: 1.2;">
                             @if($isSufficient)
                                 {{ __('Auto renew ready') }}
                             @else
