@@ -23,22 +23,22 @@
     @include('alerts.alerts')
 
 <style>
-    /* Metric Cards Overall & Height Equalization */
+    /* Metric Cards Overall & Compact Height Equalization */
     .plan-metric-card {
-        border-radius: 10px !important;
+        border-radius: 8px !important;
         transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     }
     .plan-metric-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 .5rem 1rem rgba(0,0,0,.12) !important;
+        box-shadow: 0 .25rem .75rem rgba(0,0,0,.1) !important;
     }
     .plan-metric-body {
-        min-height: 118px !important;
+        min-height: 82px !important;
         height: 100% !important;
         display: flex !important;
         flex-direction: column !important;
         justify-content: space-between !important;
-        padding: 12px 14px !important;
+        padding: 8px 10px !important;
         box-sizing: border-box !important;
     }
 
@@ -49,16 +49,16 @@
         align-items: center !important;
         justify-content: space-between !important;
         width: 100% !important;
-        margin-bottom: 8px !important;
-        gap: 6px !important;
+        margin-bottom: 3px !important;
+        gap: 4px !important;
         box-sizing: border-box !important;
     }
     .plan-card-title {
-        font-size: 11px !important;
+        font-size: 10px !important;
         font-weight: 700 !important;
         text-transform: uppercase !important;
         letter-spacing: 0.3px !important;
-        line-height: 1.25 !important;
+        line-height: 1.2 !important;
         flex: 1 1 auto !important;
         min-width: 0 !important;
         margin: 0 !important;
@@ -66,83 +66,91 @@
         word-break: normal !important;
     }
 
-    /* Icon Badge: STRICT sizing to never stretch, expand or become column */
+    /* Compact Circular Icon Badge */
     .plan-card-icon-wrap {
-        width: 32px !important;
-        height: 32px !important;
-        min-width: 32px !important;
-        max-width: 32px !important;
-        min-height: 32px !important;
-        max-height: 32px !important;
+        width: 24px !important;
+        height: 24px !important;
+        min-width: 24px !important;
+        max-width: 24px !important;
+        min-height: 24px !important;
+        max-height: 24px !important;
         border-radius: 50% !important;
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
         flex-shrink: 0 !important;
         flex-grow: 0 !important;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) !important;
         padding: 0 !important;
         margin: 0 !important;
         overflow: hidden !important;
     }
     .plan-card-icon-wrap i {
-        font-size: 13px !important;
+        font-size: 11px !important;
         line-height: 1 !important;
         display: inline-block !important;
         text-align: center !important;
     }
     .plan-card-icon-wrap svg {
-        width: 13px !important;
-        height: 13px !important;
-        max-width: 13px !important;
-        max-height: 13px !important;
+        width: 11px !important;
+        height: 11px !important;
+        max-width: 11px !important;
+        max-height: 11px !important;
         display: inline-block !important;
     }
 
     .plan-card-value {
-        margin-bottom: 2px !important;
-        line-height: 1.25 !important;
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        margin-bottom: 1px !important;
+        line-height: 1.2 !important;
     }
     .plan-card-subtext {
-        font-size: 11px !important;
-        line-height: 1.2 !important;
+        font-size: 9.5px !important;
+        line-height: 1.15 !important;
         color: #6c757d !important;
         display: block !important;
     }
 
     @media (max-width: 575.98px) {
         .plan-metric-body {
-            padding: 10px 10px !important;
-            min-height: 112px !important;
+            padding: 7px 8px !important;
+            min-height: 76px !important;
         }
         .plan-card-title {
-            font-size: 10px !important;
+            font-size: 9.5px !important;
             letter-spacing: 0.1px !important;
         }
         .plan-card-icon-wrap {
-            width: 28px !important;
-            height: 28px !important;
-            min-width: 28px !important;
-            max-width: 28px !important;
-            min-height: 28px !important;
-            max-height: 28px !important;
+            width: 22px !important;
+            height: 22px !important;
+            min-width: 22px !important;
+            max-width: 22px !important;
+            min-height: 22px !important;
+            max-height: 22px !important;
         }
         .plan-card-icon-wrap i {
-            font-size: 11.5px !important;
+            font-size: 10px !important;
         }
         .plan-card-icon-wrap svg {
-            width: 11.5px !important;
-            height: 11.5px !important;
+            width: 10px !important;
+            height: 10px !important;
+        }
+        .plan-card-value {
+            font-size: 12.5px !important;
+        }
+        .plan-card-subtext {
+            font-size: 9px !important;
         }
     }
 </style>
 
     <!-- 1. Top 5 Overview Metric Cards -->
-    <div class="row mb-4">
+    <div class="row mb-3">
 
         <!-- Card 1: Plan Status (Line 1 on Mobile) -->
-        <div class="col-12 col-xl mb-3">
-            <div class="card plan-metric-card {{ $isPlanExpired ? 'border-left-danger' : 'border-left-primary' }} shadow h-100" style="border-left: 5px solid {{ $isPlanExpired ? '#dc3545' : '#4e73df' }} !important;">
+        <div class="col-12 col-xl mb-2">
+            <div class="card plan-metric-card {{ $isPlanExpired ? 'border-left-danger' : 'border-left-primary' }} shadow-sm h-100" style="border-left: 3.5px solid {{ $isPlanExpired ? '#dc3545' : '#4e73df' }} !important;">
                 <div class="card-body plan-metric-body">
                     <div class="plan-card-header">
                         <div class="plan-card-title {{ $isPlanExpired ? 'text-danger' : 'text-primary' }}">
@@ -153,19 +161,19 @@
                         </div>
                     </div>
                     <div>
-                        <div class="plan-card-value font-weight-bold text-gray-800">
+                        <div class="plan-card-value text-gray-800">
                             @if($isPlanExpired)
-                                <span class="badge badge-danger px-2 py-1" style="font-size: 12.5px;">{{ __('Plan Expired') }}</span>
+                                <span class="badge badge-danger px-2 py-0.5" style="font-size: 11px;">{{ __('Plan Expired') }}</span>
                             @elseif($seller->plan_status === 'active_plan')
-                                <span class="badge badge-primary px-2 py-1" style="font-size: 12.5px;">{{ __('Active Plan') }}</span>
+                                <span class="badge badge-primary px-2 py-0.5" style="font-size: 11px;">{{ __('Active Plan') }}</span>
                             @elseif(in_array($seller->plan_status, ['free_time', 'free_period']))
-                                <span class="badge badge-success px-2 py-1" style="font-size: 12.5px;">{{ __('Free Time') }}</span>
+                                <span class="badge badge-success px-2 py-0.5" style="font-size: 11px;">{{ __('Free Time') }}</span>
                             @else
-                                <span class="badge badge-primary px-2 py-1" style="font-size: 12.5px;">{{ __('Active Plan') }}</span>
+                                <span class="badge badge-primary px-2 py-0.5" style="font-size: 11px;">{{ __('Active Plan') }}</span>
                             @endif
                         </div>
                         <small class="plan-card-subtext">
-                            {{ __('Time-Based Store Subscription') }}
+                            {{ __('Time-Based Subscription') }}
                         </small>
                     </div>
                 </div>
@@ -173,8 +181,8 @@
         </div>
 
         <!-- Card 2: Days Left (Line 2 Left on Mobile) -->
-        <div class="col-6 col-xl mb-3">
-            <div class="card plan-metric-card border-left-info shadow h-100" style="border-left: 5px solid #36b9cc !important;">
+        <div class="col-6 col-xl mb-2">
+            <div class="card plan-metric-card border-left-info shadow-sm h-100" style="border-left: 3.5px solid #36b9cc !important;">
                 <div class="card-body plan-metric-body">
                     <div class="plan-card-header">
                         <div class="plan-card-title text-info">
@@ -185,7 +193,7 @@
                         </div>
                     </div>
                     <div>
-                        <div class="plan-card-value h5 mb-1 font-weight-bold {{ $isPlanExpired ? 'text-danger' : 'text-gray-800' }}" style="font-size: 15px;">
+                        <div class="plan-card-value {{ $isPlanExpired ? 'text-danger' : 'text-gray-800' }}">
                             {{ $daysRemaining }} {{ __('Day(s)') }}
                         </div>
                         <small class="plan-card-subtext">
@@ -197,8 +205,8 @@
         </div>
 
         <!-- Card 3: Valid Until (Line 2 Right on Mobile) -->
-        <div class="col-6 col-xl mb-3">
-            <div class="card plan-metric-card border-left-success shadow h-100" style="border-left: 5px solid #1cc88a !important;">
+        <div class="col-6 col-xl mb-2">
+            <div class="card plan-metric-card border-left-success shadow-sm h-100" style="border-left: 3.5px solid #1cc88a !important;">
                 <div class="card-body plan-metric-body">
                     <div class="plan-card-header">
                         <div class="plan-card-title text-success">
@@ -209,7 +217,7 @@
                         </div>
                     </div>
                     <div>
-                        <div class="plan-card-value h5 mb-1 font-weight-bold text-gray-800" style="font-size: 14px; white-space: nowrap;">
+                        <div class="plan-card-value text-gray-800" style="white-space: nowrap;">
                             {{ $planEndDate ? $planEndDate->format('d M Y') : 'N/A' }}
                         </div>
                         <small class="plan-card-subtext">
@@ -221,8 +229,8 @@
         </div>
 
         <!-- Card 4: Next Renewal Charge (Line 3 Left on Mobile) -->
-        <div class="col-6 col-xl mb-3">
-            <div class="card plan-metric-card border-left-warning shadow h-100" style="border-left: 5px solid #f6c23e !important;">
+        <div class="col-6 col-xl mb-2">
+            <div class="card plan-metric-card border-left-warning shadow-sm h-100" style="border-left: 3.5px solid #f6c23e !important;">
                 <div class="card-body plan-metric-body">
                     <div class="plan-card-header">
                         <div class="plan-card-title text-warning">
@@ -233,7 +241,7 @@
                         </div>
                     </div>
                     <div>
-                        <div class="plan-card-value h5 mb-1 font-weight-bold text-gray-800" style="font-size: 14px;">
+                        <div class="plan-card-value text-gray-800">
                             {{ PriceHelper::adminCurrency() }} {{ number_format($planCharge, 2) }}
                         </div>
                         <small class="plan-card-subtext">
@@ -245,8 +253,8 @@
         </div>
 
         <!-- Card 5: Renewal Status (Line 3 Right on Mobile) -->
-        <div class="col-6 col-xl mb-3">
-            <div class="card plan-metric-card {{ $isSufficient ? 'border-left-success' : 'border-left-danger' }} shadow h-100" style="border-left: 5px solid {{ $isSufficient ? '#28a745' : '#dc3545' }} !important;">
+        <div class="col-6 col-xl mb-2">
+            <div class="card plan-metric-card {{ $isSufficient ? 'border-left-success' : 'border-left-danger' }} shadow-sm h-100" style="border-left: 3.5px solid {{ $isSufficient ? '#28a745' : '#dc3545' }} !important;">
                 <div class="card-body plan-metric-body">
                     <div class="plan-card-header">
                         <div class="plan-card-title {{ $isSufficient ? 'text-success' : 'text-danger' }}">
@@ -257,7 +265,7 @@
                         </div>
                     </div>
                     <div>
-                        <div class="plan-card-value h5 mb-1 font-weight-bold" style="font-size: 14px;">
+                        <div class="plan-card-value">
                             @if($isSufficient)
                                 <span class="text-success"><i class="fas fa-check-circle mr-1"></i>{{ __('Sufficient') }}</span>
                             @else
