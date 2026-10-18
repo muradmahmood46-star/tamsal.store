@@ -159,12 +159,26 @@
         </a>
     </li>
 
-    <li class="nav-item {{ request()->is('seller/plans*') ? 'active' : '' }}">
-        <a href="{{ route('seller.plan.index') }}">
-            <i class="fas fa-calendar-check text-info"></i>
-            <p>{{ __('Plans') }}</p>
-        </a>
-    </li>
+    @php
+        $sitebarSetting = \App\Models\Setting::first();
+        $isTimeBasedActive = $sitebarSetting && ($sitebarSetting->vendor_plan_mode === 'time_based');
+    @endphp
+
+    @if($isTimeBasedActive)
+        <li class="nav-item {{ request()->is('seller/plans*') || request()->is('seller/commission*') ? 'active' : '' }}">
+            <a href="{{ route('seller.plan.index') }}">
+                <i class="fas fa-calendar-check text-info"></i>
+                <p>{{ __('Plans') }}</p>
+            </a>
+        </li>
+    @else
+        <li class="nav-item {{ request()->is('seller/plans*') || request()->is('seller/commission*') ? 'active' : '' }}">
+            <a href="{{ route('seller.commission.index') }}">
+                <i class="fas fa-percentage text-primary"></i>
+                <p>{{ __('Commission') }}</p>
+            </a>
+        </li>
+    @endif
 
     <li class="nav-item {{ request()->is('seller/promotion*') ? 'active' : '' }}">
         <a href="{{ route('seller.promotion.index') }}">

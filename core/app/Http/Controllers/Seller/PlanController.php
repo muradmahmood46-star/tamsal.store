@@ -6,6 +6,7 @@ use App\Helpers\PriceHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Deal;
 use App\Models\Item;
+use App\Models\Order;
 use App\Models\Seller;
 use App\Models\Setting;
 use App\Models\VendorNotification;
@@ -22,11 +23,18 @@ class PlanController extends Controller
         $this->middleware(['auth', 'seller']);
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
         $seller = Seller::where('user_id', $user->id)->firstOrFail();
         $setting = Setting::first();
+
+        // Check if active vendor mode is Commission Per Order
+        $isTimeBased = $setting && ($setting->vendor_plan_mode === 'time_based');
+
+        if (!$isTimeBased) {
+            return $this->commissionIndex($request, $user, $seller, $setting);
+        }
 
         VendorPlanHistory::ensureTable();
         VendorPlanHistory::syncInitialHistory($seller);
@@ -190,5 +198,66 @@ class PlanController extends Controller
             'days' => $planDuration,
             'date' => $newEnd->format('d M Y'),
         ]));
+    }
+
+    protected function commissionIndex(Request $request, $user, $seller, $setting)
+    {
+        $commissionPercent = (float)($setting->vendor_commission_percent ?? 2.0);
+        $freeOrdersLimit = (int)($setting->vendor_free_orders ?? 5);
+
+        // Orders summary counts
+        $totalOrdersCount = Order::where('vendor_id', $user->id)->count();
+        $freeOrdersCount = Order::where('vendor_id', $user->id)->where('commission_status', 'free')->count();
+        $deductedOrdersCount = Order::where('vendor_id', $user->id)->where('commission_status', 'deducted')->count();
+        $totalCommissionPaid = (float)Order::where('vendor_id', $user->id)->where('commission_status', 'deducted')->sum('commission_amount');
+
+        $pendingOrders = Order::where('vendor_id', $user->id)->where('commission_status', 'pending_balance')->get();
+        $pendingOrdersCount = $pendingOrders->count();
+        $pendingCommissionAmount = (float)$pendingOrders->sum('commission_amount');
+
+        $remainingFreeOrders = max(0, $freeOrdersLimit - $totalOrdersCount);
+
+        // Orders Query with filters
+        $orderQuery = Order::where('vendor_id', $user->id);
+
+        if ($request->filled('status')) {
+            $status = $request->status;
+            if (in_array($status, ['deducted', 'free', 'pending_balance'])) {
+                $orderQuery->where('commission_status', $status);
+            }
+        }
+
+        if ($request->filled('search')) {
+            $term = trim($request->search);
+            $orderQuery->where(function($q) use ($term) {
+                $q->where('transaction_number', 'like', "%{$term}%")
+                  ->orWhere('id', $term);
+            });
+        }
+
+        if ($request->filled('date_from')) {
+            $orderQuery->whereDate('created_at', '>=', Carbon::parse($request->date_from));
+        }
+        if ($request->filled('date_to')) {
+            $orderQuery->whereDate('created_at', '<=', Carbon::parse($request->date_to));
+        }
+
+        $orders = $orderQuery->orderBy('id', 'desc')->paginate(15);
+
+        return view('seller.commission.index', compact(
+            'user',
+            'seller',
+            'setting',
+            'commissionPercent',
+            'freeOrdersLimit',
+            'totalOrdersCount',
+            'freeOrdersCount',
+            'deductedOrdersCount',
+            'totalCommissionPaid',
+            'pendingOrdersCount',
+            'pendingCommissionAmount',
+            'remainingFreeOrders',
+            'orders'
+        ));
     }
 }
