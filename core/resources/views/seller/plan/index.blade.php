@@ -107,9 +107,10 @@
     }
     .plan-card-subtext {
         font-size: 9.5px !important;
-        line-height: 1.15 !important;
+        line-height: 1.2 !important;
         color: #6c757d !important;
         display: block !important;
+        margin-top: 3px !important;
     }
 
     @media (max-width: 575.98px) {
@@ -160,20 +161,20 @@
                             <i class="fas {{ $isPlanExpired ? 'fa-exclamation-triangle' : 'fa-crown' }}"></i>
                         </div>
                     </div>
-                    <div>
-                        <div class="plan-card-value text-gray-800">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap no-mob-stack mt-auto pt-1" style="gap: 8px;">
+                        <div class="plan-card-value text-gray-800 mb-0">
                             @if($isPlanExpired)
-                                <span class="badge badge-danger px-2 py-0.5" style="font-size: 11px;">{{ __('Plan Expired') }}</span>
+                                <span class="badge badge-danger px-2.5 py-1" style="font-size: 11px;">{{ __('Plan Expired') }}</span>
                             @elseif($seller->plan_status === 'active_plan')
-                                <span class="badge badge-primary px-2 py-0.5" style="font-size: 11px;">{{ __('Active Plan') }}</span>
+                                <span class="badge badge-primary px-2.5 py-1" style="font-size: 11px;">{{ __('Active Plan') }}</span>
                             @elseif(in_array($seller->plan_status, ['free_time', 'free_period']))
-                                <span class="badge badge-success px-2 py-0.5" style="font-size: 11px;">{{ __('Free Time') }}</span>
+                                <span class="badge badge-success px-2.5 py-1" style="font-size: 11px;">{{ __('Free Time') }}</span>
                             @else
-                                <span class="badge badge-primary px-2 py-0.5" style="font-size: 11px;">{{ __('Active Plan') }}</span>
+                                <span class="badge badge-primary px-2.5 py-1" style="font-size: 11px;">{{ __('Active Plan') }}</span>
                             @endif
                         </div>
-                        <small class="plan-card-subtext">
-                            {{ __('Time-Based Subscription') }}
+                        <small class="plan-card-subtext mb-0 text-muted" style="margin-top: 0 !important; font-size: 10px;">
+                            <i class="fas fa-clock mr-1 text-primary"></i> {{ __('Time-Based Subscription') }}
                         </small>
                     </div>
                 </div>
