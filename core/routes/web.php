@@ -491,6 +491,9 @@ Route::group(['middleware' => 'maintainance'], function () {
             //------------ SETTING ------------
             Route::post('/profile/update', 'User\AccountController@profileUpdate')->name('user.profile.update');
             Route::get('/addresses', 'User\AccountController@addresses')->name('user.address');
+            Route::post('/addresses/store', 'User\AccountController@addressStore')->name('user.address.store');
+            Route::post('/addresses/delete/{id}', 'User\AccountController@addressDelete')->name('user.address.delete');
+            Route::post('/addresses/default/{id}', 'User\AccountController@addressSetDefault')->name('user.address.default');
             Route::post('/billing/addresses', 'User\AccountController@billingSubmit')->name('user.billing.submit');
             Route::post('/shipping/addresses', 'User\AccountController@shippingSubmit')->name('user.shipping.submit');
 

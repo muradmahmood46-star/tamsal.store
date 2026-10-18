@@ -60,6 +60,16 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\Wishlist');
     }
 
+    public function addresses()
+    {
+        return $this->hasMany('App\Models\UserAddress', 'user_id')->orderBy('is_default', 'desc')->orderBy('id', 'desc');
+    }
+
+    public function defaultAddress()
+    {
+        return $this->hasOne('App\Models\UserAddress', 'user_id')->where('is_default', 1);
+    }
+
     public function reviews()
     {
         return $this->hasMany('App\Models\Review');

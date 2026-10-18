@@ -22,6 +22,7 @@ use App\Models\Item;
 use App\Models\Setting;
 use App\Models\ShippingService;
 use App\Models\State;
+use App\Models\UserAddress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -160,6 +161,7 @@ class CheckoutController extends Controller
         $data['shipping'] = $shipping;
         $data['tax'] = $total_tax;
         $data['payments'] = PriceHelper::getCheckoutPaymentGateways($cart);
+        $data['savedAddresses'] = Auth::check() ? Auth::user()->addresses : collect();
 
         return view('front.checkout.billing', $data);
     }
@@ -168,7 +170,60 @@ class CheckoutController extends Controller
 
     public function billingStore(Request $request)
     {
-        // laravel validation
+        if (Auth::check() && $request->filled('selected_address_id') && $request->selected_address_id !== 'new') {
+            $saved = UserAddress::where('id', $request->selected_address_id)
+                ->where('user_id', Auth::id())
+                ->first();
+
+            if ($saved) {
+                $billingData = [
+                    'bill_first_name' => $saved->first_name,
+                    'bill_last_name' => $saved->last_name,
+                    'bill_email' => $saved->email,
+                    'bill_phone' => $saved->phone,
+                    'bill_province' => $saved->province,
+                    'bill_city' => $saved->city,
+                    'bill_area' => $saved->area,
+                    'bill_locality' => $saved->locality,
+                    'bill_address1' => $saved->address1,
+                    'bill_zip' => $saved->zip ?? 'N/A',
+                    'bill_country' => $saved->country ?? 'Pakistan',
+                    'selected_address_id' => $saved->id,
+                ];
+                Session::put('billing_address', $billingData);
+
+                if (PriceHelper::CheckDigital()) {
+                    $shipping = [
+                        "ship_first_name" => $saved->first_name,
+                        "ship_last_name" => $saved->last_name,
+                        "ship_email" => $saved->email,
+                        "ship_phone" => $saved->phone,
+                        "ship_company" => null,
+                        "ship_province" => $saved->province,
+                        "ship_city" => $saved->city,
+                        "ship_area" => $saved->area,
+                        "ship_locality" => $saved->locality ?? null,
+                        "ship_address1" => $saved->address1,
+                        "ship_complete_address" => $saved->address1,
+                        "ship_address2" => $saved->locality ?? null,
+                        "ship_zip" => $saved->zip ?? 'N/A',
+                        "ship_country" => $saved->country ?? 'Pakistan',
+                    ];
+                } else {
+                    $shipping = [
+                        "ship_first_name" => $saved->first_name,
+                        "ship_last_name" => $saved->last_name,
+                        "ship_email" => $saved->email,
+                        "ship_phone" => $saved->phone,
+                    ];
+                }
+                Session::put('shipping_address', $shipping);
+
+                return redirect()->route('front.checkout.payment');
+            }
+        }
+
+        // laravel validation for new / guest address
         $request->validate([
             'bill_first_name' => 'required',
             'bill_last_name' => 'required',
