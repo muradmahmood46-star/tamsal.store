@@ -294,6 +294,29 @@ class Seller extends Model
                 'status' => 'completed'
             ]);
 
+            // Log Plan History
+            try {
+                \App\Models\VendorPlanHistory::ensureTable();
+                \App\Models\VendorPlanHistory::create([
+                    'seller_id' => $this->id,
+                    'user_id' => $this->user_id,
+                    'plan_type' => 'auto_renewal',
+                    'plan_name' => 'Time-Based Store Plan',
+                    'duration_days' => $planDuration,
+                    'days_added' => $planDuration,
+                    'charge' => $planCharge,
+                    'start_date' => $now,
+                    'end_date' => $this->plan_end_date,
+                    'previous_end_date' => $now,
+                    'balance_after' => $this->balance,
+                    'details' => __('Auto-renewed for :days days until :date', [
+                        'days' => $planDuration,
+                        'date' => $this->plan_end_date->format('d M Y')
+                    ]),
+                    'status' => 'active'
+                ]);
+            } catch (\Throwable $e) {}
+
             \App\Models\VendorNotification::log(
                 $this->user_id,
                 'plan_renewed',
@@ -410,6 +433,29 @@ class Seller extends Model
                 ]),
                 'status' => 'completed'
             ]);
+
+            // Log Plan History
+            try {
+                \App\Models\VendorPlanHistory::ensureTable();
+                \App\Models\VendorPlanHistory::create([
+                    'seller_id' => $this->id,
+                    'user_id' => $this->user_id,
+                    'plan_type' => 'deposit_reactivation',
+                    'plan_name' => 'Time-Based Store Plan',
+                    'duration_days' => $planDuration,
+                    'days_added' => $planDuration,
+                    'charge' => $planCharge,
+                    'start_date' => $now,
+                    'end_date' => $this->plan_end_date,
+                    'previous_end_date' => null,
+                    'balance_after' => $this->balance,
+                    'details' => __('Reactivated upon deposit approval for :days days until :date', [
+                        'days' => $planDuration,
+                        'date' => $this->plan_end_date->format('d M Y')
+                    ]),
+                    'status' => 'active'
+                ]);
+            } catch (\Throwable $e) {}
 
             \App\Models\VendorNotification::log(
                 $this->user_id,

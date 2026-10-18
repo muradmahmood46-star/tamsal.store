@@ -895,6 +895,10 @@ class Helper
                 }
             }
 
+            try {
+                \App\Models\VendorPlanHistory::ensureTable();
+            } catch (\Throwable $e) {}
+
             // Auto-generate missing store codes for existing sellers
             try {
                 if (\Illuminate\Support\Facades\Schema::hasTable('sellers') && \Illuminate\Support\Facades\Schema::hasColumn('sellers', 'store_code')) {

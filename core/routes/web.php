@@ -584,6 +584,10 @@ Route::group(['middleware' => 'maintainance'], function () {
             Route::get('wallet', 'Seller\WalletController@index')->name('seller.wallet.index');
             Route::post('wallet/store', 'Seller\WalletController@store')->name('seller.wallet.store');
 
+            //------------ STORE PLANS ------------
+            Route::get('plans', 'Seller\PlanController@index')->name('seller.plan.index');
+            Route::post('plans/renew', 'Seller\PlanController@renew')->name('seller.plan.renew');
+
             //------------ PROMOTION BADGES ------------
             Route::get('promotions', 'Seller\PromotionController@index')->name('seller.promotion.index');
             Route::post('promotions/purchase', 'Seller\PromotionController@purchase')->name('seller.promotion.purchase');

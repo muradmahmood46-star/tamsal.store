@@ -159,6 +159,13 @@
         </a>
     </li>
 
+    <li class="nav-item {{ request()->is('seller/plans*') ? 'active' : '' }}">
+        <a href="{{ route('seller.plan.index') }}">
+            <i class="fas fa-calendar-check text-info"></i>
+            <p>{{ __('Plans') }}</p>
+        </a>
+    </li>
+
     <li class="nav-item {{ request()->is('seller/promotion*') ? 'active' : '' }}">
         <a href="{{ route('seller.promotion.index') }}">
             <i class="fas fa-bullhorn text-success"></i>

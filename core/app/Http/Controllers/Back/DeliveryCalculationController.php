@@ -20,6 +20,20 @@ class DeliveryCalculationController extends Controller
     {
         PriceHelper::ensureDeliveryCalcColumns();
 
+        try {
+            $compiledViews = glob(storage_path('framework/views/*.php'));
+            if (is_array($compiledViews)) {
+                foreach ($compiledViews as $compiledFile) {
+                    $content = @file_get_contents($compiledFile);
+                    if ($content !== false && (strpos($content, 'Formula Explanation') !== false || strpos($content, 'Divisor applied to the original delivery fee') !== false)) {
+                        @unlink($compiledFile);
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            // Silently ignore
+        }
+
         $setting = Setting::first();
         if (!$setting) {
             $setting = new Setting();
