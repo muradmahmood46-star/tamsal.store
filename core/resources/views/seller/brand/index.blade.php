@@ -92,30 +92,52 @@
         min-width: 110px !important;
         text-align: center !important;
     }
+
+    @media (max-width: 767.98px) {
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter {
+            text-align: left !important;
+            margin-bottom: 10px !important;
+        }
+        .dataTables_wrapper .dataTables_filter input {
+            width: 100% !important;
+            max-width: 220px !important;
+            margin-left: 0 !important;
+            margin-top: 5px !important;
+            display: inline-block !important;
+        }
+        .dataTables_wrapper .dataTables_info,
+        .dataTables_wrapper .dataTables_paginate {
+            text-align: center !important;
+            margin-top: 8px !important;
+        }
+        .dataTables_wrapper .dataTables_paginate ul.pagination {
+            justify-content: center !important;
+            flex-wrap: wrap !important;
+        }
+    }
 </style>
 
 	<!-- DataTales -->
 	<div class="card shadow mb-4">
 		<div class="card-body">
 			@include('alerts.alerts')
-			<div class="brand-table-wrap">
-				<table class="table table-bordered table-striped table-hover brand-table" id="admin-table" width="100%" cellspacing="0">
-					<thead>
-						<tr>
-                            <th class="brand-col-name">{{ __('Name') }}</th>
-                            @if(($setting->is_brand_image ?? 1) == 1)
-                                <th class="brand-col-logo text-center">{{ __('Logo') }}</th>
-                            @endif
-                            <th class="brand-col-slug">{{ __('Slug') }}</th>
-							<th class="brand-col-status text-center">{{ __('Status') }}</th>
-							<th class="brand-col-actions text-center">{{ __('Actions') }}</th>
-						</tr>
-					</thead>
-					<tbody>
-                        @include('seller.brand.table', compact('datas'))
-					</tbody>
-				</table>
-			</div>
+			<table class="table table-bordered table-striped table-hover brand-table" id="brand-admin-table" width="100%" cellspacing="0">
+				<thead>
+					<tr>
+                        <th class="brand-col-name">{{ __('Name') }}</th>
+                        @if(($setting->is_brand_image ?? 1) == 1)
+                            <th class="brand-col-logo text-center">{{ __('Logo') }}</th>
+                        @endif
+                        <th class="brand-col-slug">{{ __('Slug') }}</th>
+						<th class="brand-col-status text-center">{{ __('Status') }}</th>
+						<th class="brand-col-actions text-center">{{ __('Actions') }}</th>
+					</tr>
+				</thead>
+				<tbody>
+                    @include('seller.brand.table', compact('datas'))
+				</tbody>
+			</table>
 		</div>
 	</div>
 
@@ -146,4 +168,36 @@
     </div>
 </div>
 
+@endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        if ($('#brand-admin-table').length > 0) {
+            $('#brand-admin-table').DataTable({
+                responsive: false,
+                ordering: false,
+                pageLength: 15,
+                lengthMenu: [[15, 25, 50, 100, -1], [15, 25, 50, 100, "{{ __('All') }}"]],
+                dom: "<'row add-btn-area'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>><'row'<'col-sm-12'<'brand-table-wrap'tr>>><'row mt-3'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                language: {
+                    search: "{{ __('Search:') }}",
+                    searchPlaceholder: "{{ __('Search brands...') }}",
+                    lengthMenu: "{{ __('Show _MENU_ entries') }}",
+                    info: "{{ __('Showing _START_ to _END_ of _TOTAL_ entries') }}",
+                    infoEmpty: "{{ __('Showing 0 to 0 of 0 entries') }}",
+                    infoFiltered: "{{ __('(filtered from _MAX_ total entries)') }}",
+                    zeroRecords: "{{ __('No matching brands found') }}",
+                    emptyTable: "{{ __('No brands found') }}",
+                    paginate: {
+                        first: "{{ __('First') }}",
+                        last: "{{ __('Last') }}",
+                        next: "{{ __('Next') }}",
+                        previous: "{{ __('Previous') }}"
+                    }
+                }
+            });
+        }
+    });
+</script>
 @endsection
