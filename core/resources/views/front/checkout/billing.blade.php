@@ -54,10 +54,10 @@
                             @if($hasSavedAddresses)
                                 <div class="mb-4">
                                     <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <label class="font-weight-bold text-dark mb-0" style="font-size: 15px;">
-                                            <i class="fas fa-map-marker-alt text-primary mr-1"></i> {{ __('Select Delivery Address') }}
+                                        <label class="font-weight-bold text-dark mb-0" style="font-size: 15.5px; letter-spacing: -0.2px;">
+                                            <i class="fas fa-map-marked-alt text-primary mr-1"></i> {{ __('Select Delivery Address') }}
                                         </label>
-                                        <a href="{{ route('user.address') }}" target="_blank" class="small text-primary">
+                                        <a href="{{ route('user.address') }}" target="_blank" class="small text-primary font-weight-bold">
                                             <i class="fas fa-cog mr-1"></i> {{ __('Manage Addresses') }}
                                         </a>
                                     </div>
@@ -65,24 +65,29 @@
                                     <div class="row">
                                         @foreach($savedAddresses as $sAddr)
                                             <div class="col-12 mb-3">
-                                                <label class="saved-address-card p-3 rounded d-flex align-items-start {{ ($selectedAddressId == $sAddr->id) ? 'active-address' : '' }}">
-                                                    <input type="radio" name="selected_address_id" value="{{ $sAddr->id }}" class="mt-1 mr-3 address-radio" {{ ($selectedAddressId == $sAddr->id) ? 'checked' : '' }}>
-                                                    <div class="flex-grow-1">
-                                                        <div class="d-flex align-items-center mb-1">
-                                                            <strong class="text-dark" style="font-size: 15px;">{{ $sAddr->full_name }}</strong>
+                                                <label class="checkout-address-option-card {{ ($selectedAddressId == $sAddr->id) ? 'active-address' : '' }}">
+                                                    <input type="radio" name="selected_address_id" value="{{ $sAddr->id }}" class="address-radio-input" {{ ($selectedAddressId == $sAddr->id) ? 'checked' : '' }}>
+                                                    
+                                                    <div class="card-radio-mark-wrap">
+                                                        <span class="custom-radio-circle"></span>
+                                                    </div>
+
+                                                    <div class="card-address-content">
+                                                        <div class="d-flex align-items-center justify-content-between flex-wrap mb-1">
+                                                            <strong class="addr-name font-weight-bold">{{ $sAddr->full_name }}</strong>
                                                             @if($sAddr->is_default)
-                                                                <span class="badge badge-primary ml-2" style="font-size: 11px;">{{ __('Default') }}</span>
+                                                                <span class="addr-default-pill"><i class="fas fa-check-circle mr-1"></i>{{ __('Default') }}</span>
                                                             @endif
                                                         </div>
-                                                        <div class="text-muted small mb-1">
-                                                            <i class="fas fa-phone-alt mr-1"></i> <strong>{{ $sAddr->phone }}</strong>
+                                                        <div class="addr-contact text-muted small mb-1">
+                                                            <span><i class="fas fa-phone-alt mr-1 text-primary"></i> <strong>{{ $sAddr->phone }}</strong></span>
                                                             @if($sAddr->email)
                                                                 <span class="mx-2">•</span>
-                                                                <i class="fas fa-envelope mr-1"></i> {{ $sAddr->email }}
+                                                                <span><i class="fas fa-envelope mr-1 text-muted"></i> {{ $sAddr->email }}</span>
                                                             @endif
                                                         </div>
-                                                        <div class="text-dark small">
-                                                            <i class="fas fa-map-pin text-primary mr-1"></i> {{ $sAddr->formatted_address }}
+                                                        <div class="addr-detail text-dark small">
+                                                            <i class="fas fa-map-marker-alt text-primary mr-1"></i> {{ $sAddr->formatted_address }}
                                                         </div>
                                                     </div>
                                                 </label>
@@ -90,11 +95,22 @@
                                         @endforeach
 
                                         <div class="col-12 mb-3">
-                                            <label class="saved-address-card p-3 rounded d-flex align-items-center {{ ($selectedAddressId == 'new') ? 'active-address' : '' }}" style="border-style: dashed !important; background: #fafbfc;">
-                                                <input type="radio" name="selected_address_id" value="new" class="mr-3 address-radio" {{ ($selectedAddressId == 'new') ? 'checked' : '' }}>
-                                                <div>
-                                                    <strong class="text-primary" style="font-size: 14px;"><i class="fas fa-plus-circle mr-1"></i> {{ __('Deliver to a different / new address') }}</strong>
-                                                    <div class="text-muted small">{{ __('Use a one-time delivery address for this order only (will not be saved to your address book).') }}</div>
+                                            <label class="checkout-address-option-card new-address-card {{ ($selectedAddressId == 'new') ? 'active-address' : '' }}">
+                                                <input type="radio" name="selected_address_id" value="new" class="address-radio-input" {{ ($selectedAddressId == 'new') ? 'checked' : '' }}>
+                                                
+                                                <div class="card-radio-mark-wrap">
+                                                    <span class="custom-radio-circle"></span>
+                                                </div>
+
+                                                <div class="card-address-content">
+                                                    <div class="d-flex align-items-center">
+                                                        <strong class="text-primary font-weight-bold" style="font-size: 15px;">
+                                                            <i class="fas fa-plus-circle mr-1"></i> {{ __('Deliver to a different / new address') }}
+                                                        </strong>
+                                                    </div>
+                                                    <div class="text-muted small mt-1" style="line-height: 1.45;">
+                                                        {{ __('Use a one-time delivery address for this order only (will not be saved to your address book).') }}
+                                                    </div>
                                                 </div>
                                             </label>
                                         </div>
@@ -249,29 +265,125 @@
     </div>
 
     <style>
-        .saved-address-card {
+        .checkout-address-option-card {
+            position: relative !important;
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important; /* Top-to-bottom center */
+            justify-content: flex-start !important;
+            padding: 16px 18px !important;
+            border-radius: 12px !important;
             border: 2px solid #e2e8f0 !important;
-            background: #ffffff;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            margin-bottom: 0;
-            width: 100%;
+            background: #ffffff !important;
+            cursor: pointer !important;
+            transition: all 0.25s ease !important;
+            margin-bottom: 12px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
         }
-        .saved-address-card:hover {
+
+        .checkout-address-option-card:hover {
             border-color: #7952b3 !important;
-            box-shadow: 0 2px 8px rgba(121, 82, 179, 0.1);
+            box-shadow: 0 4px 15px rgba(121, 82, 179, 0.1) !important;
         }
-        .saved-address-card.active-address {
+
+        .checkout-address-option-card.active-address {
             border-color: #7952b3 !important;
-            background-color: #fbf9ff !important;
-            box-shadow: 0 2px 10px rgba(121, 82, 179, 0.12);
+            background-color: #faf7ff !important;
+            box-shadow: 0 4px 18px rgba(121, 82, 179, 0.14) !important;
         }
-        .saved-address-card input[type="radio"] {
-            accent-color: #7952b3;
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
+
+        .checkout-address-option-card.new-address-card {
+            border-style: dashed !important;
+            background: #fafbfc !important;
         }
+
+        .checkout-address-option-card.new-address-card.active-address {
+            border-style: solid !important;
+            background: #faf7ff !important;
+        }
+
+        /* Native radio input is completely hidden so it never overlaps or shifts text */
+        .checkout-address-option-card input.address-radio-input {
+            position: absolute !important;
+            opacity: 0 !important;
+            width: 0 !important;
+            height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
+        }
+
+        /* Radio mark container: strictly vertically centered, fixed width, never overlaps */
+        .checkout-address-option-card .card-radio-mark-wrap {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-shrink: 0 !important;
+            width: 24px !important;
+            height: 24px !important;
+            margin-right: 16px !important;
+            margin-left: 0 !important;
+            align-self: center !important; /* Top-to-bottom center */
+        }
+
+        /* Custom circular radio mark */
+        .checkout-address-option-card .custom-radio-circle {
+            width: 22px !important;
+            height: 22px !important;
+            border-radius: 50% !important;
+            border: 2px solid #cbd5e1 !important;
+            background: #ffffff !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            box-sizing: border-box !important;
+            transition: all 0.2s ease !important;
+            flex-shrink: 0 !important;
+            position: relative !important;
+        }
+
+        .checkout-address-option-card:hover .custom-radio-circle {
+            border-color: #7952b3 !important;
+        }
+
+        .checkout-address-option-card.active-address .custom-radio-circle {
+            border-color: #7952b3 !important;
+            background: #7952b3 !important;
+        }
+
+        .checkout-address-option-card.active-address .custom-radio-circle::after {
+            content: '' !important;
+            display: block !important;
+            width: 8px !important;
+            height: 8px !important;
+            border-radius: 50% !important;
+            background: #ffffff !important;
+        }
+
+        /* Content wrapper */
+        .checkout-address-option-card .card-address-content {
+            flex: 1 1 auto !important;
+            min-width: 0 !important; /* Guarantees no text overflow or overlap */
+        }
+
+        .addr-name {
+            font-size: 15.5px;
+            color: #1e293b;
+        }
+
+        .addr-default-pill {
+            background: #ecfdf5;
+            color: #059669;
+            border: 1px solid #a7f3d0;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 12px;
+            white-space: nowrap;
+        }
+
         #continue__button:disabled,
         #continue__button[disabled] {
             pointer-events: none !important;
@@ -337,7 +449,7 @@
                 var newAddressSection = document.getElementById('newAddressFormWrapper');
 
                 radios.forEach(function(radio) {
-                    var card = radio.closest('.saved-address-card');
+                    var card = radio.closest('.checkout-address-option-card');
                     if (radio.checked) {
                         if (card) card.classList.add('active-address');
                         if (radio.value === 'new') {

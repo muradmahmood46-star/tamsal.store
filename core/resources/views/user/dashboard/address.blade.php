@@ -27,17 +27,22 @@
                 @include('alerts.alerts')
 
                 <!-- Saved Addresses Section -->
-                <div class="card mb-4 shadow-sm" style="border-radius: 10px; border: 1px solid #e2e8f0;">
-                    <div class="card-header bg-white py-3 d-flex flex-wrap align-items-center justify-content-between" style="border-bottom: 1px solid #edf2f7;">
-                        <div>
-                            <h5 class="mb-0 text-dark font-weight-bold" style="font-size: 17px;">
-                                <i class="icon-map-pin text-primary mr-2"></i>{{ __('Saved Addresses') }}
-                                <span class="badge badge-primary ml-2" style="font-size: 11px;">{{ $addresses->count() }}</span>
-                            </h5>
-                            <small class="text-muted">{{ __('Manage your delivery locations for fast 1-click checkout.') }}</small>
+                <div class="card mb-4 shadow-sm" style="border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden;">
+                    <div class="card-header bg-white py-3 px-3 px-sm-4 d-flex flex-wrap align-items-center justify-content-between" style="border-bottom: 1px solid #f1f5f9;">
+                        <div class="d-flex align-items-center mb-2 mb-sm-0">
+                            <div class="header-icon-box mr-3">
+                                <i class="fas fa-map-marked-alt"></i>
+                            </div>
+                            <div>
+                                <div class="d-flex align-items-center flex-wrap">
+                                    <h5 class="mb-0 text-dark font-weight-bold" style="font-size: 17px; letter-spacing: -0.2px;">{{ __('Saved Addresses') }}</h5>
+                                    <span class="badge badge-purple-soft ml-2">{{ $addresses->count() }} {{ __('Saved') }}</span>
+                                </div>
+                                <small class="text-muted" style="font-size: 12.5px;">{{ __('Manage your delivery locations for fast 1-click checkout.') }}</small>
+                            </div>
                         </div>
-                        <a href="#new-address-section" class="btn btn-primary btn-sm mt-2 mt-sm-0 font-weight-bold" style="border-radius: 6px;">
-                            <i class="icon-plus mr-1"></i> {{ __('Add New Address') }}
+                        <a href="#new-address-section" class="btn btn-primary btn-sm font-weight-bold px-3 py-2" style="border-radius: 8px; font-size: 12.5px; box-shadow: 0 2px 8px rgba(121, 82, 179, 0.25);">
+                            <i class="fas fa-plus mr-1"></i> {{ __('Add New Address') }}
                         </a>
                     </div>
                     <div class="card-body p-3 p-md-4">
@@ -45,54 +50,60 @@
                             <div class="row">
                                 @foreach($addresses as $addr)
                                     <div class="col-md-6 mb-3">
-                                        <div class="p-3 rounded h-100 position-relative d-flex flex-column justify-content-between" 
-                                             style="border: 1.5px solid {{ $addr->is_default ? '#2563eb' : '#e2e8f0' }}; background: {{ $addr->is_default ? '#f8fafc' : '#ffffff' }}; border-radius: 8px;">
+                                        <div class="user-address-card h-100 {{ $addr->is_default ? 'is-default-card' : '' }}">
                                             <div>
-                                                <div class="d-flex align-items-center justify-content-between mb-2">
-                                                    <span class="font-weight-bold text-dark" style="font-size: 15px;">
-                                                        <i class="icon-user text-muted mr-1"></i> {{ $addr->full_name }}
-                                                    </span>
+                                                <div class="card-top-header d-flex align-items-center justify-content-between mb-2">
+                                                    <div class="d-flex align-items-center text-truncate mr-2">
+                                                        <div class="user-avatar-icon mr-2">
+                                                            <i class="fas fa-user text-primary"></i>
+                                                        </div>
+                                                        <span class="recipient-title font-weight-bold text-dark text-truncate" title="{{ $addr->full_name }}">
+                                                            {{ $addr->full_name }}
+                                                        </span>
+                                                    </div>
                                                     @if($addr->is_default)
-                                                        <span class="badge badge-success px-2 py-1 font-weight-bold" style="font-size: 10.5px; border-radius: 4px;">
-                                                            <i class="icon-check mr-1"></i> {{ __('Default') }}
+                                                        <span class="badge-default-active">
+                                                            <i class="fas fa-check-circle mr-1"></i> {{ __('Default') }}
                                                         </span>
                                                     @endif
                                                 </div>
 
-                                                <div class="text-muted small mb-1" style="font-size: 12px;">
-                                                    <i class="icon-phone mr-1 text-primary"></i> <strong>{{ $addr->phone }}</strong>
+                                                <div class="contact-pill-row mb-2">
+                                                    <span class="contact-badge"><i class="fas fa-phone-alt mr-1 text-primary"></i> <strong>{{ $addr->phone }}</strong></span>
                                                     @if($addr->email)
-                                                        <span class="mx-1">•</span> <i class="icon-mail mr-1"></i> {{ $addr->email }}
+                                                        <span class="contact-badge"><i class="fas fa-envelope mr-1 text-muted"></i> {{ $addr->email }}</span>
                                                     @endif
                                                 </div>
 
-                                                <div class="text-dark my-2 font-weight-bold" style="font-size: 13px; line-height: 1.45;">
-                                                    {{ $addr->address1 }}
-                                                </div>
-
-                                                <div class="text-muted small" style="font-size: 12px; line-height: 1.4;">
-                                                    @if($addr->locality)
-                                                        <span>{{ $addr->locality }}, </span>
-                                                    @endif
-                                                    <span>{{ $addr->area }}, {{ $addr->city }}</span>
-                                                    <span class="d-block text-secondary font-weight-bold mt-1">
-                                                        <i class="icon-map-pin mr-1 text-info"></i> {{ $addr->province }}, Pakistan
-                                                    </span>
+                                                <div class="address-details-box">
+                                                    <div class="address-street">
+                                                        <i class="fas fa-home text-muted mr-1"></i> {{ $addr->address1 }}
+                                                    </div>
+                                                    <div class="address-sub text-muted">
+                                                        <i class="fas fa-map-marker-alt text-primary mr-1"></i>
+                                                        @if($addr->locality)
+                                                            <span>{{ $addr->locality }}, </span>
+                                                        @endif
+                                                        <span>{{ $addr->area }}, {{ $addr->city }}</span>
+                                                    </div>
+                                                    <div class="address-region font-weight-bold text-secondary">
+                                                        <i class="fas fa-flag text-muted mr-1"></i> {{ $addr->province }}, Pakistan
+                                                    </div>
                                                 </div>
                                             </div>
 
-                                            <div class="d-flex align-items-center justify-content-between pt-3 mt-3 border-top" style="border-color: #e2e8f0 !important;">
+                                            <div class="card-actions-footer d-flex align-items-center justify-content-between pt-3 mt-3 border-top">
                                                 <div>
                                                     @if(!$addr->is_default)
                                                         <form action="{{ route('user.address.default', $addr->id) }}" method="POST" class="d-inline">
                                                             @csrf
-                                                            <button type="submit" class="btn btn-outline-primary btn-xs py-1 px-2" style="font-size: 11px;">
-                                                                {{ __('Set as Default') }}
+                                                            <button type="submit" class="btn btn-outline-primary btn-sm py-1 px-2" style="font-size: 11.5px; border-radius: 6px; font-weight: 600;">
+                                                                <i class="fas fa-star mr-1"></i> {{ __('Set as Default') }}
                                                             </button>
                                                         </form>
                                                     @else
-                                                        <span class="small text-success font-weight-bold" style="font-size: 11px;">
-                                                            <i class="icon-check-circle mr-1"></i> {{ __('Primary Delivery') }}
+                                                        <span class="default-status-text">
+                                                            <i class="fas fa-check-double mr-1 text-success"></i> {{ __('Primary Delivery') }}
                                                         </span>
                                                     @endif
                                                 </div>
@@ -100,8 +111,8 @@
                                                 <div>
                                                     <form action="{{ route('user.address.delete', $addr->id) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('Are you sure you want to delete this saved address?') }}');">
                                                         @csrf
-                                                        <button type="submit" class="btn btn-outline-danger btn-xs py-1 px-2" style="font-size: 11px;" title="{{ __('Delete Address') }}">
-                                                            <i class="icon-trash-2 mr-1"></i> {{ __('Delete') }}
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm py-1 px-2" style="font-size: 11.5px; border-radius: 6px;" title="{{ __('Delete Address') }}">
+                                                            <i class="fas fa-trash-alt mr-1"></i> {{ __('Delete') }}
                                                         </button>
                                                     </form>
                                                 </div>
@@ -111,23 +122,34 @@
                                 @endforeach
                             </div>
                         @else
-                            <div class="text-center py-4 my-2">
-                                <div class="rounded-circle d-inline-flex align-items-center justify-content-center bg-light text-primary mb-3" style="width: 60px; height: 60px; font-size: 26px;">
-                                    <i class="icon-map-pin"></i>
+                            <div class="text-center py-5 my-2">
+                                <div class="rounded-circle d-inline-flex align-items-center justify-content-center bg-light text-primary mb-3" style="width: 65px; height: 65px; font-size: 28px;">
+                                    <i class="fas fa-map-marked-alt"></i>
                                 </div>
-                                <h6 class="text-dark font-weight-bold mb-1">{{ __('No Saved Addresses') }}</h6>
-                                <p class="text-muted small mb-0">{{ __('You have not saved any delivery address yet. Add your address below to enable instant 1-click checkout!') }}</p>
+                                <h6 class="text-dark font-weight-bold mb-1">{{ __('No Saved Addresses Yet') }}</h6>
+                                <p class="text-muted small mb-3" style="max-width: 420px; margin: 0 auto;">{{ __('Add your delivery addresses here for lightning-fast 1-click checkout whenever you place an order.') }}</p>
+                                <a href="#new-address-section" class="btn btn-primary btn-sm font-weight-bold px-3 py-2" style="border-radius: 8px;">
+                                    <i class="fas fa-plus mr-1"></i> {{ __('Add Your First Address') }}
+                                </a>
                             </div>
                         @endif
                     </div>
                 </div>
 
                 <!-- Add New Address Form Section -->
-                <div class="card shadow-sm" id="new-address-section" style="border-radius: 10px; border: 1px solid #e2e8f0;">
-                    <div class="card-header bg-white py-3" style="border-bottom: 1px solid #edf2f7;">
-                        <h5 class="mb-0 text-dark font-weight-bold" style="font-size: 16px;">
-                            <i class="icon-plus text-primary mr-1"></i> {{ __('Add New Address') }}
-                        </h5>
+                <div class="card shadow-sm" id="new-address-section" style="border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden;">
+                    <div class="card-header bg-white py-3 px-3 px-sm-4 d-flex align-items-center justify-content-between" style="border-bottom: 1px solid #f1f5f9;">
+                        <div class="d-flex align-items-center">
+                            <div class="header-icon-box mr-3" style="background: rgba(37, 99, 235, 0.1); color: #2563eb;">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-0 text-dark font-weight-bold" style="font-size: 16.5px;">
+                                    {{ __('Add New Address') }}
+                                </h5>
+                                <small class="text-muted" style="font-size: 12px;">{{ __('Save a permanent address to your address book.') }}</small>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body p-3 p-md-4">
                         <form action="{{ route('user.address.store') }}" method="POST" id="checkoutBilling">
@@ -262,12 +284,12 @@
                             <div class="d-flex flex-wrap align-items-center justify-content-between mt-3 pt-2">
                                 <div class="custom-control custom-checkbox mb-2 mb-sm-0">
                                     <input type="checkbox" class="custom-control-input" id="set_default_address" name="is_default" value="1" {{ $addresses->count() == 0 ? 'checked' : '' }}>
-                                    <label class="custom-control-label font-weight-bold text-dark" for="set_default_address" style="font-size: 13.5px;">
+                                    <label class="custom-control-label font-weight-bold text-dark" for="set_default_address" style="font-size: 13.5px; cursor: pointer;">
                                         {{ __('Set as default delivery address') }}
                                     </label>
                                 </div>
-                                <button type="submit" class="btn btn-primary px-4 py-2 font-weight-bold" style="border-radius: 6px;">
-                                    <i class="icon-save mr-1"></i> {{ __('Save Address') }}
+                                <button type="submit" class="btn btn-primary px-4 py-2 font-weight-bold" style="border-radius: 8px; box-shadow: 0 2px 8px rgba(121, 82, 179, 0.25);">
+                                    <i class="fas fa-save mr-1"></i> {{ __('Save Address') }}
                                 </button>
                             </div>
                         </form>
@@ -277,6 +299,117 @@
             </div>
         </div>
     </div>
+
+    <style>
+        .header-icon-box {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: rgba(121, 82, 179, 0.1);
+            color: #7952b3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .badge-purple-soft {
+            background: #f3e8ff;
+            color: #7952b3;
+            font-weight: 700;
+            font-size: 11.5px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(121, 82, 179, 0.2);
+        }
+        .user-address-card {
+            padding: 16px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            background: #ffffff;
+            transition: all 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+        .user-address-card:hover {
+            border-color: #7952b3;
+            box-shadow: 0 6px 18px rgba(121, 82, 179, 0.1);
+            transform: translateY(-2px);
+        }
+        .user-address-card.is-default-card {
+            border-color: #7952b3;
+            background: #fdfcff;
+            box-shadow: 0 4px 14px rgba(121, 82, 179, 0.08);
+        }
+        .user-avatar-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #f3f0fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .recipient-title {
+            font-size: 15.5px;
+            color: #0f172a;
+        }
+        .badge-default-active {
+            background: #ecfdf5;
+            color: #059669;
+            border: 1px solid #a7f3d0;
+            font-weight: 700;
+            font-size: 11px;
+            padding: 4px 9px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+        .contact-pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .contact-badge {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #475569;
+        }
+        .address-details-box {
+            background: #f8fafc;
+            border: 1px solid #edf2f7;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-top: 8px;
+        }
+        .address-street {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #1e293b;
+            line-height: 1.45;
+            margin-bottom: 4px;
+        }
+        .address-sub {
+            font-size: 12.5px;
+            line-height: 1.4;
+            color: #475569;
+        }
+        .address-region {
+            font-size: 12px;
+            margin-top: 4px;
+        }
+        .default-status-text {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #16a34a;
+        }
+    </style>
 
     @include('includes.checkout_location_script')
 

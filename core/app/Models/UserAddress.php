@@ -46,10 +46,20 @@ class UserAddress extends Model
     }
 
     /**
-     * Get recipient full name.
+     * Get recipient full name with robust fallbacks.
      */
     public function getFullNameAttribute()
     {
-        return trim($this->first_name . ' ' . $this->last_name);
+        $name = trim(($this->first_name ?? '') . ' ' . ($this->last_name ?? ''));
+        if (!empty($name)) {
+            return $name;
+        }
+        if ($this->user) {
+            $userName = trim(($this->user->first_name ?? '') . ' ' . ($this->user->last_name ?? ''));
+            if (!empty($userName)) {
+                return $userName;
+            }
+        }
+        return __('Saved Address');
     }
 }
