@@ -490,7 +490,15 @@
                             <input type="hidden" name="stock" id="stock" value="999999">
                         @endif
 
-                        <input type="hidden" name="tax_id" value="{{ $item->tax_id ?? ($taxes->where('status', 1)->first()->id ?? ($taxes->first()->id ?? '')) }}">
+                        <div class="form-group mb-3">
+                            <label for="tax_id" class="font-weight-bold">{{ __('Select Tax') }}</label>
+                            <select name="tax_id" id="tax_id" class="form-control">
+                                <option value="0">{{ __('Select One') }}</option>
+                                @foreach($taxes as $tax)
+                                    <option value="{{ $tax->id }}" {{ old('tax_id', $item->tax_id) == $tax->id ? 'selected' : '' }}>{{ $tax->name }} ({{ $tax->value }}%)</option>
+                                @endforeach
+                            </select>
+                        </div>
 
                         <div class="form-group mb-3">
                             <label for="sku" class="font-weight-bold">{{ __('SKU / Product ID') }} <span class="text-danger">*</span></label>

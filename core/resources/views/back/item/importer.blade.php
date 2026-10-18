@@ -826,9 +826,20 @@
                             </div>
 
                             <!-- Stock -->
-                            <div class="form-group mb-0 border-top pt-3">
+                            <div class="form-group mb-3 border-top pt-3">
                                 <label class="font-weight-bold text-dark">{{ __('Total Stock Quantity') }}</label>
                                 <input type="number" name="stock" id="imp_stock" class="form-control" value="20" min="1">
+                            </div>
+
+                            <!-- Select Tax -->
+                            <div class="form-group mb-0 border-top pt-3">
+                                <label for="imp_tax_id" class="font-weight-bold text-dark">{{ __('Select Tax') }}</label>
+                                <select name="tax_id" id="imp_tax_id" class="form-control">
+                                    <option value="0">{{ __('Select One') }}</option>
+                                    @foreach(DB::table('taxes')->whereStatus(1)->get() as $tax)
+                                        <option value="{{ $tax->id }}">{{ $tax->name }} ({{ $tax->value }}%)</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                     </div>

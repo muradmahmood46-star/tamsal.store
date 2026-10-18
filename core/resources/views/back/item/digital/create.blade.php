@@ -295,7 +295,7 @@
                         <select name="tax_id" id="tax_id" class="form-control">
                             <option value="">{{__('Select One')}}</option>
                             @foreach(DB::table('taxes')->whereStatus(1)->get() as $tax)
-                            <option value="{{ $tax->id }}" {{ old('tax_id') == $tax->id ? 'selected' : '' }}>{{ $tax->name }}</option>
+                            <option value="{{ $tax->id }}" {{ old('tax_id') == $tax->id ? 'selected' : '' }}>{{ $tax->name }} ({{ $tax->value }}%)</option>
                             @endforeach
                         </select>
                     </div>
