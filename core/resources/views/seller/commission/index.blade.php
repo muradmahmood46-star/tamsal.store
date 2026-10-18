@@ -151,26 +151,101 @@
             -webkit-overflow-scrolling: touch;
         }
         .comm-table {
-            min-width: 900px;
+            min-width: 1050px !important;
+            width: 100% !important;
             margin-bottom: 0 !important;
+            border-collapse: separate !important;
+            border-spacing: 0 !important;
+        }
+        .comm-table th,
+        .comm-table td {
+            white-space: nowrap !important;
+            vertical-align: middle !important;
         }
         .comm-table th {
-            font-size: 11.5px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-            white-space: nowrap;
+            font-size: 11.5px !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.4px !important;
             background-color: #f8fafc !important;
-            vertical-align: middle !important;
-            padding: 12px 10px !important;
+            padding: 12px 14px !important;
             border-bottom: 2px solid #e2e8f0 !important;
-            color: #475569;
+            color: #475569 !important;
         }
         .comm-table td {
-            font-size: 13px;
-            vertical-align: middle !important;
-            padding: 10px 10px !important;
-            color: #1e293b;
+            font-size: 13px !important;
+            padding: 10px 14px !important;
+            color: #1e293b !important;
+        }
+
+        /* Anti-Overlap Explicit Column Widths on all screen sizes */
+        .comm-table th:nth-child(1),
+        .comm-table td:nth-child(1) {
+            width: 185px !important;
+            min-width: 185px !important;
+            max-width: 185px !important;
+            text-align: left !important;
+            padding-left: 14px !important;
+            padding-right: 14px !important;
+        }
+        .comm-table th:nth-child(2),
+        .comm-table td:nth-child(2) {
+            width: 140px !important;
+            min-width: 140px !important;
+            max-width: 140px !important;
+            text-align: left !important;
+            padding-left: 14px !important;
+            padding-right: 14px !important;
+        }
+        .comm-table th:nth-child(3),
+        .comm-table td:nth-child(3) {
+            width: 160px !important;
+            min-width: 160px !important;
+            text-align: left !important;
+            padding-left: 12px !important;
+            padding-right: 12px !important;
+        }
+        .comm-table th:nth-child(4),
+        .comm-table td:nth-child(4) {
+            width: 120px !important;
+            min-width: 120px !important;
+            text-align: right !important;
+        }
+        .comm-table th:nth-child(5),
+        .comm-table td:nth-child(5) {
+            width: 95px !important;
+            min-width: 95px !important;
+            text-align: center !important;
+        }
+        .comm-table th:nth-child(6),
+        .comm-table td:nth-child(6) {
+            width: 145px !important;
+            min-width: 145px !important;
+            text-align: right !important;
+        }
+        .comm-table th:nth-child(7),
+        .comm-table td:nth-child(7) {
+            width: 135px !important;
+            min-width: 135px !important;
+            text-align: right !important;
+        }
+        .comm-table th:nth-child(8),
+        .comm-table td:nth-child(8) {
+            width: 140px !important;
+            min-width: 140px !important;
+            text-align: center !important;
+        }
+        .comm-table th:nth-child(9),
+        .comm-table td:nth-child(9) {
+            width: 125px !important;
+            min-width: 125px !important;
+            text-align: center !important;
+        }
+        .comm-table th:nth-child(10),
+        .comm-table td:nth-child(10) {
+            width: 90px !important;
+            min-width: 90px !important;
+            text-align: center !important;
         }
 
         @media (max-width: 575.98px) {

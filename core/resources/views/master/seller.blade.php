@@ -852,8 +852,8 @@
                 flex: none !important;
             }
 
-            .table th:first-child,
-            .table td:first-child {
+            .table:not(.comm-table):not(.no-fixed-cols) th:first-child,
+            .table:not(.comm-table):not(.no-fixed-cols) td:first-child {
                 width: 28px !important;
                 max-width: 28px !important;
                 text-align: center !important;
@@ -861,7 +861,7 @@
                 padding-right: 4px !important;
             }
 
-            .table td:nth-child(3) {
+            .table:not(.comm-table):not(.no-fixed-cols) td:nth-child(3) {
                 max-width: 170px !important;
                 word-break: break-word !important;
             }
