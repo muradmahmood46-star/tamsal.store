@@ -82,13 +82,15 @@
                                 if ($product->is_free_delivery == 1) {
                                     $isFree = true;
                                 } elseif ($product->delivery_fee > 0) {
-                                    $itemFee = $curr_val > 0 ? ($product->delivery_fee / $curr_val) : $product->delivery_fee;
+                                    $baseFee = $curr_val > 0 ? ($product->delivery_fee / $curr_val) : $product->delivery_fee;
+                                    $itemFee = PriceHelper::calculateProductLineDeliveryFee($baseFee, (int)($cItem['qty'] ?? 1));
                                 } else {
                                     $isFree = true;
                                 }
                             }
                             $delivery_fee_details[] = [
                                 'name' => $cItem['name'] ?? ($product->name ?? 'Product'),
+                                'qty' => (int)($cItem['qty'] ?? 1),
                                 'fee' => $itemFee,
                                 'is_free' => $isFree
                             ];
@@ -107,7 +109,7 @@
                                 @foreach($delivery_fee_details as $dDetail)
                                     <div class="d-flex justify-content-between align-items-center py-1" style="border-bottom: 1px dotted #bbf7d0; text-align: left;">
                                         <div style="text-align: left; flex: 1;">
-                                            <div class="font-weight-bold text-dark text-left" style="font-size: 12px; text-align: left !important; margin: 0; padding: 0;">• {{ \Illuminate\Support\Str::limit($dDetail['name'], 22) }}</div>
+                                            <div class="font-weight-bold text-dark text-left" style="font-size: 12px; text-align: left !important; margin: 0; padding: 0;">• {{ \Illuminate\Support\Str::limit($dDetail['name'], 22) }} @if(!empty($dDetail['qty']) && $dDetail['qty'] > 1)<span class="text-muted">(&times;{{ $dDetail['qty'] }})</span>@endif</div>
                                         </div>
                                         <div class="sidebar-item-delivery-val text-right" style="font-size: 12px; white-space: nowrap; text-align: right;" data-is-free="{{ ($dDetail['is_free'] || $dDetail['fee'] == 0) ? '1' : '0' }}" data-orig-text="{{ ($dDetail['is_free'] || $dDetail['fee'] == 0) ? '' : PriceHelper::setCurrencyPrice($dDetail['fee']) }}">
                                             @if($dDetail['is_free'] || $dDetail['fee'] == 0)

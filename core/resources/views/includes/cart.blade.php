@@ -54,6 +54,27 @@
                                                 {{ $option_name }}
                                                 ({{ PriceHelper::setCurrencyPrice($item['attribute']['option_price'][$optionkey]) }})</span>
                                         @endforeach
+                                        @if (PriceHelper::CheckDigital() && !$isBundleItem)
+                                            @php
+                                                $cartItemProduct = \App\Models\Item::find(PriceHelper::GetItemId($key));
+                                                $lineDeliveryFee = 0;
+                                                $isLineFreeDelivery = false;
+                                                if ($cartItemProduct) {
+                                                    if ($cartItemProduct->is_free_delivery == 1 || $cartItemProduct->delivery_fee <= 0) {
+                                                        $isLineFreeDelivery = true;
+                                                    } else {
+                                                        $currValCart = PriceHelper::setCurrencyValue();
+                                                        $baseLineFee = $currValCart > 0 ? ($cartItemProduct->delivery_fee / $currValCart) : $cartItemProduct->delivery_fee;
+                                                        $lineDeliveryFee = PriceHelper::calculateProductLineDeliveryFee($baseLineFee, (int)($item['qty'] ?? 1));
+                                                    }
+                                                }
+                                            @endphp
+                                            @if ($isLineFreeDelivery)
+                                                <span class="text-success small d-block mt-1"><i class="fas fa-truck mr-1"></i>{{ __('Free Delivery') }}</span>
+                                            @elseif ($lineDeliveryFee > 0)
+                                                <span class="text-muted small d-block mt-1"><i class="fas fa-truck mr-1"></i>{{ __('Delivery Fee') }}: <strong class="text-dark">{{ PriceHelper::setCurrencyPrice($lineDeliveryFee) }}</strong></span>
+                                            @endif
+                                        @endif
                                     </div>
                                 </div>
                             </td>
@@ -64,7 +85,8 @@
                                 @if ($item['item_type'] == 'normal' && !$isBundleItem)
                                     <div class="qtySelector product-quantity">
                                         <span class="decreaseQtycart cartsubclick" data-id="{{ $key }}"
-                                            data-target="{{ PriceHelper::GetItemId($key) }}"><i
+                                            data-target="{{ PriceHelper::GetItemId($key) }}"
+                                            data-item="{{ implode(',', $item['options_id']) }}"><i
                                                 class="fas fa-minus"></i></span>
                                         <input type="text" disabled class="qtyValue cartcart-amount"
                                             value="{{ $item['qty'] }}">
@@ -120,8 +142,33 @@
                                     title="Remove item"><i class="icon-x"></i></a>
             </div>
 
-            <div class="text-right column text-lg"><span class="text-muted">{{ __('Subtotal') }}: </span><span
-                    class="text-gray-dark">{{ PriceHelper::setCurrencyPrice($cartTotal - (Session::has('coupon') ? Session::get('coupon')['discount'] : 0)) }}</span>
+            @php
+                $couponDiscount = Session::has('coupon') ? Session::get('coupon')['discount'] : 0;
+                $netSubtotal = $cartTotal - $couponDiscount;
+                $cartDeliveryFee = PriceHelper::CheckDigital() ? PriceHelper::getDeliveryFee($cart, $cartTotal, false) : 0;
+                $cartGrandTotal = $netSubtotal + $cartDeliveryFee;
+            @endphp
+            <div class="text-right column text-lg">
+                <div>
+                    <span class="text-muted">{{ __('Subtotal') }}: </span>
+                    <span class="text-gray-dark">{{ PriceHelper::setCurrencyPrice($netSubtotal) }}</span>
+                </div>
+                @if (PriceHelper::CheckDigital())
+                    <div class="mt-1">
+                        <span class="text-muted">{{ __('Delivery Fee') }}: </span>
+                        <span class="text-gray-dark" id="cart_total_delivery_fee">
+                            @if ($cartDeliveryFee > 0)
+                                {{ PriceHelper::setCurrencyPrice($cartDeliveryFee) }}
+                            @else
+                                <span class="text-success">{{ __('Free Delivery') }}</span>
+                            @endif
+                        </span>
+                    </div>
+                    <div class="mt-1 font-weight-bold">
+                        <span class="text-muted">{{ __('Total') }}: </span>
+                        <span class="text-primary" id="cart_grand_total_display">{{ PriceHelper::setCurrencyPrice($cartGrandTotal) }}</span>
+                    </div>
+                @endif
             </div>
 
 

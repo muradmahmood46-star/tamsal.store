@@ -772,7 +772,8 @@ class CheckoutController extends Controller
             $discount = Session::get('coupon');
         }
 
-        $delivery_fee = PriceHelper::getDeliveryFee($cart, $cart_total);
+        $isFreeClaimed = !empty($request->is_free_delivery_claimed) && $request->is_free_delivery_claimed == '1';
+        $delivery_fee = $isFreeClaimed ? 0 : PriceHelper::getDeliveryFee($cart, $cart_total, false);
         $grand_total = ($cart_total + $delivery_fee) + $total_tax;
         $grand_total = $grand_total - ($discount ? $discount['discount'] : 0);
 

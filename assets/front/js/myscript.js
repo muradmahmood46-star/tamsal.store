@@ -1100,11 +1100,12 @@ $(function ($) {
         $(document).on("click", ".decreaseQtycart", function () {
             let item_key = $(this).attr('data-target');
             let item_id = $(this).attr('data-id');
+            let item = $(this).attr('data-item') || '';
+            let newOptionArray = item ? item.split(',') : [];
             let qty = parseInt($(this).parent().find('input').val()) - 1;
 
             if (qty > 0) {
-                cartSubmit(item_key, item_id, qty);
-                getData();
+                cartSubmit(item_key, item_id, qty, newOptionArray);
             }
         });
 

@@ -294,6 +294,11 @@
                     </a>
                 </li>
                 <li>
+                    <a class="sub-link" href="{{ route('back.delivery_calculation.index') }}">
+                        <span class="sub-item">{{ __('Delivery Fees Calculation') }}</span>
+                    </a>
+                </li>
+                <li>
                     <a class="sub-link" href="{{ route('back.state.index') }}">
                         <span class="sub-item">{{ __('State Charge') }}</span>
                     </a>

@@ -145,6 +145,9 @@ class Setting extends Model
         "vendor_plan_duration",
         "vendor_plan_charge",
         "admin_store_code",
+        "is_delivery_calc_enabled",
+        "delivery_second_item_divisor",
+        "delivery_subsequent_item_divisor",
     ];
 
     public $timestamps = false;

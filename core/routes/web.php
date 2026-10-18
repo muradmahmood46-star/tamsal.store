@@ -258,6 +258,10 @@ Route::group(['middleware' => ['adminlocalize', 'demo']], function () {
             Route::get('shipping/status/{id}/{status}', 'Back\ShippingServiceController@status')->name('back.shipping.status');
             Route::resource('shipping', 'Back\ShippingServiceController', ['as' => 'back', 'except' => 'show']);
 
+            //------------ DELIVERY FEES CALCULATION ------------
+            Route::get('delivery-fees-calculation', 'Back\DeliveryCalculationController@index')->name('back.delivery_calculation.index');
+            Route::post('delivery-fees-calculation/update', 'Back\DeliveryCalculationController@update')->name('back.delivery_calculation.update');
+
             //------------ CURRENCY ------------
             Route::get('currency/status/{id}/{status}', 'Back\CurrencyController@status')->name('back.currency.status');
             Route::resource('currency', 'Back\CurrencyController', ['as' => 'back', 'except' => 'show']);

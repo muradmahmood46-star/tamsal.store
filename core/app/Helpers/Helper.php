@@ -821,6 +821,27 @@ class Helper
                         });
                     } catch (\Throwable $e) {}
                 }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('settings', 'is_delivery_calc_enabled')) {
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('settings', function ($table) {
+                            $table->tinyInteger('is_delivery_calc_enabled')->default(1);
+                        });
+                    } catch (\Throwable $e) {}
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('settings', 'delivery_second_item_divisor')) {
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('settings', function ($table) {
+                            $table->decimal('delivery_second_item_divisor', 10, 4)->default(2.0000);
+                        });
+                    } catch (\Throwable $e) {}
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('settings', 'delivery_subsequent_item_divisor')) {
+                    try {
+                        \Illuminate\Support\Facades\Schema::table('settings', function ($table) {
+                            $table->decimal('delivery_subsequent_item_divisor', 10, 4)->default(3.0000);
+                        });
+                    } catch (\Throwable $e) {}
+                }
             }
 
             if (\Illuminate\Support\Facades\Schema::hasTable('sellers')) {

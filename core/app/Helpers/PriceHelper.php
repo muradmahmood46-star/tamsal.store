@@ -757,7 +757,118 @@ class PriceHelper
         return $total_discount;
     }
 
-    public static function getDeliveryFee($cart = null, $cart_total = null, $checkThreshold = true)
+    public static function ensureDeliveryCalcColumns(): void
+    {
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('settings')) {
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('settings', 'is_delivery_calc_enabled')) {
+                    \Illuminate\Support\Facades\Schema::table('settings', function (\Illuminate\Database\Schema\Blueprint $table) {
+                        $table->boolean('is_delivery_calc_enabled')->default(1);
+                    });
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('settings', 'delivery_second_item_divisor')) {
+                    \Illuminate\Support\Facades\Schema::table('settings', function (\Illuminate\Database\Schema\Blueprint $table) {
+                        $table->decimal('delivery_second_item_divisor', 10, 4)->default(2);
+                    });
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('settings', 'delivery_subsequent_item_divisor')) {
+                    \Illuminate\Support\Facades\Schema::table('settings', function (\Illuminate\Database\Schema\Blueprint $table) {
+                        $table->decimal('delivery_subsequent_item_divisor', 10, 4)->default(3);
+                    });
+                }
+            }
+        } catch (\Throwable $e) {
+            // Silently ignore if schema inspection cannot run
+        }
+    }
+
+    public static function getDeliveryCalcSettings($setting = null): array
+    {
+        if (!$setting) {
+            try {
+                $setting = Setting::first();
+            } catch (\Throwable $e) {
+                $setting = null;
+            }
+        }
+
+        if (is_array($setting)) {
+            $enabled = isset($setting['is_delivery_calc_enabled'])
+                ? (int)$setting['is_delivery_calc_enabled'] === 1
+                : (isset($setting['enabled']) ? (bool)$setting['enabled'] : true);
+            $d2 = isset($setting['delivery_second_item_divisor']) && (float)$setting['delivery_second_item_divisor'] > 0
+                ? (float)$setting['delivery_second_item_divisor']
+                : (isset($setting['d2']) && (float)$setting['d2'] > 0 ? (float)$setting['d2'] : 2.0);
+            $d3 = isset($setting['delivery_subsequent_item_divisor']) && (float)$setting['delivery_subsequent_item_divisor'] > 0
+                ? (float)$setting['delivery_subsequent_item_divisor']
+                : (isset($setting['d3']) && (float)$setting['d3'] > 0 ? (float)$setting['d3'] : 3.0);
+
+            return [
+                'enabled' => $enabled,
+                'd2' => $d2,
+                'd3' => $d3,
+            ];
+        }
+
+        $enabled = ($setting && isset($setting->is_delivery_calc_enabled))
+            ? (int)$setting->is_delivery_calc_enabled === 1
+            : true;
+
+        $d2 = ($setting && isset($setting->delivery_second_item_divisor) && (float)$setting->delivery_second_item_divisor > 0)
+            ? (float)$setting->delivery_second_item_divisor
+            : 2.0;
+
+        $d3 = ($setting && isset($setting->delivery_subsequent_item_divisor) && (float)$setting->delivery_subsequent_item_divisor > 0)
+            ? (float)$setting->delivery_subsequent_item_divisor
+            : 3.0;
+
+        return [
+            'enabled' => $enabled,
+            'd2' => $d2,
+            'd3' => $d3,
+        ];
+    }
+
+    /**
+     * Calculate the delivery fee for a single distinct product line in the cart.
+     *
+     * Formula (when enabled):
+     * - N = 1: B
+     * - N = 2: B + (B / D2)
+     * - N >= 3: B + (B / D2) + ((N - 2) * (B / D3))
+     *
+     * When disabled: flat B for the product line.
+     */
+    public static function calculateProductLineDeliveryFee($baseFee, $qty = 1, $setting = null): float
+    {
+        $B = self::parsePrice($baseFee);
+        $N = max(1, (int)$qty);
+
+        if ($B <= 0) {
+            return 0.0;
+        }
+
+        $cfg = self::getDeliveryCalcSettings($setting);
+
+        if (!$cfg['enabled']) {
+            return round($B, 2);
+        }
+
+        $d2 = $cfg['d2'] > 0 ? (float)$cfg['d2'] : 2.0;
+        $d3 = $cfg['d3'] > 0 ? (float)$cfg['d3'] : 3.0;
+
+        if ($N === 1) {
+            $fee = $B;
+        } elseif ($N === 2) {
+            $fee = $B + ($B / $d2);
+        } else {
+            $fee = $B + ($B / $d2) + ((($N - 2) * $B) / $d3);
+        }
+
+        return round($fee, 2);
+    }
+
+    public static function getDeliveryFee($cart = null, $cart_total = null, $checkThreshold = true, $setting = null)
     {
         if (!$cart) {
             $cart = Session::get('cart');
@@ -785,9 +896,11 @@ class PriceHelper
             }
         }
 
-        $total_delivery_fee = 0;
+        $total_delivery_fee = 0.0;
         $curr_val = self::parsePrice(self::setCurrencyValue());
+        $calcSettings = self::getDeliveryCalcSettings($setting);
         $processedDeals = [];
+
         foreach ($cart as $key => $item) {
             // A deal has one delivery setting for all of its included products.
             if (!empty($item['deal_id'])) {
@@ -799,23 +912,39 @@ class PriceHelper
                 if (!empty($item['deal_free_delivery'])) {
                     continue;
                 }
-                $total_delivery_fee += self::parsePrice($item['deal_delivery_charge'] ?? 0);
+                $dealFee = self::parsePrice($item['deal_delivery_charge'] ?? 0);
+                $total_delivery_fee = round($total_delivery_fee + $dealFee, 2);
                 continue;
             }
-            $itemId = explode('-', $key)[0];
-            $product = Item::find($itemId);
+
+            $itemId = explode('-', (string)$key)[0];
+            $product = is_numeric($itemId) ? Item::find($itemId) : null;
+            $qty = max(1, (int)($item['qty'] ?? 1));
+
             if ($product) {
                 if ($product->is_free_delivery == 1) {
                     continue;
                 }
                 $delFee = self::parsePrice($product->delivery_fee ?? 0);
                 if ($delFee > 0) {
-                    $fee = $curr_val > 0 ? ($delFee / $curr_val) : $delFee;
-                    $total_delivery_fee += $fee;
+                    $baseFee = $curr_val > 0 ? ($delFee / $curr_val) : $delFee;
+                    $lineFee = self::calculateProductLineDeliveryFee($baseFee, $qty, $calcSettings);
+                    $total_delivery_fee = round($total_delivery_fee + $lineFee, 2);
+                }
+            } elseif (isset($item['delivery_fee'])) {
+                if (!empty($item['is_free_delivery'])) {
+                    continue;
+                }
+                $delFee = self::parsePrice($item['delivery_fee']);
+                if ($delFee > 0) {
+                    $baseFee = $curr_val > 0 ? ($delFee / $curr_val) : $delFee;
+                    $lineFee = self::calculateProductLineDeliveryFee($baseFee, $qty, $calcSettings);
+                    $total_delivery_fee = round($total_delivery_fee + $lineFee, 2);
                 }
             }
         }
-        return $total_delivery_fee;
+
+        return round($total_delivery_fee, 2);
     }
 
     /**
