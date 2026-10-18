@@ -34,18 +34,6 @@
                             : 3;
                     @endphp
 
-                    <div class="alert alert-info border-left-info py-3 mb-4" style="border-left: 4px solid #36b9cc; background-color: #f8fafc;">
-                        <div class="d-flex align-items-center">
-                            <i class="fas fa-info-circle text-info mr-3" style="font-size: 24px;"></i>
-                            <div>
-                                <strong class="text-dark">{{ __('Formula Explanation:') }}</strong>
-                                <p class="mb-0 text-muted" style="font-size: 13.5px; line-height: 1.5;">
-                                    {{ __('The first unit is charged at the original delivery fee. The second unit uses the second-item divisor. Every unit from the third onwards uses the subsequent-item divisor.') }}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
                     <form class="admin-form" action="{{ route('back.delivery_calculation.update') }}" method="POST">
                         @csrf
 
@@ -57,9 +45,6 @@
                                     {{ __('Enable Delivery Fee Calculation') }}
                                 </label>
                             </div>
-                            <small class="form-text text-muted">
-                                {{ __('When enabled, each distinct product line in the cart calculates its delivery fee based on its quantity and the divisors below. When disabled, the existing flat product delivery fee behavior is used.') }}
-                            </small>
                         </div>
 
                         <div class="row">
@@ -69,9 +54,6 @@
                                         {{ __('Second Item Divisor') }} *
                                     </label>
                                     <input type="number" id="delivery_second_item_divisor" name="delivery_second_item_divisor" class="form-control form-control-lg" placeholder="2" min="0.01" step="any" value="{{ old('delivery_second_item_divisor', $secondDivisor) }}" required>
-                                    <small class="form-text text-muted">
-                                        {{ __('Divisor applied to the original delivery fee for the 2nd unit of the same product (Default: 2).') }}
-                                    </small>
                                 </div>
                             </div>
 
@@ -81,9 +63,6 @@
                                         {{ __('Third and Subsequent Items Divisor') }} *
                                     </label>
                                     <input type="number" id="delivery_subsequent_item_divisor" name="delivery_subsequent_item_divisor" class="form-control form-control-lg" placeholder="3" min="0.01" step="any" value="{{ old('delivery_subsequent_item_divisor', $subsequentDivisor) }}" required>
-                                    <small class="form-text text-muted">
-                                        {{ __('Divisor applied to the original delivery fee for the 3rd and every additional unit of the same product (Default: 3).') }}
-                                    </small>
                                 </div>
                             </div>
                         </div>
