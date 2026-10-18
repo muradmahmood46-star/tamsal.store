@@ -3,23 +3,23 @@
     $isOwner = ($data->vendor_id == Auth::id());
 @endphp
 <tr>
-    <td>
-        <strong>{{ $data->name }}</strong>
+    <td class="brand-col-name">
+        <strong class="text-dark font-weight-bold">{{ $data->name }}</strong>
         @if($isOwner)
             <span class="badge badge-info ml-1" style="font-size: 11px;">{{ __('My Brand') }}</span>
         @else
-            <span class="badge badge-secondary ml-1" style="font-size: 11px;"><i class="fas fa-shield-alt"></i> {{ __('Admin') }}</span>
+            <span class="badge badge-secondary ml-1" style="font-size: 11px;"><i class="fas fa-shield-alt mr-1"></i>{{ __('Admin') }}</span>
         @endif
     </td>
     @if(($setting->is_brand_image ?? 1) == 1)
-    <td>
+    <td class="brand-col-logo text-center">
         <img style="max-height: 40px; max-width: 80px; object-fit: contain;" src="{{ $data->photo ? url('/core/public/storage/images/'.$data->photo) : url('/core/public/storage/images/placeholder.png') }}" alt="{{ $data->name }}">
     </td>
     @endif
-    <td>
-        <code>{{ $data->slug }}</code>
+    <td class="brand-col-slug">
+        <code style="font-size: 12.5px; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: #0f172a;">{{ $data->slug }}</code>
     </td>
-    <td>
+    <td class="brand-col-status text-center">
         @if($isOwner)
             <div class="dropdown">
                 <button class="btn btn-{{  $data->status == 1 ? 'success' : 'danger'  }} btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -34,7 +34,7 @@
             <span class="badge badge-success px-2 py-1">{{ __('Active') }}</span>
         @endif
     </td>
-    <td>
+    <td class="brand-col-actions text-center">
         @if($isOwner)
             <div class="action-list">
                 <a class="btn btn-secondary btn-sm" href="{{ route('seller.brand.edit', $data->id) }}" title="{{ __('Edit') }}">
