@@ -571,8 +571,8 @@
     <!-- Catalog & Orders Overview -->
     <div class="row">
         <!-- Total Products -->
-        <div class="col-6 col-md-3 mb-3">
-            <div class="card card-stats card-round h-100">
+        <div class="col-6 col-md-6 col-xl-3 mb-3">
+            <div class="card card-stats card-round h-100" style="border-left: 4px solid #17a2b8;">
                 <div class="card-body">
                     <div class="row align-items-center no-gutters">
                         <div class="col-auto col-icon">
@@ -582,8 +582,8 @@
                         </div>
                         <div class="col col-stats">
                             <div class="numbers">
-                                <p class="card-category font-weight-bold text-muted">{{ __('Total Products') }}</p>
-                                <h4 class="card-title font-weight-bold">{{ $totalProducts }}</h4>
+                                <p class="card-category text-muted font-weight-bold">{{ __('Total Products') }}</p>
+                                <h4 class="card-title text-info font-weight-bold">{{ $totalProducts }}</h4>
                             </div>
                         </div>
                     </div>
@@ -592,19 +592,19 @@
         </div>
 
         <!-- Total Categories -->
-        <div class="col-6 col-md-3 mb-3">
-            <div class="card card-stats card-round h-100">
+        <div class="col-6 col-md-6 col-xl-3 mb-3">
+            <div class="card card-stats card-round h-100" style="border-left: 4px solid #6610f2;">
                 <div class="card-body">
                     <div class="row align-items-center no-gutters">
                         <div class="col-auto col-icon">
-                            <div class="icon-big text-center bubble-shadow-small" style="background-color: #17a2b8; color: #fff;">
+                            <div class="icon-big text-center bubble-shadow-small" style="background-color: #6610f2; color: #fff;">
                                 <i class="fas fa-list-alt"></i>
                             </div>
                         </div>
                         <div class="col col-stats">
                             <div class="numbers">
-                                <p class="card-category font-weight-bold text-muted">{{ __('Total Categories') }}</p>
-                                <h4 class="card-title font-weight-bold">{{ $totalCategories }}</h4>
+                                <p class="card-category text-muted font-weight-bold">{{ __('Total Categories') }}</p>
+                                <h4 class="card-title font-weight-bold" style="color: #6610f2;">{{ $totalCategories }}</h4>
                             </div>
                         </div>
                     </div>
@@ -613,8 +613,8 @@
         </div>
 
         <!-- Total Brands -->
-        <div class="col-6 col-md-3 mb-3">
-            <div class="card card-stats card-round h-100">
+        <div class="col-6 col-md-6 col-xl-3 mb-3">
+            <div class="card card-stats card-round h-100" style="border-left: 4px solid #20c997;">
                 <div class="card-body">
                     <div class="row align-items-center no-gutters">
                         <div class="col-auto col-icon">
@@ -624,8 +624,8 @@
                         </div>
                         <div class="col col-stats">
                             <div class="numbers">
-                                <p class="card-category font-weight-bold text-muted">{{ __('Total Brands') }}</p>
-                                <h4 class="card-title font-weight-bold">{{ $totalBrands }}</h4>
+                                <p class="card-category text-muted font-weight-bold">{{ __('Total Brands') }}</p>
+                                <h4 class="card-title font-weight-bold" style="color: #20c997;">{{ $totalBrands }}</h4>
                             </div>
                         </div>
                     </div>
@@ -634,19 +634,19 @@
         </div>
 
         <!-- Total Orders -->
-        <div class="col-6 col-md-3 mb-3">
-            <div class="card card-stats card-round h-100">
+        <div class="col-6 col-md-6 col-xl-3 mb-3">
+            <div class="card card-stats card-round h-100" style="border-left: 4px solid #1572e8;">
                 <div class="card-body">
                     <div class="row align-items-center no-gutters">
                         <div class="col-auto col-icon">
-                            <div class="icon-big text-center icon-info bubble-shadow-small">
+                            <div class="icon-big text-center icon-primary bubble-shadow-small">
                                 <i class="fas fa-shopping-cart"></i>
                             </div>
                         </div>
                         <div class="col col-stats">
                             <div class="numbers">
-                                <p class="card-category font-weight-bold text-muted">{{ __('Total Orders') }}</p>
-                                <h4 class="card-title font-weight-bold">{{ $totalOrders }}</h4>
+                                <p class="card-category text-muted font-weight-bold">{{ __('Total Orders') }}</p>
+                                <h4 class="card-title text-primary font-weight-bold">{{ $totalOrders }}</h4>
                             </div>
                         </div>
                     </div>
@@ -658,8 +658,8 @@
     <!-- Orders Workflow Overview -->
     <div class="row">
         <!-- Pending Orders -->
-        <div class="col-6 col-md-3 mb-3">
-            <div class="card card-stats card-round h-100">
+        <div class="col-6 col-md-6 col-xl-3 mb-3">
+            <div class="card card-stats card-round h-100" style="border-left: 4px solid #ff9800;">
                 <div class="card-body">
                     <div class="row align-items-center no-gutters">
                         <div class="col-auto col-icon">
@@ -669,7 +669,7 @@
                         </div>
                         <div class="col col-stats">
                             <div class="numbers">
-                                <p class="card-category font-weight-bold text-warning">{{ __('Pending Orders') }}</p>
+                                <p class="card-category text-muted font-weight-bold">{{ __('Pending Orders') }}</p>
                                 <h4 class="card-title text-warning font-weight-bold">{{ $totalPendingOrders }}</h4>
                             </div>
                         </div>
@@ -679,8 +679,8 @@
         </div>
 
         <!-- Accepted Orders -->
-        <div class="col-6 col-md-3 mb-3">
-            <div class="card card-stats card-round h-100">
+        <div class="col-6 col-md-6 col-xl-3 mb-3">
+            <div class="card card-stats card-round h-100" style="border-left: 4px solid #007bff;">
                 <div class="card-body">
                     <div class="row align-items-center no-gutters">
                         <div class="col-auto col-icon">
@@ -690,8 +690,8 @@
                         </div>
                         <div class="col col-stats">
                             <div class="numbers">
-                                <p class="card-category font-weight-bold text-primary">{{ __('Accepted Orders') }}</p>
-                                <h4 class="card-title font-weight-bold text-primary">{{ $totalAcceptedOrders }}</h4>
+                                <p class="card-category text-muted font-weight-bold">{{ __('Accepted Orders') }}</p>
+                                <h4 class="card-title text-primary font-weight-bold">{{ $totalAcceptedOrders }}</h4>
                             </div>
                         </div>
                     </div>
@@ -700,8 +700,8 @@
         </div>
 
         <!-- Order in Delivery House -->
-        <div class="col-6 col-md-3 mb-3">
-            <div class="card card-stats card-round h-100">
+        <div class="col-6 col-md-6 col-xl-3 mb-3">
+            <div class="card card-stats card-round h-100" style="border-left: 4px solid #6f42c1;">
                 <div class="card-body">
                     <div class="row align-items-center no-gutters">
                         <div class="col-auto col-icon">
@@ -711,8 +711,8 @@
                         </div>
                         <div class="col col-stats">
                             <div class="numbers">
-                                <p class="card-category font-weight-bold text-muted">{{ __('In Delivery House') }}</p>
-                                <h4 class="card-title font-weight-bold">{{ $totalSendToDeliveryOrders }}</h4>
+                                <p class="card-category text-muted font-weight-bold">{{ __('In Delivery House') }}</p>
+                                <h4 class="card-title font-weight-bold" style="color: #6f42c1;">{{ $totalSendToDeliveryOrders }}</h4>
                             </div>
                         </div>
                     </div>
@@ -721,8 +721,8 @@
         </div>
 
         <!-- Delivered Orders -->
-        <div class="col-6 col-md-3 mb-3">
-            <div class="card card-stats card-round h-100">
+        <div class="col-6 col-md-6 col-xl-3 mb-3">
+            <div class="card card-stats card-round h-100" style="border-left: 4px solid #28a745;">
                 <div class="card-body">
                     <div class="row align-items-center no-gutters">
                         <div class="col-auto col-icon">
@@ -732,8 +732,8 @@
                         </div>
                         <div class="col col-stats">
                             <div class="numbers">
-                                <p class="card-category font-weight-bold text-success">{{ __('Delivered Orders') }}</p>
-                                <h4 class="card-title font-weight-bold text-success">{{ $totalDeliveredOrders }}</h4>
+                                <p class="card-category text-muted font-weight-bold">{{ __('Delivered Orders') }}</p>
+                                <h4 class="card-title text-success font-weight-bold">{{ $totalDeliveredOrders }}</h4>
                             </div>
                         </div>
                     </div>
@@ -745,8 +745,8 @@
     <!-- Additional Status Overview -->
     <div class="row">
         <!-- Delivery in Progress -->
-        <div class="col-6 col-md-3 mb-3">
-            <div class="card card-stats card-round h-100">
+        <div class="col-6 col-md-6 col-xl-3 mb-3">
+            <div class="card card-stats card-round h-100" style="border-left: 4px solid #17a2b8;">
                 <div class="card-body">
                     <div class="row align-items-center no-gutters">
                         <div class="col-auto col-icon">
@@ -756,8 +756,8 @@
                         </div>
                         <div class="col col-stats">
                             <div class="numbers">
-                                <p class="card-category font-weight-bold text-info">{{ __('In Progress') }}</p>
-                                <h4 class="card-title font-weight-bold text-info">{{ $totalInProgressOrders }}</h4>
+                                <p class="card-category text-muted font-weight-bold">{{ __('In Progress') }}</p>
+                                <h4 class="card-title text-info font-weight-bold">{{ $totalInProgressOrders }}</h4>
                             </div>
                         </div>
                     </div>
@@ -766,8 +766,8 @@
         </div>
 
         <!-- Canceled Orders -->
-        <div class="col-6 col-md-3 mb-3">
-            <div class="card card-stats card-round h-100">
+        <div class="col-6 col-md-6 col-xl-3 mb-3">
+            <div class="card card-stats card-round h-100" style="border-left: 4px solid #dc3545;">
                 <div class="card-body">
                     <div class="row align-items-center no-gutters">
                         <div class="col-auto col-icon">
@@ -777,8 +777,8 @@
                         </div>
                         <div class="col col-stats">
                             <div class="numbers">
-                                <p class="card-category font-weight-bold text-danger">{{ __('Canceled Orders') }}</p>
-                                <h4 class="card-title font-weight-bold text-danger">{{ $totalCanceledOrders }}</h4>
+                                <p class="card-category text-muted font-weight-bold">{{ __('Canceled Orders') }}</p>
+                                <h4 class="card-title text-danger font-weight-bold">{{ $totalCanceledOrders }}</h4>
                             </div>
                         </div>
                     </div>
@@ -787,8 +787,8 @@
         </div>
 
         <!-- Pending Products -->
-        <div class="col-6 col-md-3 mb-3">
-            <div class="card card-stats card-round h-100">
+        <div class="col-6 col-md-6 col-xl-3 mb-3">
+            <div class="card card-stats card-round h-100" style="border-left: 4px solid #ffc107;">
                 <div class="card-body">
                     <div class="row align-items-center no-gutters">
                         <div class="col-auto col-icon">
@@ -798,8 +798,8 @@
                         </div>
                         <div class="col col-stats">
                             <div class="numbers">
-                                <p class="card-category font-weight-bold text-warning">{{ __('Pending Products') }}</p>
-                                <h4 class="card-title font-weight-bold text-warning">{{ $pendingProductsCount }}</h4>
+                                <p class="card-category text-muted font-weight-bold">{{ __('Pending Products') }}</p>
+                                <h4 class="card-title text-warning font-weight-bold">{{ $pendingProductsCount }}</h4>
                             </div>
                         </div>
                     </div>
@@ -808,8 +808,8 @@
         </div>
 
         <!-- Out of Stock -->
-        <div class="col-6 col-md-3 mb-3">
-            <div class="card card-stats card-round h-100">
+        <div class="col-6 col-md-6 col-xl-3 mb-3">
+            <div class="card card-stats card-round h-100" style="border-left: 4px solid #6c757d;">
                 <div class="card-body">
                     <div class="row align-items-center no-gutters">
                         <div class="col-auto col-icon">
@@ -819,8 +819,8 @@
                         </div>
                         <div class="col col-stats">
                             <div class="numbers">
-                                <p class="card-category font-weight-bold text-muted">{{ __('Out of Stock') }}</p>
-                                <h4 class="card-title font-weight-bold">{{ $stockOutProducts }}</h4>
+                                <p class="card-category text-muted font-weight-bold">{{ __('Out of Stock') }}</p>
+                                <h4 class="card-title font-weight-bold" style="color: #6c757d;">{{ $stockOutProducts }}</h4>
                             </div>
                         </div>
                     </div>
