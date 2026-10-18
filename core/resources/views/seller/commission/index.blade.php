@@ -62,28 +62,89 @@
 
     <!-- Top Metric Cards -->
     <style>
-        .comm-stat-card {
-            border-radius: 10px !important;
+        /* Metric Cards Overall & Compact Height Equalization */
+        .comm-metric-card {
+            border-radius: 8px !important;
             transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-            background: #ffffff;
         }
-        .comm-stat-card:hover {
+        .comm-metric-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.08) !important;
+            box-shadow: 0 .25rem .75rem rgba(0,0,0,.1) !important;
         }
-        .comm-stat-card .card-body {
-            padding: 14px 16px !important;
+        .comm-metric-body {
+            min-height: 82px !important;
+            height: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+            padding: 8px 10px !important;
+            box-sizing: border-box !important;
         }
+
+        /* Fixed Row Header (Title on left, circular icon strictly on right) */
+        .comm-card-header {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            width: 100% !important;
+            margin-bottom: 3px !important;
+            gap: 4px !important;
+            box-sizing: border-box !important;
+        }
+        .comm-card-title {
+            font-size: 10px !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.3px !important;
+            line-height: 1.2 !important;
+            flex: 1 1 auto !important;
+            min-width: 0 !important;
+            margin: 0 !important;
+            white-space: normal !important;
+            word-break: normal !important;
+        }
+
+        /* Compact Circular Icon Badge */
         .comm-stat-icon-wrap {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            flex-shrink: 0;
+            width: 24px !important;
+            height: 24px !important;
+            min-width: 24px !important;
+            max-width: 24px !important;
+            min-height: 24px !important;
+            max-height: 24px !important;
+            border-radius: 50% !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-shrink: 0 !important;
+            flex-grow: 0 !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            overflow: hidden !important;
         }
+        .comm-stat-icon-wrap i {
+            font-size: 11px !important;
+            line-height: 1 !important;
+            display: inline-block !important;
+            text-align: center !important;
+        }
+
+        .comm-card-value {
+            font-size: 13px !important;
+            font-weight: 700 !important;
+            margin-bottom: 1px !important;
+            line-height: 1.2 !important;
+        }
+        .comm-card-subtext {
+            font-size: 9.5px !important;
+            line-height: 1.2 !important;
+            color: #6c757d !important;
+            display: block !important;
+            margin-top: 3px !important;
+        }
+
         .comm-table-wrap {
             width: 100% !important;
             overflow-x: auto !important;
@@ -111,106 +172,132 @@
             padding: 10px 10px !important;
             color: #1e293b;
         }
+
         @media (max-width: 575.98px) {
-            .comm-stat-card .card-body {
-                padding: 10px 12px !important;
+            .comm-metric-body {
+                padding: 7px 8px !important;
+                min-height: 76px !important;
+            }
+            .comm-card-title {
+                font-size: 9.5px !important;
+                letter-spacing: 0.1px !important;
             }
             .comm-stat-icon-wrap {
-                width: 36px;
-                height: 36px;
-                font-size: 15px;
+                width: 22px !important;
+                height: 22px !important;
+                min-width: 22px !important;
+                max-width: 22px !important;
+                min-height: 22px !important;
+                max-height: 22px !important;
+            }
+            .comm-stat-icon-wrap i {
+                font-size: 10px !important;
+            }
+            .comm-card-value {
+                font-size: 12.5px !important;
+            }
+            .comm-card-subtext {
+                font-size: 9px !important;
             }
         }
     </style>
 
-    <div class="row mb-4">
-        <!-- 1. Commission Rate Card -->
-        <div class="col-12 col-sm-6 col-xl-3 mb-3">
-            <div class="card border-0 shadow-sm h-100 comm-stat-card" style="border-left: 4px solid #0d6efd !important;">
-                <div class="card-body d-flex align-items-center justify-content-between">
-                    <div class="mr-2 overflow-hidden">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1" style="font-size: 11px; letter-spacing: 0.3px;">
+    <div class="row mb-3">
+        <!-- 1. Commission Rate Card (Mobile Row 1 Left) -->
+        <div class="col-6 col-md-6 col-xl-3 mb-2">
+            <div class="card comm-metric-card border-left-primary shadow-sm h-100" style="border-left: 3.5px solid #0d6efd !important;">
+                <div class="card-body comm-metric-body">
+                    <div class="comm-card-header">
+                        <div class="comm-card-title text-primary">
                             {{ __('Sales Commission Rate') }}
                         </div>
-                        <div class="h4 mb-0 font-weight-bold text-dark">
+                        <div class="comm-stat-icon-wrap bg-primary text-white">
+                            <i class="fas fa-percent"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="comm-card-value text-gray-800">
                             {{ number_format($commissionPercent, 1) }}%
                         </div>
-                        <small class="text-muted d-block text-truncate mt-1" style="font-size: 11px;">
+                        <small class="comm-card-subtext">
                             {{ __('Cut per order on marketplace sales') }}
                         </small>
                     </div>
-                    <div class="comm-stat-icon-wrap" style="background: #e0f2fe; color: #0284c7;">
-                        <i class="fas fa-percent"></i>
-                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- 2. Total Commission Paid -->
-        <div class="col-12 col-sm-6 col-xl-3 mb-3">
-            <div class="card border-0 shadow-sm h-100 comm-stat-card" style="border-left: 4px solid #e11d48 !important;">
-                <div class="card-body d-flex align-items-center justify-content-between">
-                    <div class="mr-2 overflow-hidden">
-                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1" style="font-size: 11px; letter-spacing: 0.3px;">
+        <!-- 2. Total Commission Paid (Mobile Row 1 Right) -->
+        <div class="col-6 col-md-6 col-xl-3 mb-2">
+            <div class="card comm-metric-card border-left-danger shadow-sm h-100" style="border-left: 3.5px solid #e11d48 !important;">
+                <div class="card-body comm-metric-body">
+                    <div class="comm-card-header">
+                        <div class="comm-card-title text-danger">
                             {{ __('Total Commission Paid') }}
                         </div>
-                        <div class="h4 mb-0 font-weight-bold text-dark">
+                        <div class="comm-stat-icon-wrap bg-danger text-white">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="comm-card-value text-gray-800">
                             {{ PriceHelper::adminCurrency() }} {{ number_format($totalCommissionPaid, 2) }}
                         </div>
-                        <small class="text-muted d-block text-truncate mt-1" style="font-size: 11px;">
+                        <small class="comm-card-subtext">
                             {{ __(':count order(s) processed with cut', ['count' => $deductedOrdersCount]) }}
                         </small>
                     </div>
-                    <div class="comm-stat-icon-wrap" style="background: #ffe4e6; color: #e11d48;">
-                        <i class="fas fa-coins"></i>
-                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- 3. Free Orders Allowance -->
-        <div class="col-12 col-sm-6 col-xl-3 mb-3">
-            <div class="card border-0 shadow-sm h-100 comm-stat-card" style="border-left: 4px solid #10b981 !important;">
-                <div class="card-body d-flex align-items-center justify-content-between">
-                    <div class="mr-2 overflow-hidden">
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1" style="font-size: 11px; letter-spacing: 0.3px;">
+        <!-- 3. Free Orders Allowance (Mobile Row 2 Left) -->
+        <div class="col-6 col-md-6 col-xl-3 mb-2">
+            <div class="card comm-metric-card border-left-success shadow-sm h-100" style="border-left: 3.5px solid #10b981 !important;">
+                <div class="card-body comm-metric-body">
+                    <div class="comm-card-header">
+                        <div class="comm-card-title text-success">
                             {{ __('Free Orders Allowance') }}
                         </div>
-                        <div class="h4 mb-0 font-weight-bold text-dark">
+                        <div class="comm-stat-icon-wrap bg-success text-white">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="comm-card-value text-gray-800">
                             {{ $freeOrdersCount }} / {{ $freeOrdersLimit }}
                         </div>
-                        <small class="text-muted d-block text-truncate mt-1" style="font-size: 11px;">
+                        <small class="comm-card-subtext">
                             @if($remainingFreeOrders > 0)
                                 <span class="text-success font-weight-bold">{{ $remainingFreeOrders }} {{ __('free order(s) left') }}</span>
                             @else
-                                <span class="text-muted">{{ __('Free orders quota completed') }}</span>
+                                <span class="text-muted">{{ __('Quota completed') }}</span>
                             @endif
                         </small>
-                    </div>
-                    <div class="comm-stat-icon-wrap" style="background: #dcfce7; color: #15803d;">
-                        <i class="fas fa-gift"></i>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 4. Wallet Balance Card -->
-        <div class="col-12 col-sm-6 col-xl-3 mb-3">
-            <div class="card border-0 shadow-sm h-100 comm-stat-card" style="border-left: 4px solid #0284c7 !important;">
-                <div class="card-body d-flex align-items-center justify-content-between">
-                    <div class="mr-2 overflow-hidden">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1" style="font-size: 11px; letter-spacing: 0.3px;">
+        <!-- 4. Wallet Balance Card (Mobile Row 2 Right) -->
+        <div class="col-6 col-md-6 col-xl-3 mb-2">
+            <div class="card comm-metric-card border-left-info shadow-sm h-100" style="border-left: 3.5px solid #0284c7 !important;">
+                <div class="card-body comm-metric-body">
+                    <div class="comm-card-header">
+                        <div class="comm-card-title text-info">
                             {{ __('Wallet Balance') }}
                         </div>
-                        <div class="h4 mb-0 font-weight-bold text-dark">
+                        <div class="comm-stat-icon-wrap bg-info text-white">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="comm-card-value text-gray-800">
                             {{ PriceHelper::adminCurrency() }} {{ number_format($seller->balance ?? 0, 2) }}
                         </div>
-                        <small class="text-muted d-block text-truncate mt-1" style="font-size: 11px;">
+                        <small class="comm-card-subtext">
                             {{ __('Available for auto-deductions') }}
                         </small>
-                    </div>
-                    <div class="comm-stat-icon-wrap" style="background: #e0f2fe; color: #0284c7;">
-                        <i class="fas fa-wallet"></i>
                     </div>
                 </div>
             </div>

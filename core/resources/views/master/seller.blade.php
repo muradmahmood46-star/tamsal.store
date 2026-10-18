@@ -644,14 +644,14 @@
             }
 
             .d-sm-flex.justify-content-between:not(.no-mob-stack),
-            .d-flex.justify-content-between:not(.custom-control):not(.form-check):not(.nav):not(.no-mob-stack):not(.plan-card-header):not(.plan-metric-card *) {
+            .d-flex.justify-content-between:not(.custom-control):not(.form-check):not(.nav):not(.no-mob-stack):not(.plan-card-header):not(.plan-metric-card *):not(.comm-card-header):not(.comm-stat-card *) {
                 flex-direction: column !important;
                 align-items: stretch !important;
                 gap: 8px !important;
             }
 
-            .d-sm-flex.justify-content-between:not(.no-mob-stack) > div:not(.no-mob-full):not(.plan-card-icon-wrap),
-            .d-flex.justify-content-between:not(.custom-control):not(.form-check):not(.nav):not(.no-mob-stack):not(.plan-card-header):not(.plan-metric-card *) > div:not(.no-mob-full):not(.plan-card-icon-wrap) {
+            .d-sm-flex.justify-content-between:not(.no-mob-stack) > div:not(.no-mob-full):not(.plan-card-icon-wrap):not(.comm-stat-icon-wrap),
+            .d-flex.justify-content-between:not(.custom-control):not(.form-check):not(.nav):not(.no-mob-stack):not(.plan-card-header):not(.plan-metric-card *):not(.comm-card-header):not(.comm-stat-card *) > div:not(.no-mob-full):not(.plan-card-icon-wrap):not(.comm-stat-icon-wrap) {
                 width: 100% !important;
             }
 
