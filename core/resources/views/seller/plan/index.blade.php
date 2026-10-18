@@ -175,11 +175,11 @@
                 <i class="fas fa-info-circle text-info" style="font-size: 26px;"></i>
             </div>
             <div class="flex-grow-1">
-                <h5 class="font-weight-bold text-dark mb-1" style="font-size: 16px;">
-                    {{ __('Early Plan Extension & Validity Stacking (Never Lose Remaining Days)') }}
+                <h5 class="font-weight-bold text-dark mb-1" style="font-size: 15px;">
+                    {{ __('Early Plan Renewal') }}
                 </h5>
-                <p class="mb-0 text-muted" style="font-size: 13.5px; line-height: 1.6;">
-                    You can renew or extend your store subscription at any time <strong>before your current plan expires</strong>. Any remaining validity from your existing plan is never lost — it automatically rolls over and adds to your new plan duration (for example, renewing with <strong>2 days remaining</strong> on a <strong>30-day plan</strong> extends your total validity to <strong>32 days</strong>). All plan metrics above instantly merge and reflect your new expiration date, and future auto-renewals will seamlessly occur after the full extended period ends. You can extend multiple times in advance whenever you have sufficient wallet balance.
+                <p class="mb-0 text-muted" style="font-size: 13.5px; line-height: 1.5;">
+                    {{ __('You can renew your plan anytime before it expires. Any remaining days will automatically be added to your new plan, so you never lose any days.') }}
                 </p>
             </div>
         </div>
