@@ -148,6 +148,14 @@
             background: #94a3b8;
         }
 
+        /* Modal & Backdrop Stacking Order Fix */
+        .modal-backdrop {
+            z-index: 1050 !important;
+        }
+        .modal {
+            z-index: 1055 !important;
+        }
+
         @media (max-width: 991.98px) {
             .wrapper {
                 overflow-x: hidden !important;
@@ -705,15 +713,15 @@
                 font-size: 14px !important;
             }
 
-            .d-sm-flex.justify-content-between,
-            .d-flex.justify-content-between:not(.custom-control):not(.form-check):not(.nav):not(.logo-header):not(.main-header .logo-header):not(.main-header *) {
+            .d-sm-flex.justify-content-between:not(.no-mob-stack),
+            .d-flex.justify-content-between:not(.custom-control):not(.form-check):not(.nav):not(.logo-header):not(.main-header .logo-header):not(.main-header *):not(.no-mob-stack) {
                 flex-direction: column !important;
                 align-items: stretch !important;
                 gap: 8px !important;
             }
 
-            .d-sm-flex.justify-content-between > div,
-            .d-flex.justify-content-between > div {
+            .d-sm-flex.justify-content-between:not(.no-mob-stack) > div:not(.no-mob-full),
+            .d-flex.justify-content-between:not(.custom-control):not(.form-check):not(.nav):not(.logo-header):not(.main-header .logo-header):not(.main-header *):not(.no-mob-stack) > div:not(.no-mob-full) {
                 width: 100% !important;
             }
 
@@ -1450,6 +1458,13 @@
                     $('.sidenav-toggler').removeClass('toggled');
                 });
             }
+
+            // Auto move modals to body upon show to guarantee they are never trapped inside containers with overflow/stacking contexts
+            $(document).on('show.bs.modal', '.modal', function () {
+                if (!$(this).parent().is('body')) {
+                    $(this).appendTo('body');
+                }
+            });
         });
     </script>
 </body>
