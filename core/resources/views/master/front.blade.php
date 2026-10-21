@@ -1352,6 +1352,7 @@
                 top: auto !important;
                 z-index: 1030 !important;
                 background: #ffffff !important;
+                padding-top: env(safe-area-inset-top, 0px) !important;
             }
             .site-header .topbar,
             .navbar-stuck .topbar {
@@ -1363,6 +1364,7 @@
                 border-radius: 0 !important;
                 box-shadow: none !important;
                 border-bottom: 1px solid #f0f2f5 !important;
+                padding-top: 6px !important;
             }
             .navbar-stuck {
                 box-shadow: none !important;
@@ -1378,8 +1380,8 @@
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                padding-top: 6px;
-                padding-bottom: 6px;
+                padding-top: 6px !important;
+                padding-bottom: 6px !important;
             }
             .mobile-search-col {
                 flex: 1;
