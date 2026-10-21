@@ -1286,6 +1286,227 @@
                 border-radius: 0 !important;
             }
         }
+
+        /* MOBILE ONLY: Redesigned Header Row, Currency & Fixed Bottom Navigation */
+        @media (max-width: 991.98px) {
+            body {
+                padding-bottom: calc(62px + env(safe-area-inset-bottom, 0px)) !important;
+            }
+            body.has-daraz-bar {
+                padding-bottom: calc(122px + env(safe-area-inset-bottom, 0px)) !important;
+            }
+            .scroll-to-top-btn {
+                bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+            }
+
+            /* Mobile Header Second Row */
+            .mobile-header-row {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding-top: 6px;
+                padding-bottom: 6px;
+            }
+            .mobile-search-col {
+                flex: 1;
+                min-width: 0;
+            }
+            .mobile-search-input-wrap {
+                position: relative;
+                width: 100%;
+            }
+            .mobile-search-ico {
+                position: absolute;
+                left: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 14px;
+                color: #8c98a4;
+                pointer-events: none;
+                z-index: 2;
+            }
+            .mobile-search-input {
+                width: 100% !important;
+                height: 38px !important;
+                padding-left: 34px !important;
+                padding-right: 12px !important;
+                font-size: 13px !important;
+                border-radius: 20px !important;
+                border: 1px solid #dcdfe4 !important;
+                background-color: #f6f8fa !important;
+                color: #24292f !important;
+                box-shadow: none !important;
+                outline: none !important;
+                line-height: 38px !important;
+            }
+            .mobile-search-input:focus {
+                background-color: #ffffff !important;
+                border-color: #0d6efd !important;
+                box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15) !important;
+            }
+            .mobile-serch-result {
+                position: absolute;
+                top: calc(100% + 4px);
+                left: 0;
+                right: 0;
+                background: #ffffff;
+                border-radius: 8px;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+                max-height: 340px;
+                overflow-y: auto;
+                z-index: 1060;
+                border: 1px solid #e2e8f0;
+            }
+
+            .mobile-icon-col {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+            }
+            .mobile-header-icon-link {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 36px;
+                height: 36px;
+                color: #2d3748;
+                font-size: 21px;
+                text-decoration: none !important;
+                transition: color 0.15s ease;
+                position: relative;
+            }
+            .mobile-header-icon-link:active,
+            .mobile-header-icon-link:hover {
+                color: #0d6efd;
+            }
+            .mobile-counter-badge {
+                position: absolute;
+                top: 1px;
+                right: -2px;
+                min-width: 16px;
+                height: 16px;
+                padding: 0 4px;
+                border-radius: 10px;
+                background-color: #e53935;
+                color: #ffffff;
+                font-size: 10px;
+                font-weight: 700;
+                line-height: 16px;
+                text-align: center;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            }
+            .mobile-counter-badge.cart_count {
+                background-color: #0d6efd;
+            }
+
+            /* Mobile Fixed Bottom Navigation Bar */
+            #mobile_bottom_nav {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: calc(56px + env(safe-area-inset-bottom, 0px));
+                padding-bottom: env(safe-area-inset-bottom, 0px);
+                background: #ffffff;
+                box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+                border-top: 1px solid #eef2f6;
+                z-index: 1045;
+                display: flex;
+                align-items: center;
+                justify-content: space-around;
+                box-sizing: border-box;
+            }
+            .mobile-nav-item {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                color: #64748b;
+                text-decoration: none !important;
+                font-size: 10.5px;
+                font-weight: 500;
+                transition: color 0.15s ease;
+                padding: 4px 0 2px 0;
+                position: relative;
+            }
+            .mobile-nav-item:hover,
+            .mobile-nav-item.active {
+                color: #0d6efd;
+            }
+            .mobile-nav-icon-wrap {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 19px;
+                line-height: 1;
+                margin-bottom: 2px;
+                position: relative;
+            }
+            .mobile-nav-label {
+                font-size: 10px;
+                line-height: 1.1;
+                letter-spacing: -0.2px;
+            }
+            .mobile-nav-item.active .mobile-nav-label {
+                font-weight: 700;
+            }
+            .mobile-nav-badge {
+                position: absolute;
+                top: -5px;
+                right: -9px;
+                min-width: 15px;
+                height: 15px;
+                padding: 0 4px;
+                border-radius: 8px;
+                background-color: #ef4444;
+                color: #ffffff;
+                font-size: 9px;
+                font-weight: 700;
+                line-height: 15px;
+                text-align: center;
+            }
+
+            /* Prominent Center "Sell" Button */
+            .mobile-nav-item-sell {
+                position: relative;
+                overflow: visible;
+            }
+            .mobile-sell-btn-circle {
+                width: 44px;
+                height: 44px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
+                color: #ffffff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 18px;
+                box-shadow: 0 4px 12px rgba(13, 110, 253, 0.4);
+                margin-top: -16px;
+                margin-bottom: 2px;
+                border: 3px solid #ffffff;
+                transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            }
+            .mobile-nav-item-sell:active .mobile-sell-btn-circle {
+                transform: scale(0.92);
+            }
+            .mobile-sell-label {
+                font-size: 10px;
+                font-weight: 700;
+                color: #0d6efd;
+            }
+        }
+
+        @media (min-width: 992px) {
+            #mobile_bottom_nav,
+            .mobile-header-row {
+                display: none !important;
+            }
+        }
     </style>
     {{-- Google AdSense Start --}}
     @if ($setting->is_google_adsense == '1')
@@ -1407,6 +1628,7 @@ body_theme4 @endif
                                             @endif
                                             <a href="{{ route('user.ticket') }}"><i class="icon-chevron-right pr-2"></i>{{ __('Support Ticket') }}</a>
                                             <a href="{{ route('user.order.index') }}"><i class="icon-chevron-right pr-2"></i>{{ __('Orders') }}</a>
+                                            <a href="{{ route('front.order.track') }}"><i class="icon-chevron-right pr-2"></i>{{ __('Track My Order') }}</a>
                                             <a href="{{ route('user.logout') }}"><i class="icon-chevron-right pr-2"></i>{{ __('Logout') }}</a>
                                         </div>
                                     </div>
@@ -1417,61 +1639,19 @@ body_theme4 @endif
                 </div>
 
                 <!-- Mobile Topbar (Hidden on Desktop) -->
-                <div class="d-flex d-lg-none justify-content-between align-items-center w-100" style="font-size: 11px; padding: 5px 0 8px 0;">
-                    
-                    <!-- Left: Track Order -->
-                    <div class="d-flex align-items-center" style="gap: 4px;">
-                        <a class="track-order-link" href="{{ route('front.order.track') }}" style="margin:0; padding:0; line-height: 1.2;"><i class="icon-map-pin" style="font-size:10px;"></i>{{ __('Track') }}</a>
-                    </div>
-
-                    <!-- Middle: Currency -->
-                    <div class="d-flex justify-content-center">
-                        <div class="t-h-dropdown" style="margin:0;">
-                            <a class="main-link" href="#" style="padding:0; font-size:13px; font-weight:600; color:#333;">{{ __('Currency') }}<i class="icon-chevron-down" style="font-size:10px; margin-left: 3px;"></i></a>
-                            <div class="t-h-dropdown-menu" style="min-width: 100px; left: 50%; transform: translateX(-50%);">
-                                @foreach ($all_currencies as $currency)
-                                    <a class="{{ Session::get('currency') == $currency->id ? 'active' : ($currency->is_default == 1 && !Session::has('currency') ? 'active' : '') }}"
-                                        href="{{ route('front.currency.setup', $currency->id) }}" style="font-size:12px; padding: 6px 8px;"><i class="icon-chevron-right pr-2"></i>{{ $currency->name }}</a>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Right: Login -->
-                    <div class="d-flex align-items-center" style="gap: 4px;">
-                        <div class="login-register" style="margin:0; padding:0; line-height: 1.2;">
-                            @if (!Auth::user())
-                                <a class="track-order-link mr-0" href="{{ route('user.login') }}" style="margin:0; padding:0;"><i class="icon-user" style="font-size:10px;"></i>{{ __('Login') }}</a>
-                            @else
-                                <div class="t-h-dropdown" style="margin:0;">
-                                    <a class="main-link" href="javascript:;" style="padding:0; font-size:11px; font-weight:600; color:#333;">
-                                        {{ Auth::user()->first_name }}
-                                        @if($headerUserUnread > 0)
-                                            <span class="badge badge-success ml-1" style="font-size: 9px; padding: 1px 4px; border-radius: 8px;">{{ $headerUserUnread }}</span>
-                                        @endif
-                                        <i class="icon-chevron-down" style="font-size:9px; margin-left: 2px;"></i>
-                                    </a>
-                                    <div class="t-h-dropdown-menu" style="min-width: 130px; right: 0; left: auto;">
-                                        <a href="{{ route('user.dashboard') }}" style="font-size:11px; padding: 4px 8px;">{{ __('Dashboard') }}</a>
-                                        <a href="{{ route('user.message.index') }}" style="font-size:11px; padding: 4px 8px;">
-                                            {{ __('My Chats') }}
-                                            @if($headerUserUnread > 0)
-                                                <span class="badge badge-success ml-1 font-weight-bold" style="font-size: 9px; border-radius: 8px; padding: 1px 4px;">{{ $headerUserUnread }}</span>
-                                            @endif
-                                        </a>
-                                        <a href="{{ route('user.profile') }}" style="font-size:11px; padding: 4px 8px;">{{ __('Profile') }}</a>
-                                        @if(Auth::user()->isSeller())
-                                            <a href="{{ Auth::user()->getStoreUrl() }}" target="_blank" style="font-size:11px; padding: 4px 8px; font-weight: bold; color: #28a745;">{{ __('My Store (Live)') }}</a>
-                                            <a href="{{ route('seller.dashboard') }}" style="font-size:11px; padding: 4px 8px; font-weight: bold; color: #007bff;">{{ __('Seller Dashboard') }}</a>
-                                        @else
-                                            <a href="{{ route('user.store.apply') }}" style="font-size:11px; padding: 4px 8px;">{{ __('Open Shop / List Product') }}</a>
-                                        @endif
-                                        <a href="{{ route('user.ticket') }}" style="font-size:11px; padding: 4px 8px;">{{ __('Support Ticket') }}</a>
-                                        <a href="{{ route('user.order.index') }}" style="font-size:11px; padding: 4px 8px;">{{ __('Orders') }}</a>
-                                        <a href="{{ route('user.logout') }}" style="font-size:11px; padding: 4px 8px;">{{ __('Logout') }}</a>
-                                    </div>
-                                </div>
-                            @endif
+                <div class="d-flex d-lg-none justify-content-end align-items-center w-100" style="font-size: 11.5px; padding: 4px 0 5px 0;">
+                    <div class="t-h-dropdown" style="margin:0;">
+                        <a class="main-link" href="javascript:;" style="padding: 2px 4px; font-size: 11.5px; font-weight: 600; color: #444; display: inline-flex; align-items: center; gap: 3px;">
+                            <span>{{ \PriceHelper::setCurrencyName() ?: __('Currency') }}</span>
+                            <i class="icon-chevron-down" style="font-size: 9px;"></i>
+                        </a>
+                        <div class="t-h-dropdown-menu" style="min-width: 110px; right: 0; left: auto; transform: none;">
+                            @foreach ($all_currencies as $currency)
+                                <a class="{{ Session::get('currency') == $currency->id ? 'active' : ($currency->is_default == 1 && !Session::has('currency') ? 'active' : '') }}"
+                                    href="{{ route('front.currency.setup', $currency->id) }}" style="font-size: 12px; padding: 6px 10px;">
+                                    <i class="icon-chevron-right pr-1"></i>{{ $currency->name }}
+                                </a>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -1482,14 +1662,15 @@ body_theme4 @endif
             <div class="container">
                 <div class="row">
                     <div class="col-lg-12">
-                        <div class="d-flex justify-content-between">
+                        <!-- Desktop Header Row (Hidden on Mobile) -->
+                        <div class="d-none d-lg-flex justify-content-between align-items-center w-100">
                             <!-- Logo-->
                             <div class="site-branding"><a class="site-logo align-self-center"
                                     href="{{ route('front.index') }}"><img
                                         src="{{ url('/core/public/storage/images/' . $setting->logo) }}"
                                         alt="{{ $setting->title }}"></a></div>
                             <!-- Search / Categories-->
-                            <div class="search-box-wrap d-none d-lg-block d-flex">
+                            <div class="search-box-wrap d-flex">
                                 <div class="search-box-inner align-self-center">
                                     <div class="search-box d-flex">
                                         <select name="category" id="category_select" class="categoris">
@@ -1515,24 +1696,9 @@ body_theme4 @endif
                                         </form>
                                     </div>
                                 </div>
-                                <span class="d-block d-lg-none close-m-serch"><i class="icon-x"></i></span>
                             </div>
                             <!-- Toolbar-->
                             <div class="toolbar d-flex">
-
-                                <div class="toolbar-item close-m-serch visible-on-mobile"><a href="#">
-                                        <div>
-                                            <i class="icon-search"></i>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="toolbar-item visible-on-mobile mobile-menu-toggle"><a href="#">
-                                        <div><i class="icon-menu"></i><span
-                                                class="text-label">{{ __('Menu') }}</span></div>
-                                    </a>
-                                </div>
-
-
                                 @if (Auth::check())
                                     <div class="toolbar-item"><a
                                             href="{{ route('user.wishlist.index') }}">
@@ -1561,6 +1727,50 @@ body_theme4 @endif
                                     </div>
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- Mobile Header Row (Strictly Mobile Only) -->
+                        <div class="d-flex d-lg-none align-items-center justify-content-between mobile-header-row py-2 w-100">
+                            <!-- 1. Search Input (Takes available width on left) -->
+                            <div class="mobile-search-col flex-grow-1 mr-2 position-relative">
+                                <form class="mobile-header-search-form m-0" id="mobile_search_form" action="{{ route('front.catalog') }}" method="get">
+                                    <div class="mobile-search-input-wrap position-relative">
+                                        <i class="icon-search mobile-search-ico"></i>
+                                        <input class="form-control mobile-search-input" type="text"
+                                            data-target="{{ route('front.search.suggest') }}"
+                                            id="__product__search_mobile" name="search"
+                                            placeholder="{{ __('Search by name/type/id') }}"
+                                            autocomplete="off">
+                                        <div class="serch-result mobile-serch-result d-none">
+                                            {{-- search result --}}
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- 2. Heart (Wishlist) -->
+                            <div class="mobile-icon-col mr-2">
+                                <a href="{{ route('user.wishlist.index') }}" class="mobile-header-icon-link position-relative" title="{{ __('Wishlist') }}">
+                                    <i class="icon-heart"></i>
+                                    <span class="mobile-counter-badge wishlist_count {{ (Auth::user() && Auth::user()->wishlists && Auth::user()->wishlists->count() > 0) ? '' : 'd-none' }}">{{ (Auth::user() && Auth::user()->wishlists) ? Auth::user()->wishlists->count() : 0 }}</span>
+                                </a>
+                            </div>
+
+                            <!-- 3. Cart -->
+                            <div class="mobile-icon-col mr-2">
+                                <a href="{{ route('front.cart') }}" class="mobile-header-icon-link position-relative" title="{{ __('Cart') }}">
+                                    <i class="icon-shopping-cart"></i>
+                                    <span class="mobile-counter-badge cart_count">{{ Session::has('cart') ? count(Session::get('cart')) : '0' }}</span>
+                                </a>
+                            </div>
+
+                            <!-- 4. Menu (Hamburger) -->
+                            <div class="mobile-icon-col">
+                                <a href="javascript:;" class="mobile-header-icon-link mobile-menu-toggle" title="{{ __('Menu') }}">
+                                    <i class="icon-menu"></i>
+                                </a>
+                            </div>
+                        </div>
 
                             <!-- Mobile Menu-->
                             <div class="mobile-menu">
@@ -1825,6 +2035,64 @@ body_theme4 @endif
     </a>
     <!-- Backdrop-->
     <div class="site-backdrop"></div>
+
+    <!-- Mobile Fixed Bottom Navigation Bar -->
+    @php
+        $navUserUnread = (Auth::check()) ? \App\Models\Conversation::where('user_id', Auth::id())->where('user_unread_count', '>', 0)->where('deleted_by_user', 0)->sum('user_unread_count') : 0;
+        $isUserSeller = Auth::check() && Auth::user()->isSeller();
+        $sellUrl = $isUserSeller ? route('seller.dashboard') : route('user.store.apply');
+        $isSellActive = request()->routeIs('user.store.*') || request()->routeIs('seller.*');
+        $isHomeActive = request()->routeIs('front.index');
+        $isMessagesActive = request()->routeIs('user.message.*');
+        $isShopActive = request()->routeIs('front.catalog*');
+        $isMeActive = (request()->routeIs('user.*') && !$isMessagesActive && !request()->routeIs('user.store.*')) || request()->routeIs('front.order.track');
+        $meUrl = Auth::check() ? route('user.dashboard') : route('user.login');
+        $messagesUrl = Auth::check() ? route('user.message.index') : route('user.login');
+    @endphp
+    <nav id="mobile_bottom_nav" class="d-flex d-lg-none" aria-label="Mobile Navigation">
+        <!-- 1. Home -->
+        <a href="{{ route('front.index') }}" class="mobile-nav-item {{ $isHomeActive ? 'active' : '' }}">
+            <div class="mobile-nav-icon-wrap">
+                <i class="icon-home"></i>
+            </div>
+            <span class="mobile-nav-label">{{ __('Home') }}</span>
+        </a>
+
+        <!-- 2. Messages -->
+        <a href="{{ $messagesUrl }}" class="mobile-nav-item {{ $isMessagesActive ? 'active' : '' }}">
+            <div class="mobile-nav-icon-wrap position-relative">
+                <i class="icon-message-square"></i>
+                @if($navUserUnread > 0)
+                    <span class="mobile-nav-badge">{{ $navUserUnread > 99 ? '99+' : $navUserUnread }}</span>
+                @endif
+            </div>
+            <span class="mobile-nav-label">{{ __('Messages') }}</span>
+        </a>
+
+        <!-- 3. Sell (Center Prominent Button) -->
+        <a href="{{ $sellUrl }}" class="mobile-nav-item mobile-nav-item-sell {{ $isSellActive ? 'active' : '' }}">
+            <div class="mobile-sell-btn-circle">
+                <i class="fas fa-store"></i>
+            </div>
+            <span class="mobile-nav-label mobile-sell-label">{{ __('Sell') }}</span>
+        </a>
+
+        <!-- 4. Shop -->
+        <a href="{{ route('front.catalog') }}" class="mobile-nav-item {{ $isShopActive ? 'active' : '' }}">
+            <div class="mobile-nav-icon-wrap">
+                <i class="icon-grid"></i>
+            </div>
+            <span class="mobile-nav-label">{{ __('Shop') }}</span>
+        </a>
+
+        <!-- 5. Me -->
+        <a href="{{ $meUrl }}" class="mobile-nav-item {{ $isMeActive ? 'active' : '' }}">
+            <div class="mobile-nav-icon-wrap">
+                <i class="icon-user"></i>
+            </div>
+            <span class="mobile-nav-label">{{ __('Me') }}</span>
+        </a>
+    </nav>
 
     <!-- Cookie alert dialog  -->
     @if ($setting->is_cookie == 1)

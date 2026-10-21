@@ -888,24 +888,39 @@ $(function ($) {
             $("#search_form #page").val('');
         }
 
-        $(document).on('keyup', '#__product__search', function () {
-            let search = $(this).val();
-            let category = '';
-            category = $('#search__category').val();
+        $(document).on('keyup', '#__product__search, #__product__search_mobile', function () {
+            let $input = $(this);
+            let search = $input.val();
+            let category = $('#search__category').val() || '';
+            let $result = $input.closest('form').find('.serch-result');
+            if (!$result.length) {
+                $result = $('.serch-result');
+            }
             if (search) {
-                let url = $(this).attr('data-target');
-                $.get(url + '?search=' + search + '&category=' + category, function (response) {
-                    $('.serch-result').removeClass('d-none');
-                    $('.serch-result').html(response);
-                })
+                let url = $input.attr('data-target');
+                $.get(url + '?search=' + encodeURIComponent(search) + '&category=' + encodeURIComponent(category), function (response) {
+                    $result.removeClass('d-none');
+                    $result.html(response);
+                });
             } else {
+                $result.addClass('d-none');
+            }
+        });
+
+        $(document).on('click', '#view_all_search_', function () {
+            let $form = $(this).closest('form');
+            if ($form.length && $form.attr('id') === 'mobile_search_form') {
+                $form.submit();
+            } else {
+                $('#header_search_form').submit();
+            }
+        });
+
+        $(document).on('click', function (e) {
+            if (!$(e.target).closest('#header_search_form, #mobile_search_form, .serch-result').length) {
                 $('.serch-result').addClass('d-none');
             }
-
-        })
-        $(document).on('click', '#view_all_search_', function () {
-            $('#header_search_form').submit();
-        })
+        });
 
         $(document).on('click', '#category_list li a.category_search', function () {
             $('#category_list li').removeClass('active');

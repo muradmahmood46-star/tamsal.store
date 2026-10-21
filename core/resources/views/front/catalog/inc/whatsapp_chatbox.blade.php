@@ -266,13 +266,13 @@
         .mobile-daraz-bar {
             display: flex;
             position: fixed;
-            bottom: 0;
+            bottom: calc(56px + env(safe-area-inset-bottom, 0px));
             left: 0;
             width: 100%;
             height: 60px;
             background: #ffffff;
             box-shadow: 0 -3px 15px rgba(0,0,0,0.12);
-            z-index: 99999;
+            z-index: 1035;
             align-items: center;
             justify-content: space-between;
             padding: 6px 10px;
@@ -466,6 +466,9 @@
 
 <!-- JavaScript Engine for WhatsApp Live Chat -->
 <script>
+    if (window.innerWidth <= 991) {
+        document.body.classList.add('has-daraz-bar');
+    }
     let currentConversationId = null;
     let chatPollInterval = null;
     const currentItemId = {{ isset($item) ? $item->id : 'null' }};
