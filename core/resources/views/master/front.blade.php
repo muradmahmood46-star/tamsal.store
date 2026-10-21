@@ -1346,7 +1346,33 @@
                 font-weight: 700;
             }
 
-            /* Mobile Header Second Row */
+            /* Mobile Header: Sticky without fixed jump or slider overlap */
+            .site-header {
+                position: sticky !important;
+                top: 0 !important;
+                z-index: 1030 !important;
+                background: #ffffff !important;
+            }
+            .site-header .topbar,
+            .navbar-stuck .topbar {
+                position: relative !important;
+                top: auto !important;
+                left: auto !important;
+                width: 100% !important;
+                background: #ffffff !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                border-bottom: 1px solid #f0f2f5 !important;
+            }
+            .navbar-stuck {
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08) !important;
+            }
+            .slider-area-wrapper {
+                margin-top: 8px !important;
+                position: relative;
+            }
+
+            /* Mobile Header Row */
             .mobile-header-row {
                 width: 100%;
                 display: flex;
