@@ -1299,31 +1299,51 @@
                 bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
             }
 
-            /* Mobile Topbar Height Reduction & Logo / Currency Alignment */
             .menu-top-area {
-                padding: 4px 0 !important;
-                border-bottom: 1px solid #f0f2f5;
+                display: none !important;
             }
-            .mobile-top-bar-strip {
-                min-height: 26px;
-                padding: 0 !important;
+
+            /* Mobile Drawer Submenu Dropdown (Pages & Currency) */
+            .slideable-menu ul li.t-h-dropdown > a {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                cursor: pointer !important;
             }
-            .mobile-top-logo-wrap {
-                display: flex;
-                align-items: center;
-                max-width: 150px;
+            .slideable-menu ul li.t-h-dropdown > a .icon-chevron-down {
+                transition: transform 0.25s ease !important;
+                font-size: 11px !important;
+                margin-left: auto !important;
             }
-            .mobile-top-strip-logo {
-                max-height: 22px;
-                max-width: 130px;
-                width: auto;
-                height: auto;
-                object-fit: contain;
+            .slideable-menu ul li.t-h-dropdown.open > a .icon-chevron-down {
+                transform: rotate(180deg) !important;
+            }
+            .slideable-menu ul li.t-h-dropdown.open .t-h-dropdown-menu {
+                display: block !important;
+            }
+            .slideable-menu ul li.t-h-dropdown .t-h-dropdown-menu {
+                background: #f8fafc;
+                border-left: 3px solid #0d6efd;
+                padding: 4px 0 4px 10px;
+                position: relative;
+                left: 0;
+                width: 100%;
+                box-shadow: none !important;
+            }
+            .slideable-menu ul li.t-h-dropdown .t-h-dropdown-menu a {
+                padding: 8px 15px;
+                font-size: 13px;
+                color: #334155 !important;
                 display: block;
+                line-height: 1.4;
+                border-bottom: 1px solid #edf2f7;
             }
-            .mobile-top-curr-dropdown {
-                display: flex;
-                align-items: center;
+            .slideable-menu ul li.t-h-dropdown .t-h-dropdown-menu a:last-child {
+                border-bottom: none;
+            }
+            .slideable-menu ul li.t-h-dropdown .t-h-dropdown-menu a.active {
+                color: #0d6efd !important;
+                font-weight: 700;
             }
 
             /* Mobile Header Second Row */
@@ -1603,7 +1623,7 @@ body_theme4 @endif
     <!-- Header-->
 
     <header class="site-header navbar-sticky">
-        <div class="menu-top-area">
+        <div class="menu-top-area d-none d-lg-block">
             <div class="container">
                 <!-- Desktop Topbar (Hidden on Mobile) -->
                 <div class="row d-none d-lg-flex">
@@ -1661,34 +1681,6 @@ body_theme4 @endif
                                     </div>
                                 @endif
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Mobile Topbar (Hidden on Desktop) -->
-                <div class="d-flex d-lg-none justify-content-between align-items-center w-100 mobile-top-bar-strip">
-                    <!-- Left: Website Logo (Admin Uploaded) -->
-                    <div class="mobile-top-logo-wrap">
-                        <a href="{{ route('front.index') }}" class="d-inline-flex align-items-center" title="{{ $setting->title }}">
-                            <img src="{{ url('/core/public/storage/images/' . $setting->logo) }}"
-                                 alt="{{ $setting->title }}"
-                                 class="mobile-top-strip-logo">
-                        </a>
-                    </div>
-
-                    <!-- Right: Active Currency Selector -->
-                    <div class="t-h-dropdown mobile-top-curr-dropdown" style="margin:0;">
-                        <a class="main-link" href="javascript:;" style="padding: 2px 4px; font-size: 11.5px; font-weight: 600; color: #444; display: inline-flex; align-items: center; gap: 3px;">
-                            <span>{{ \PriceHelper::setCurrencyName() ?: __('Currency') }}</span>
-                            <i class="icon-chevron-down" style="font-size: 9px;"></i>
-                        </a>
-                        <div class="t-h-dropdown-menu" style="min-width: 110px; right: 0; left: auto; transform: none;">
-                            @foreach ($all_currencies as $currency)
-                                <a class="{{ Session::get('currency') == $currency->id ? 'active' : ($currency->is_default == 1 && !Session::has('currency') ? 'active' : '') }}"
-                                    href="{{ route('front.currency.setup', $currency->id) }}" style="font-size: 12px; padding: 6px 10px;">
-                                    <i class="icon-chevron-right pr-1"></i>{{ $currency->name }}
-                                </a>
-                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -1871,7 +1863,7 @@ body_theme4 @endif
                                                     </li>
                                                 @endif
                                                 <li class="t-h-dropdown">
-                                                    <a class="" href="#"><i
+                                                    <a class="" href="javascript:;"><i
                                                             class="icon-chevron-right"></i>{{ __('Pages') }} <i
                                                             class="icon-chevron-down"></i></a>
                                                     <div class="t-h-dropdown-menu">
@@ -1893,6 +1885,21 @@ body_theme4 @endif
                                                         class="{{ request()->routeIs('front.contact') ? 'active' : '' }}">
                                                         <a href="{{ route('front.contact') }}"><i
                                                                 class="icon-chevron-right"></i>{{ __('Contact') }}</a>
+                                                    </li>
+                                                @endif
+
+                                                @if (isset($all_currencies) && $all_currencies->count() > 0)
+                                                    <li class="t-h-dropdown mobile-drawer-currency">
+                                                        <a class="" href="javascript:;"><i
+                                                                class="icon-chevron-right"></i>{{ __('Currency') }} <span class="badge badge-light border ml-1 font-weight-bold text-primary" style="font-size: 11px;">{{ \PriceHelper::setCurrencyName() }}</span> <i
+                                                                class="icon-chevron-down"></i></a>
+                                                        <div class="t-h-dropdown-menu">
+                                                            @foreach ($all_currencies as $currency)
+                                                                <a class="{{ Session::get('currency') == $currency->id ? 'active' : ($currency->is_default == 1 && !Session::has('currency') ? 'active' : '') }}"
+                                                                    href="{{ route('front.currency.setup', $currency->id) }}"><i
+                                                                        class="icon-chevron-right pr-2"></i>{{ $currency->name }} ({{ $currency->sign }})</a>
+                                                            @endforeach
+                                                        </div>
                                                     </li>
                                                 @endif
                                             </ul>
