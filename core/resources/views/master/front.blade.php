@@ -1299,6 +1299,33 @@
                 bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
             }
 
+            /* Mobile Topbar Height Reduction & Logo / Currency Alignment */
+            .menu-top-area {
+                padding: 4px 0 !important;
+                border-bottom: 1px solid #f0f2f5;
+            }
+            .mobile-top-bar-strip {
+                min-height: 26px;
+                padding: 0 !important;
+            }
+            .mobile-top-logo-wrap {
+                display: flex;
+                align-items: center;
+                max-width: 150px;
+            }
+            .mobile-top-strip-logo {
+                max-height: 22px;
+                max-width: 130px;
+                width: auto;
+                height: auto;
+                object-fit: contain;
+                display: block;
+            }
+            .mobile-top-curr-dropdown {
+                display: flex;
+                align-items: center;
+            }
+
             /* Mobile Header Second Row */
             .mobile-header-row {
                 width: 100%;
@@ -1639,8 +1666,18 @@ body_theme4 @endif
                 </div>
 
                 <!-- Mobile Topbar (Hidden on Desktop) -->
-                <div class="d-flex d-lg-none justify-content-end align-items-center w-100" style="font-size: 11.5px; padding: 4px 0 5px 0;">
-                    <div class="t-h-dropdown" style="margin:0;">
+                <div class="d-flex d-lg-none justify-content-between align-items-center w-100 mobile-top-bar-strip">
+                    <!-- Left: Website Logo (Admin Uploaded) -->
+                    <div class="mobile-top-logo-wrap">
+                        <a href="{{ route('front.index') }}" class="d-inline-flex align-items-center" title="{{ $setting->title }}">
+                            <img src="{{ url('/core/public/storage/images/' . $setting->logo) }}"
+                                 alt="{{ $setting->title }}"
+                                 class="mobile-top-strip-logo">
+                        </a>
+                    </div>
+
+                    <!-- Right: Active Currency Selector -->
+                    <div class="t-h-dropdown mobile-top-curr-dropdown" style="margin:0;">
                         <a class="main-link" href="javascript:;" style="padding: 2px 4px; font-size: 11.5px; font-weight: 600; color: #444; display: inline-flex; align-items: center; gap: 3px;">
                             <span>{{ \PriceHelper::setCurrencyName() ?: __('Currency') }}</span>
                             <i class="icon-chevron-down" style="font-size: 9px;"></i>
@@ -1938,6 +1975,7 @@ body_theme4 @endif
     </div>
     <!--    announcement banner section end   -->
 
+    @if (!request()->routeIs('user.login') && !View::hasSection('no_footer'))
     <!-- Site Footer-->
     <footer class="site-footer">
         <div class="container">
@@ -2028,6 +2066,7 @@ body_theme4 @endif
             <p class="footer-copyright" style="background: transparent !important; border-top: none !important; padding-top: 20px; box-shadow: none !important;"> {{ $setting->copy_right }}</p>
         </div>
     </footer>
+    @endif
 
     <!-- Back To Top Button-->
     <a class="scroll-to-top-btn" href="#">
