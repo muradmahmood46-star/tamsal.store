@@ -1715,7 +1715,7 @@ body_theme4 @endif
             </div>
         </div>
         <!-- Topbar-->
-        @if (!request()->routeIs('user.login*') && !View::hasSection('no_topbar'))
+        @if (!request()->routeIs('user.login*') && !request()->routeIs('user.register*') && !View::hasSection('no_topbar'))
         <div class="topbar">
             <div class="container">
                 <div class="row">
@@ -2012,7 +2012,7 @@ body_theme4 @endif
     </div>
     <!--    announcement banner section end   -->
 
-    @if (!request()->routeIs('user.login') && !View::hasSection('no_footer'))
+    @if (!request()->routeIs('user.login*') && !request()->routeIs('user.register*') && !View::hasSection('no_footer'))
     <!-- Site Footer-->
     <footer class="site-footer">
         <div class="container">
