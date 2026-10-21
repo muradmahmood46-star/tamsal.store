@@ -80,6 +80,7 @@
 
 <style>
     /* 1. Hide search box topbar and header on login page */
+    .site-header,
     .site-header .topbar,
     .topbar {
         display: none !important;

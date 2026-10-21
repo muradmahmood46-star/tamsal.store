@@ -121,6 +121,7 @@
 
 <style>
     /* 1. Hide search box topbar and header on register page */
+    .site-header,
     .site-header .topbar,
     .topbar,
     .site-footer {

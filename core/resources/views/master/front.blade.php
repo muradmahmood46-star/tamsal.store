@@ -47,15 +47,30 @@
         if ('scrollRestoration' in history) {
             history.scrollRestoration = 'manual';
         }
-        window.addEventListener('beforeunload', function() {
+        function forceScrollToTop() {
             window.scrollTo(0, 0);
-        });
-        window.addEventListener('pageshow', function(e) {
-            window.scrollTo(0, 0);
+            if (document.documentElement) document.documentElement.scrollTop = 0;
+            if (document.body) document.body.scrollTop = 0;
+        }
+        forceScrollToTop();
+        window.addEventListener('beforeunload', forceScrollToTop);
+        window.addEventListener('pagehide', forceScrollToTop);
+        window.addEventListener('pageshow', function() {
+            forceScrollToTop();
+            setTimeout(forceScrollToTop, 50);
+            setTimeout(forceScrollToTop, 150);
         });
         document.addEventListener('DOMContentLoaded', function() {
             if (!window.location.hash) {
-                window.scrollTo(0, 0);
+                forceScrollToTop();
+                setTimeout(forceScrollToTop, 50);
+            }
+        });
+        window.addEventListener('load', function() {
+            if (!window.location.hash) {
+                forceScrollToTop();
+                setTimeout(forceScrollToTop, 50);
+                setTimeout(forceScrollToTop, 200);
             }
         });
     </script>
@@ -1375,6 +1390,15 @@
                 padding-top: max(8px, env(safe-area-inset-top, 0px)) !important;
                 margin-top: 0 !important;
             }
+            /* iOS Safari / WebKit Safe-Area Fix:
+               On iPhone Safari reload, env(safe-area-inset-top) evaluates to 0px before safe areas resolve.
+               A fallback of 47px (standard iPhone notch) up to 59px (Dynamic Island) guarantees the mobile
+               topbar never slips behind the iPhone status bar or notch on refresh. Android is untouched. */
+            @supports (-webkit-touch-callout: none) {
+                .site-header {
+                    padding-top: calc(max(47px, env(safe-area-inset-top, 47px)) + 4px) !important;
+                }
+            }
             .site-header .topbar,
             .navbar-stuck .topbar,
             .topbar {
@@ -1672,7 +1696,7 @@ body_theme4 @endif
     @endif
 
     <!-- Header-->
-
+    @if (!request()->routeIs('user.login*') && !request()->routeIs('user.register*') && !View::hasSection('no_topbar'))
     <header class="site-header navbar-sticky">
         <div class="menu-top-area d-none d-lg-block">
             <div class="container">
@@ -1994,6 +2018,7 @@ body_theme4 @endif
         </div>
 
     </header>
+    @endif
     <!-- Page Content-->
     @yield('content')
 
