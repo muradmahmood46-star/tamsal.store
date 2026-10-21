@@ -40,7 +40,7 @@
     <link rel="canonical" href="@yield('canonical', url()->current())">
 
     <!-- Mobile Specific Meta Tag-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 
     <!-- Favicon Icons-->
     @php
@@ -1290,13 +1290,13 @@
         /* MOBILE ONLY: Redesigned Header Row, Currency & Fixed Bottom Navigation */
         @media (max-width: 991.98px) {
             body {
-                padding-bottom: 64px !important;
+                padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important;
             }
             body.has-daraz-bar {
-                padding-bottom: 124px !important;
+                padding-bottom: calc(124px + env(safe-area-inset-bottom, 0px)) !important;
             }
             .scroll-to-top-btn {
-                bottom: 70px !important;
+                bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;
             }
 
             .menu-top-area {
@@ -1346,10 +1346,10 @@
                 font-weight: 700;
             }
 
-            /* Mobile Header: Sticky without fixed jump or slider overlap */
+            /* Mobile Header: In-flow Positioning, No Overlap or Jumping on Sliders */
             .site-header {
-                position: sticky !important;
-                top: 0 !important;
+                position: relative !important;
+                top: auto !important;
                 z-index: 1030 !important;
                 background: #ffffff !important;
             }
@@ -1365,10 +1365,10 @@
                 border-bottom: 1px solid #f0f2f5 !important;
             }
             .navbar-stuck {
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08) !important;
+                box-shadow: none !important;
             }
             .slider-area-wrapper {
-                margin-top: 8px !important;
+                margin-top: 10px !important;
                 position: relative;
             }
 
@@ -1480,8 +1480,8 @@
                 bottom: 0;
                 left: 0;
                 width: 100%;
-                height: 56px !important;
-                padding-bottom: 0 !important;
+                height: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
+                padding-bottom: env(safe-area-inset-bottom, 0px) !important;
                 background: #ffffff;
                 box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
                 border-top: 1px solid #eef2f6;
@@ -1497,7 +1497,7 @@
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                height: 100%;
+                height: 56px;
                 color: #64748b;
                 text-decoration: none !important;
                 font-size: 10.5px;

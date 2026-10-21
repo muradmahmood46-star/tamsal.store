@@ -268,8 +268,8 @@
                     object-fit: cover !important;
                 }
                 .slider-area-wrapper {
-                    padding-top: 8px !important;
-                    margin-top: 0 !important;
+                    padding-top: 6px !important;
+                    margin-top: 8px !important;
                     position: relative;
                 }
                 .slider-area-wrapper::before {
@@ -278,7 +278,7 @@
                     width: 100%;
                     height: 2px;
                     background: linear-gradient(90deg, rgba(37, 99, 235, 0.15) 0%, #2563eb 25%, #3b82f6 50%, #2563eb 75%, rgba(37, 99, 235, 0.15) 100%);
-                    margin-bottom: 8px;
+                    margin-bottom: 6px;
                 }
                 .slider-area-wrapper .container {
                     padding-left: 15px !important;
