@@ -1369,6 +1369,8 @@ $(document).on('click', '#trams__condition', function () {
         $('#continue__button').attr('type', 'button');
         $('#continue__button').prop('disabled', true).css({ 'pointer-events': 'none', 'opacity': '0.5', 'cursor': 'not-allowed' });
     }
+});
+
 // Mobile drawer dropdown toggle (Pages & Currency)
 $(document).on('click', '.slideable-menu li.t-h-dropdown > a', function (e) {
     e.preventDefault();
