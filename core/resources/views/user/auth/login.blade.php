@@ -3,6 +3,7 @@
     {{__('Login')}}
 @endsection
 @section('no_footer', true)
+@section('no_topbar', true)
 
 @section('content')
 <div class="login-page-wrapper">
@@ -28,6 +29,11 @@
                 <form class="card auth-form-card shadow-sm" method="post" action="{{route('user.login.submit')}}">
                     @csrf
                     <div class="card-body">
+                        <div class="text-center mb-3">
+                            <a href="{{ route('front.index') }}" title="{{ $setting->title }}">
+                                <img src="{{ url('/core/public/storage/images/' . $setting->logo) }}" alt="{{ $setting->title }}" style="max-height: 38px; width: auto; object-fit: contain;">
+                            </a>
+                        </div>
                         <h4 class="margin-bottom-1x text-center font-weight-bold" style="color: #1e293b; font-size: 20px;">{{__('Login')}}</h4>
 
                         <div class="form-group input-group">
@@ -73,7 +79,13 @@
 </div>
 
 <style>
-    /* 1. Lock screen completely: no window scrolling, no flickering / blinking */
+    /* 1. Hide search box topbar and header on login page */
+    .site-header .topbar,
+    .topbar {
+        display: none !important;
+    }
+
+    /* 2. Lock screen completely: no window scrolling, no flickering / blinking */
     html, body {
         overflow: hidden !important;
         height: 100% !important;
@@ -84,7 +96,7 @@
     }
     body {
         padding-top: 0 !important;
-        padding-bottom: 56px !important;
+        padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
     }
     .scroll-to-top-btn {
         display: none !important;
@@ -93,11 +105,11 @@
         display: none !important;
     }
 
-    /* 2. Vertically and horizontally center the login card in the viewport */
+    /* 3. Vertically and horizontally center the login card in the viewport */
     .login-page-wrapper {
         width: 100%;
-        height: calc(100vh - 54px - 56px);
-        height: calc(100dvh - 54px - 56px);
+        height: calc(100vh - 56px - env(safe-area-inset-bottom, 0px));
+        height: calc(100dvh - 56px - env(safe-area-inset-bottom, 0px));
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
@@ -132,13 +144,19 @@
         touch-action: manipulation !important;
     }
 
+    @media (max-width: 991.98px) {
+        .site-header {
+            display: none !important;
+        }
+    }
+
     @media (min-width: 992px) {
         body {
             padding-bottom: 0 !important;
         }
         .login-page-wrapper {
-            height: calc(100vh - 135px);
-            height: calc(100dvh - 135px);
+            height: calc(100vh - 85px);
+            height: calc(100dvh - 85px);
         }
     }
 </style>

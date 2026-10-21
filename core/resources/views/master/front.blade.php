@@ -1713,6 +1713,7 @@ body_theme4 @endif
             </div>
         </div>
         <!-- Topbar-->
+        @if (!request()->routeIs('user.login*') && !View::hasSection('no_topbar'))
         <div class="topbar">
             <div class="container">
                 <div class="row">
@@ -1944,6 +1945,7 @@ body_theme4 @endif
                 </div>
             </div>
         </div>
+        @endif
         <!-- Navbar-->
         <div class="navbar">
             <div class="container">
