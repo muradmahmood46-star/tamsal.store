@@ -42,6 +42,24 @@
     <!-- Mobile Specific Meta Tag-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 
+    <script>
+        // Prevent mobile browsers from restoring previous scroll position under the browser header on refresh
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.addEventListener('beforeunload', function() {
+            window.scrollTo(0, 0);
+        });
+        window.addEventListener('pageshow', function(e) {
+            window.scrollTo(0, 0);
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!window.location.hash) {
+                window.scrollTo(0, 0);
+            }
+        });
+    </script>
+
     <!-- Favicon Icons-->
     @php
         $favPath = $setting->favicon ?? '';
@@ -1349,22 +1367,27 @@
             /* Mobile Header: In-flow Positioning, No Overlap or Jumping on Sliders */
             .site-header {
                 position: relative !important;
-                top: auto !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
                 z-index: 1030 !important;
                 background: #ffffff !important;
-                padding-top: env(safe-area-inset-top, 0px) !important;
+                padding-top: max(8px, env(safe-area-inset-top, 0px)) !important;
+                margin-top: 0 !important;
             }
             .site-header .topbar,
-            .navbar-stuck .topbar {
+            .navbar-stuck .topbar,
+            .topbar {
                 position: relative !important;
-                top: auto !important;
-                left: auto !important;
+                top: 0 !important;
+                left: 0 !important;
                 width: 100% !important;
                 background: #ffffff !important;
                 border-radius: 0 !important;
                 box-shadow: none !important;
                 border-bottom: 1px solid #f0f2f5 !important;
                 padding-top: 6px !important;
+                margin-top: 0 !important;
             }
             .navbar-stuck {
                 box-shadow: none !important;
