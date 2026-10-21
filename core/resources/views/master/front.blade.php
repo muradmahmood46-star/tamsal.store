@@ -40,40 +40,7 @@
     <link rel="canonical" href="@yield('canonical', url()->current())">
 
     <!-- Mobile Specific Meta Tag-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-
-    <script>
-        // Prevent mobile browsers from restoring previous scroll position under the browser header on refresh
-        if ('scrollRestoration' in history) {
-            history.scrollRestoration = 'manual';
-        }
-        function forceScrollToTop() {
-            window.scrollTo(0, 0);
-            if (document.documentElement) document.documentElement.scrollTop = 0;
-            if (document.body) document.body.scrollTop = 0;
-        }
-        forceScrollToTop();
-        window.addEventListener('beforeunload', forceScrollToTop);
-        window.addEventListener('pagehide', forceScrollToTop);
-        window.addEventListener('pageshow', function() {
-            forceScrollToTop();
-            setTimeout(forceScrollToTop, 50);
-            setTimeout(forceScrollToTop, 150);
-        });
-        document.addEventListener('DOMContentLoaded', function() {
-            if (!window.location.hash) {
-                forceScrollToTop();
-                setTimeout(forceScrollToTop, 50);
-            }
-        });
-        window.addEventListener('load', function() {
-            if (!window.location.hash) {
-                forceScrollToTop();
-                setTimeout(forceScrollToTop, 50);
-                setTimeout(forceScrollToTop, 200);
-            }
-        });
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <!-- Favicon Icons-->
     @php
@@ -1323,13 +1290,16 @@
         /* MOBILE ONLY: Redesigned Header Row, Currency & Fixed Bottom Navigation */
         @media (max-width: 991.98px) {
             body {
-                padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important;
+                @if (!request()->routeIs('user.login*') && !request()->routeIs('user.register*') && !View::hasSection('no_topbar'))
+                padding-top: 60px !important;
+                @endif
+                padding-bottom: 64px !important;
             }
             body.has-daraz-bar {
-                padding-bottom: calc(124px + env(safe-area-inset-bottom, 0px)) !important;
+                padding-bottom: 124px !important;
             }
             .scroll-to-top-btn {
-                bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;
+                bottom: 70px !important;
             }
 
             .menu-top-area {
@@ -1379,25 +1349,17 @@
                 font-weight: 700;
             }
 
-            /* Mobile Header: In-flow Positioning, No Overlap or Jumping on Sliders */
+            /* Mobile Header: Fixed at Top Below Browser Bar, Never Hides on Refresh or Overlaps Sliders */
             .site-header {
-                position: relative !important;
+                position: fixed !important;
                 top: 0 !important;
                 left: 0 !important;
+                right: 0 !important;
                 width: 100% !important;
                 z-index: 1030 !important;
                 background: #ffffff !important;
-                padding-top: max(8px, env(safe-area-inset-top, 0px)) !important;
+                padding-top: 4px !important;
                 margin-top: 0 !important;
-            }
-            /* iOS Safari / WebKit Safe-Area Fix:
-               On iPhone Safari reload, env(safe-area-inset-top) evaluates to 0px before safe areas resolve.
-               A fallback of 47px (standard iPhone notch) up to 59px (Dynamic Island) guarantees the mobile
-               topbar never slips behind the iPhone status bar or notch on refresh. Android is untouched. */
-            @supports (-webkit-touch-callout: none) {
-                .site-header {
-                    padding-top: calc(max(47px, env(safe-area-inset-top, 47px)) + 4px) !important;
-                }
             }
             .site-header .topbar,
             .navbar-stuck .topbar,
@@ -1408,16 +1370,17 @@
                 width: 100% !important;
                 background: #ffffff !important;
                 border-radius: 0 !important;
-                box-shadow: none !important;
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
                 border-bottom: 1px solid #f0f2f5 !important;
-                padding-top: 6px !important;
+                padding-top: 2px !important;
+                padding-bottom: 2px !important;
                 margin-top: 0 !important;
             }
             .navbar-stuck {
                 box-shadow: none !important;
             }
             .slider-area-wrapper {
-                margin-top: 10px !important;
+                margin-top: 8px !important;
                 position: relative;
             }
 
@@ -1526,13 +1489,13 @@
             /* Mobile Fixed Bottom Navigation Bar */
             #mobile_bottom_nav {
                 position: fixed;
-                bottom: 0;
+                bottom: 0 !important;
                 left: 0;
                 width: 100%;
-                height: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
-                padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+                height: 56px !important;
+                padding-bottom: 0 !important;
                 background: #ffffff;
-                box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+                box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08), 0 40px 0 40px #ffffff !important;
                 border-top: 1px solid #eef2f6;
                 z-index: 1045;
                 display: flex;
