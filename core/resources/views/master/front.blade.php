@@ -1290,13 +1290,13 @@
         /* MOBILE ONLY: Redesigned Header Row, Currency & Fixed Bottom Navigation */
         @media (max-width: 991.98px) {
             body {
-                padding-bottom: calc(62px + env(safe-area-inset-bottom, 0px)) !important;
+                padding-bottom: 64px !important;
             }
             body.has-daraz-bar {
-                padding-bottom: calc(122px + env(safe-area-inset-bottom, 0px)) !important;
+                padding-bottom: 124px !important;
             }
             .scroll-to-top-btn {
-                bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+                bottom: 70px !important;
             }
 
             .menu-top-area {
@@ -1454,8 +1454,8 @@
                 bottom: 0;
                 left: 0;
                 width: 100%;
-                height: calc(56px + env(safe-area-inset-bottom, 0px));
-                padding-bottom: env(safe-area-inset-bottom, 0px);
+                height: 56px !important;
+                padding-bottom: 0 !important;
                 background: #ffffff;
                 box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
                 border-top: 1px solid #eef2f6;
