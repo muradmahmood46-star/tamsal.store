@@ -2060,9 +2060,12 @@ body_theme4 @endif
     </div>
     <!--    announcement banner section end   -->
 
-    @if (!request()->routeIs('user.login*') && !request()->routeIs('user.register*') && !View::hasSection('no_footer'))
+    @php
+        $isUserSectionRoute = request()->is('user*') || request()->routeIs('user.*') || request()->is('track/order*') || request()->routeIs('front.order.track*');
+    @endphp
+    @if (!request()->routeIs('user.login*') && !request()->routeIs('user.register*') && !$isUserSectionRoute && !View::hasSection('no_footer'))
     <!-- Site Footer-->
-    <footer class="site-footer {{ request()->routeIs('user.message.*') ? 'd-none d-lg-block' : '' }}">
+    <footer class="site-footer">
         <div class="container">
             <div class="row">
                 <div class="col-lg-4 col-md-6">
