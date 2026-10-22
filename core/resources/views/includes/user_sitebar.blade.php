@@ -5,8 +5,13 @@
 <div class="col-lg-4 {{ (!request()->routeIs('user.dashboard') && !request()->is('user/dashboard')) ? 'd-none d-lg-block' : '' }}">
     <aside class="user-info-wrapper">
       <div class="user-info">
-        <div class="user-avatar">
-          <img id="avater_photo_view" src="{{ $user->photoUrl() }}" alt="User" style="width: 90px; height: 90px; object-fit: cover; border-radius: 50%;">
+        <div class="user-avatar position-relative" style="display: inline-block;">
+          <a href="{{ route('user.profile') }}" title="{{ __('Change Profile Picture') }}" style="display: inline-block; position: relative; text-decoration: none;">
+            <img id="avater_photo_view" src="{{ $user->photoUrl() }}" alt="User" style="width: 90px; height: 90px; object-fit: cover; border-radius: 50%; border: 3px solid #008069; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+            <span style="position: absolute; bottom: 2px; right: 2px; width: 28px; height: 28px; background: #008069; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.25);">
+              <i class="fas fa-camera"></i>
+            </span>
+          </a>
         </div>
 
         <div class="user-data">

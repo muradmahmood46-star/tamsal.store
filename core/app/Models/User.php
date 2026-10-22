@@ -125,13 +125,17 @@ class User extends Authenticatable
     public function photoUrl()
     {
         if (!empty($this->photo)) {
-            $imgPath = public_path('storage/images/' . $this->photo);
-            if (file_exists($imgPath)) {
+            if (file_exists(public_path('storage/images/' . $this->photo))) {
                 return asset('storage/images/' . $this->photo);
             }
-            $storePath = public_path('storage/images/stores/' . $this->photo);
-            if (file_exists($storePath)) {
+            if (file_exists(public_path('storage/images/stores/' . $this->photo))) {
                 return asset('storage/images/stores/' . $this->photo);
+            }
+            if (file_exists(public_path('storage/assets/images/' . $this->photo))) {
+                return asset('storage/assets/images/' . $this->photo);
+            }
+            if (file_exists(public_path('assets/images/' . $this->photo))) {
+                return asset('assets/images/' . $this->photo);
             }
             return asset('storage/images/' . $this->photo);
         }

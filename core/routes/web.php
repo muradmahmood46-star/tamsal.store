@@ -490,6 +490,7 @@ Route::group(['middleware' => 'maintainance'], function () {
 
             //------------ SETTING ------------
             Route::post('/profile/update', 'User\AccountController@profileUpdate')->name('user.profile.update');
+            Route::post('/profile/photo-update', 'User\AccountController@photoUpdate')->name('user.profile.photo.update');
             Route::get('/addresses', 'User\AccountController@addresses')->name('user.address');
             Route::post('/addresses/store', 'User\AccountController@addressStore')->name('user.address.store');
             Route::post('/addresses/delete/{id}', 'User\AccountController@addressDelete')->name('user.address.delete');

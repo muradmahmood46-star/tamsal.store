@@ -72,6 +72,30 @@ class AccountController extends Controller
         return redirect()->back();
     }
 
+    public function photoUpdate(Request $request)
+    {
+        $request->validate([
+            'photo' => 'required|image|mimes:jpeg,jpg,png,svg,webp,gif,bmp,jfif,heic,heif|max:10240',
+        ]);
+
+        $user = Auth::user();
+        $file = $request->file('photo');
+        $photoName = ImageHelper::handleUpdatedUploadedImage($file, 'images', $user, 'images/', 'photo');
+        $user->photo = $photoName;
+        $user->save();
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => __('Profile Picture Updated Successfully.'),
+                'photo_url' => $user->photoUrl(),
+            ]);
+        }
+
+        Session::flash('success', __('Profile Picture Updated Successfully.'));
+        return redirect()->back();
+    }
+
     public function addresses()
     {
         $user = Auth::user();
