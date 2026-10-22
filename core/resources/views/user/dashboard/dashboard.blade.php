@@ -27,51 +27,61 @@
             <div class="padding-top-2x mt-2 hidden-lg-up"></div>
                 <div class="row u-d-d">
                     <div class="col-md-6 mb-4">
-                        <div class="card round">
-                            <div class="card-body text-center">
-                                <i class="icon-shopping-bag"></i>
-                                <p class="mt-3">{{__('All Order')}}</p>
-                                <h4><b>{{$allorders}}</b></h4>
+                        <a href="{{ route('user.order.index') }}" style="text-decoration: none !important; color: inherit; display: block;">
+                            <div class="card round shadow-sm" style="transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                                <div class="card-body text-center">
+                                    <i class="icon-shopping-bag"></i>
+                                    <p class="mt-3">{{__('All Order')}}</p>
+                                    <h4><b>{{$allorders}}</b></h4>
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
                     <div class="col-md-6 mb-4">
-                        <div class="card round">
-                            <div class="card-body text-center">
-                                <i class="icon-shopping-bag"></i>
-                                <p class="mt-3">{{__('Completed Order')}}</p>
-                                <h4><b>{{$delivered}}</b></h4>
+                        <a href="{{ route('user.order.index') }}" style="text-decoration: none !important; color: inherit; display: block;">
+                            <div class="card round shadow-sm" style="transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                                <div class="card-body text-center">
+                                    <i class="icon-shopping-bag"></i>
+                                    <p class="mt-3">{{__('Completed Order')}}</p>
+                                    <h4><b>{{$delivered}}</b></h4>
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
                     <div class="col-md-6 mb-4">
-                        <div class="card round">
-                            <div class="card-body text-center">
-                                <i class="icon-shopping-bag"></i>
-                                <p class="mt-3">{{__('Processing Order')}}</p>
-                                <h4><b>{{$progress}}</b></h4>
+                        <a href="{{ route('user.order.index') }}" style="text-decoration: none !important; color: inherit; display: block;">
+                            <div class="card round shadow-sm" style="transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                                <div class="card-body text-center">
+                                    <i class="icon-shopping-bag"></i>
+                                    <p class="mt-3">{{__('Processing Order')}}</p>
+                                    <h4><b>{{$progress}}</b></h4>
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
 
 
                     <div class="col-md-6 mb-4">
-                        <div class="card round">
-                            <div class="card-body text-center">
-                                <i class="icon-shopping-bag"></i>
-                                <p class="mt-3">{{__('Canceled Order')}}</p>
-                                <h4><b>{{$canceled}}</b></h4>
+                        <a href="{{ route('user.order.index') }}" style="text-decoration: none !important; color: inherit; display: block;">
+                            <div class="card round shadow-sm" style="transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                                <div class="card-body text-center">
+                                    <i class="icon-shopping-bag"></i>
+                                    <p class="mt-3">{{__('Canceled Order')}}</p>
+                                    <h4><b>{{$canceled}}</b></h4>
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
                     <div class="col-md-6 mb-4">
-                        <div class="card round">
-                            <div class="card-body text-center">
-                                <i class="icon-shopping-bag"></i>
-                                <p class="mt-3">{{__('Pending Order')}}</p>
-                                <h4><b>{{$pending}}</b></h4>
+                        <a href="{{ route('user.order.index') }}" style="text-decoration: none !important; color: inherit; display: block;">
+                            <div class="card round shadow-sm" style="transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                                <div class="card-body text-center">
+                                    <i class="icon-shopping-bag"></i>
+                                    <p class="mt-3">{{__('Pending Order')}}</p>
+                                    <h4><b>{{$pending}}</b></h4>
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
                     <div class="col-md-6 mb-4">
                         <a href="{{ route('user.message.index') }}" style="text-decoration: none !important;">
