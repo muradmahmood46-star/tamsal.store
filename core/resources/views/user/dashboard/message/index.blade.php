@@ -115,30 +115,128 @@
         background-size: 16px 16px;
     }
     .user-bubble {
-        max-width: 75%;
-        padding: 8px 14px;
+        max-width: 78%;
+        padding: 9px 13px;
         font-size: 14px;
-        line-height: 1.4;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.12);
+        line-height: 1.5;
+        box-shadow: 0 1px 2px rgba(11, 20, 26, 0.12);
         position: relative;
+        word-break: break-word;
+        transition: transform 0.15s ease;
     }
     .user-bubble-me {
         align-self: flex-end;
         background: #d9fdd3;
         color: #111b21;
-        border-radius: 10px 0 10px 10px;
+        border-radius: 14px 14px 2px 14px;
+        border: 1px solid rgba(0, 128, 105, 0.12);
+        margin-left: 15%;
     }
     .user-bubble-other {
         align-self: flex-start;
         background: #ffffff;
         color: #111b21;
-        border-radius: 0 10px 10px 10px;
+        border-radius: 14px 14px 14px 2px;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        margin-right: 15%;
+    }
+    .user-bubble-sender {
+        font-size: 11px;
+        font-weight: 700;
+        margin-bottom: 3px;
+        display: flex;
+        align-items: center;
+        letter-spacing: -0.1px;
     }
     .user-bubble-meta {
-        font-size: 10.5px;
+        font-size: 10px;
         color: #64748b;
         text-align: right;
-        margin-top: 3px;
+        margin-top: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 3px;
+        user-select: none;
+    }
+    .user-bubble-meta .msg-ticks {
+        color: #53bdeb;
+        font-weight: 700;
+        font-size: 11px;
+    }
+    .chat-date-pill {
+        align-self: center;
+        margin: 10px 0;
+        user-select: none;
+    }
+    .chat-date-pill span {
+        background: rgba(255, 255, 255, 0.9);
+        color: #54656f;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 12px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    /* Swipe & Long Press styles for chat list */
+    .user-chat-swipe-wrapper {
+        position: relative;
+        overflow: hidden;
+        background: #dc2626;
+        border-bottom: 1px solid #f1f5f9;
+        touch-action: pan-y;
+    }
+    .user-chat-swipe-btn {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 82px;
+        height: 100%;
+        background: #dc2626;
+        color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 11.5px;
+        font-weight: 700;
+        gap: 4px;
+        cursor: pointer;
+        z-index: 1;
+        transition: background 0.2s;
+    }
+    .user-chat-swipe-btn:active {
+        background: #b91c1c;
+    }
+    .user-chat-item {
+        position: relative;
+        background: #ffffff;
+        z-index: 2;
+        transition: transform 0.22s cubic-bezier(0.2, 0, 0, 1), background-color 0.15s ease;
+        display: flex;
+        align-items: center;
+        padding: 12px 14px;
+        text-decoration: none !important;
+        color: inherit;
+        user-select: none;
+        -webkit-user-select: none;
+        border-bottom: none !important;
+    }
+    .user-chat-item.is-swiped-open {
+        transform: translateX(82px) !important;
+    }
+    .chat-desktop-delete-btn {
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        padding: 4px;
+    }
+    .user-chat-item:hover .chat-desktop-delete-btn {
+        opacity: 0.7;
+    }
+    .chat-desktop-delete-btn:hover {
+        opacity: 1 !important;
     }
     .user-chat-footer {
         padding: 10px 16px;
@@ -308,6 +406,9 @@
             flex-grow: 1 !important;
             overflow-y: auto !important;
             -webkit-overflow-scrolling: touch !important;
+            touch-action: pan-y !important;
+            overscroll-behavior-y: contain;
+            padding-bottom: 35px !important;
         }
 
         .user-chat-header {
@@ -407,35 +508,48 @@
                                 $isActive = ($activeChat && $activeChat->id == $conv->id);
                                 $allMsgText = $conv->messages->pluck('message')->implode(' ');
                             @endphp
-                            <a href="{{ route('user.message.index', ['chat_id' => $conv->id]) }}" 
-                               class="user-chat-item {{ $isActive ? 'active' : '' }}"
-                               data-store-name="{{ strtolower($conv->store_name) }}"
-                               data-product-name="{{ strtolower($conv->item ? $conv->item->name : '') }}"
-                               data-last-message="{{ strtolower($conv->last_message) }}"
-                               data-all-messages="{{ strtolower($allMsgText) }}">
-                                <div class="user-chat-avatar">
-                                    <i class="fas fa-store"></i>
-                                </div>
-                                <div style="flex-grow: 1; overflow: hidden;">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="chat-title-row d-flex align-items-center text-truncate mr-1">
-                                            <strong style="font-size: 13.5px;" class="text-dark text-truncate">{{ $conv->store_name }}</strong>
-                                        </div>
-                                        <small class="text-muted flex-shrink-0" style="font-size: 10.5px;">{{ $conv->last_message_at ? $conv->last_message_at->diffForHumans(null, true) : '' }}</small>
+                            <div class="user-chat-swipe-wrapper" id="chat_wrapper_{{ $conv->id }}">
+                                <button type="button" class="user-chat-swipe-btn" onclick="confirmDeleteChat({{ $conv->id }}, '{{ addslashes($conv->store_name) }}')">
+                                    <i class="fas fa-trash-alt"></i>
+                                    <span>{{ __('Delete') }}</span>
+                                </button>
+                                <a href="{{ route('user.message.index', ['chat_id' => $conv->id]) }}" 
+                                   class="user-chat-item {{ $isActive ? 'active' : '' }}"
+                                   data-chat-id="{{ $conv->id }}"
+                                   data-store-name="{{ strtolower($conv->store_name) }}"
+                                   data-store-display="{{ $conv->store_name }}"
+                                   data-product-name="{{ strtolower($conv->item ? $conv->item->name : '') }}"
+                                   data-last-message="{{ strtolower($conv->last_message) }}"
+                                   data-all-messages="{{ strtolower($allMsgText) }}">
+                                    <div class="user-chat-avatar">
+                                        <i class="fas fa-store"></i>
                                     </div>
-                                    @if($conv->item && $conv->item->name)
-                                        <div style="font-size: 11.5px; color: #0d6efd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                            <i class="fas fa-box mr-1"></i> {{ $conv->item->name }}
+                                    <div style="flex-grow: 1; overflow: hidden;">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="chat-title-row d-flex align-items-center text-truncate mr-1">
+                                                <strong style="font-size: 13.5px;" class="text-dark text-truncate">{{ $conv->store_name }}</strong>
+                                            </div>
+                                            <div class="d-flex align-items-center flex-shrink-0">
+                                                <small class="text-muted mr-1" style="font-size: 10.5px;">{{ $conv->last_message_at ? $conv->last_message_at->diffForHumans(null, true) : '' }}</small>
+                                                <button type="button" class="btn btn-sm text-danger p-0 chat-desktop-delete-btn d-none d-lg-inline-block" onclick="event.preventDefault(); event.stopPropagation(); confirmDeleteChat({{ $conv->id }}, '{{ addslashes($conv->store_name) }}');" title="{{ __('Delete Conversation') }}">
+                                                    <i class="fas fa-trash-alt" style="font-size: 11px;"></i>
+                                                </button>
+                                            </div>
                                         </div>
-                                    @endif
-                                    <div class="d-flex justify-content-between align-items-center mt-1">
-                                        <span class="text-muted" style="font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 190px;">{{ $conv->last_message ?: __('No messages') }}</span>
-                                        @if(!$isActive && $conv->user_unread_count > 0)
-                                            <span class="badge badge-success font-weight-bold ml-1" style="font-size: 10px; border-radius: 10px; padding: 2px 7px; flex-shrink: 0;">{{ $conv->user_unread_count }}</span>
+                                        @if($conv->item && $conv->item->name)
+                                            <div style="font-size: 11.5px; color: #0d6efd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                <i class="fas fa-box mr-1"></i> {{ $conv->item->name }}
+                                            </div>
                                         @endif
+                                        <div class="d-flex justify-content-between align-items-center mt-1">
+                                            <span class="text-muted" style="font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 190px;">{{ $conv->last_message ?: __('No messages') }}</span>
+                                            @if(!$isActive && $conv->user_unread_count > 0)
+                                                <span class="badge badge-success font-weight-bold ml-1" style="font-size: 10px; border-radius: 10px; padding: 2px 7px; flex-shrink: 0;">{{ $conv->user_unread_count }}</span>
+                                            @endif
+                                        </div>
                                     </div>
-                                </div>
-                            </a>
+                                </a>
+                            </div>
                         @empty
                             <div class="text-center py-5 px-3 text-muted">
                                 <div class="mb-3" style="width: 60px; height: 60px; border-radius: 50%; background: #f1f5f9; display: inline-flex; align-items: center; justify-content: center;">
@@ -498,22 +612,32 @@
 
                         <!-- Messages Stream -->
                         <div class="user-chat-stream" id="user_messages_container">
+                            @php $lastDate = null; @endphp
                             @forelse($messages as $msg)
                                 @php
                                     $isMe = ($msg->sender_type === 'user');
                                     $isAdmin = ($msg->sender_type === 'admin');
+                                    $msgDate = $msg->created_at ? $msg->created_at->format('M d, Y') : '';
                                 @endphp
+                                @if($msgDate && $msgDate !== $lastDate)
+                                    <div class="chat-date-pill"><span>{{ $msgDate }}</span></div>
+                                    @php $lastDate = $msgDate; @endphp
+                                @endif
                                 <div class="user-bubble {{ $isMe ? 'user-bubble-me' : 'user-bubble-other' }}" style="{{ $isAdmin ? 'border-left: 3px solid #4f46e5;' : '' }}">
                                     @if($isAdmin)
-                                        <div style="font-size: 11px; font-weight: 700; color: #4f46e5; margin-bottom: 2px;">
+                                        <div class="user-bubble-sender" style="color: #4f46e5;">
                                             <i class="fas fa-user-shield mr-1"></i> {{ __('Administration / Support') }}
+                                        </div>
+                                    @elseif(!$isMe)
+                                        <div class="user-bubble-sender text-success">
+                                            <i class="fas fa-store mr-1"></i> {{ $activeChat->store_name }}
                                         </div>
                                     @endif
                                     <div style="white-space: pre-wrap; word-break: break-word; line-height: 1.55;">{!! \App\Helpers\Helper::formatChatMessage($msg->message) !!}</div>
                                     <div class="user-bubble-meta">
                                         {{ $msg->created_at ? $msg->created_at->format('h:i A') : '' }}
                                         @if($isMe)
-                                            <span style="color: #53bdeb; margin-left: 2px;">✓✓</span>
+                                            <span class="msg-ticks">✓✓</span>
                                         @endif
                                     </div>
                                 </div>
@@ -708,17 +832,31 @@
         .then(data => {
             if (data.success && data.messages) {
                 let html = '';
+                let lastDate = '';
+                const storeName = "{{ addslashes($activeChat->store_name) }}";
+
                 data.messages.forEach(msg => {
                     const isMe = msg.is_me;
                     const isAdmin = (msg.sender_type === 'admin');
                     const bubbleClass = isMe ? 'user-bubble-me' : 'user-bubble-other';
-                    const ticks = isMe ? '<span style="color:#53bdeb; margin-left: 2px;">✓✓</span>' : '';
-                    const adminBadge = isAdmin ? '<div style="font-size: 11px; font-weight: 700; color: #4f46e5; margin-bottom: 2px;"><i class="fas fa-user-shield mr-1"></i> {{ __("Administration / Support") }}</div>' : '';
+                    const ticks = isMe ? '<span class="msg-ticks">✓✓</span>' : '';
+                    
+                    if (msg.date && msg.date !== lastDate) {
+                        html += `<div class="chat-date-pill"><span>${escapeHtml(msg.date)}</span></div>`;
+                        lastDate = msg.date;
+                    }
+
+                    let senderHeader = '';
+                    if (isAdmin) {
+                        senderHeader = '<div class="user-bubble-sender" style="color: #4f46e5;"><i class="fas fa-user-shield mr-1"></i> {{ __("Administration / Support") }}</div>';
+                    } else if (!isMe) {
+                        senderHeader = `<div class="user-bubble-sender text-success"><i class="fas fa-store mr-1"></i> ${escapeHtml(storeName)}</div>`;
+                    }
                     const borderStyle = isAdmin ? 'border-left: 3px solid #4f46e5;' : '';
 
                     html += `
                         <div class="user-bubble ${bubbleClass}" style="${borderStyle}">
-                            ${adminBadge}
+                            ${senderHeader}
                             <div style="white-space: pre-wrap; word-break: break-word; line-height: 1.55;">${formatChatMessage(msg.message)}</div>
                             <div class="user-bubble-meta">
                                 ${msg.time} ${ticks}
@@ -742,19 +880,261 @@
 </script>
 @endif
 
+<!-- Delete Conversation Modal -->
+<div class="modal fade" id="deleteChatModal" tabindex="-1" role="dialog" aria-hidden="true" style="z-index: 1060;">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 360px; margin: auto;">
+        <div class="modal-content" style="border-radius: 16px; border: none; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+            <div class="modal-body text-center p-4">
+                <div class="mb-3" style="width: 56px; height: 56px; border-radius: 50%; background: #fee2e2; color: #dc2626; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto;">
+                    <i class="fas fa-trash-alt"></i>
+                </div>
+                <h5 class="font-weight-bold text-dark mb-2" style="font-size: 16px;">{{ __('Delete Conversation?') }}</h5>
+                <p class="text-muted small mb-4" id="deleteChatModalText">
+                    {{ __('Are you sure you want to delete this chat with') }} <strong id="deleteChatStoreName"></strong>? {{ __('This chat will be removed from your inbox.') }}
+                </p>
+                <div class="d-flex" style="gap: 10px;">
+                    <button type="button" class="btn btn-light flex-grow-1 border" data-dismiss="modal" style="border-radius: 10px; font-weight: 600; font-size: 13px; padding: 9px 0;">
+                        {{ __('Cancel') }}
+                    </button>
+                    <button type="button" class="btn btn-danger flex-grow-1" id="confirmDeleteChatBtn" style="border-radius: 10px; font-weight: 600; font-size: 13px; padding: 9px 0;">
+                        <i class="fas fa-trash-alt mr-1"></i> {{ __('Delete') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+let pendingDeleteId = null;
+let currentSwipedItem = null;
+
+function confirmDeleteChat(chatId, storeName) {
+    pendingDeleteId = chatId;
+    const storeLabel = document.getElementById('deleteChatStoreName');
+    if (storeLabel) storeLabel.textContent = storeName || 'this store';
+    
+    if (window.$ && typeof $('#deleteChatModal').modal === 'function') {
+        $('#deleteChatModal').modal('show');
+    } else {
+        if (confirm("{{ __('Are you sure you want to delete this conversation?') }}")) {
+            executeDeleteChat(chatId);
+        }
+    }
+}
+
+function executeDeleteChat(chatId) {
+    const deleteUrl = "{{ url('/user/messages/delete') }}/" + chatId;
+    const wrapper = document.getElementById('chat_wrapper_' + chatId);
+
+    fetch(deleteUrl, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (wrapper) {
+            wrapper.style.transition = 'all 0.3s ease';
+            wrapper.style.maxHeight = wrapper.offsetHeight + 'px';
+            wrapper.style.opacity = '1';
+            setTimeout(() => {
+                wrapper.style.maxHeight = '0px';
+                wrapper.style.opacity = '0';
+                wrapper.style.padding = '0';
+                wrapper.style.margin = '0';
+                wrapper.style.border = 'none';
+            }, 10);
+            setTimeout(() => {
+                wrapper.remove();
+                const remaining = document.querySelectorAll('.user-chat-swipe-wrapper');
+                if (remaining.length === 0) {
+                    location.href = "{{ route('user.message.index') }}";
+                }
+            }, 350);
+        } else {
+            location.href = "{{ route('user.message.index') }}";
+        }
+    })
+    .catch(err => {
+        location.href = deleteUrl;
+    });
+}
+
+function setupSwipeAndLongPress() {
+    const wrappers = document.querySelectorAll('.user-chat-swipe-wrapper');
+    
+    wrappers.forEach(wrapper => {
+        const item = wrapper.querySelector('.user-chat-item');
+        if (!item) return;
+
+        let startX = 0;
+        let startY = 0;
+        let isSwiping = false;
+        let isScrolling = false;
+        let longPressTimer = null;
+        let isLongPressTriggered = false;
+
+        const chatId = item.dataset.chatId;
+        const storeName = item.dataset.storeDisplay || '';
+
+        function clearLongPress() {
+            if (longPressTimer) {
+                clearTimeout(longPressTimer);
+                longPressTimer = null;
+            }
+        }
+
+        item.addEventListener('touchstart', function(e) {
+            if (e.touches.length !== 1) return;
+            const touch = e.touches[0];
+            startX = touch.clientX;
+            startY = touch.clientY;
+            isSwiping = false;
+            isScrolling = false;
+            isLongPressTriggered = false;
+
+            // Close other swiped items
+            if (currentSwipedItem && currentSwipedItem !== item) {
+                currentSwipedItem.classList.remove('is-swiped-open');
+                currentSwipedItem.style.transform = '';
+                currentSwipedItem = null;
+            }
+
+            // Start long press timer (500ms)
+            longPressTimer = setTimeout(() => {
+                isLongPressTriggered = true;
+                if (navigator.vibrate) navigator.vibrate(50);
+                confirmDeleteChat(chatId, storeName);
+            }, 500);
+        }, { passive: true });
+
+        item.addEventListener('touchmove', function(e) {
+            if (e.touches.length !== 1) return;
+            const touch = e.touches[0];
+            const diffX = touch.clientX - startX;
+            const diffY = touch.clientY - startY;
+
+            // Finger moved > 8px, cancel long-press
+            if (Math.abs(diffX) > 8 || Math.abs(diffY) > 8) {
+                clearLongPress();
+            }
+
+            // Detect vertical scroll
+            if (!isSwiping && Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 5) {
+                isScrolling = true;
+                return;
+            }
+
+            // Detect horizontal swipe right
+            if (!isScrolling && diffX > 10) {
+                isSwiping = true;
+                item.style.transition = 'none';
+
+                const isOpen = item.classList.contains('is-swiped-open');
+                let translateX = isOpen ? (82 + diffX) : diffX;
+                if (translateX < 0) translateX = 0;
+                if (translateX > 110) translateX = 110;
+                item.style.transform = `translateX(${translateX}px)`;
+            } else if (!isScrolling && diffX < -10 && item.classList.contains('is-swiped-open')) {
+                // Swiping left to close
+                isSwiping = true;
+                item.style.transition = 'none';
+                let translateX = 82 + diffX;
+                if (translateX < 0) translateX = 0;
+                item.style.transform = `translateX(${translateX}px)`;
+            }
+        }, { passive: true });
+
+        item.addEventListener('touchend', function(e) {
+            clearLongPress();
+
+            if (isLongPressTriggered) {
+                e.preventDefault();
+                return;
+            }
+
+            if (isSwiping) {
+                item.style.transition = 'transform 0.22s cubic-bezier(0.2, 0, 0, 1)';
+                const currentTransform = item.style.transform;
+                const match = /translateX\(([\d\.-]+)px\)/.exec(currentTransform);
+                const currentVal = match ? parseFloat(match[1]) : 0;
+
+                if (currentVal > 45) {
+                    item.classList.add('is-swiped-open');
+                    item.style.transform = 'translateX(82px)';
+                    currentSwipedItem = item;
+                } else {
+                    item.classList.remove('is-swiped-open');
+                    item.style.transform = '';
+                    if (currentSwipedItem === item) currentSwipedItem = null;
+                }
+            }
+        });
+
+        item.addEventListener('touchcancel', function() {
+            clearLongPress();
+            item.style.transition = 'transform 0.22s cubic-bezier(0.2, 0, 0, 1)';
+            if (!item.classList.contains('is-swiped-open')) {
+                item.style.transform = '';
+            }
+        });
+
+        // Click handler: if item is swiped open or long pressed, prevent opening chat
+        item.addEventListener('click', function(e) {
+            if (item.classList.contains('is-swiped-open')) {
+                e.preventDefault();
+                e.stopPropagation();
+                item.classList.remove('is-swiped-open');
+                item.style.transform = '';
+                currentSwipedItem = null;
+                return false;
+            }
+            if (isLongPressTriggered) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+        });
+    });
+
+    // Tap outside to close swiped item
+    document.addEventListener('touchstart', function(e) {
+        if (currentSwipedItem && !currentSwipedItem.contains(e.target) && !e.target.closest('.user-chat-swipe-btn')) {
+            currentSwipedItem.classList.remove('is-swiped-open');
+            currentSwipedItem.style.transform = '';
+            currentSwipedItem = null;
+        }
+    }, { passive: true });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    setupSwipeAndLongPress();
+
+    const confirmBtn = document.getElementById('confirmDeleteChatBtn');
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', function() {
+            if (pendingDeleteId) {
+                if (window.$ && typeof $('#deleteChatModal').modal === 'function') {
+                    $('#deleteChatModal').modal('hide');
+                }
+                executeDeleteChat(pendingDeleteId);
+            }
+        });
+    }
+
     const searchInput = document.getElementById('chat_search_input');
     const clearBtn = document.getElementById('chat_search_clear');
     const chatList = document.querySelector('.user-chat-list');
     const noMatchEl = document.getElementById('chat_no_match_item');
     if (!searchInput || !chatList) return;
 
-    const chatItems = Array.from(chatList.querySelectorAll('.user-chat-item'));
+    const chatWrappers = Array.from(chatList.querySelectorAll('.user-chat-swipe-wrapper'));
 
-    // Save original index for ordering
-    chatItems.forEach((item, idx) => {
-        item.dataset.originalIndex = idx;
+    chatWrappers.forEach((wrapper, idx) => {
+        wrapper.dataset.originalIndex = idx;
     });
 
     searchInput.addEventListener('input', function() {
@@ -765,12 +1145,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (!query) {
-            // Restore original order and show all
-            chatItems.sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex));
-            chatItems.forEach(item => {
-                item.style.display = 'flex';
-                chatList.appendChild(item);
-                const badge = item.querySelector('.search-match-badge');
+            chatWrappers.sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex));
+            chatWrappers.forEach(wrapper => {
+                wrapper.style.display = 'block';
+                chatList.appendChild(wrapper);
+                const badge = wrapper.querySelector('.search-match-badge');
                 if (badge) badge.remove();
             });
             if (noMatchEl) noMatchEl.style.display = 'none';
@@ -780,7 +1159,10 @@ document.addEventListener('DOMContentLoaded', function() {
         let matchedCount = 0;
         const scoredItems = [];
 
-        chatItems.forEach(item => {
+        chatWrappers.forEach(wrapper => {
+            const item = wrapper.querySelector('.user-chat-item');
+            if (!item) return;
+
             const store = item.dataset.storeName || '';
             const product = item.dataset.productName || '';
             const allMsg = item.dataset.allMessages || '';
@@ -809,9 +1191,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (score > 0) {
                 matchedCount++;
-                scoredItems.push({ item, score, matchType });
+                scoredItems.push({ wrapper, item, score, matchType });
             } else {
-                item.style.display = 'none';
+                wrapper.style.display = 'none';
                 const badge = item.querySelector('.search-match-badge');
                 if (badge) badge.remove();
             }
@@ -820,12 +1202,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (matchedCount > 0) {
             if (noMatchEl) noMatchEl.style.display = 'none';
 
-            // Sort by score descending (Store matches first, then Products, then Messages)
             scoredItems.sort((a, b) => b.score - a.score);
 
-            scoredItems.forEach(({ item, matchType }) => {
-                item.style.display = 'flex';
-                chatList.appendChild(item);
+            scoredItems.forEach(({ wrapper, item, matchType }) => {
+                wrapper.style.display = 'block';
+                chatList.appendChild(wrapper);
 
                 let badge = item.querySelector('.search-match-badge');
                 if (!badge) {

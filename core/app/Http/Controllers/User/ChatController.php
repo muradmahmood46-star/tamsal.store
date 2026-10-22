@@ -197,6 +197,13 @@ class ChatController extends Controller
         $conversation->update(['deleted_by_user' => 1]);
         ChatMessage::where('conversation_id', $conversation->id)->update(['deleted_by_user' => 1]);
 
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => __('Conversation deleted successfully.')
+            ]);
+        }
+
         return redirect()->route('user.message.index')->withSuccess(__('Conversation deleted successfully.'));
     }
 }
