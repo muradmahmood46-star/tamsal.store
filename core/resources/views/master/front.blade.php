@@ -1322,10 +1322,15 @@
                 overflow-y: hidden !important;
             }
             body {
-                @if (!request()->routeIs('user.login*') && !request()->routeIs('user.register*') && !View::hasSection('no_topbar'))
+                @if (!request()->routeIs('user.login*') && !request()->routeIs('user.register*') && !View::hasSection('no_topbar') && !request()->routeIs('user.message.*'))
                 padding-top: 60px !important;
                 @endif
+                @if (request()->routeIs('user.message.*'))
+                padding-top: 0 !important;
+                padding-bottom: 0 !important;
+                @else
                 padding-bottom: 64px !important;
+                @endif
             }
             body.has-daraz-bar {
                 padding-bottom: 124px !important;
@@ -1692,7 +1697,7 @@ body_theme4 @endif
 
     <!-- Header-->
     @if (!request()->routeIs('user.login*') && !request()->routeIs('user.register*') && !View::hasSection('no_topbar'))
-    <header class="site-header navbar-sticky">
+    <header class="site-header navbar-sticky {{ request()->routeIs('user.message.*') ? 'd-none d-lg-block' : '' }}">
         <div class="menu-top-area d-none d-lg-block">
             <div class="container">
                 <!-- Desktop Topbar (Hidden on Mobile) -->
@@ -2057,7 +2062,7 @@ body_theme4 @endif
 
     @if (!request()->routeIs('user.login*') && !request()->routeIs('user.register*') && !View::hasSection('no_footer'))
     <!-- Site Footer-->
-    <footer class="site-footer">
+    <footer class="site-footer {{ request()->routeIs('user.message.*') ? 'd-none d-lg-block' : '' }}">
         <div class="container">
             <div class="row">
                 <div class="col-lg-4 col-md-6">
@@ -2168,7 +2173,7 @@ body_theme4 @endif
         $meUrl = Auth::check() ? route('user.dashboard') : route('user.login');
         $messagesUrl = Auth::check() ? route('user.message.index') : route('user.login');
     @endphp
-    <nav id="mobile_bottom_nav" class="d-flex d-lg-none" aria-label="Mobile Navigation">
+    <nav id="mobile_bottom_nav" class="{{ (request()->routeIs('user.message.*') && request('chat_id')) ? 'd-none' : 'd-flex d-lg-none' }}" aria-label="Mobile Navigation">
         <!-- 1. Home -->
         <a href="{{ route('front.index') }}" class="mobile-nav-item {{ $isHomeActive ? 'active' : '' }}">
             <div class="mobile-nav-icon-wrap">

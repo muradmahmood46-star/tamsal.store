@@ -23,7 +23,7 @@ class ChatController extends Controller
     {
         $userId = Auth::id();
 
-        $conversations = Conversation::with(['item', 'vendor', 'seller'])
+        $conversations = Conversation::with(['item', 'vendor', 'seller', 'messages'])
             ->where('user_id', $userId)
             ->where('deleted_by_user', 0)
             ->orderByRaw('COALESCE(last_message_at, updated_at) desc')

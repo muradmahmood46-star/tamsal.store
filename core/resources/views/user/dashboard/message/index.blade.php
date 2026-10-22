@@ -175,29 +175,106 @@
         flex-shrink: 0;
     }
 
+    /* Search Bar in Chat Sidebar */
+    .chat-search-wrap {
+        position: relative;
+        width: 100%;
+    }
+    .chat-search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 13px;
+        pointer-events: none;
+    }
+    .chat-search-field {
+        border-radius: 20px !important;
+        padding-left: 34px !important;
+        padding-right: 32px !important;
+        background: #f1f5f9 !important;
+        border: 1px solid #e2e8f0 !important;
+        font-size: 13px !important;
+        height: 36px !important;
+        transition: all 0.2s ease;
+    }
+    .chat-search-field:focus {
+        background: #ffffff !important;
+        border-color: #008069 !important;
+        box-shadow: 0 0 0 2px rgba(0, 128, 105, 0.15) !important;
+    }
+    .chat-search-clear-btn {
+        position: absolute;
+        right: 6px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        color: #94a3b8;
+        padding: 4px 8px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+    .chat-search-clear-btn:hover {
+        color: #64748b;
+    }
+
     @media (max-width: 991.98px) {
+        /* Screen locked on mobile: outer website does not scroll */
+        html, body, html.ios-shell-scroll, html.ios-shell-scroll body {
+            overflow: hidden !important;
+            height: 100% !important;
+            height: 100dvh !important;
+            max-height: 100dvh !important;
+            position: fixed !important;
+            width: 100% !important;
+            top: 0 !important;
+            left: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overscroll-behavior: none !important;
+        }
+
+        .site-header,
+        .site-footer,
+        .page-title,
+        .scroll-to-top-btn {
+            display: none !important;
+        }
+
         .user-messages-container {
-            padding-left: 10px !important;
-            padding-right: 10px !important;
-            padding-top: 8px !important;
-            padding-bottom: 75px !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: {{ $activeChat ? '0' : '58px' }} !important;
+            width: 100% !important;
+            height: {{ $activeChat ? '100dvh' : 'calc(100dvh - 58px)' }} !important;
+            max-height: {{ $activeChat ? '100dvh' : 'calc(100dvh - 58px)' }} !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            overflow: hidden !important;
+            z-index: 999 !important;
+            background: #ffffff !important;
         }
         .user-messages-container .row {
-            margin-left: 0 !important;
-            margin-right: 0 !important;
+            margin: 0 !important;
+            height: 100% !important;
         }
         .user-messages-container .p-0-mobile {
-            padding-left: 0 !important;
-            padding-right: 0 !important;
+            padding: 0 !important;
+            height: 100% !important;
         }
         .user-chat-box {
-            height: calc(100vh - 140px) !important;
-            height: calc(100dvh - 140px) !important;
-            min-height: 480px !important;
-            border-radius: 10px !important;
+            height: 100% !important;
+            max-height: 100% !important;
+            border-radius: 0 !important;
+            border: none !important;
             flex-direction: column !important;
             width: 100% !important;
-            margin-bottom: 0 !important;
+            margin: 0 !important;
+            box-shadow: none !important;
         }
 
         @if($activeChat)
@@ -206,30 +283,43 @@
             }
             .user-chat-main {
                 display: flex !important;
+                flex-direction: column !important;
                 width: 100% !important;
                 height: 100% !important;
+                max-height: 100dvh !important;
+                overflow: hidden !important;
             }
         @else
             .user-chat-sidebar {
                 display: flex !important;
+                flex-direction: column !important;
                 width: 100% !important;
                 height: 100% !important;
                 min-width: 0 !important;
                 border-right: none !important;
+                overflow: hidden !important;
             }
             .user-chat-main {
                 display: none !important;
             }
         @endif
 
+        .user-chat-list {
+            flex-grow: 1 !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
+
         .user-chat-header {
             padding: 10px 12px !important;
+            flex-shrink: 0 !important;
         }
 
         .user-chat-product-banner {
             padding: 8px 12px !important;
             flex-wrap: wrap !important;
             gap: 6px !important;
+            flex-shrink: 0 !important;
         }
 
         .user-chat-product-banner > div {
@@ -237,6 +327,9 @@
         }
 
         .user-chat-stream {
+            flex-grow: 1 !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
             padding: 12px 10px !important;
         }
 
@@ -247,10 +340,12 @@
 
         .user-chat-footer {
             padding: 8px 10px !important;
+            flex-shrink: 0 !important;
+            background: #f0f2f5 !important;
         }
 
         .user-chat-input {
-            font-size: 13px !important;
+            font-size: 13.5px !important;
             padding: 8px 14px !important;
         }
 
@@ -269,28 +364,64 @@
             <div class="user-chat-box">
                 <!-- Sidebar Conversations -->
                 <div class="user-chat-sidebar">
-                    <div class="p-3 bg-white border-bottom d-flex align-items-center justify-content-between">
-                        <h6 class="mb-0 font-weight-bold text-dark"><i class="fas fa-store text-success mr-1"></i> {{ __('Store Chats') }}</h6>
-                        @php
-                            $totalUnread = $conversations->sum('user_unread_count');
-                        @endphp
-                        @if($totalUnread > 0)
-                            <span class="badge badge-success font-weight-bold" style="font-size: 11px; border-radius: 10px; padding: 2px 8px;">{{ $totalUnread }} {{ __('new') }}</span>
-                        @endif
+                    <div class="user-chat-sidebar-header p-2 p-sm-3 bg-white border-bottom">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div class="d-flex align-items-center">
+                                <a href="{{ route('user.dashboard') }}" class="btn btn-sm btn-light border mr-2 d-lg-none shadow-sm" style="border-radius: 8px; padding: 5px 10px; margin-right: 8px;" title="{{ __('Back to Dashboard') }}">
+                                    <i class="fas fa-arrow-left"></i>
+                                </a>
+                                <h6 class="mb-0 font-weight-bold text-dark d-flex align-items-center" style="font-size: 16px;">
+                                    <i class="icon-message-square text-success mr-2" style="margin-right: 6px; font-size: 18px;"></i> {{ __('My Messages') }}
+                                </h6>
+                            </div>
+                            @php
+                                $totalUnread = $conversations->sum('user_unread_count');
+                            @endphp
+                            @if($totalUnread > 0)
+                                <span class="badge badge-success font-weight-bold" style="font-size: 11px; border-radius: 10px; padding: 3px 8px;">{{ $totalUnread }} {{ __('new') }}</span>
+                            @endif
+                        </div>
+
+                        <!-- Search Input for Messages -->
+                        <div class="chat-search-wrap position-relative">
+                            <i class="fas fa-search chat-search-icon"></i>
+                            <input type="text" id="chat_search_input" class="form-control form-control-sm chat-search-field" placeholder="{{ __('Search stores, products, messages...') }}" autocomplete="off">
+                            <button type="button" id="chat_search_clear" class="btn btn-sm chat-search-clear-btn" style="display: none;" title="{{ __('Clear search') }}">
+                                <i class="fas fa-times-circle"></i>
+                            </button>
+                        </div>
                     </div>
+
                     <div class="user-chat-list">
+                        <!-- No search match banner -->
+                        <div id="chat_no_match_item" class="p-4 text-center text-muted" style="display: none;">
+                            <div class="mb-2" style="width: 48px; height: 48px; border-radius: 50%; background: #f1f5f9; display: inline-flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                <i class="fas fa-search text-secondary" style="font-size: 20px;"></i>
+                            </div>
+                            <h6 class="font-weight-bold text-dark mb-1" style="font-size: 14px;">{{ __('No matching conversations') }}</h6>
+                            <p class="small text-muted mb-0">{{ __('No store, product, or message matched') }} "<span class="no-match-query font-weight-bold text-dark"></span>".</p>
+                        </div>
+
                         @forelse($conversations as $conv)
                             @php
                                 $isActive = ($activeChat && $activeChat->id == $conv->id);
+                                $allMsgText = $conv->messages->pluck('message')->implode(' ');
                             @endphp
-                            <a href="{{ route('user.message.index', ['chat_id' => $conv->id]) }}" class="user-chat-item {{ $isActive ? 'active' : '' }}">
+                            <a href="{{ route('user.message.index', ['chat_id' => $conv->id]) }}" 
+                               class="user-chat-item {{ $isActive ? 'active' : '' }}"
+                               data-store-name="{{ strtolower($conv->store_name) }}"
+                               data-product-name="{{ strtolower($conv->item ? $conv->item->name : '') }}"
+                               data-last-message="{{ strtolower($conv->last_message) }}"
+                               data-all-messages="{{ strtolower($allMsgText) }}">
                                 <div class="user-chat-avatar">
                                     <i class="fas fa-store"></i>
                                 </div>
                                 <div style="flex-grow: 1; overflow: hidden;">
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <strong style="font-size: 13.5px;" class="text-dark">{{ $conv->store_name }}</strong>
-                                        <small class="text-muted" style="font-size: 10.5px;">{{ $conv->last_message_at ? $conv->last_message_at->diffForHumans(null, true) : '' }}</small>
+                                        <div class="chat-title-row d-flex align-items-center text-truncate mr-1">
+                                            <strong style="font-size: 13.5px;" class="text-dark text-truncate">{{ $conv->store_name }}</strong>
+                                        </div>
+                                        <small class="text-muted flex-shrink-0" style="font-size: 10.5px;">{{ $conv->last_message_at ? $conv->last_message_at->diffForHumans(null, true) : '' }}</small>
                                     </div>
                                     @if($conv->item && $conv->item->name)
                                         <div style="font-size: 11.5px; color: #0d6efd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
@@ -610,4 +741,125 @@
     }
 </script>
 @endif
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('chat_search_input');
+    const clearBtn = document.getElementById('chat_search_clear');
+    const chatList = document.querySelector('.user-chat-list');
+    const noMatchEl = document.getElementById('chat_no_match_item');
+    if (!searchInput || !chatList) return;
+
+    const chatItems = Array.from(chatList.querySelectorAll('.user-chat-item'));
+
+    // Save original index for ordering
+    chatItems.forEach((item, idx) => {
+        item.dataset.originalIndex = idx;
+    });
+
+    searchInput.addEventListener('input', function() {
+        const query = this.value.trim().toLowerCase();
+
+        if (clearBtn) {
+            clearBtn.style.display = query ? 'block' : 'none';
+        }
+
+        if (!query) {
+            // Restore original order and show all
+            chatItems.sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex));
+            chatItems.forEach(item => {
+                item.style.display = 'flex';
+                chatList.appendChild(item);
+                const badge = item.querySelector('.search-match-badge');
+                if (badge) badge.remove();
+            });
+            if (noMatchEl) noMatchEl.style.display = 'none';
+            return;
+        }
+
+        let matchedCount = 0;
+        const scoredItems = [];
+
+        chatItems.forEach(item => {
+            const store = item.dataset.storeName || '';
+            const product = item.dataset.productName || '';
+            const allMsg = item.dataset.allMessages || '';
+            const lastMsg = item.dataset.lastMessage || '';
+
+            let score = 0;
+            let matchType = '';
+
+            // Priority 1: Store Name Match (Highest priority)
+            if (store.includes(query)) {
+                score = 300;
+                if (store.startsWith(query)) score += 50;
+                matchType = 'store';
+            }
+            // Priority 2: Product Title Match (2nd priority)
+            else if (product.includes(query)) {
+                score = 200;
+                if (product.startsWith(query)) score += 30;
+                matchType = 'product';
+            }
+            // Priority 3: Message Text Match (3rd priority)
+            else if (lastMsg.includes(query) || allMsg.includes(query)) {
+                score = 100;
+                matchType = 'message';
+            }
+
+            if (score > 0) {
+                matchedCount++;
+                scoredItems.push({ item, score, matchType });
+            } else {
+                item.style.display = 'none';
+                const badge = item.querySelector('.search-match-badge');
+                if (badge) badge.remove();
+            }
+        });
+
+        if (matchedCount > 0) {
+            if (noMatchEl) noMatchEl.style.display = 'none';
+
+            // Sort by score descending (Store matches first, then Products, then Messages)
+            scoredItems.sort((a, b) => b.score - a.score);
+
+            scoredItems.forEach(({ item, matchType }) => {
+                item.style.display = 'flex';
+                chatList.appendChild(item);
+
+                let badge = item.querySelector('.search-match-badge');
+                if (!badge) {
+                    badge = document.createElement('span');
+                    badge.className = 'search-match-badge ml-1';
+                    const titleRow = item.querySelector('.chat-title-row');
+                    if (titleRow) {
+                        titleRow.appendChild(badge);
+                    }
+                }
+                if (matchType === 'store') {
+                    badge.innerHTML = '<span class="badge badge-success" style="font-size: 9px; padding: 2px 5px;"><i class="fas fa-store mr-1"></i>Store</span>';
+                } else if (matchType === 'product') {
+                    badge.innerHTML = '<span class="badge badge-primary" style="font-size: 9px; padding: 2px 5px;"><i class="fas fa-box mr-1"></i>Product</span>';
+                } else {
+                    badge.innerHTML = '<span class="badge badge-secondary" style="font-size: 9px; padding: 2px 5px;"><i class="fas fa-comment mr-1"></i>Message</span>';
+                }
+            });
+        } else {
+            if (noMatchEl) {
+                noMatchEl.style.display = 'block';
+                const queryText = noMatchEl.querySelector('.no-match-query');
+                if (queryText) queryText.textContent = query;
+            }
+        }
+    });
+
+    if (clearBtn) {
+        clearBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            searchInput.dispatchEvent(new Event('input'));
+            searchInput.focus();
+        });
+    }
+});
+</script>
 @endsection
