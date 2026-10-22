@@ -180,7 +180,7 @@
         border: 1px solid rgba(0,0,0,0.05);
     }
 
-    /* Swipe & Long Press styles for chat list */
+    /* Swipe styles for chat list (both left and right) */
     .user-chat-swipe-wrapper {
         position: relative;
         overflow: hidden;
@@ -191,7 +191,6 @@
     .user-chat-swipe-btn {
         position: absolute;
         top: 0;
-        left: 0;
         width: 82px;
         height: 100%;
         background: #dc2626;
@@ -205,7 +204,15 @@
         gap: 4px;
         cursor: pointer;
         z-index: 1;
+        border: none;
+        outline: none;
         transition: background 0.2s;
+    }
+    .user-chat-swipe-btn-left {
+        left: 0;
+    }
+    .user-chat-swipe-btn-right {
+        right: 0;
     }
     .user-chat-swipe-btn:active {
         background: #b91c1c;
@@ -224,8 +231,11 @@
         -webkit-user-select: none;
         border-bottom: none !important;
     }
-    .user-chat-item.is-swiped-open {
+    .user-chat-item.is-swiped-right {
         transform: translateX(82px) !important;
+    }
+    .user-chat-item.is-swiped-left {
+        transform: translateX(-82px) !important;
     }
     .chat-desktop-delete-btn {
         opacity: 0;
@@ -509,7 +519,11 @@
                                 $allMsgText = $conv->messages->pluck('message')->implode(' ');
                             @endphp
                             <div class="user-chat-swipe-wrapper" id="chat_wrapper_{{ $conv->id }}">
-                                <button type="button" class="user-chat-swipe-btn" onclick="confirmDeleteChat({{ $conv->id }}, '{{ addslashes($conv->store_name) }}')">
+                                <button type="button" class="user-chat-swipe-btn user-chat-swipe-btn-left" onclick="confirmDeleteChat({{ $conv->id }}, '{{ addslashes($conv->store_name) }}')" title="{{ __('Delete') }}">
+                                    <i class="fas fa-trash-alt"></i>
+                                    <span>{{ __('Delete') }}</span>
+                                </button>
+                                <button type="button" class="user-chat-swipe-btn user-chat-swipe-btn-right" onclick="confirmDeleteChat({{ $conv->id }}, '{{ addslashes($conv->store_name) }}')" title="{{ __('Delete') }}">
                                     <i class="fas fa-trash-alt"></i>
                                     <span>{{ __('Delete') }}</span>
                                 </button>
@@ -562,6 +576,12 @@
                                 </a>
                             </div>
                         @endforelse
+
+                        @if($conversations->isNotEmpty())
+                            <div class="chat-swipe-hint text-center py-3" style="font-size: 11px; color: #94a3b8; user-select: none;">
+                                <i class="fas fa-arrows-alt-h mr-1" style="font-size: 10px;"></i> {{ __('Swipe left/right for actions') }}
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -880,27 +900,23 @@
 </script>
 @endif
 
-<!-- Delete Conversation Modal -->
-<div class="modal fade" id="deleteChatModal" tabindex="-1" role="dialog" aria-hidden="true" style="z-index: 1060;">
-    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 360px; margin: auto;">
-        <div class="modal-content" style="border-radius: 16px; border: none; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
-            <div class="modal-body text-center p-4">
-                <div class="mb-3" style="width: 56px; height: 56px; border-radius: 50%; background: #fee2e2; color: #dc2626; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto;">
-                    <i class="fas fa-trash-alt"></i>
-                </div>
-                <h5 class="font-weight-bold text-dark mb-2" style="font-size: 16px;">{{ __('Delete Conversation?') }}</h5>
-                <p class="text-muted small mb-4" id="deleteChatModalText">
-                    {{ __('Are you sure you want to delete this chat with') }} <strong id="deleteChatStoreName"></strong>? {{ __('This chat will be removed from your inbox.') }}
-                </p>
-                <div class="d-flex" style="gap: 10px;">
-                    <button type="button" class="btn btn-light flex-grow-1 border" data-dismiss="modal" style="border-radius: 10px; font-weight: 600; font-size: 13px; padding: 9px 0;">
-                        {{ __('Cancel') }}
-                    </button>
-                    <button type="button" class="btn btn-danger flex-grow-1" id="confirmDeleteChatBtn" style="border-radius: 10px; font-weight: 600; font-size: 13px; padding: 9px 0;">
-                        <i class="fas fa-trash-alt mr-1"></i> {{ __('Delete') }}
-                    </button>
-                </div>
-            </div>
+<!-- Custom Clean Delete Confirmation Modal (Self-contained, No Bootstrap backdrop trap) -->
+<div id="customDeletePopup" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100dvh; background: rgba(0,0,0,0.55); z-index: 999999; align-items: center; justify-content: center; padding: 20px;">
+    <div style="background: #ffffff; width: 100%; max-width: 320px; border-radius: 18px; padding: 22px 18px; text-align: center; box-shadow: 0 16px 36px rgba(0,0,0,0.3);">
+        <div style="width: 50px; height: 50px; border-radius: 50%; background: #fee2e2; color: #dc2626; display: inline-flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 12px; margin-left: auto; margin-right: auto;">
+            <i class="fas fa-trash-alt"></i>
+        </div>
+        <h6 style="font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 6px;">{{ __('Delete Conversation?') }}</h6>
+        <p style="font-size: 12.5px; color: #64748b; margin-bottom: 18px; line-height: 1.4;">
+            {{ __('Are you sure you want to delete this chat with') }} <strong id="customDeleteStoreName" style="color: #0f172a;"></strong>?
+        </p>
+        <div style="display: flex; gap: 10px;">
+            <button type="button" onclick="closeCustomDeleteModal()" style="flex: 1; padding: 9px 0; border: 1px solid #cbd5e1; background: #f8fafc; color: #334155; border-radius: 10px; font-weight: 600; font-size: 13px; cursor: pointer;">
+                {{ __('Cancel') }}
+            </button>
+            <button type="button" onclick="executeCustomDelete()" style="flex: 1; padding: 9px 0; border: none; background: #dc2626; color: #ffffff; border-radius: 10px; font-weight: 600; font-size: 13px; cursor: pointer; box-shadow: 0 2px 8px rgba(220,38,38,0.35);">
+                <i class="fas fa-trash-alt mr-1"></i> {{ __('Delete') }}
+            </button>
         </div>
     </div>
 </div>
@@ -911,19 +927,29 @@ let currentSwipedItem = null;
 
 function confirmDeleteChat(chatId, storeName) {
     pendingDeleteId = chatId;
-    const storeLabel = document.getElementById('deleteChatStoreName');
+    const storeLabel = document.getElementById('customDeleteStoreName');
     if (storeLabel) storeLabel.textContent = storeName || 'this store';
-    
-    if (window.$ && typeof $('#deleteChatModal').modal === 'function') {
-        $('#deleteChatModal').modal('show');
+    const popup = document.getElementById('customDeletePopup');
+    if (popup) {
+        popup.style.display = 'flex';
     } else {
         if (confirm("{{ __('Are you sure you want to delete this conversation?') }}")) {
-            executeDeleteChat(chatId);
+            executeCustomDelete();
         }
     }
 }
 
-function executeDeleteChat(chatId) {
+function closeCustomDeleteModal() {
+    pendingDeleteId = null;
+    const popup = document.getElementById('customDeletePopup');
+    if (popup) popup.style.display = 'none';
+}
+
+function executeCustomDelete() {
+    if (!pendingDeleteId) return;
+    const chatId = pendingDeleteId;
+    closeCustomDeleteModal();
+
     const deleteUrl = "{{ url('/user/messages/delete') }}/" + chatId;
     const wrapper = document.getElementById('chat_wrapper_' + chatId);
 
@@ -963,7 +989,7 @@ function executeDeleteChat(chatId) {
     });
 }
 
-function setupSwipeAndLongPress() {
+function setupSwipeHandlers() {
     const wrappers = document.querySelectorAll('.user-chat-swipe-wrapper');
     
     wrappers.forEach(wrapper => {
@@ -974,18 +1000,7 @@ function setupSwipeAndLongPress() {
         let startY = 0;
         let isSwiping = false;
         let isScrolling = false;
-        let longPressTimer = null;
-        let isLongPressTriggered = false;
-
-        const chatId = item.dataset.chatId;
-        const storeName = item.dataset.storeDisplay || '';
-
-        function clearLongPress() {
-            if (longPressTimer) {
-                clearTimeout(longPressTimer);
-                longPressTimer = null;
-            }
-        }
+        let initialTransform = 0;
 
         item.addEventListener('touchstart', function(e) {
             if (e.touches.length !== 1) return;
@@ -994,21 +1009,21 @@ function setupSwipeAndLongPress() {
             startY = touch.clientY;
             isSwiping = false;
             isScrolling = false;
-            isLongPressTriggered = false;
+
+            if (item.classList.contains('is-swiped-right')) {
+                initialTransform = 82;
+            } else if (item.classList.contains('is-swiped-left')) {
+                initialTransform = -82;
+            } else {
+                initialTransform = 0;
+            }
 
             // Close other swiped items
             if (currentSwipedItem && currentSwipedItem !== item) {
-                currentSwipedItem.classList.remove('is-swiped-open');
+                currentSwipedItem.classList.remove('is-swiped-right', 'is-swiped-left');
                 currentSwipedItem.style.transform = '';
                 currentSwipedItem = null;
             }
-
-            // Start long press timer (500ms)
-            longPressTimer = setTimeout(() => {
-                isLongPressTriggered = true;
-                if (navigator.vibrate) navigator.vibrate(50);
-                confirmDeleteChat(chatId, storeName);
-            }, 500);
         }, { passive: true });
 
         item.addEventListener('touchmove', function(e) {
@@ -1017,57 +1032,45 @@ function setupSwipeAndLongPress() {
             const diffX = touch.clientX - startX;
             const diffY = touch.clientY - startY;
 
-            // Finger moved > 8px, cancel long-press
-            if (Math.abs(diffX) > 8 || Math.abs(diffY) > 8) {
-                clearLongPress();
-            }
-
             // Detect vertical scroll
-            if (!isSwiping && Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 5) {
+            if (!isSwiping && Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 6) {
                 isScrolling = true;
                 return;
             }
 
-            // Detect horizontal swipe right
-            if (!isScrolling && diffX > 10) {
+            // Detect horizontal swipe (left OR right)
+            if (!isScrolling && Math.abs(diffX) > 8) {
                 isSwiping = true;
                 item.style.transition = 'none';
 
-                const isOpen = item.classList.contains('is-swiped-open');
-                let translateX = isOpen ? (82 + diffX) : diffX;
-                if (translateX < 0) translateX = 0;
-                if (translateX > 110) translateX = 110;
-                item.style.transform = `translateX(${translateX}px)`;
-            } else if (!isScrolling && diffX < -10 && item.classList.contains('is-swiped-open')) {
-                // Swiping left to close
-                isSwiping = true;
-                item.style.transition = 'none';
-                let translateX = 82 + diffX;
-                if (translateX < 0) translateX = 0;
-                item.style.transform = `translateX(${translateX}px)`;
+                let targetX = initialTransform + diffX;
+                if (targetX > 110) targetX = 110;
+                if (targetX < -110) targetX = -110;
+                item.style.transform = `translateX(${targetX}px)`;
             }
         }, { passive: true });
 
         item.addEventListener('touchend', function(e) {
-            clearLongPress();
-
-            if (isLongPressTriggered) {
-                e.preventDefault();
-                return;
-            }
-
             if (isSwiping) {
                 item.style.transition = 'transform 0.22s cubic-bezier(0.2, 0, 0, 1)';
-                const currentTransform = item.style.transform;
-                const match = /translateX\(([\d\.-]+)px\)/.exec(currentTransform);
+                const match = /translateX\(([\d\.-]+)px\)/.exec(item.style.transform);
                 const currentVal = match ? parseFloat(match[1]) : 0;
 
-                if (currentVal > 45) {
-                    item.classList.add('is-swiped-open');
+                if (currentVal > 40) {
+                    // Swiped Right -> reveals Left Delete Button
+                    item.classList.add('is-swiped-right');
+                    item.classList.remove('is-swiped-left');
                     item.style.transform = 'translateX(82px)';
                     currentSwipedItem = item;
+                } else if (currentVal < -40) {
+                    // Swiped Left -> reveals Right Delete Button
+                    item.classList.add('is-swiped-left');
+                    item.classList.remove('is-swiped-right');
+                    item.style.transform = 'translateX(-82px)';
+                    currentSwipedItem = item;
                 } else {
-                    item.classList.remove('is-swiped-open');
+                    // Snap Closed
+                    item.classList.remove('is-swiped-right', 'is-swiped-left');
                     item.style.transform = '';
                     if (currentSwipedItem === item) currentSwipedItem = null;
                 }
@@ -1075,26 +1078,20 @@ function setupSwipeAndLongPress() {
         });
 
         item.addEventListener('touchcancel', function() {
-            clearLongPress();
             item.style.transition = 'transform 0.22s cubic-bezier(0.2, 0, 0, 1)';
-            if (!item.classList.contains('is-swiped-open')) {
+            if (!item.classList.contains('is-swiped-right') && !item.classList.contains('is-swiped-left')) {
                 item.style.transform = '';
             }
         });
 
-        // Click handler: if item is swiped open or long pressed, prevent opening chat
+        // Click handler: if item is swiped open, click closes it instead of navigating
         item.addEventListener('click', function(e) {
-            if (item.classList.contains('is-swiped-open')) {
+            if (item.classList.contains('is-swiped-right') || item.classList.contains('is-swiped-left')) {
                 e.preventDefault();
                 e.stopPropagation();
-                item.classList.remove('is-swiped-open');
+                item.classList.remove('is-swiped-right', 'is-swiped-left');
                 item.style.transform = '';
                 currentSwipedItem = null;
-                return false;
-            }
-            if (isLongPressTriggered) {
-                e.preventDefault();
-                e.stopPropagation();
                 return false;
             }
         });
@@ -1103,7 +1100,7 @@ function setupSwipeAndLongPress() {
     // Tap outside to close swiped item
     document.addEventListener('touchstart', function(e) {
         if (currentSwipedItem && !currentSwipedItem.contains(e.target) && !e.target.closest('.user-chat-swipe-btn')) {
-            currentSwipedItem.classList.remove('is-swiped-open');
+            currentSwipedItem.classList.remove('is-swiped-right', 'is-swiped-left');
             currentSwipedItem.style.transform = '';
             currentSwipedItem = null;
         }
@@ -1111,24 +1108,13 @@ function setupSwipeAndLongPress() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    setupSwipeAndLongPress();
-
-    const confirmBtn = document.getElementById('confirmDeleteChatBtn');
-    if (confirmBtn) {
-        confirmBtn.addEventListener('click', function() {
-            if (pendingDeleteId) {
-                if (window.$ && typeof $('#deleteChatModal').modal === 'function') {
-                    $('#deleteChatModal').modal('hide');
-                }
-                executeDeleteChat(pendingDeleteId);
-            }
-        });
-    }
+    setupSwipeHandlers();
 
     const searchInput = document.getElementById('chat_search_input');
     const clearBtn = document.getElementById('chat_search_clear');
     const chatList = document.querySelector('.user-chat-list');
     const noMatchEl = document.getElementById('chat_no_match_item');
+    const hintEl = chatList ? chatList.querySelector('.chat-swipe-hint') : null;
     if (!searchInput || !chatList) return;
 
     const chatWrappers = Array.from(chatList.querySelectorAll('.user-chat-swipe-wrapper'));
@@ -1144,6 +1130,10 @@ document.addEventListener('DOMContentLoaded', function() {
             clearBtn.style.display = query ? 'block' : 'none';
         }
 
+        if (hintEl) {
+            hintEl.style.display = query ? 'none' : 'block';
+        }
+
         if (!query) {
             chatWrappers.sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex));
             chatWrappers.forEach(wrapper => {
@@ -1152,6 +1142,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const badge = wrapper.querySelector('.search-match-badge');
                 if (badge) badge.remove();
             });
+            if (hintEl) chatList.appendChild(hintEl);
             if (noMatchEl) noMatchEl.style.display = 'none';
             return;
         }
