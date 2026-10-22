@@ -42,6 +42,21 @@
     <!-- Mobile Specific Meta Tag-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
+    @if (!request()->routeIs('user.login*') && !request()->routeIs('user.register*'))
+    <script>
+        // iPhone Chrome / Google App / Firefox / Edge (non-Safari iOS browsers) collapse their toolbars while the
+        // document scrolls, which makes fixed header & bottom nav drift and hide behind the browser bar on refresh.
+        // In these browsers we scroll <body> internally instead, so browser toolbars stay still and fixed bars stay locked.
+        (function () {
+            var ua = navigator.userAgent || '';
+            var isIOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+            if (isIOS && /CriOS|FxiOS|EdgiOS|OPiOS|GSA\//.test(ua)) {
+                document.documentElement.classList.add('ios-shell-scroll');
+            }
+        })();
+    </script>
+    @endif
+
     <!-- Favicon Icons-->
     @php
         $favPath = $setting->favicon ?? '';
@@ -1289,6 +1304,23 @@
 
         /* MOBILE ONLY: Redesigned Header Row, Currency & Fixed Bottom Navigation */
         @media (max-width: 991.98px) {
+            /* iOS Chrome / Google App: lock document, scroll body internally (see detection script in <head>) */
+            html.ios-shell-scroll {
+                height: 100% !important;
+                overflow: hidden !important;
+                overscroll-behavior: none;
+            }
+            html.ios-shell-scroll body {
+                height: 100% !important;
+                overflow-x: hidden !important;
+                overflow-y: auto !important;
+                -webkit-overflow-scrolling: touch;
+                overscroll-behavior-y: contain;
+                box-sizing: border-box !important;
+            }
+            html.ios-shell-scroll body.modal-open {
+                overflow-y: hidden !important;
+            }
             body {
                 @if (!request()->routeIs('user.login*') && !request()->routeIs('user.register*') && !View::hasSection('no_topbar'))
                 padding-top: 60px !important;
@@ -2181,6 +2213,42 @@ body_theme4 @endif
         </a>
     </nav>
 
+    <script>
+        (function () {
+            if (!document.documentElement.classList.contains('ios-shell-scroll')) return;
+            var b = document.body;
+            var topBtn = document.querySelector('.scroll-to-top-btn');
+            var ticking = false;
+
+            // Forward body scrolling to window 'scroll' listeners (lazy images, infinite scroll, etc.)
+            b.addEventListener('scroll', function () {
+                if (ticking) return;
+                ticking = true;
+                requestAnimationFrame(function () {
+                    ticking = false;
+                    try { window.dispatchEvent(new Event('scroll')); } catch (e) {}
+                    if (topBtn) topBtn.classList.toggle('visible', b.scrollTop > 600);
+                });
+            }, { passive: true });
+
+            // Back-to-top button scrolls the body scroller
+            document.addEventListener('click', function (e) {
+                if (e.target.closest && e.target.closest('.scroll-to-top-btn') && window.matchMedia('(max-width: 991.98px)').matches) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    b.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }, true);
+
+            // window.scrollTo(...) calls should scroll the body scroller (only while shell CSS is active)
+            var nativeScrollTo = window.scrollTo.bind(window);
+            var mq = window.matchMedia('(max-width: 991.98px)');
+            window.scrollTo = function (x, y) {
+                if (!mq.matches) return nativeScrollTo.apply(window, arguments);
+                if (x && typeof x === 'object') { b.scrollTo(x); } else { b.scrollTo(x || 0, y || 0); }
+            };
+        })();
+    </script>
     <!-- Cookie alert dialog  -->
     @if ($setting->is_cookie == 1)
         @include('cookie-consent::index')
