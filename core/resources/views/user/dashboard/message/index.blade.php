@@ -6,7 +6,7 @@
 
 @section('content')
 <!-- Page Title-->
-<div class="page-title">
+<div class="page-title d-none d-lg-block">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
@@ -175,13 +175,29 @@
         flex-shrink: 0;
     }
 
-    @media (max-width: 767.98px) {
+    @media (max-width: 991.98px) {
+        .user-messages-container {
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+            padding-top: 8px !important;
+            padding-bottom: 75px !important;
+        }
+        .user-messages-container .row {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+        .user-messages-container .p-0-mobile {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
         .user-chat-box {
             height: calc(100vh - 140px) !important;
+            height: calc(100dvh - 140px) !important;
             min-height: 480px !important;
-            border-radius: 8px !important;
+            border-radius: 10px !important;
             flex-direction: column !important;
             width: 100% !important;
+            margin-bottom: 0 !important;
         }
 
         @if($activeChat)
@@ -246,15 +262,21 @@
     }
 </style>
 
-<div class="container padding-bottom-3x mb-1">
+<div class="container user-messages-container padding-bottom-2x mb-1">
     <div class="row">
         @include('includes.user_sitebar')
-        <div class="col-lg-8">
+        <div class="col-12 col-lg-8 p-0-mobile">
             <div class="user-chat-box">
                 <!-- Sidebar Conversations -->
                 <div class="user-chat-sidebar">
-                    <div class="p-3 bg-white border-bottom">
+                    <div class="p-3 bg-white border-bottom d-flex align-items-center justify-content-between">
                         <h6 class="mb-0 font-weight-bold text-dark"><i class="fas fa-store text-success mr-1"></i> {{ __('Store Chats') }}</h6>
+                        @php
+                            $totalUnread = $conversations->sum('user_unread_count');
+                        @endphp
+                        @if($totalUnread > 0)
+                            <span class="badge badge-success font-weight-bold" style="font-size: 11px; border-radius: 10px; padding: 2px 8px;">{{ $totalUnread }} {{ __('new') }}</span>
+                        @endif
                     </div>
                     <div class="user-chat-list">
                         @forelse($conversations as $conv)
@@ -284,9 +306,15 @@
                                 </div>
                             </a>
                         @empty
-                            <div class="text-center py-5 text-muted small">
-                                <i class="fas fa-comments fa-3x mb-2 d-block text-secondary"></i>
-                                {{ __('No chats yet. Visit any product page to message a store seller!') }}
+                            <div class="text-center py-5 px-3 text-muted">
+                                <div class="mb-3" style="width: 60px; height: 60px; border-radius: 50%; background: #f1f5f9; display: inline-flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-comment-slash fa-2x text-muted"></i>
+                                </div>
+                                <h6 class="font-weight-bold text-dark mb-1" style="font-size: 15px;">{{ __('No messages to show') }}</h6>
+                                <p class="text-muted small mb-3">{{ __('You don\'t have any store messages yet. Visit any product and click "Chat with Seller" to message a store!') }}</p>
+                                <a href="{{ route('front.catalog') }}" class="btn btn-sm btn-primary px-3 shadow-sm" style="border-radius: 20px; font-size: 12px;">
+                                    <i class="icon-shopping-bag mr-1"></i> {{ __('Browse Products') }}
+                                </a>
                             </div>
                         @endforelse
                     </div>
@@ -298,7 +326,7 @@
                         <!-- Header -->
                         <div class="user-chat-header">
                             <div class="d-flex align-items-center" style="min-width: 0;">
-                                <a href="{{ route('user.message.index') }}" class="btn btn-sm btn-light border mr-2 d-md-none text-dark shadow-sm" style="border-radius: 6px; padding: 5px 10px; flex-shrink: 0;" title="{{ __('Back to Chats') }}">
+                                <a href="{{ route('user.message.index') }}" class="btn btn-sm btn-light border mr-2 d-lg-none text-dark shadow-sm" style="border-radius: 6px; padding: 5px 10px; flex-shrink: 0;" title="{{ __('Back to Chats') }}">
                                     <i class="fas fa-arrow-left"></i>
                                 </a>
                                 <div class="user-chat-avatar mr-2" style="width: 38px; height: 38px; font-size: 15px;">
@@ -360,6 +388,7 @@
                                 </div>
                             @empty
                                 <div class="text-center py-5 text-muted my-auto">
+                                    <i class="fas fa-comment-dots fa-2x text-muted mb-2 d-block"></i>
                                     {{ __('No messages yet. Send a message to start conversation!') }}
                                 </div>
                             @endforelse
@@ -379,10 +408,21 @@
                             @endif
                         </div>
                     @else
-                        <div class="text-center py-5 my-auto text-muted">
-                            <i class="fas fa-comments fa-3x text-secondary mb-2 d-block"></i>
-                            <h6 class="font-weight-bold text-dark">{{ __('Select a Chat') }}</h6>
-                            <p class="small">{{ __('Select a store conversation from the left to start chatting.') }}</p>
+                        <div class="text-center py-5 my-auto text-muted px-3">
+                            @if($conversations->isEmpty())
+                                <div class="mb-3" style="width: 70px; height: 70px; border-radius: 50%; background: #f8fafc; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #e2e8f0;">
+                                    <i class="fas fa-comment-slash fa-2x text-secondary"></i>
+                                </div>
+                                <h5 class="font-weight-bold text-dark mb-1">{{ __('No messages to show') }}</h5>
+                                <p class="small text-muted mb-3">{{ __('No chats available. When you message a store seller from a product page, your conversation will appear here.') }}</p>
+                                <a href="{{ route('front.catalog') }}" class="btn btn-sm btn-primary px-3 shadow-sm" style="border-radius: 20px; font-size: 13px;">
+                                    <i class="icon-shopping-bag mr-1"></i> {{ __('Explore Shop') }}
+                                </a>
+                            @else
+                                <i class="fas fa-comments fa-3x text-secondary mb-2 d-block"></i>
+                                <h6 class="font-weight-bold text-dark">{{ __('Select a Chat') }}</h6>
+                                <p class="small">{{ __('Select a store conversation from the left to start chatting.') }}</p>
+                            @endif
                         </div>
                     @endif
                 </div>

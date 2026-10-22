@@ -25,7 +25,7 @@
     <!-- Page Content-->
     <div class="container login-page-container">
         <div class="row justify-content-center align-items-center w-100 m-0">
-            <div class="col-12 col-sm-10 col-md-8 col-lg-5 col-xl-4 p-0">
+            <div class="col-12 p-0">
                 <form class="card auth-form-card shadow-sm" method="post" action="{{route('user.login.submit')}}">
                     @csrf
                     <div class="card-body">
@@ -85,48 +85,18 @@
     .topbar {
         display: none !important;
     }
-
-    /* 2. Lock screen completely: no window scrolling, no flickering / blinking */
-    html, body {
-        overflow: hidden !important;
-        height: 100% !important;
-        max-height: 100vh !important;
-        max-height: 100dvh !important;
-        overscroll-behavior: none !important;
-        margin: 0 !important;
-    }
-    body {
-        padding-top: 0 !important;
-        padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
-    }
-    .scroll-to-top-btn {
-        display: none !important;
-    }
+    .scroll-to-top-btn,
     .login-page-title {
         display: none !important;
     }
 
-    /* 3. Vertically and horizontally center the login card in the viewport */
-    .login-page-wrapper {
-        width: 100%;
-        height: calc(100vh - 56px - env(safe-area-inset-bottom, 0px));
-        height: calc(100dvh - 56px - env(safe-area-inset-bottom, 0px));
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        padding: 8px 16px !important;
-        box-sizing: border-box !important;
-        overflow: hidden !important;
-        touch-action: none !important;
-    }
     .login-page-container {
         width: 100%;
-        max-width: 480px;
+        max-width: 440px;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        padding: 0 !important;
+        padding: 0 15px !important;
         margin: 0 auto !important;
     }
     .auth-form-card {
@@ -145,31 +115,81 @@
         touch-action: manipulation !important;
     }
 
+    /* Mobile specific: locked & centered screen */
     @media (max-width: 991.98px) {
-        .site-header {
-            display: none !important;
+        html, body {
+            overflow: hidden !important;
+            height: 100% !important;
+            max-height: 100vh !important;
+            max-height: 100dvh !important;
+            overscroll-behavior: none !important;
+            margin: 0 !important;
+        }
+        body {
+            padding-top: 0 !important;
+            padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
+        }
+        .login-page-wrapper {
+            width: 100%;
+            height: calc(100vh - 56px - env(safe-area-inset-bottom, 0px));
+            height: calc(100dvh - 56px - env(safe-area-inset-bottom, 0px));
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 8px 16px !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+            touch-action: none !important;
         }
     }
 
+    /* Laptop / PC: Responsive, Spacious, Centered Card */
     @media (min-width: 992px) {
+        html, body {
+            height: auto !important;
+            min-height: 100vh !important;
+            overflow-y: auto !important;
+            margin: 0 !important;
+        }
         body {
+            padding-top: 0 !important;
             padding-bottom: 0 !important;
+            background-color: #f8fafc !important;
         }
         .login-page-wrapper {
-            height: calc(100vh - 85px);
-            height: calc(100dvh - 85px);
+            width: 100%;
+            min-height: 100vh;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 40px 20px !important;
+            box-sizing: border-box !important;
+        }
+        .login-page-container {
+            max-width: 440px !important;
+            width: 100% !important;
+        }
+        .auth-form-card {
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+        }
+        .auth-form-card .card-body {
+            padding: 32px 30px !important;
         }
     }
 </style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Prevent all unwanted screen scrolling/dragging on login page
-        document.addEventListener('touchmove', function(e) {
-            if (!e.target.closest('input, textarea, select, button, a')) {
-                e.preventDefault();
-            }
-        }, { passive: false });
+        if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+            document.addEventListener('touchmove', function(e) {
+                if (!e.target.closest('input, textarea, select, button, a')) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+        }
     });
 </script>
 @endsection

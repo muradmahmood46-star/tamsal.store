@@ -25,7 +25,7 @@
     <!-- Page Content-->
     <div class="container register-page-container">
         <div class="row justify-content-center align-items-center w-100 m-0">
-            <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 p-0">
+            <div class="col-12 p-0">
                 <div class="card register-area auth-form-card shadow-sm">
                     <div class="card-body">
                         <div class="text-center mb-2">
@@ -127,48 +127,18 @@
     .site-footer {
         display: none !important;
     }
-
-    /* 2. Lock screen completely: no window scrolling, no flickering / blinking */
-    html, body {
-        overflow: hidden !important;
-        height: 100% !important;
-        max-height: 100vh !important;
-        max-height: 100dvh !important;
-        overscroll-behavior: none !important;
-        margin: 0 !important;
-    }
-    body {
-        padding-top: 0 !important;
-        padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
-    }
-    .scroll-to-top-btn {
-        display: none !important;
-    }
+    .scroll-to-top-btn,
     .register-page-title {
         display: none !important;
     }
 
-    /* 3. Vertically and horizontally center the register card in the viewport */
-    .register-page-wrapper {
-        width: 100%;
-        height: calc(100vh - 56px - env(safe-area-inset-bottom, 0px));
-        height: calc(100dvh - 56px - env(safe-area-inset-bottom, 0px));
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        padding: 8px 16px !important;
-        box-sizing: border-box !important;
-        overflow: hidden !important;
-        touch-action: none !important;
-    }
     .register-page-container {
         width: 100%;
-        max-width: 520px;
+        max-width: 550px;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        padding: 0 !important;
+        padding: 0 15px !important;
         margin: 0 auto !important;
     }
     .auth-form-card {
@@ -177,13 +147,6 @@
         box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07) !important;
         background: #ffffff !important;
         width: 100%;
-        max-height: calc(100vh - 65px - env(safe-area-inset-bottom, 0px));
-        max-height: calc(100dvh - 65px - env(safe-area-inset-bottom, 0px));
-        overflow-y: auto !important;
-        -webkit-overflow-scrolling: touch;
-    }
-    .auth-form-card::-webkit-scrollbar {
-        display: none;
     }
     .auth-form-card .card-body {
         padding: 20px 22px !important;
@@ -205,31 +168,92 @@
         margin-bottom: 3px !important;
     }
 
+    /* Mobile specific: locked & centered screen */
     @media (max-width: 991.98px) {
-        .site-header {
-            display: none !important;
+        html, body {
+            overflow: hidden !important;
+            height: 100% !important;
+            max-height: 100vh !important;
+            max-height: 100dvh !important;
+            overscroll-behavior: none !important;
+            margin: 0 !important;
+        }
+        body {
+            padding-top: 0 !important;
+            padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
+        }
+        .register-page-wrapper {
+            width: 100%;
+            height: calc(100vh - 56px - env(safe-area-inset-bottom, 0px));
+            height: calc(100dvh - 56px - env(safe-area-inset-bottom, 0px));
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 8px 16px !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+            touch-action: none !important;
+        }
+        .auth-form-card {
+            max-height: calc(100vh - 65px - env(safe-area-inset-bottom, 0px));
+            max-height: calc(100dvh - 65px - env(safe-area-inset-bottom, 0px));
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch;
+        }
+        .auth-form-card::-webkit-scrollbar {
+            display: none;
         }
     }
 
+    /* Laptop / PC: Responsive, Spacious, Centered Card */
     @media (min-width: 992px) {
+        html, body {
+            height: auto !important;
+            min-height: 100vh !important;
+            overflow-y: auto !important;
+            margin: 0 !important;
+        }
         body {
+            padding-top: 0 !important;
             padding-bottom: 0 !important;
+            background-color: #f8fafc !important;
         }
         .register-page-wrapper {
-            height: calc(100vh - 85px);
-            height: calc(100dvh - 85px);
+            width: 100%;
+            min-height: 100vh;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 40px 20px !important;
+            box-sizing: border-box !important;
+        }
+        .register-page-container {
+            max-width: 550px !important;
+            width: 100% !important;
+        }
+        .auth-form-card {
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+            max-height: none !important;
+            overflow-y: visible !important;
+        }
+        .auth-form-card .card-body {
+            padding: 28px 28px !important;
         }
     }
 </style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Prevent all unwanted screen scrolling/dragging on register page outside form inputs
-        document.addEventListener('touchmove', function(e) {
-            if (!e.target.closest('input, textarea, select, button, a, .card-body')) {
-                e.preventDefault();
-            }
-        }, { passive: false });
+        if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+            document.addEventListener('touchmove', function(e) {
+                if (!e.target.closest('input, textarea, select, button, a, .card-body')) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+        }
     });
 </script>
 @endsection
