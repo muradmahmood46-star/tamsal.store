@@ -5,7 +5,7 @@
 @section('content')
 
 <!-- Page Title-->
-<div class="page-title">
+<div class="page-title d-none d-lg-block">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
@@ -19,15 +19,20 @@
     </div>
   </div>
   <!-- Page Content-->
-<div class="container   padding-bottom-3x mb-1">
+<div class="container padding-bottom-3x mb-1 mt-3 mt-lg-0">
   <div class="row">
          @include('includes.user_sitebar')
-          <div class="col-lg-8">
+          <div class="col-12 col-lg-8">
                 <div class="mb-3">
-                    <div class="card">
+                    <div class="card shadow-sm border-0" style="border-radius: 12px;">
                         <div class="card-body d-flex flex-row justify-content-between align-items-center">
-                            <h5 class="mb-0">{{ __('All Tickets') }}</h5>
-                            <a href="{{ route('user.ticket.create') }}" class="btn btn-primary btn-sm"><span>{{__('Add New')}}</span></a>
+                            <div class="d-flex align-items-center">
+                                <a href="{{ route('user.dashboard') }}" class="btn btn-sm btn-light border mr-2 shadow-sm d-lg-none" style="border-radius: 8px; padding: 6px 12px; margin-right: 10px;" title="{{ __('Back to Dashboard') }}">
+                                    <i class="fas fa-arrow-left"></i>
+                                </a>
+                                <h5 class="mb-0 font-weight-bold text-dark">{{ __('All Tickets') }}</h5>
+                            </div>
+                            <a href="{{ route('user.ticket.create') }}" class="btn btn-primary btn-sm font-weight-bold" style="border-radius: 8px;"><span><i class="fas fa-plus mr-1"></i>{{__('Add New')}}</span></a>
                         </div>
                     </div>
                 </div>

@@ -517,7 +517,7 @@
 
 @section('content')
 <!-- Page Title-->
-<div class="page-title">
+<div class="page-title d-none d-lg-block">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
@@ -534,13 +534,16 @@
 </div>
 
 <!-- Page Content-->
-<div class="container padding-bottom-3x mb-2">
+<div class="container padding-bottom-3x mb-2 mt-3 mt-lg-0">
     <div class="row">
         @include('includes.user_sitebar')
 
-        <div class="col-lg-8">
+        <div class="col-12 col-lg-8">
             <div class="card shadow-sm border-0">
-                <div class="card-header bg-primary text-white py-3">
+                <div class="card-header bg-primary text-white py-3 d-flex align-items-center">
+                    <a href="{{ route('user.dashboard') }}" class="btn btn-sm btn-light border mr-2 shadow-sm d-lg-none" style="border-radius: 8px; padding: 6px 12px; margin-right: 10px;" title="{{ __('Back to Dashboard') }}">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
                     <h5 class="mb-0 text-white"><i class="icon-shopping-bag mr-2"></i> {{ __('Open Shop / Seller Application') }}</h5>
                 </div>
 

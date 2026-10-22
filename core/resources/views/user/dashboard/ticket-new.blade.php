@@ -5,7 +5,7 @@
 @section('content')
 
 <!-- Page Title-->
-<div class="page-title">
+<div class="page-title d-none d-lg-block">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
@@ -19,10 +19,10 @@
     </div>
   </div>
   <!-- Page Content-->
-  <div class="container   padding-bottom-3x mb-1">
+  <div class="container padding-bottom-3x mb-1 mt-3 mt-lg-0">
   <div class="row">
          @include('includes.user_sitebar')
-          <div class="col-lg-8">
+          <div class="col-12 col-lg-8">
             <div class="padding-top-2x mt-2 hidden-lg-up"></div>
             <div class="mb-3">
                 <div class="card">

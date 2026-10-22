@@ -2,7 +2,7 @@
     $user = Auth::user() ?? ($user ?? null);
 @endphp
 @if($user)
-<div class="col-lg-4 {{ request()->routeIs('user.message.*') || request()->routeIs('user.order.*') || request()->is('user/orders*') ? 'd-none d-lg-block' : '' }}">
+<div class="col-lg-4 {{ (!request()->routeIs('user.dashboard') && !request()->is('user/dashboard')) ? 'd-none d-lg-block' : '' }}">
     <aside class="user-info-wrapper">
       <div class="user-info">
         <div class="user-avatar">

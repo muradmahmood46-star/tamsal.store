@@ -5,7 +5,7 @@
 @section('content')
 
 <!-- Page Title-->
-<div class="page-title">
+<div class="page-title d-none d-lg-block">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
@@ -19,13 +19,23 @@
     </div>
   </div>
   <!-- Page Content-->
-  <div class="container padding-bottom-3x mb-1">
+  <div class="container padding-bottom-3x mb-1 mt-3 mt-lg-0">
   <div class="row">
          @include('includes.user_sitebar')
-          <div class="col-lg-8">
-            <div class="card">
+          <div class="col-12 col-lg-8">
+            <!-- Mobile Header with Back Button -->
+            <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+                <div class="d-flex align-items-center">
+                    <a href="{{ route('user.dashboard') }}" class="btn btn-sm btn-light border mr-2 shadow-sm d-lg-none" style="border-radius: 8px; padding: 6px 12px; margin-right: 10px;" title="{{ __('Back to Dashboard') }}">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <h5 class="mb-0 font-weight-bold text-dark d-flex align-items-center">
+                        <i class="icon-user mr-2 text-primary" style="margin-right: 8px;"></i>{{ __('Edit Profile') }}
+                    </h5>
+                </div>
+            </div>
+            <div class="card shadow-sm border-0" style="border-radius: 12px;">
                 <div class="card-body">
-                    <div class="padding-top-2x mt-2 hidden-lg-up"></div>
                         <form  class="row" action="{{route('user.profile.update')}}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="col-md-6">
