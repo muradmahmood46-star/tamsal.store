@@ -24,52 +24,43 @@
 
     @if($items->count() > 0)
         @php
-            $categoryGroups = $items->groupBy(function($item) {
-                return $item->category_id ?? 0;
-            });
+            $activeQuickFilter = request('quick_filter');
+            $isRankedView = !empty($activeQuickFilter) || !empty(request('sorting')) || !empty(request('search'));
+            $qfTitle = '';
+            $qfSubtitle = '';
+            $qfIcon = '';
+            if (in_array($activeQuickFilter, ['most_selling', 'best'])) {
+                $qfTitle = __('Most Selling Products');
+                $qfSubtitle = __('Sorted strictly from highest accepted orders to lowest');
+                $qfIcon = 'fa-fire text-danger';
+            } elseif (in_array($activeQuickFilter, ['top_rated', 'top'])) {
+                $qfTitle = __('Top Rated Products');
+                $qfSubtitle = __('Sorted strictly from highest customer ratings to lowest');
+                $qfIcon = 'fa-star text-warning';
+            } elseif (in_array($activeQuickFilter, ['newly_listed', 'new'])) {
+                $qfTitle = __('Newly Listed products');
+                $qfSubtitle = __('Sorted strictly from newest listed products to oldest');
+                $qfIcon = 'fa-bolt text-primary';
+            }
         @endphp
 
-        @foreach ($categoryGroups as $catId => $catItems)
-            @php
-                $catModel = $catItems->first()->category ?? null;
-                $catName = ($catModel && !empty($catModel->name)) ? $catModel->name : __('General Products');
-                $catSlug = $catModel ? $catModel->slug : null;
-            @endphp
-
-            <div class="col-12 catalog-category-block mb-4" data-category-id="{{ $catId }}">
-                {{-- Premium Modern Category Header Bar --}}
-                <div class="catalog-cat-header-bar mb-3">
-                    <div class="d-flex align-items-center justify-content-between flex-wrap">
-                        <div class="d-flex align-items-center">
-                            <div class="catalog-cat-header-icon mr-2">
-                                @if($catModel && !empty($catModel->photo))
-                                    <img src="{{ url('/core/public/storage/images/' . $catModel->photo) }}" alt="{{ $catName }}" class="catalog-cat-avatar-img">
-                                @else
-                                    <i class="fas fa-layer-group"></i>
-                                @endif
-                            </div>
-                            <div>
-                                <h3 class="catalog-cat-title-text mb-0">
-                                    {{ $catName }}
-                                </h3>
-                                <span class="catalog-cat-count-badge">
-                                    {{ $catItems->count() }} {{ __('Products available') }}
-                                </span>
-                            </div>
-                        </div>
-                        @if($catSlug)
-                            <a href="{{ route('front.catalog', ['category' => $catSlug]) }}" class="catalog-cat-view-btn">
-                                <span>{{ __('Explore Category') }}</span>
-                                <i class="icon-chevron-right ml-1"></i>
-                            </a>
-                        @endif
+        @if(!empty($qfTitle))
+            <div class="col-12 mb-3">
+                <div class="d-flex align-items-center justify-content-between p-2 px-3 bg-white rounded shadow-sm border" style="border-left: 4px solid #0d6efd !important;">
+                    <div>
+                        <h5 class="mb-0 font-weight-bold" style="font-size: 15px;"><i class="fas {{ $qfIcon }} mr-2"></i>{{ $qfTitle }}</h5>
+                        <small class="text-muted">{{ $qfSubtitle }}</small>
                     </div>
+                    <span class="badge badge-light border text-dark font-weight-bold">{{ $items->total() }} {{ __('Products') }}</span>
                 </div>
+            </div>
+        @endif
 
-                {{-- Products in this Category --}}
+        @if($isRankedView)
+            <div class="col-12 catalog-category-block mb-4" data-category-id="ranked">
                 <div class="row g-3 gx-2 gx-md-3">
                     @if ($checkType != 'list')
-                        @foreach ($catItems as $item)
+                        @foreach ($items as $item)
                             <div class="col-xxl-3 col-md-4 col-6">
                                 <div class="product-card {{ $item->isPromotionActive() ? 'promoted-card' : '' }}">
                                     @if($item->isPromotionActive())
@@ -78,16 +69,28 @@
                                         </div>
                                     @endif
                                     @if ($item->is_stock())
-                                        @if($item->is_type != 'undefine')
-                                        <div class="product-badge
-                                            @if($item->is_type == 'feature') bg-warning
-                                            @elseif($item->is_type == 'new') bg-danger
-                                            @elseif($item->is_type == 'top') bg-info
-                                            @elseif($item->is_type == 'best') bg-dark
-                                            @elseif($item->is_type == 'flash_deal') bg-success
-                                            @endif
-                                            "> {{ __(str_replace('_',' ',$item->is_type)) }}
-                                        </div>
+                                        @if(!empty($activeQuickFilter) && in_array($activeQuickFilter, ['most_selling', 'best']))
+                                            <div class="product-badge bg-primary text-white font-weight-bold" style="background-color: #0d6efd !important;">
+                                                <i class="fas fa-fire mr-1"></i> {{ $item->accepted_orders_count ?? 0 }} {{ __('Orders') }}
+                                            </div>
+                                        @elseif(!empty($activeQuickFilter) && in_array($activeQuickFilter, ['top_rated', 'top']))
+                                            <div class="product-badge bg-warning text-dark font-weight-bold">
+                                                <i class="fas fa-star mr-1"></i> {{ number_format($item->rating, 1) }} ★
+                                            </div>
+                                        @elseif(!empty($activeQuickFilter) && in_array($activeQuickFilter, ['newly_listed', 'new']))
+                                            <div class="product-badge bg-danger text-white font-weight-bold">
+                                                <i class="fas fa-bolt mr-1"></i> {{ __('New') }}
+                                            </div>
+                                        @elseif($item->is_type != 'undefine')
+                                            <div class="product-badge
+                                                @if($item->is_type == 'feature') bg-warning
+                                                @elseif($item->is_type == 'new') bg-danger
+                                                @elseif($item->is_type == 'top') bg-info
+                                                @elseif($item->is_type == 'best') bg-dark
+                                                @elseif($item->is_type == 'flash_deal') bg-success
+                                                @endif
+                                                "> {{ __(str_replace('_',' ',$item->is_type)) }}
+                                            </div>
                                         @endif
                                     @else
                                         <div class="product-badge bg-secondary border-default text-body">
@@ -135,7 +138,7 @@
                             </div>
                         @endforeach
                     @else
-                        @foreach ($catItems as $item)
+                        @foreach ($items as $item)
                             <div class="col-lg-12">
                                 <div class="product-card product-list {{ $item->isPromotionActive() ? 'promoted-card' : '' }}">
                                     @if($item->isPromotionActive())
@@ -145,16 +148,28 @@
                                     @endif
                                     <div class="product-thumb">
                                         @if ($item->is_stock())
-                                            @if($item->is_type != 'undefine')
-                                            <div class="product-badge
-                                                @if($item->is_type == 'feature') bg-warning
-                                                @elseif($item->is_type == 'new') bg-danger
-                                                @elseif($item->is_type == 'top') bg-info
-                                                @elseif($item->is_type == 'best') bg-dark
-                                                @elseif($item->is_type == 'flash_deal') bg-success
-                                                @endif
-                                                ">{{ __(ucfirst(str_replace('_',' ',$item->is_type))) }}
-                                            </div>
+                                            @if(!empty($activeQuickFilter) && in_array($activeQuickFilter, ['most_selling', 'best']))
+                                                <div class="product-badge bg-primary text-white font-weight-bold" style="background-color: #0d6efd !important;">
+                                                    <i class="fas fa-fire mr-1"></i> {{ $item->accepted_orders_count ?? 0 }} {{ __('Orders') }}
+                                                </div>
+                                            @elseif(!empty($activeQuickFilter) && in_array($activeQuickFilter, ['top_rated', 'top']))
+                                                <div class="product-badge bg-warning text-dark font-weight-bold">
+                                                    <i class="fas fa-star mr-1"></i> {{ number_format($item->rating, 1) }} ★
+                                                </div>
+                                            @elseif(!empty($activeQuickFilter) && in_array($activeQuickFilter, ['newly_listed', 'new']))
+                                                <div class="product-badge bg-danger text-white font-weight-bold">
+                                                    <i class="fas fa-bolt mr-1"></i> {{ __('New') }}
+                                                </div>
+                                            @elseif($item->is_type != 'undefine')
+                                                <div class="product-badge
+                                                    @if($item->is_type == 'feature') bg-warning
+                                                    @elseif($item->is_type == 'new') bg-danger
+                                                    @elseif($item->is_type == 'top') bg-info
+                                                    @elseif($item->is_type == 'best') bg-dark
+                                                    @elseif($item->is_type == 'flash_deal') bg-success
+                                                    @endif
+                                                    ">{{ __(ucfirst(str_replace('_',' ',$item->is_type))) }}
+                                                </div>
                                             @endif
                                         @else
                                             <div class="product-badge bg-secondary border-default text-body">
@@ -209,7 +224,219 @@
                     @endif
                 </div>
             </div>
-        @endforeach
+        @else
+            @php
+                $categoryGroups = $items->groupBy(function($item) {
+                    return $item->category_id ?? 0;
+                });
+            @endphp
+
+            @foreach ($categoryGroups as $catId => $catItems)
+                @php
+                    $catModel = $catItems->first()->category ?? null;
+                    $catName = ($catModel && !empty($catModel->name)) ? $catModel->name : __('General Products');
+                    $catSlug = $catModel ? $catModel->slug : null;
+                @endphp
+
+                <div class="col-12 catalog-category-block mb-4" data-category-id="{{ $catId }}">
+                    {{-- Premium Modern Category Header Bar --}}
+                    <div class="catalog-cat-header-bar mb-3">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap">
+                            <div class="d-flex align-items-center">
+                                <div class="catalog-cat-header-icon mr-2">
+                                    @if($catModel && !empty($catModel->photo))
+                                        <img src="{{ url('/core/public/storage/images/' . $catModel->photo) }}" alt="{{ $catName }}" class="catalog-cat-avatar-img">
+                                    @else
+                                        <i class="fas fa-layer-group"></i>
+                                    @endif
+                                </div>
+                                <div>
+                                    <h3 class="catalog-cat-title-text mb-0">
+                                        {{ $catName }}
+                                    </h3>
+                                    <span class="catalog-cat-count-badge">
+                                        {{ $catItems->count() }} {{ __('Products available') }}
+                                    </span>
+                                </div>
+                            </div>
+                            @if($catSlug)
+                                <a href="{{ route('front.catalog', ['category' => $catSlug]) }}" class="catalog-cat-view-btn">
+                                    <span>{{ __('Explore Category') }}</span>
+                                    <i class="icon-chevron-right ml-1"></i>
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- Products in this Category --}}
+                    <div class="row g-3 gx-2 gx-md-3">
+                        @if ($checkType != 'list')
+                            @foreach ($catItems as $item)
+                                <div class="col-xxl-3 col-md-4 col-6">
+                                    <div class="product-card {{ $item->isPromotionActive() ? 'promoted-card' : '' }}">
+                                        @if($item->isPromotionActive())
+                                            <div class="promoted-tag-badge">
+                                                <i class="fas fa-crown mr-1"></i> {{ $item->promotion_tag }}
+                                            </div>
+                                        @endif
+                                        @if ($item->is_stock())
+                                            @if(!empty($activeQuickFilter) && in_array($activeQuickFilter, ['most_selling', 'best']))
+                                                <div class="product-badge bg-primary text-white font-weight-bold" style="background-color: #0d6efd !important;">
+                                                    <i class="fas fa-fire mr-1"></i> {{ $item->accepted_orders_count ?? 0 }} {{ __('Orders') }}
+                                                </div>
+                                            @elseif(!empty($activeQuickFilter) && in_array($activeQuickFilter, ['top_rated', 'top']))
+                                                <div class="product-badge bg-warning text-dark font-weight-bold">
+                                                    <i class="fas fa-star mr-1"></i> {{ number_format($item->rating, 1) }} ★
+                                                </div>
+                                            @elseif(!empty($activeQuickFilter) && in_array($activeQuickFilter, ['newly_listed', 'new']))
+                                                <div class="product-badge bg-danger text-white font-weight-bold">
+                                                    <i class="fas fa-bolt mr-1"></i> {{ __('New') }}
+                                                </div>
+                                            @elseif($item->is_type != 'undefine')
+                                                <div class="product-badge
+                                                    @if($item->is_type == 'feature') bg-warning
+                                                    @elseif($item->is_type == 'new') bg-danger
+                                                    @elseif($item->is_type == 'top') bg-info
+                                                    @elseif($item->is_type == 'best') bg-dark
+                                                    @elseif($item->is_type == 'flash_deal') bg-success
+                                                    @endif
+                                                    "> {{ __(str_replace('_',' ',$item->is_type)) }}
+                                                </div>
+                                            @endif
+                                        @else
+                                            <div class="product-badge bg-secondary border-default text-body">
+                                                {{__('out of stock')}}
+                                            </div>
+                                        @endif
+
+                                        @if($item->previous_price && $item->previous_price !=0)
+                                            <div class="product-badge product-badge2 bg-info"> -{{PriceHelper::DiscountPercentage($item)}}</div>
+                                        @endif
+                                        <div class="product-thumb">
+                                            @if($item->is_free_delivery == 1)
+                                                <div class="product-badge product-badge-free-delivery bg-success">{{ __('Free Delivery') }}</div>
+                                            @endif
+                                            <img src="{{url('/core/public/storage/images/'.($item->photo ?: $item->thumbnail))}}" class="lazy" data-src="{{url('/core/public/storage/images/'.($item->photo ?: $item->thumbnail))}}" alt="{{ $item->name ?? 'Product' }}">
+                                            <div class="product-button-group">
+                                                <a class="product-button wishlist_store" href="{{route('user.wishlist.store',$item->id)}}" title="{{__('Wishlist')}}"><i class="icon-heart"></i></a>
+                                                <a class="product-button product_compare" href="javascript:;" data-target="{{route('fornt.compare.product',$item->id)}}" title="{{__('Compare')}}"><i class="icon-repeat"></i></a>
+                                                @include('includes.item_footer',['sitem' => $item])
+                                            </div>
+                                        </div>
+                                        <div class="product-card-body">
+                                            <div class="product-category">
+                                                @if($item->subcategory && $item->subcategory->name)
+                                                    <a href="{{route('front.catalog').'?subcategory='.$item->subcategory->slug}}">{{$item->subcategory->name}}</a>
+                                                @endif
+                                            </div>
+                                            <h3 class="product-title"><a href="{{route('front.product',$item->slug)}}">
+                                                {{ Str::limit($item->name, 70) }}
+                                            </a></h3>
+                                            <div class="rating-stars">
+                                                {!! Helper::renderStarRating($item) !!}
+                                                @if($item->rating > 0)
+                                                    <span class="text-muted ml-1" style="font-size: 11.5px; font-weight: 600;">({{ number_format($item->rating, 1) }})</span>
+                                                @endif
+                                            </div>
+                                            <h4 class="product-price">
+                                                @if ($item->previous_price !=0)
+                                                    <del>{{PriceHelper::setPreviousPrice($item->previous_price)}}</del>
+                                                @endif
+                                                {{PriceHelper::grandCurrencyPrice($item)}}
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @else
+                            @foreach ($catItems as $item)
+                                <div class="col-lg-12">
+                                    <div class="product-card product-list {{ $item->isPromotionActive() ? 'promoted-card' : '' }}">
+                                        @if($item->isPromotionActive())
+                                            <div class="promoted-tag-badge">
+                                                <i class="fas fa-crown mr-1"></i> {{ $item->promotion_tag }}
+                                            </div>
+                                        @endif
+                                        <div class="product-thumb">
+                                            @if ($item->is_stock())
+                                                @if(!empty($activeQuickFilter) && in_array($activeQuickFilter, ['most_selling', 'best']))
+                                                    <div class="product-badge bg-primary text-white font-weight-bold" style="background-color: #0d6efd !important;">
+                                                        <i class="fas fa-fire mr-1"></i> {{ $item->accepted_orders_count ?? 0 }} {{ __('Orders') }}
+                                                    </div>
+                                                @elseif(!empty($activeQuickFilter) && in_array($activeQuickFilter, ['top_rated', 'top']))
+                                                    <div class="product-badge bg-warning text-dark font-weight-bold">
+                                                        <i class="fas fa-star mr-1"></i> {{ number_format($item->rating, 1) }} ★
+                                                    </div>
+                                                @elseif(!empty($activeQuickFilter) && in_array($activeQuickFilter, ['newly_listed', 'new']))
+                                                    <div class="product-badge bg-danger text-white font-weight-bold">
+                                                        <i class="fas fa-bolt mr-1"></i> {{ __('New') }}
+                                                    </div>
+                                                @elseif($item->is_type != 'undefine')
+                                                    <div class="product-badge
+                                                        @if($item->is_type == 'feature') bg-warning
+                                                        @elseif($item->is_type == 'new') bg-danger
+                                                        @elseif($item->is_type == 'top') bg-info
+                                                        @elseif($item->is_type == 'best') bg-dark
+                                                        @elseif($item->is_type == 'flash_deal') bg-success
+                                                        @endif
+                                                        ">{{ __(ucfirst(str_replace('_',' ',$item->is_type))) }}
+                                                    </div>
+                                                @endif
+                                            @else
+                                                <div class="product-badge bg-secondary border-default text-body">
+                                                    {{__('out of stock')}}
+                                                </div>
+                                            @endif
+                                            @if($item->previous_price && $item->previous_price !=0)
+                                                <div class="product-badge product-badge2 bg-info"> -{{PriceHelper::DiscountPercentage($item)}}</div>
+                                            @endif
+
+                                            @if($item->is_free_delivery == 1)
+                                                <div class="product-badge product-badge-free-delivery bg-success">{{ __('Free Delivery') }}</div>
+                                            @endif
+
+                                            <img src="{{url('/core/public/storage/images/'.($item->photo ?: $item->thumbnail))}}" class="lazy" data-src="{{url('/core/public/storage/images/'.($item->photo ?: $item->thumbnail))}}" alt="{{ $item->name ?? 'Product' }}">
+                                            <div class="product-button-group">
+                                                <a class="product-button wishlist_store" href="{{route('user.wishlist.store',$item->id)}}" title="{{__('Wishlist')}}"><i class="icon-heart"></i></a>
+                                                <a data-target="{{route('fornt.compare.product',$item->id)}}" class="product-button product_compare" href="javascript:;" title="{{__('Compare')}}"><i class="icon-repeat"></i></a>
+                                                @include('includes.item_footer',['sitem' => $item])
+                                            </div>
+                                        </div>
+                                        <div class="product-card-inner">
+                                            <div class="product-card-body">
+                                                <div class="product-category">
+                                                    @if($item->subcategory && $item->subcategory->name)
+                                                        <a href="{{route('front.catalog').'?subcategory='.$item->subcategory->slug}}">{{$item->subcategory->name}}</a>
+                                                    @endif
+                                                </div>
+                                                <h3 class="product-title"><a href="{{route('front.product',$item->slug)}}">
+                                                    {{ Str::limit($item->name, 70) }}
+                                                </a></h3>
+                                                <div class="rating-stars">
+                                                    {!! Helper::renderStarRating($item) !!}
+                                                    @if($item->rating > 0)
+                                                        <span class="text-muted ml-1" style="font-size: 11.5px; font-weight: 600;">({{ number_format($item->rating, 1) }})</span>
+                                                    @endif
+                                                </div>
+                                                <h4 class="product-price">
+                                                    @if ($item->previous_price !=0)
+                                                        <del>{{PriceHelper::setPreviousPrice($item->previous_price)}}</del>
+                                                    @endif
+                                                    {{PriceHelper::grandCurrencyPrice($item)}}
+                                                </h4>
+                                                <p class="text-sm sort_details_show text-muted hidden-xs-down my-1">
+                                                    {{ Str::limit(strip_tags($item->sort_details), 100) }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+            @endforeach
+        @endif
     @elseif(!isset($deals) || $deals->count() == 0)
         <div class="col-lg-12">
             <div class="card">

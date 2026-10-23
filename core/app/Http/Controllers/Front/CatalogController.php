@@ -17,8 +17,10 @@ use App\Models\AttributeOption;
 use App\Models\Brand;
 use App\Models\ChieldCategory;
 use App\Models\Deal;
+use App\Models\Order;
 use App\Models\Setting;
 use App\Models\Subcategory;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 
 class CatalogController extends Controller
@@ -57,11 +59,59 @@ class CatalogController extends Controller
         $setting = Setting::first();
 
         $sorting = $request->has('sorting') ?  ( !empty($request->sorting) ? $request->sorting : null ) : null;
-        $new = $request->has('new') ?  ( !empty($request->new) ? 1 : null ) : null;
-        $feature = $request->has('quick_filter') ?  ( !empty($request->quick_filter == 'feature') ? 1 : null ) : null;
-        $top = $request->has('quick_filter') ?  ( !empty($request->quick_filter == 'top') ? 1 : null ) : null;
-        $best = $request->has('quick_filter') ?  ( !empty($request->quick_filter == 'best') ? 1 : null ) : null;
-        $new = $request->has('quick_filter') ?  ( !empty($request->quick_filter == 'new') ? 1 : null ) : null;
+        $quick_filter = $request->has('quick_filter') ? ( !empty($request->quick_filter) ? trim($request->quick_filter) : null ) : null;
+        $feature = ($quick_filter == 'feature') ? 1 : null;
+        $isMostSelling = ($quick_filter == 'most_selling' || $quick_filter == 'best');
+        $isTopRated = ($quick_filter == 'top_rated' || $quick_filter == 'top');
+        $isNewlyListed = ($quick_filter == 'newly_listed' || $quick_filter == 'new' || ($request->has('new') && !empty($request->new)));
+
+        $salesData = Cache::remember('catalog_item_sales_map', 60, function() {
+            try {
+                $orders = Order::whereIn('order_status', ['Accepted', 'In Progress', 'Send to Delivery House', 'Delivered'])
+                    ->whereNotNull('cart')
+                    ->select('cart')
+                    ->get();
+
+                $itemOrderCounts = [];
+                $itemQtyCounts = [];
+
+                foreach ($orders as $order) {
+                    $cart = is_string($order->cart) ? json_decode($order->cart, true) : $order->cart;
+                    if (!is_array($cart)) continue;
+                    $seenInOrder = [];
+                    foreach ($cart as $key => $cItem) {
+                        $itemId = isset($cItem['id']) && is_numeric($cItem['id']) ? (int)$cItem['id'] : (int)explode('-', $key)[0];
+                        if ($itemId > 0) {
+                            $qty = isset($cItem['qty']) ? (int)$cItem['qty'] : 1;
+                            if (!isset($seenInOrder[$itemId])) {
+                                $itemOrderCounts[$itemId] = ($itemOrderCounts[$itemId] ?? 0) + 1;
+                                $seenInOrder[$itemId] = true;
+                            }
+                            $itemQtyCounts[$itemId] = ($itemQtyCounts[$itemId] ?? 0) + $qty;
+                        }
+                    }
+                }
+
+                uksort($itemOrderCounts, function($a, $b) use ($itemOrderCounts, $itemQtyCounts) {
+                    if ($itemOrderCounts[$a] === $itemOrderCounts[$b]) {
+                        return ($itemQtyCounts[$b] ?? 0) <=> ($itemQtyCounts[$a] ?? 0);
+                    }
+                    return $itemOrderCounts[$b] <=> $itemOrderCounts[$a];
+                });
+
+                return [
+                    'order_counts' => $itemOrderCounts,
+                    'qty_counts' => $itemQtyCounts,
+                    'sorted_ids' => array_keys($itemOrderCounts)
+                ];
+            } catch (\Throwable $e) {
+                return [
+                    'order_counts' => [],
+                    'qty_counts' => [],
+                    'sorted_ids' => []
+                ];
+            }
+        });
         $brand = $request->has('brand') ?  ( !empty($request->brand) ? Brand::whereSlug($request->brand)->firstOrFail() : null ) : null;
         $search = $request->has('search') ?  ( !empty($request->search) ? $request->search : null ) : null;
         $vendorParam = $request->has('vendor') ? ( !empty($request->vendor) ? trim((string)$request->vendor) : null ) : ( $request->has('v') ? ( !empty($request->v) ? trim((string)$request->v) : null ) : null );
@@ -214,19 +264,6 @@ class CatalogController extends Controller
         })
       
 
-        ->when($new, function ($query) {
-            return $query->orderby('id','desc');
-        })
-        ->when($top, function ($query) {
-            return $query->whereIsType('top');
-        })
-        ->when($best, function ($query) {
-            return $query->whereIsType('best');
-        })
-        ->when($new, function ($query) {
-            return $query->whereIsType('new');
-        })
-
         ->when($brand, function ($query, $brand) {
             return $query->where('brand_id', $brand->id);
         })
@@ -290,7 +327,31 @@ class CatalogController extends Controller
             }else{
                 return $query->orderby('discount_price','desc');
             }
-        }, function($query) use ($search) {
+        }, function($query) use ($search, $isMostSelling, $isTopRated, $isNewlyListed, $salesData) {
+            if ($isMostSelling) {
+                if (!empty($salesData['sorted_ids'])) {
+                    $idsString = implode(',', $salesData['sorted_ids']);
+                    return $query->orderByRaw("FIELD(items.id, {$idsString}) = 0, FIELD(items.id, {$idsString}) ASC, items.id DESC");
+                }
+                return $query->orderBy('items.id', 'desc');
+            }
+
+            if ($isTopRated) {
+                return $query->orderByRaw("
+                    COALESCE(
+                        (SELECT AVG(rating) FROM reviews WHERE reviews.item_id = items.id AND reviews.status = 1),
+                        IF(items.is_custom_rating = 1 AND items.custom_rating > 0, items.custom_rating, 0),
+                        0
+                    ) DESC,
+                    (SELECT COUNT(id) FROM reviews WHERE reviews.item_id = items.id AND reviews.status = 1) DESC,
+                    items.id DESC
+                ");
+            }
+
+            if ($isNewlyListed) {
+                return $query->orderBy('items.id', 'desc');
+            }
+
             if (!empty($search)) {
                 $escaped = addslashes($search);
                 return $query->orderByRaw("
@@ -307,6 +368,7 @@ class CatalogController extends Controller
                     END) DESC, id DESC
                 ");
             }
+
             return $query->orderby('category_id', 'asc')->orderby('id', 'desc');
         })
 
@@ -328,6 +390,11 @@ class CatalogController extends Controller
         })
 
         ->paginate($setting->view_product);
+
+        foreach ($items as $it) {
+            $it->accepted_orders_count = $salesData['order_counts'][$it->id] ?? 0;
+            $it->accepted_units_sold = $salesData['qty_counts'][$it->id] ?? 0;
+        }
 
      
         $attrubutes_check =[];
@@ -438,6 +505,7 @@ class CatalogController extends Controller
             'checkType'  => $checkType,
             'vendorStore' => $vendorStore,
             'vendor' => $vendor,
+            'quick_filter' => $quick_filter,
             'tag' => $tag,
             'brands' => Brand::withCount('items')->whereStatus(1)->get(),
             'categories' => Category::whereStatus(1)->orderby('serial','asc')->withCount(['items' => function($query) {

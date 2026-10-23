@@ -75,11 +75,10 @@
                             <div class="quickFilter">
                                 <h4 class="quickFilter-title"><i class="fas fa-filter"></i>{{__('Quick filter')}}</h4>
                                 <ul id="quick_filter">
-                                    <li><a datahref=""><i class="icon-chevron-right pr-2"></i>{{__('All products')}} </a></li>
-                                    <li class=""><a href="javascript:;" data-href="feature"><i class="icon-chevron-right pr-2"></i>{{__('Featured products')}} </a></li>
-                                    <li class=""><a href="javascript:;" data-href="best"><i class="icon-chevron-right pr-2"></i>{{__('Best sellers')}} </a></li>
-                                    <li class=""><a href="javascript:;" data-href="top"><i class="icon-chevron-right pr-2"></i>{{__('Top rated')}} </a></li>
-                                    <li class=""><a href="javascript:;" data-href="new"><i class="icon-chevron-right pr-2"></i>{{__('New Arrival')}} </a></li>
+                                    <li class="{{ empty(request('quick_filter')) || request('quick_filter') == 'all' ? 'active' : '' }}"><a href="javascript:;" data-href=""><i class="icon-chevron-right pr-2"></i>{{__('ALL PRODUCTS')}} </a></li>
+                                    <li class="{{ in_array(request('quick_filter'), ['most_selling', 'best']) ? 'active' : '' }}"><a href="javascript:;" data-href="most_selling"><i class="icon-chevron-right pr-2"></i>{{__('Most Selling Products')}} </a></li>
+                                    <li class="{{ in_array(request('quick_filter'), ['top_rated', 'top']) ? 'active' : '' }}"><a href="javascript:;" data-href="top_rated"><i class="icon-chevron-right pr-2"></i>{{__('Top Rated Products')}} </a></li>
+                                    <li class="{{ in_array(request('quick_filter'), ['newly_listed', 'new']) ? 'active' : '' }}"><a href="javascript:;" data-href="newly_listed"><i class="icon-chevron-right pr-2"></i>{{__('Newly Listed products')}} </a></li>
                                 </ul>
                             </div>
                             <div class="shop-sorting">
@@ -226,7 +225,7 @@
     <input type="text" name="brand" id="brand" value="{{isset($brand) ? $brand->slug : ''}}">
     <input type="text" name="vendor" id="vendor" value="{{request()->input('vendor') ? request()->input('vendor') : ''}}">
     <input type="text" name="category" id="category" value="{{request()->input('category') ? (is_array(request()->input('category')) ? implode(',', request()->input('category')) : request()->input('category')) : (isset($category) && $category ? $category->slug : '')}}">
-    <input type="text" name="quick_filter" id="quick_filter" value="">
+    <input type="text" name="quick_filter" id="quick_filter" value="{{ request('quick_filter') ?? '' }}">
     <input type="text" name="childcategory" id="childcategory" value="{{isset($childcategory) ? $childcategory->slug : ''}}">
     <input type="text" name="page" id="page" value="{{isset($page) ? $page : ''}}">
     <input type="text" name="attribute" id="attribute" value="{{isset($attribute) ? $attribute : ''}}">

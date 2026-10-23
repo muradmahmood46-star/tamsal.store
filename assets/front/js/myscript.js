@@ -869,16 +869,17 @@ $(function ($) {
 
 
 
-        $(document).on('click', '#quick_filter li a', function () {
+        $(document).on('click', '#quick_filter li a', function (e) {
+            e.preventDefault();
             $('#quick_filter li').removeClass('active');
-            let filter = '';
             $(this).parent().addClass('active');
-            if ($(this).attr('data-href')) {
-                filter = $(this).attr('data-href');
-            } else {
-                filter = $(this).attr('data-href');
+            let filter = $(this).attr('data-href');
+            if (typeof filter === 'undefined' || filter === null) {
+                filter = '';
             }
             $("#search_form #quick_filter").val(filter);
+            $("#search_form #sorting").val('');
+            $("#sorting").val('');
             closeMobileFilterSidebar();
             removePage();
             $("#search_button").click();
