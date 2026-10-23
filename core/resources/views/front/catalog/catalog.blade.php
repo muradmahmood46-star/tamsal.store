@@ -62,7 +62,7 @@
                 <div class="row g-3 gx-2 gx-md-3">
                     @if ($checkType != 'list')
                         @foreach ($items as $item)
-                            <div class="col-xxl-3 col-md-4 col-6">
+                            <div class="col-xxl-3 col-md-4 col-6 catalog-product-item" data-product-id="{{ $item->id }}">
                                 <div class="product-card {{ $item->isPromotionActive() ? 'promoted-card' : '' }}">
                                     @if($item->isPromotionActive())
                                         <div class="promoted-tag-badge">
@@ -128,7 +128,7 @@
                         @endforeach
                     @else
                         @foreach ($items as $item)
-                            <div class="col-lg-12">
+                            <div class="col-lg-12 catalog-product-item" data-product-id="{{ $item->id }}">
                                 <div class="product-card product-list {{ $item->isPromotionActive() ? 'promoted-card' : '' }}">
                                     @if($item->isPromotionActive())
                                         <div class="promoted-tag-badge">
@@ -249,7 +249,7 @@
                     <div class="row g-3 gx-2 gx-md-3">
                         @if ($checkType != 'list')
                             @foreach ($catItems as $item)
-                                <div class="col-xxl-3 col-md-4 col-6">
+                                <div class="col-xxl-3 col-md-4 col-6 catalog-product-item" data-product-id="{{ $item->id }}">
                                     <div class="product-card {{ $item->isPromotionActive() ? 'promoted-card' : '' }}">
                                         @if($item->isPromotionActive())
                                             <div class="promoted-tag-badge">
@@ -315,7 +315,7 @@
                             @endforeach
                         @else
                             @foreach ($catItems as $item)
-                                <div class="col-lg-12">
+                                <div class="col-lg-12 catalog-product-item" data-product-id="{{ $item->id }}">
                                     <div class="product-card product-list {{ $item->isPromotionActive() ? 'promoted-card' : '' }}">
                                         @if($item->isPromotionActive())
                                             <div class="promoted-tag-badge">
@@ -411,7 +411,7 @@
     <span class="text-muted" style="font-size:13px;"><i class="fas fa-check-circle text-success mr-1"></i>{{ __("You've seen all products") }}</span>
 </div>
 <script>
-window._infiniteNextUrl = '{{ $items->nextPageUrl() }}';
+window._infiniteNextUrl = '{!! $items->nextPageUrl() !!}';
 window._infiniteInit && window._infiniteInit();
 </script>
 

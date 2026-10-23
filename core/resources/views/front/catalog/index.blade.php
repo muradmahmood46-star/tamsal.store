@@ -482,6 +482,7 @@
         var nextUrl = window._infiniteNextUrl;
         if(_loading || !nextUrl) return;
         _loading = true;
+        nextUrl = nextUrl.replace(/&amp;/g, '&');
         var loader = document.getElementById('infinite-scroll-loader');
         var endMsg = document.getElementById('infinite-scroll-end');
         if(loader) loader.style.display = 'block';
@@ -504,10 +505,17 @@
 
                     // If existing view is flat/ranked (mixed filter view), keep it strictly flat!
                     if(existingRanked && existingRankedRow){
-                        var products = child.querySelectorAll('.product-card');
+                        var products = child.querySelectorAll('.catalog-product-item');
+                        if(!products.length){
+                            products = child.querySelectorAll('.product-card');
+                        }
                         products.forEach(function(pc){
-                            var colWrapper = pc.closest('.col-xxl-3, .col-md-4, .col-6, .col-lg-12');
+                            var colWrapper = pc.classList.contains('catalog-product-item') ? pc : pc.closest('.col-xxl-3, .col-md-4, .col-6, .col-lg-12');
                             if(colWrapper){
+                                var pid = colWrapper.dataset && colWrapper.dataset.productId;
+                                if(pid && existingMain.querySelector('.catalog-product-item[data-product-id="' + pid + '"]')){
+                                    return; // Skip duplicate!
+                                }
                                 existingRankedRow.appendChild(colWrapper.cloneNode(true));
                             }
                         });
@@ -522,12 +530,16 @@
                         var newRow = child.querySelector('.row.g-3.gx-2');
                         if(existingRow && newRow){
                             Array.from(newRow.children).forEach(function(product){
+                                var pid = product.dataset && product.dataset.productId;
+                                if(pid && existingMain.querySelector('.catalog-product-item[data-product-id="' + pid + '"]')){
+                                    return; // Skip duplicate!
+                                }
                                 existingRow.appendChild(product.cloneNode(true));
                             });
                             // Update product count badge
                             var badge = existing.querySelector('.catalog-cat-count-badge');
                             if(badge){
-                                var total = existingRow.children.length;
+                                var total = existingRow.querySelectorAll('.product-card').length;
                                 badge.textContent = badge.textContent.replace(/\d+/, total);
                             }
                             return;
@@ -539,7 +551,7 @@
 
             // Get next URL from injected script tag
             var m = html.match(/window\._infiniteNextUrl = '([^']*)'/);
-            window._infiniteNextUrl = (m && m[1]) ? m[1] : '';
+            window._infiniteNextUrl = (m && m[1]) ? m[1].replace(/&amp;/g, '&') : '';
 
             _loading = false;
             if(loader) loader.style.display = 'none';
@@ -562,6 +574,9 @@
     window._infiniteInit = function(){
         // Reset state on filter reload
         _loading = false;
+        if(window._infiniteNextUrl){
+            window._infiniteNextUrl = window._infiniteNextUrl.replace(/&amp;/g, '&');
+        }
         if(_observer) _observer.disconnect();
         var endMsg = document.getElementById('infinite-scroll-end');
         if(endMsg) endMsg.style.display = 'none';
