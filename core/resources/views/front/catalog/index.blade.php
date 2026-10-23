@@ -497,24 +497,23 @@
             if(newMain && existingMain){
                 Array.from(newMain.children).forEach(function(child){
                     var catId = child.dataset && child.dataset.categoryId;
-                    if(catId){
-                        var existing = existingMain.querySelector('.catalog-category-block[data-category-id="' + catId + '"]');
-                        if(existing){
-                            // Merge products into the existing category block
-                            var existingRow = existing.querySelector('.row.g-3.gx-2');
-                            var newRow = child.querySelector('.row.g-3.gx-2');
-                            if(existingRow && newRow){
-                                Array.from(newRow.children).forEach(function(product){
-                                    existingRow.appendChild(product.cloneNode(true));
-                                });
-                                // Update product count badge
-                                var badge = existing.querySelector('.catalog-cat-count-badge');
-                                if(badge){
-                                    var total = existingRow.children.length;
-                                    badge.textContent = badge.textContent.replace(/\d+/, total);
-                                }
-                                return;
+                    if(!catId) return;
+                    var existing = existingMain.querySelector('.catalog-category-block[data-category-id="' + catId + '"]');
+                    if(existing){
+                        // Merge products into the existing category block
+                        var existingRow = existing.querySelector('.row.g-3.gx-2');
+                        var newRow = child.querySelector('.row.g-3.gx-2');
+                        if(existingRow && newRow){
+                            Array.from(newRow.children).forEach(function(product){
+                                existingRow.appendChild(product.cloneNode(true));
+                            });
+                            // Update product count badge
+                            var badge = existing.querySelector('.catalog-cat-count-badge');
+                            if(badge){
+                                var total = existingRow.children.length;
+                                badge.textContent = badge.textContent.replace(/\d+/, total);
                             }
+                            return;
                         }
                     }
                     existingMain.appendChild(child.cloneNode(true));
