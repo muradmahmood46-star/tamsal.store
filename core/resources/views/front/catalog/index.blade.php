@@ -495,9 +495,26 @@
             var newMain = doc.getElementById('main_div');
             var existingMain = document.getElementById('main_div');
             if(newMain && existingMain){
+                var existingRanked = existingMain.querySelector('.catalog-category-block[data-category-id="ranked"]');
+                var existingRankedRow = existingRanked ? existingRanked.querySelector('.row.g-3.gx-2') : null;
+
                 Array.from(newMain.children).forEach(function(child){
                     var catId = child.dataset && child.dataset.categoryId;
                     if(!catId) return;
+
+                    // If existing view is flat/ranked (mixed filter view), keep it strictly flat!
+                    if(existingRanked && existingRankedRow){
+                        var products = child.querySelectorAll('.product-card');
+                        products.forEach(function(pc){
+                            var colWrapper = pc.closest('.col-xxl-3, .col-md-4, .col-6, .col-lg-12');
+                            if(colWrapper){
+                                existingRankedRow.appendChild(colWrapper.cloneNode(true));
+                            }
+                        });
+                        return;
+                    }
+
+                    // Otherwise, category-wise view
                     var existing = existingMain.querySelector('.catalog-category-block[data-category-id="' + catId + '"]');
                     if(existing){
                         // Merge products into the existing category block

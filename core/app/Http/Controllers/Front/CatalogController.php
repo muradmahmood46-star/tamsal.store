@@ -389,7 +389,8 @@ class CatalogController extends Controller
                 ->orWhere('is_hidden_by_block', 0);
         })
 
-        ->paginate($setting->view_product);
+        ->paginate($setting->view_product)
+        ->appends($request->all());
 
         foreach ($items as $it) {
             $it->accepted_orders_count = $salesData['order_counts'][$it->id] ?? 0;

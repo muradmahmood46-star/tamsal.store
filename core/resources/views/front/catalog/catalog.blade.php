@@ -24,7 +24,7 @@
 
     @if($items->count() > 0)
         @php
-            $activeQuickFilter = request('quick_filter');
+            $activeQuickFilter = trim((string)($quick_filter ?? request('quick_filter')));
             $hasSpecialQuickFilter = (!empty($activeQuickFilter) && $activeQuickFilter !== 'all') || !empty(request('new'));
             $isRankedView = $hasSpecialQuickFilter || !empty(request('sorting')) || !empty(request('search'));
             $qfTitle = '';
