@@ -69,28 +69,16 @@
                                         </div>
                                     @endif
                                     @if ($item->is_stock())
-                                        @if(!empty($activeQuickFilter) && in_array($activeQuickFilter, ['most_selling', 'best']))
-                                            <div class="product-badge bg-primary text-white font-weight-bold" style="background-color: #0d6efd !important;">
-                                                <i class="fas fa-fire mr-1"></i> {{ $item->accepted_orders_count ?? 0 }} {{ __('Orders') }}
-                                            </div>
-                                        @elseif(!empty($activeQuickFilter) && in_array($activeQuickFilter, ['top_rated', 'top']))
-                                            <div class="product-badge bg-warning text-dark font-weight-bold">
-                                                <i class="fas fa-star mr-1"></i> {{ number_format($item->rating, 1) }} ★
-                                            </div>
-                                        @elseif(!empty($activeQuickFilter) && in_array($activeQuickFilter, ['newly_listed', 'new']))
-                                            <div class="product-badge bg-danger text-white font-weight-bold">
-                                                <i class="fas fa-bolt mr-1"></i> {{ __('New') }}
-                                            </div>
-                                        @elseif($item->is_type != 'undefine')
-                                            <div class="product-badge
-                                                @if($item->is_type == 'feature') bg-warning
-                                                @elseif($item->is_type == 'new') bg-danger
-                                                @elseif($item->is_type == 'top') bg-info
-                                                @elseif($item->is_type == 'best') bg-dark
-                                                @elseif($item->is_type == 'flash_deal') bg-success
-                                                @endif
-                                                "> {{ __(str_replace('_',' ',$item->is_type)) }}
-                                            </div>
+                                        @if($item->is_type != 'undefine')
+                                        <div class="product-badge
+                                            @if($item->is_type == 'feature') bg-warning
+                                            @elseif($item->is_type == 'new') bg-danger
+                                            @elseif($item->is_type == 'top') bg-info
+                                            @elseif($item->is_type == 'best') bg-dark
+                                            @elseif($item->is_type == 'flash_deal') bg-success
+                                            @endif
+                                            "> {{ __(str_replace('_',' ',$item->is_type)) }}
+                                        </div>
                                         @endif
                                     @else
                                         <div class="product-badge bg-secondary border-default text-body">
@@ -148,28 +136,16 @@
                                     @endif
                                     <div class="product-thumb">
                                         @if ($item->is_stock())
-                                            @if(!empty($activeQuickFilter) && in_array($activeQuickFilter, ['most_selling', 'best']))
-                                                <div class="product-badge bg-primary text-white font-weight-bold" style="background-color: #0d6efd !important;">
-                                                    <i class="fas fa-fire mr-1"></i> {{ $item->accepted_orders_count ?? 0 }} {{ __('Orders') }}
-                                                </div>
-                                            @elseif(!empty($activeQuickFilter) && in_array($activeQuickFilter, ['top_rated', 'top']))
-                                                <div class="product-badge bg-warning text-dark font-weight-bold">
-                                                    <i class="fas fa-star mr-1"></i> {{ number_format($item->rating, 1) }} ★
-                                                </div>
-                                            @elseif(!empty($activeQuickFilter) && in_array($activeQuickFilter, ['newly_listed', 'new']))
-                                                <div class="product-badge bg-danger text-white font-weight-bold">
-                                                    <i class="fas fa-bolt mr-1"></i> {{ __('New') }}
-                                                </div>
-                                            @elseif($item->is_type != 'undefine')
-                                                <div class="product-badge
-                                                    @if($item->is_type == 'feature') bg-warning
-                                                    @elseif($item->is_type == 'new') bg-danger
-                                                    @elseif($item->is_type == 'top') bg-info
-                                                    @elseif($item->is_type == 'best') bg-dark
-                                                    @elseif($item->is_type == 'flash_deal') bg-success
-                                                    @endif
-                                                    ">{{ __(ucfirst(str_replace('_',' ',$item->is_type))) }}
-                                                </div>
+                                            @if($item->is_type != 'undefine')
+                                            <div class="product-badge
+                                                @if($item->is_type == 'feature') bg-warning
+                                                @elseif($item->is_type == 'new') bg-danger
+                                                @elseif($item->is_type == 'top') bg-info
+                                                @elseif($item->is_type == 'best') bg-dark
+                                                @elseif($item->is_type == 'flash_deal') bg-success
+                                                @endif
+                                                ">{{ __(ucfirst(str_replace('_',' ',$item->is_type))) }}
+                                            </div>
                                             @endif
                                         @else
                                             <div class="product-badge bg-secondary border-default text-body">
@@ -280,28 +256,16 @@
                                             </div>
                                         @endif
                                         @if ($item->is_stock())
-                                            @if(!empty($activeQuickFilter) && in_array($activeQuickFilter, ['most_selling', 'best']))
-                                                <div class="product-badge bg-primary text-white font-weight-bold" style="background-color: #0d6efd !important;">
-                                                    <i class="fas fa-fire mr-1"></i> {{ $item->accepted_orders_count ?? 0 }} {{ __('Orders') }}
-                                                </div>
-                                            @elseif(!empty($activeQuickFilter) && in_array($activeQuickFilter, ['top_rated', 'top']))
-                                                <div class="product-badge bg-warning text-dark font-weight-bold">
-                                                    <i class="fas fa-star mr-1"></i> {{ number_format($item->rating, 1) }} ★
-                                                </div>
-                                            @elseif(!empty($activeQuickFilter) && in_array($activeQuickFilter, ['newly_listed', 'new']))
-                                                <div class="product-badge bg-danger text-white font-weight-bold">
-                                                    <i class="fas fa-bolt mr-1"></i> {{ __('New') }}
-                                                </div>
-                                            @elseif($item->is_type != 'undefine')
-                                                <div class="product-badge
-                                                    @if($item->is_type == 'feature') bg-warning
-                                                    @elseif($item->is_type == 'new') bg-danger
-                                                    @elseif($item->is_type == 'top') bg-info
-                                                    @elseif($item->is_type == 'best') bg-dark
-                                                    @elseif($item->is_type == 'flash_deal') bg-success
-                                                    @endif
-                                                    "> {{ __(str_replace('_',' ',$item->is_type)) }}
-                                                </div>
+                                            @if($item->is_type != 'undefine')
+                                            <div class="product-badge
+                                                @if($item->is_type == 'feature') bg-warning
+                                                @elseif($item->is_type == 'new') bg-danger
+                                                @elseif($item->is_type == 'top') bg-info
+                                                @elseif($item->is_type == 'best') bg-dark
+                                                @elseif($item->is_type == 'flash_deal') bg-success
+                                                @endif
+                                                "> {{ __(str_replace('_',' ',$item->is_type)) }}
+                                            </div>
                                             @endif
                                         @else
                                             <div class="product-badge bg-secondary border-default text-body">
@@ -359,28 +323,16 @@
                                         @endif
                                         <div class="product-thumb">
                                             @if ($item->is_stock())
-                                                @if(!empty($activeQuickFilter) && in_array($activeQuickFilter, ['most_selling', 'best']))
-                                                    <div class="product-badge bg-primary text-white font-weight-bold" style="background-color: #0d6efd !important;">
-                                                        <i class="fas fa-fire mr-1"></i> {{ $item->accepted_orders_count ?? 0 }} {{ __('Orders') }}
-                                                    </div>
-                                                @elseif(!empty($activeQuickFilter) && in_array($activeQuickFilter, ['top_rated', 'top']))
-                                                    <div class="product-badge bg-warning text-dark font-weight-bold">
-                                                        <i class="fas fa-star mr-1"></i> {{ number_format($item->rating, 1) }} ★
-                                                    </div>
-                                                @elseif(!empty($activeQuickFilter) && in_array($activeQuickFilter, ['newly_listed', 'new']))
-                                                    <div class="product-badge bg-danger text-white font-weight-bold">
-                                                        <i class="fas fa-bolt mr-1"></i> {{ __('New') }}
-                                                    </div>
-                                                @elseif($item->is_type != 'undefine')
-                                                    <div class="product-badge
-                                                        @if($item->is_type == 'feature') bg-warning
-                                                        @elseif($item->is_type == 'new') bg-danger
-                                                        @elseif($item->is_type == 'top') bg-info
-                                                        @elseif($item->is_type == 'best') bg-dark
-                                                        @elseif($item->is_type == 'flash_deal') bg-success
-                                                        @endif
-                                                        ">{{ __(ucfirst(str_replace('_',' ',$item->is_type))) }}
-                                                    </div>
+                                                @if($item->is_type != 'undefine')
+                                                <div class="product-badge
+                                                    @if($item->is_type == 'feature') bg-warning
+                                                    @elseif($item->is_type == 'new') bg-danger
+                                                    @elseif($item->is_type == 'top') bg-info
+                                                    @elseif($item->is_type == 'best') bg-dark
+                                                    @elseif($item->is_type == 'flash_deal') bg-success
+                                                    @endif
+                                                    ">{{ __(ucfirst(str_replace('_',' ',$item->is_type))) }}
+                                                </div>
                                                 @endif
                                             @else
                                                 <div class="product-badge bg-secondary border-default text-body">
