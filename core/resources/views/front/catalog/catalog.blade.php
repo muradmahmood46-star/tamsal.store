@@ -24,8 +24,9 @@
 
     @if($items->count() > 0)
         @php
-            $activeQuickFilter = request('quick_filter');
-            $isRankedView = !empty($activeQuickFilter) || !empty(request('sorting')) || !empty(request('search'));
+            $activeQuickFilter = $quick_filter ?? request('quick_filter');
+            $hasSpecialQuickFilter = !empty($activeQuickFilter) && $activeQuickFilter !== 'all';
+            $isRankedView = $hasSpecialQuickFilter || !empty(request('new')) || !empty(request('sorting')) || !empty(request('search'));
             $qfTitle = '';
             $qfSubtitle = '';
             $qfIcon = '';
@@ -37,7 +38,7 @@
                 $qfTitle = __('Top Rated Products');
                 $qfSubtitle = __('Sorted strictly from highest customer ratings to lowest');
                 $qfIcon = 'fa-star text-warning';
-            } elseif (in_array($activeQuickFilter, ['newly_listed', 'new'])) {
+            } elseif (in_array($activeQuickFilter, ['newly_listed', 'new']) || !empty(request('new'))) {
                 $qfTitle = __('Newly Listed products');
                 $qfSubtitle = __('Sorted strictly from newest listed products to oldest');
                 $qfIcon = 'fa-bolt text-primary';

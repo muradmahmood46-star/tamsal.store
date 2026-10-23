@@ -225,7 +225,7 @@
     <input type="text" name="brand" id="brand" value="{{isset($brand) ? $brand->slug : ''}}">
     <input type="text" name="vendor" id="vendor" value="{{request()->input('vendor') ? request()->input('vendor') : ''}}">
     <input type="text" name="category" id="category" value="{{request()->input('category') ? (is_array(request()->input('category')) ? implode(',', request()->input('category')) : request()->input('category')) : (isset($category) && $category ? $category->slug : '')}}">
-    <input type="text" name="quick_filter" id="quick_filter" value="{{ request('quick_filter') ?? '' }}">
+    <input type="text" name="quick_filter" id="quick_filter_input" value="{{ request('quick_filter') ?? '' }}">
     <input type="text" name="childcategory" id="childcategory" value="{{isset($childcategory) ? $childcategory->slug : ''}}">
     <input type="text" name="page" id="page" value="{{isset($page) ? $page : ''}}">
     <input type="text" name="attribute" id="attribute" value="{{isset($attribute) ? $attribute : ''}}">
@@ -260,6 +260,27 @@
             var existingMain = document.getElementById('main_div');
             if(newMain && existingMain){
                 Array.from(newMain.children).forEach(function(child){
+                    var catId = child.dataset && child.dataset.categoryId;
+                    if(catId){
+                        var existing = existingMain.querySelector('.catalog-category-block[data-category-id="' + catId + '"]');
+                        if(existing){
+                            // Merge products into the existing category block
+                            var existingRow = existing.querySelector('.row.g-3.gx-2');
+                            var newRow = child.querySelector('.row.g-3.gx-2');
+                            if(existingRow && newRow){
+                                Array.from(newRow.children).forEach(function(product){
+                                    existingRow.appendChild(product.cloneNode(true));
+                                });
+                                // Update product count badge
+                                var badge = existing.querySelector('.catalog-cat-count-badge');
+                                if(badge){
+                                    var total = existingRow.children.length;
+                                    badge.textContent = badge.textContent.replace(/\d+/, total);
+                                }
+                                return;
+                            }
+                        }
+                    }
                     existingMain.appendChild(child.cloneNode(true));
                 });
             }

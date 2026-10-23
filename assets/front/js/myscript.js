@@ -877,7 +877,8 @@ $(function ($) {
             if (typeof filter === 'undefined' || filter === null) {
                 filter = '';
             }
-            $("#search_form #quick_filter").val(filter);
+            $('#search_form input[name="quick_filter"]').val(filter);
+            $('#quick_filter_input').val(filter);
             $("#search_form #sorting").val('');
             $("#sorting").val('');
             closeMobileFilterSidebar();
